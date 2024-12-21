@@ -264,6 +264,6 @@
 			</div>
 		{/if}
 
-		<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Fetching data...' : 'Copy'}</button>
+		<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Please wait...' : 'Copy'}</button>
 	</div>
 </Modal>
