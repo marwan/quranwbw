@@ -16,17 +16,14 @@
 	import Morphology from '$svgs/Morphology.svelte';
 	import Copy from '$svgs/Copy.svelte';
 	import AdvancedCopy from '$svgs/AdvancedCopy.svelte';
-	import Share from '$svgs/Share.svelte';
 	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
 	import Back from '$svgs/Back.svelte';
 	import Link from '$svgs/Link.svelte';
 	import { showAudioModal } from '$utils/audioController';
-	import { quranMetaData } from '$data/quranMeta';
 	import { selectableDisplays } from '$data/options';
 	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
-	import { getVerseText } from '$utils/getVerseText';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
@@ -40,7 +37,7 @@
 
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
 	let dropdownOpen = false;
-	let moreOptionsEnabled = true;
+	let subMenuVisible = false;
 	let verseKeyData;
 
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
@@ -59,36 +56,12 @@
 			})();
 		}
 	}
-
-	// Copy arabic verse text
-	function copyVerse() {
-		const copyButtonText = document.getElementById(`copy-text-${verse}`);
-		navigator.clipboard.writeText(getVerseText($__verseKey));
-		copyButtonText.innerText = 'Copied!';
-
-		// Set the button text back to default
-		setTimeout(function () {
-			copyButtonText.innerText = 'Copy Text';
-		}, 1500);
-	}
-
-	// Copy verse link
-	function copyLink() {
-		const copyButtonText = document.getElementById(`copy-link-${verse}`);
-		navigator.clipboard.writeText(`https://quranwbw.com/${chapter}/${verse}`);
-		copyButtonText.innerText = 'Copied!';
-
-		// Set the button text back to default
-		setTimeout(function () {
-			copyButtonText.innerText = 'Copy Link';
-		}, 1500);
-	}
 </script>
 
 <Dropdown bind:open={dropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr">
 	<div class="py-2 px-4 text-xs font-semibold text-left">{term('verse')} {$__verseKey}</div>
 
-	{#if moreOptionsEnabled}
+	{#if !subMenuVisible}
 		<!-- play verse button -->
 		<DropdownItem
 			class={dropdownItemClasses}
@@ -124,19 +97,19 @@
 	<!-- <DropdownItem
 		class={dropdownItemClasses}
 		on:click={() => {
-			moreOptionsEnabled = !moreOptionsEnabled;
+			subMenuVisible = !subMenuVisible;
 		}}
 	>
-		{#if !moreOptionsEnabled}
-			<DotsHorizontal />
-			<span>More Options</span>
-		{:else}
+		{#if subMenuVisible}
 			<Back />
 			<span>Go Back</span>
+		{:else}
+			<DotsHorizontal />
+			<span>More Options</span>
 		{/if}
 	</DropdownItem> -->
 
-	{#if moreOptionsEnabled}
+	{#if !subMenuVisible}
 		<div transition:fly={{ duration: 0, x: 0, easing: sineIn }}>
 			<!-- verse translation button - only show on Mushaf page or on continuous display -->
 			{#if selectableDisplays[$__displayType].continuous}
@@ -195,11 +168,6 @@
 
 			<!-- copy verse button (only for hafs digital and indopak) -->
 			{#if [1, 4].includes($__fontType)}
-				<DropdownItem class={dropdownItemClasses} on:click={(event) => copyVerse(event)}>
-					<Copy />
-					<span id="copy-text-{verse}">Copy Text</span>
-				</DropdownItem>
-
 				<DropdownItem
 					class={dropdownItemClasses}
 					on:click={() => {
@@ -207,16 +175,10 @@
 						dropdownOpen = false;
 					}}
 				>
-					<AdvancedCopy />
-					<span id="copy-text-{verse}">Advanced Copy</span>
+					<Copy />
+					<span>Copy</span>
 				</DropdownItem>
 			{/if}
-
-			<!-- copy verse button -->
-			<DropdownItem class={dropdownItemClasses} on:click={copyLink}>
-				<Link />
-				<span id="copy-link-{verse}">Copy Link</span>
-			</DropdownItem>
 		</div>
 	{/if}
 </Dropdown>

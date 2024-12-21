@@ -10,6 +10,7 @@
 	import { createLink } from '$utils/createLink';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { downloadTextFile } from '$utils/downloadTextFile';
+	import { getVerseText } from '$utils/getVerseText';
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
@@ -27,6 +28,7 @@
 	};
 
 	// Options
+	let copyType = 1;
 	let textType = 1;
 	let fontType = 4;
 	let includeKey = true;
@@ -40,7 +42,7 @@
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
 	// Reset the generated data variable whenever any of the option changes
-	$: if ($__verseKey || textType || fontType || includeKey || includeTranslationNames || includeFootNotes || includeLink || fetchingData) {
+	$: if ($__copyShareVerseModalVisible || $__verseKey || copyType || textType || fontType || includeKey || includeTranslationNames || includeFootNotes || includeLink || fetchingData) {
 		generatedVerseData = '';
 	}
 
@@ -109,11 +111,17 @@
 
 	// Function to fetch, process and return the final data
 	async function processAndCopyVerseData() {
-		const verseData = await fetchVerseData();
-		const manipulatedData = manipulateString(verseData, includeKey, includeLink, quranMetaData, chapter, $__verseKey);
-		generatedVerseData = manipulatedData;
+		if (copyType === 1) {
+			generatedVerseData = getVerseText($__verseKey);
+		} else if (copyType === 2) {
+			generatedVerseData = `https://quranwbw.com/${chapter}/${verse}`;
+		} else if (copyType === 3) {
+			const verseData = await fetchVerseData();
+			const manipulatedData = manipulateString(verseData, includeKey, includeLink, quranMetaData, chapter, $__verseKey);
+			generatedVerseData = manipulatedData;
+		}
+
 		navigator.clipboard.writeText(generatedVerseData);
-		return manipulatedData;
 	}
 
 	// Function to download the generated verse data as a text file
@@ -125,90 +133,137 @@
 
 <Modal id="copyShareVerseModal" bind:open={$__copyShareVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme" bodyClass="p-6" placement="center" position="bottom" outsideclose>
 	<!-- Modal content -->
-	<div class="flex flex-row space-x-4 mb-4 text-xl" style="margin-top: 0px;">
-		<h3 id="modal-title" class="font-medium">{quranMetaData[chapter || 1].transliteration}, {$__verseKey}</h3>
-	</div>
-	<div class="flex flex-col">
-		<!-- Main Options -->
-		<div class="flex flex-col">
-			<!-- Arabic/Translation/Both -->
-			<div class="flex flex-col space-y-4 py-4">
-				<span class="text-sm">Text</span>
-				<div class="flex flex-row space-x-2">
-					<div class="flex items-center">
-						<Radio bind:group={textType} value={1} custom>
-							<div class="{radioClasses} {textType === 1 && selectedRadioOrCheckboxClasses}">
-								<div class="w-full">Arabic</div>
-							</div>
-						</Radio>
-					</div>
-					<div class="flex items-center">
-						<Radio bind:group={textType} value={2} custom>
-							<div class="{radioClasses} {textType === 2 && selectedRadioOrCheckboxClasses}">
-								<div class="w-full">Translation</div>
-							</div>
-						</Radio>
-					</div>
-					<div class="flex items-center">
-						<Radio bind:group={textType} value={3} custom>
-							<div class="{radioClasses} {textType === 3 && selectedRadioOrCheckboxClasses}">
-								<div class="w-full">Both</div>
-							</div>
-						</Radio>
-					</div>
+	<h3 id="modal-title" class="mb-2 text-xl font-medium">{quranMetaData[chapter || 1].transliteration}, {$__verseKey}</h3>
+
+	<div class="max-h-[70vh] overflow-y-scroll w-full pr-2">
+		<!-- Copy Type -->
+		<div class="flex flex-col space-y-4 py-4">
+			<span class="text-sm">Type</span>
+			<div class="flex flex-row space-x-2">
+				<div class="flex items-center">
+					<Radio bind:group={copyType} value={1} custom>
+						<div class="{radioClasses} {copyType === 1 && selectedRadioOrCheckboxClasses}">
+							<div class="w-full">Text</div>
+						</div>
+					</Radio>
+				</div>
+				<div class="flex items-center">
+					<Radio bind:group={copyType} value={2} custom>
+						<div class="{radioClasses} {copyType === 2 && selectedRadioOrCheckboxClasses}">
+							<div class="w-full">Link</div>
+						</div>
+					</Radio>
+				</div>
+				<div class="flex items-center">
+					<Radio bind:group={copyType} value={3} custom>
+						<div class="{radioClasses} {copyType === 3 && selectedRadioOrCheckboxClasses}">
+							<div class="w-full">Advanced</div>
+						</div>
+					</Radio>
 				</div>
 			</div>
 
-			<!-- Font Type -->
-			{#if textType !== 2}
-				<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
-					<span class="text-sm">Font</span>
-					<div class="flex flex-row space-x-2">
-						{#each Object.entries(fontTypes) as [id, font]}
-							<Radio bind:group={fontType} value={font.id} custom>
-								<div class="{radioClasses} {fontType === font.id && selectedRadioOrCheckboxClasses}">
-									<div class="w-full">{font.name}</div>
-								</div>
-							</Radio>
-						{/each}
+			<!-- Type Description -->
+			{#if copyType !== 3}
+				<span class="flex flex-col space-y-3 text-xs opacity-70">
+					{#if copyType === 1}
+						<span>Copy the Arabic text of the {term('verse')} only.</span>
+					{:else if copyType === 2}
+						<span>Copy the website link of the {term('verse')} only.</span>
+					{/if}
+				</span>
+			{/if}
+		</div>
+
+		<!-- If Advanced -->
+		{#if copyType === 3}
+			<div class="flex flex-col">
+				<!-- Main Options -->
+				<div class="flex flex-col">
+					<!-- Arabic/Translation/Both -->
+					<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
+						<span class="text-sm">Text</span>
+						<div class="flex flex-row space-x-2">
+							<div class="flex items-center">
+								<Radio bind:group={textType} value={1} custom>
+									<div class="{radioClasses} {textType === 1 && selectedRadioOrCheckboxClasses}">
+										<div class="w-full">Arabic</div>
+									</div>
+								</Radio>
+							</div>
+							<div class="flex items-center">
+								<Radio bind:group={textType} value={2} custom>
+									<div class="{radioClasses} {textType === 2 && selectedRadioOrCheckboxClasses}">
+										<div class="w-full">Translation</div>
+									</div>
+								</Radio>
+							</div>
+							<div class="flex items-center">
+								<Radio bind:group={textType} value={3} custom>
+									<div class="{radioClasses} {textType === 3 && selectedRadioOrCheckboxClasses}">
+										<div class="w-full">Both</div>
+									</div>
+								</Radio>
+							</div>
+						</div>
 					</div>
 
-					<!-- Font Links -->
-					<span class="flex flex-col space-y-3 text-xs opacity-70">
-						<span>You may download the {fontTypes[fontType].name} font from {@html createLink(`${staticEndpoint}/fonts/Archives/${fontTypes[fontType].name}.zip?version=1`, 'here')}.</span>
-					</span>
+					<!-- Font Type -->
+					{#if textType !== 2}
+						<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
+							<span class="text-sm">Font</span>
+							<div class="flex flex-row space-x-2">
+								{#each Object.entries(fontTypes) as [id, font]}
+									<Radio bind:group={fontType} value={font.id} custom>
+										<div class="{radioClasses} {fontType === font.id && selectedRadioOrCheckboxClasses}">
+											<div class="w-full">{font.name}</div>
+										</div>
+									</Radio>
+								{/each}
+							</div>
+
+							<!-- Font Links -->
+							<span class="flex flex-col space-y-3 text-xs opacity-70">
+								<span>You may download the {fontTypes[fontType].name} font from {@html createLink(`${staticEndpoint}/fonts/Archives/${fontTypes[fontType].name}.zip?version=1`, 'here')}.</span>
+							</span>
+						</div>
+					{/if}
 				</div>
-			{/if}
-		</div>
 
-		<!-- Other Options -->
-		<div class="flex flex-col space-y-2 py-4 border-t {window.theme('border')}">
-			<Checkbox checked={includeKey} on:click={() => (includeKey = !includeKey)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
-				<span>Include {term('chapter')} Name & {term('verse')} Key</span>
-			</Checkbox>
+				<!-- Other Options -->
+				<div class="flex flex-col space-y-2 py-4 border-t {window.theme('border')}">
+					<Checkbox checked={includeKey} on:click={() => (includeKey = !includeKey)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+						<span>Include {term('chapter')} Name & {term('verse')} Key</span>
+					</Checkbox>
 
-			{#if textType === 2 || textType === 3}
-				<Checkbox checked={includeTranslationNames} on:click={() => (includeTranslationNames = !includeTranslationNames)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
-					<span>Include Translation Names</span>
-				</Checkbox>
+					{#if textType === 2 || textType === 3}
+						<Checkbox checked={includeTranslationNames} on:click={() => (includeTranslationNames = !includeTranslationNames)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+							<span>Include Author Names</span>
+						</Checkbox>
 
-				<Checkbox checked={includeFootNotes} on:click={() => (includeFootNotes = !includeFootNotes)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
-					<span>Include Footnotes</span>
-				</Checkbox>
-			{/if}
+						<Checkbox checked={includeFootNotes} on:click={() => (includeFootNotes = !includeFootNotes)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+							<span>Include Footnotes</span>
+						</Checkbox>
+					{/if}
 
-			<Checkbox checked={includeLink} on:click={() => (includeLink = !includeLink)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
-				<span>Include Website Link</span>
-			</Checkbox>
-		</div>
+					<Checkbox checked={includeLink} on:click={() => (includeLink = !includeLink)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+						<span>Include Website Link</span>
+					</Checkbox>
+				</div>
+			</div>
+		{/if}
+
+		{#if generatedVerseData !== ''}
+			<div class="text-xs opacity-70 mb-6 text-left">
+				{#if copyType === 1 || copyType === 3}
+					<span>Text copied to clipboard.</span>
+					<button on:click={downloadData} class={linkClasses}>Click here to download it as a file.</button>
+				{:else}
+					<span>Link copied to clipboard.</span>
+				{/if}
+			</div>
+		{/if}
+
+		<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Fetching data...' : 'Copy'}</button>
 	</div>
-
-	{#if generatedVerseData !== ''}
-		<div class="text-xs opacity-70 mb-6 text-center">
-			<span>Text copied to clipboard.</span>
-			<button on:click={downloadData} class={linkClasses}>Click here to download it as a file.</button>
-		</div>
-	{/if}
-
-	<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Fetching data...' : 'Copy'}</button>
 </Modal>
