@@ -240,7 +240,7 @@
 		</Checkbox>
 
 		<div class="mt-4">
-			<button on:click={() => playButtonHandler($__audioSettings.playingKey)} class="w-full mr-2 {buttonClasses} {invalidStartVerse || invalidEndVerse || invalidTimesToRepeat ? disabledClasses : null}">Play</button>
+			<button on:click={() => playButtonHandler($__audioSettings.playingKey)} class="w-full {buttonClasses} {invalidStartVerse || invalidEndVerse || invalidTimesToRepeat ? disabledClasses : null}">Play</button>
 		</div>
 	</div>
 </Modal>

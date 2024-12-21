@@ -37,9 +37,13 @@
 	let includeLink = true;
 	let fetchingData = false;
 	let generatedVerseData = '';
+	let websiteLink = '';
 
 	// Extract chapter number from verse key
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
+
+	// Shareable link
+	$: websiteLink = `https://quranwbw.com/${chapter}/${verse}`;
 
 	// Reset the generated data variable whenever any of the option changes
 	$: if ($__copyShareVerseModalVisible || $__verseKey || copyType || textType || fontType || includeKey || includeTranslationNames || includeFootNotes || includeLink || fetchingData) {
@@ -92,7 +96,7 @@
 		}
 
 		// Include link if selected
-		if (includeLink) result += `\n\nhttps://quranwbw.com/${chapter}/${verse}`;
+		if (includeLink) result += `\n\n${websiteLink}`;
 
 		return result;
 	}
@@ -127,7 +131,7 @@
 		if (copyType === 1) {
 			generatedVerseData = getVerseText($__verseKey);
 		} else if (copyType === 2) {
-			generatedVerseData = `https://quranwbw.com/${chapter}/${verse}`;
+			generatedVerseData = websiteLink;
 		} else if (copyType === 3) {
 			const verseData = await fetchVerseData();
 			const manipulatedData = manipulateString(verseData, includeKey, includeLink, quranMetaData, chapter, $__verseKey);
@@ -272,7 +276,7 @@
 		{/if}
 
 		<div class="flex flex-row">
-			<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Please wait...' : 'Copy'}</button>
+			<button class="w-full {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Please wait...' : 'Copy'}</button>
 			<!-- <button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={shareVerse}>Share</button> -->
 		</div>
 	</div>
