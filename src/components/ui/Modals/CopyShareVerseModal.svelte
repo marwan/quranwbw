@@ -34,16 +34,19 @@
 	let includeFootNotes = false;
 	let includeLink = true;
 	let fetchingData = false;
-	let dataFetched = false;
 	let generatedVerseData = '';
 
 	// Extract chapter number from verse key
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
+	// Reset the generated data variable whenever any of the option changes
+	$: if ($__verseKey || textType || fontType || includeKey || includeTranslationNames || includeFootNotes || includeLink || fetchingData) {
+		generatedVerseData = '';
+	}
+
 	// Function to fetch data from Quran.com's API
 	async function fetchVerseData() {
 		fetchingData = true;
-		dataFetched = false;
 
 		const params = {
 			raw: true,
@@ -63,7 +66,6 @@
 		const response = await fetch(api);
 		const data = await response.json();
 		fetchingData = false;
-		dataFetched = true;
 
 		return data.result;
 	}
@@ -87,8 +89,6 @@
 		// Include link if selected
 		if (includeLink) result += `\n\nhttps://quranwbw.com/${chapter}/${verse}`;
 
-		console.log(result);
-
 		return result;
 	}
 
@@ -108,10 +108,11 @@
 	}
 
 	// Function to fetch, process and return the final data
-	async function processVerseData() {
+	async function processAndCopyVerseData() {
 		const verseData = await fetchVerseData();
 		const manipulatedData = manipulateString(verseData, includeKey, includeLink, quranMetaData, chapter, $__verseKey);
 		generatedVerseData = manipulatedData;
+		navigator.clipboard.writeText(generatedVerseData);
 		return manipulatedData;
 	}
 
@@ -202,12 +203,12 @@
 		</div>
 	</div>
 
-	{#if dataFetched}
+	{#if generatedVerseData !== ''}
 		<div class="text-xs opacity-70 mb-6 text-center">
 			<span>Text copied to clipboard.</span>
 			<button on:click={downloadData} class={linkClasses}>Click here to download it as a file.</button>
 		</div>
 	{/if}
 
-	<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processVerseData}>{fetchingData ? 'Fetching data...' : 'Copy'}</button>
+	<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Fetching data...' : 'Copy'}</button>
 </Modal>
