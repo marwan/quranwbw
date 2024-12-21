@@ -4,7 +4,9 @@ export const websitechangelog = [
 	{
 		version: 'v4.0.2',
 		date: 'Dec 21, 2024',
-		description: [`In this update, we’ve enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, and ensured verse translations display in your selected order.`],
+		description: [
+			`In this update, we’ve enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, ensured verse translations display in your selected order, and added a button to listen to a word directly on the morphology page. Enjoy these fantastic enhancements!`
+		],
 		updates: [
 			'<span class="font-semibold">Enhanced Audio Modal:</span> Now allows translation playback and remembers your settings. Say goodbye to repetitive adjustments!',
 			'<span class="font-semibold">New Reciters:</span> We are excited to welcome Ayman Suwayd and Ibrahim Al Akhdar. Enjoy their melodious recitations!',
