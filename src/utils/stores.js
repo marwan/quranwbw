@@ -54,6 +54,7 @@ let __websiteOnline,
 	__changelogModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
+	__copyShareVerseModalVisible,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
@@ -203,6 +204,7 @@ if (browser) {
 	__changelogModalVisible = writable(false);
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
+	__copyShareVerseModalVisible = writable(false);
 
 	// wake lock settings
 	__wakeLockEnabled = writable(userSettings.displaySettings.wakeLockEnabled);
@@ -296,6 +298,7 @@ export {
 	__changelogModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
+	__copyShareVerseModalVisible,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,

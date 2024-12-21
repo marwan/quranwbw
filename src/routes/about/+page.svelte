@@ -185,7 +185,7 @@
 			<div id="about-start" class="flex flex-col space-y-6 text-center">
 				<div class="text-md md:text-xl font-medium italic w-4/5 mx-auto">
 					"Indeed, this (book) is a reminder, so he who wills may take to his Lord a way. And you do not will except that Allah wills. Indeed, Allah is ever Knowing and Wise."
-					<a href="/76/29-30" class={linkClasses}>(76:29-30)</a>
+					{@html createLink('/76/29-30', '(76:29-30)')}
 				</div>
 
 				<i class="text-sm">In the name of Allah and prayers & blessings be upon His messenger, Muhammad (<span style="font-style: initial; font-weight: normal;">ﷺ</span>).</i>
