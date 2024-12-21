@@ -44,17 +44,29 @@ function getIdByKeyword(keyword) {
 	}
 
 	keyword = keyword.toLowerCase();
+	keyword = keyword.replace(/-/g, '');
+
 	for (let item of quranMetaData) {
 		if (item.id > 0) {
 			const transliteration = item.transliteration.replace(/[^a-zA-Z]/g, '').toLowerCase();
 
-			// First check alternate names
+			// Alternate names check
 			if (item.alternateNames !== undefined && item.alternateNames.includes(keyword)) {
 				return item.id;
 			}
 
-			// Then check other names
+			// Reverse alternate names check
+			if (item.alternateNames !== undefined && keyword.includes(item.alternateNames)) {
+				return item.id;
+			}
+
+			// Other names check
 			if (item.arabic.toLowerCase().includes(keyword) || item.translation.toLowerCase().includes(keyword) || transliteration.includes(keyword)) {
+				return item.id;
+			}
+
+			// Reverse other names check
+			if (keyword.includes(item.arabic.toLowerCase()) || keyword.includes(item.translation.toLowerCase()) || keyword.includes(transliteration)) {
 				return item.id;
 			}
 		}

@@ -2,7 +2,7 @@
 export const quranMetaData = [
 	{ id: 0 },
 	{ id: 1, arabic: 'الفاتحة', translation: 'The Opening', transliteration: 'Al Faatiha', verses: 7, revelation: 1, icon: '04', alternateNames: ['fatihah', 'fatiha'] },
-	{ id: 2, arabic: 'البقرة', translation: 'The Cow', transliteration: 'Al Baqara', verses: 286, revelation: 2, icon: '05' },
+	{ id: 2, arabic: 'البقرة', translation: 'The Cow', transliteration: 'Al Baqara', verses: 286, revelation: 2, icon: '05', alternateNames: ['baqarah'] },
 	{ id: 3, arabic: 'آل عمران', translation: 'The Family of Imraan', transliteration: 'Aal i Imraan', verses: 200, revelation: 2, icon: '06', alternateNames: ['imran'] },
 	{ id: 4, arabic: 'النساء', translation: 'The Women', transliteration: 'An Nisaa', verses: 176, revelation: 2, icon: '07' },
 	{ id: 5, arabic: 'المائدة', translation: 'The Table', transliteration: 'Al Maaida', verses: 120, revelation: 2, icon: '08' },
