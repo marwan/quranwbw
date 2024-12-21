@@ -112,6 +112,16 @@
 		return updatedString;
 	}
 
+	// Open share menu
+	function shareVerse() {
+		if (navigator.share) {
+			navigator.share({
+				title: generatedVerseData,
+				text: generatedVerseData
+			});
+		}
+	}
+
 	// Function to fetch, process and return the final data
 	async function processAndCopyVerseData() {
 		if (copyType === 1) {
@@ -261,6 +271,9 @@
 			</div>
 		{/if}
 
-		<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Please wait...' : 'Copy'}</button>
+		<div class="flex flex-row">
+			<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Please wait...' : 'Copy'}</button>
+			<!-- <button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={shareVerse}>Share</button> -->
+		</div>
 	</div>
 </Modal>
