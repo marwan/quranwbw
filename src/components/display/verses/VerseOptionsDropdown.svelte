@@ -174,16 +174,14 @@
 			{/if}
 
 			<!-- only show results of key-pages if we have loaded the data -->
-			{#if $__currentPage !== 'juz'}
-				{#await verseKeyData}
-					<!-- ... -->
-				{:then data}
-					<!-- <DropdownItem class={dropdownItemClasses} href="/juz/{data[$__verseKey].juz}?startKey={$__verseKey}">
+			<!-- {#if $__currentPage !== 'juz'}
+				{#await verseKeyData then data}
+					<DropdownItem class={dropdownItemClasses} href="/juz/{data[$__verseKey].juz}?startKey={$__verseKey}">
 						<Juz />
 						<span>Juz Mode</span>
-					</DropdownItem> -->
+					</DropdownItem>
 				{/await}
-			{/if}
+			{/if} -->
 
 			<!-- verse morphology button -->
 			<DropdownItem class={dropdownItemClasses} href="/morphology/{$__verseKey}">

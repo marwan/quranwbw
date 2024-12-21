@@ -20,13 +20,13 @@
 <Modal id="changelogModal" bind:open={$__changelogModalVisible} size="md" class="rounded-3xl" bodyClass="p-6" dialogClass="fixed top-0 start-0 end-0 h-[-webkit-fill-available] md:inset-0 md:h-full z-50 w-full p-4 flex" center outsideclose>
 	<div class="flex flex-col space-y-4">
 		<div class="flex flex-col space-y-2">
-			<div class="font-medium text-lg">QuranWBW {websitechangelog[0].version} Update</div>
+			<div class="font-medium text-lg">Update {websitechangelog[0].version}</div>
 			<div class="flex flex-col space-y-4 text-sm max-h-[60vh] overflow-y-scroll pr-2">
 				{#each websitechangelog[0].description as description}
 					<span>{@html description}</span>
 				{/each}
 
-				{#if websitechangelog[0].updates !== undefined}
+				{#if websitechangelog[0].updates}
 					<a class={linkClasses} href="/changelog">View Highlights & Explore All Our Updates Here!</a>
 				{:else}
 					<a class={linkClasses} href="/changelog">Explore All Our Updates Here!</a>

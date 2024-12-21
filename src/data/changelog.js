@@ -1,17 +1,19 @@
 import { createLink } from '$utils/createLink';
 
 export const websitechangelog = [
-	// {
-	// 	version: 'v4.0.2',
-	// 	title: 'Explore Chapters with Ease',
-	// 	date: 'Dec 7, 2024',
-	// 	description: [
-	// 		"In our latest update, we're thrilled to introduce custom chapter slugs for effortless navigation. Now, you can jump to any chapter using their translated, transliterated, or Arabic names. For instance:",
-	// 		`${createLink('https://quranwbw.com/cave', 'quranwbw.com/cave')}, ${createLink('https://quranwbw.com/yaseen', 'quranwbw.com/yaseen')}, ${createLink('https://quranwbw.com/هود', 'quranwbw.com/هود')}, ${createLink('https://quranwbw.com/baqarah', 'quranwbw.com/baqarah')}...`,
-	// 		"Each link will take you straight to its respective chapter. It's never been easier to explore!",
-	// 		'Happy navigating!'
-	// 	]
-	// },
+	{
+		version: 'v4.0.2',
+		date: 'Dec 21, 2024',
+		description: [`In this update, we’ve enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, and ensured verse translations display in your selected order.`],
+		updates: [
+			'<span class="font-semibold">Enhanced Audio Modal:</span> Now allows translation playback and remembers your settings. Say goodbye to repetitive adjustments!',
+			'<span class="font-semibold">New Reciters:</span> We are excited to welcome Ayman Suwayd and Ibrahim Al Akhdar. Enjoy their melodious recitations!',
+			`<span class="font-semibold">Custom Chapter Slugs:</span> Jump to any chapter using their translated, transliterated, or Arabic names. For example: ${createLink('https://quranwbw.com/cave', 'quranwbw.com/cave')}, ${createLink('https://quranwbw.com/yaseen', 'quranwbw.com/yaseen')}, ${createLink('https://quranwbw.com/هود', 'quranwbw.com/هود')}, ${createLink('https://quranwbw.com/baqarah', 'quranwbw.com/baqarah')}...`,
+			'<span class="font-semibold">Effortless Verse Copying:</span> Added an option to copy Arabic verse text effortlessly. Perfect for sharing and making notes!',
+			'<span class="font-semibold">Ordered Verse Translations:</span> Display verse translations in the sequence you selected. Enjoy a seamless reading experience!',
+			'<span class="font-semibold">Morphology Page Audio:</span> Added a button to listen to a word directly on the morphology page for enhanced learning and pronunciation.'
+		]
+	},
 	{
 		version: 'v4.0.1',
 		title: 'Shine with Golden Glint',

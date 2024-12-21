@@ -16,7 +16,13 @@
 		{#each Object.entries(websitechangelog) as [key, changelog]}
 			<div class="py-6 space-y-2 border-b {window.theme('border')}">
 				<div id="changelog-title" class="font-medium text-lg">
-					<span>Update {changelog.version} - {changelog.title}</span>
+					<span>
+						Update {changelog.version}
+
+						{#if changelog.title}
+							- {changelog.title}
+						{/if}
+					</span>
 
 					{#if changelog.date !== null}
 						<span class="opacity-70">({changelog.date})</span>
