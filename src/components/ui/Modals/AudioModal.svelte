@@ -12,7 +12,7 @@
 	import { defaultSettings } from '$src/hooks.client';
 
 	// CSS classes for radio buttons
-	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
+	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;

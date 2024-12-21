@@ -13,7 +13,7 @@
 	import { getVerseText } from '$utils/getVerseText';
 
 	// CSS classes for radio buttons
-	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
+	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
 
 	// Selectable font types for copy/share
 	const fontTypes = {
@@ -80,6 +80,9 @@
 		// Replace the 2 line breaks in authors name with just 1
 		result = result.replace(/\n\n—/g, '\n—');
 
+		// Replace sup tags with brackets
+		result = result.replace(/<sup.*?>/g, '[').replace(/<\/sup>/g, ']');
+
 		// Replace verse key with complete name
 		if (includeKey) {
 			result = detectAndReplaceVerseKey(result, `${quranMetaData[chapter || 1].transliteration}, ${$__verseKey}`);
@@ -122,12 +125,6 @@
 		}
 
 		navigator.clipboard.writeText(generatedVerseData);
-	}
-
-	// Function to download the generated verse data as a text file
-	function downloadData() {
-		const fileName = `quran-${chapter}-${verse}`;
-		downloadTextFile(fileName, generatedVerseData);
 	}
 </script>
 
@@ -257,7 +254,7 @@
 			<div class="text-xs opacity-70 mb-6 text-left">
 				{#if copyType === 1 || copyType === 3}
 					<span>Text copied to clipboard.</span>
-					<button on:click={downloadData} class={linkClasses}>Click here to download it as a file.</button>
+					<button on:click={downloadTextFile(`quran-${chapter}-${verse}`, generatedVerseData)} class={linkClasses}>Click here to download it as a file.</button>
 				{:else}
 					<span>Link copied to clipboard.</span>
 				{/if}
