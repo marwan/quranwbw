@@ -68,7 +68,7 @@
 
 		// Set the button text back to default
 		setTimeout(function () {
-			copyButtonText.innerText = 'Copy';
+			copyButtonText.innerText = 'Copy Text';
 		}, 1500);
 	}
 
@@ -80,7 +80,7 @@
 
 		// Set the button text back to default
 		setTimeout(function () {
-			copyButtonText.innerText = 'Copy';
+			copyButtonText.innerText = 'Copy Link';
 		}, 1500);
 	}
 </script>

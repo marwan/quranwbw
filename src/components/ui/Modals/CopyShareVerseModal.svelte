@@ -4,11 +4,12 @@
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __verseKey, __copyShareVerseModalVisible, __verseTranslations } from '$utils/stores';
-	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
+	import { disabledClasses, linkClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { createLink } from '$utils/createLink';
 	import { staticEndpoint } from '$data/websiteSettings';
+	import { downloadTextFile } from '$utils/downloadTextFile';
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
@@ -26,13 +27,15 @@
 	};
 
 	// Options
-	$: textType = 1;
-	$: fontType = 4;
-	$: includeKey = true;
-	$: includeTranslationNames = true;
-	$: includeFootNotes = false;
-	$: includeLink = true;
-	$: fetchingData = false;
+	let textType = 1;
+	let fontType = 4;
+	let includeKey = true;
+	let includeTranslationNames = true;
+	let includeFootNotes = false;
+	let includeLink = true;
+	let fetchingData = false;
+	let dataFetched = false;
+	let generatedVerseData = '';
 
 	// Extract chapter number from verse key
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
@@ -40,6 +43,7 @@
 	// Function to fetch data from Quran.com's API
 	async function fetchVerseData() {
 		fetchingData = true;
+		dataFetched = false;
 
 		const params = {
 			raw: true,
@@ -59,6 +63,7 @@
 		const response = await fetch(api);
 		const data = await response.json();
 		fetchingData = false;
+		dataFetched = true;
 
 		return data.result;
 	}
@@ -103,10 +108,17 @@
 	}
 
 	// Function to fetch, process and return the final data
-	async function processedVerseData() {
+	async function processVerseData() {
 		const verseData = await fetchVerseData();
 		const manipulatedData = manipulateString(verseData, includeKey, includeLink, quranMetaData, chapter, $__verseKey);
+		generatedVerseData = manipulatedData;
 		return manipulatedData;
+	}
+
+	// Function to download the generated verse data as a text file
+	function downloadData() {
+		const fileName = `quran-${chapter}-${verse}`;
+		downloadTextFile(fileName, generatedVerseData);
 	}
 </script>
 
@@ -190,7 +202,12 @@
 		</div>
 	</div>
 
-	<div>
-		<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processedVerseData}>{fetchingData ? 'Fetching data...' : 'Copy'}</button>
-	</div>
+	{#if dataFetched}
+		<div class="text-xs opacity-70 mb-6 text-center">
+			<span>Text copied to clipboard.</span>
+			<button on:click={downloadData} class={linkClasses}>Click here to download it as a file.</button>
+		</div>
+	{/if}
+
+	<button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={processVerseData}>{fetchingData ? 'Fetching data...' : 'Copy'}</button>
 </Modal>
