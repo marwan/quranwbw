@@ -36,10 +36,11 @@ export function parseURL() {
 			startVerse = parseInt(verseRange[0], 10) || 1;
 			endVerse = parseInt(verseRange[1], 10) || startVerse;
 
-			// limit verses to valid range
-			if (startVerse < 1) startVerse = 1;
-			if (endVerse > quranMetaData[chapter].verses) endVerse = quranMetaData[chapter].verses;
-			if (startVerse > endVerse) startVerse = endVerse;
+			// Ensure start verse is between 1 and the max number of verses
+			startVerse = Math.max(1, Math.min(startVerse, quranMetaData[chapter].verses));
+
+			// Ensure end verse is between start verse and max verses
+			endVerse = Math.max(startVerse, Math.min(endVerse, quranMetaData[chapter].verses));
 		}
 	}
 
@@ -52,8 +53,8 @@ export function parseURL() {
 
 			// limit hash-based verse to valid range
 			const chapter = parseInt(urlParts[0], 10) || 1;
-			if (startVerse < 1) startVerse = 1;
-			if (endVerse > quranMetaData[chapter].verses) endVerse = quranMetaData[chapter].verses;
+			startVerse = Math.max(1, Math.min(startVerse, quranMetaData[chapter].verses));
+			endVerse = Math.max(startVerse, Math.min(endVerse, quranMetaData[chapter].verses));
 		}
 	}
 
