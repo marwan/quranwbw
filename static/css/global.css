@@ -1625,6 +1625,11 @@ input[type="range"].range-lg::-moz-range-thumb {
   width: max-content;
 }
 
+.min-w-fit {
+  min-width: -moz-fit-content;
+  min-width: fit-content;
+}
+
 .max-w-2xl {
   max-width: 42rem;
 }

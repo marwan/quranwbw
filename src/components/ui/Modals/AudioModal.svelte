@@ -100,15 +100,15 @@
 
 	<div class="max-h-[70vh] overflow-y-scroll w-full pr-2">
 		<div class="flex flex-col">
-			<!-- verse or words -->
+			<!-- play type options -->
 			<div class="flex flex-col space-y-4 py-4">
-				<span class="text-sm">Playback Options</span>
+				<span class="text-sm">Play</span>
 				<div class="flex flex-row space-x-2">
 					<!-- play verse -->
 					<div class="flex items-center">
 						<Radio bind:group={$__audioSettings.audioType} value="verse" custom>
 							<div class="{radioClasses} {$__audioSettings.audioType === 'verse' && selectedRadioOrCheckboxClasses}">
-								<div class="w-full">Play {term('verse')}</div>
+								<div class="w-full">{term('verse')}</div>
 							</div>
 						</Radio>
 					</div>
@@ -116,7 +116,7 @@
 					<div class="flex items-center">
 						<Radio bind:group={$__audioSettings.audioType} value="word" custom>
 							<div class="{radioClasses} {$__audioSettings.audioType === 'word' && selectedRadioOrCheckboxClasses}">
-								<div class="w-full">Play Words</div>
+								<div class="w-full">Words</div>
 							</div>
 						</Radio>
 					</div>
@@ -129,9 +129,9 @@
 				{/if}
 			</div>
 
-			<!-- recitation language -->
+			<!-- language options -->
 			<div id="recitation-language-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
-				<span class="text-sm">Preferred Language</span>
+				<span class="text-sm">Language</span>
 				<div class="flex flex-row space-x-2">
 					<!-- play arabic only -->
 					<div class="flex items-center">
@@ -160,12 +160,12 @@
 				</div>
 			</div>
 
-			<!-- single or range -->
+			<!-- range options -->
 			<div id="single-or-range-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
-				<span class="text-sm">Preferred Range</span>
+				<span class="text-sm">Range</span>
 				<div class="flex flex-row space-x-2">
 					<!-- play this verse -->
-					<div class="flex items-center {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
+					<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
 						<Radio bind:group={$__audioSettings.audioRange} value="playThisVerse" custom>
 							<div class="{radioClasses} {$__audioSettings.audioRange === 'playThisVerse' && selectedRadioOrCheckboxClasses}">
 								<div class="w-full">This {term('verse')}</div>
@@ -173,7 +173,7 @@
 						</Radio>
 					</div>
 					<!-- play from here -->
-					<div class="flex items-center {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
+					<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
 						<Radio bind:group={$__audioSettings.audioRange} value="playFromHere" custom>
 							<div class="{radioClasses} {$__audioSettings.audioRange === 'playFromHere' && selectedRadioOrCheckboxClasses}">
 								<div class="w-full">From Here</div>
@@ -181,10 +181,10 @@
 						</Radio>
 					</div>
 					<!-- play range -->
-					<div class="flex items-center {!['chapter'].includes($__currentPage) && disabledClasses}">
+					<div class="flex items-center min-w-fit {!['chapter'].includes($__currentPage) && disabledClasses}">
 						<Radio bind:group={$__audioSettings.audioRange} value="playRange" custom>
 							<div class="{radioClasses} {$__audioSettings.audioRange === 'playRange' && selectedRadioOrCheckboxClasses}">
-								<div class="w-full">From / Till</div>
+								<div class="w-full">Custom</div>
 							</div>
 						</Radio>
 					</div>

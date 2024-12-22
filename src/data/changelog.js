@@ -2,7 +2,7 @@ import { createLink } from '$utils/createLink';
 
 export const websitechangelog = [
 	{
-		version: 'v4.0.2',
+		version: '4.1',
 		date: 'Dec 21, 2024',
 		description: [
 			`In this update, we’ve enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, ensured verse translations display in your selected order, and added a button to listen to a word directly on the morphology page. Enjoy these fantastic enhancements!`
@@ -17,7 +17,7 @@ export const websitechangelog = [
 		]
 	},
 	{
-		version: 'v4.0.1',
+		version: '4.0.1',
 		title: 'Shine with Golden Glint',
 		date: 'Dec 7, 2024',
 		description: [
@@ -26,7 +26,7 @@ export const websitechangelog = [
 		]
 	},
 	{
-		version: 'v4.0',
+		version: '4.0',
 		title: 'Introducing QuranWBW v4.0',
 		date: 'Dec 2, 2024',
 		description: [
