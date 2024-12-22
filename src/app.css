@@ -68,6 +68,7 @@
   border-radius: 15px;
 }
 
+/* Scrollbar Colors */
 html.theme-1 ::-webkit-scrollbar-thumb { background: #b1901f; } /* Golden Glint */
 html.theme-2 ::-webkit-scrollbar-thumb { background: #000000; } /* Classic Light */
 html.theme-3 ::-webkit-scrollbar-thumb { background: #000000; } /* Silver Lining */
@@ -78,15 +79,25 @@ html.theme-7 ::-webkit-scrollbar-thumb { background: #dddddd; } /* Forest Green 
 html.theme-8 ::-webkit-scrollbar-thumb { background: #dddddd; } /* Oled Black */
 html.theme-9 ::-webkit-scrollbar-thumb { background: #dca54c; } /* Dark Luxury */
 
-.theme-1 [type='checkbox'], .theme-1 [type='checkbox']:checked { background-color: #b1901f; border-color: #b1901f } /* Golden Glint */
-.theme-2 [type='checkbox'], .theme-2 [type='checkbox']:checked { background-color: #000000; border-color: #000000 } /* Classic Light */
-.theme-3 [type='checkbox'], .theme-3 [type='checkbox']:checked { background-color: #000000; border-color: #000000 } /* Silver Lining */
-.theme-4 [type='checkbox'], .theme-4 [type='checkbox']:checked { background-color: #553c0f; border-color: #553c0f } /* Vintage Sepia */
-.theme-5 [type='checkbox'], .theme-5 [type='checkbox']:checked { background-color: #c59f60; border-color: #c59f60 } /* Mocha Night */
-.theme-6 [type='checkbox'], .theme-6 [type='checkbox']:checked { background-color: #c2c2c2; border-color: #c2c2c2 } /* Midnight Blue */
-.theme-7 [type='checkbox'], .theme-7 [type='checkbox']:checked { background-color: #dddddd; border-color: #dddddd } /* Forest Green */
-.theme-8 [type='checkbox'], .theme-8 [type='checkbox']:checked { background-color: #dddddd; border-color: #dddddd } /* Oled Black */
-.theme-9 [type='checkbox'], .theme-9 [type='checkbox']:checked { background-color: #dca54c; border-color: #dca54c } /* Dark Luxury */
+/* Checkbox Colors */
+.theme-1 [type='checkbox'], .theme-1 [type='checkbox']:checked { background-color: transparent; border-color: #b1901f }
+.theme-1 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23b1901f'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Golden Glint */
+.theme-2 [type='checkbox'], .theme-2 [type='checkbox']:checked { background-color: transparent; border-color: #000000 }
+.theme-2 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23000000'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Classic Light */
+.theme-3 [type='checkbox'], .theme-3 [type='checkbox']:checked { background-color: transparent; border-color: #000000 }
+.theme-3 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23000000'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Silver Lining */
+.theme-4 [type='checkbox'], .theme-4 [type='checkbox']:checked { background-color: transparent; border-color: #553c0f }
+.theme-4 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23553c0f'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Vintage Sepia */
+.theme-5 [type='checkbox'], .theme-5 [type='checkbox']:checked { background-color: transparent; border-color: #c59f60 }
+.theme-5 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23c59f60'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Mocha Night */
+.theme-6 [type='checkbox'], .theme-6 [type='checkbox']:checked { background-color: transparent; border-color: #c2c2c2 }
+.theme-6 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23c2c2c2'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Midnight Blue */
+.theme-7 [type='checkbox'], .theme-7 [type='checkbox']:checked { background-color: transparent; border-color: #dddddd }
+.theme-7 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dddddd'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Forest Green */
+.theme-8 [type='checkbox'], .theme-8 [type='checkbox']:checked { background-color: transparent; border-color: #dddddd }
+.theme-8 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dddddd'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Oled Black */
+.theme-9 [type='checkbox'], .theme-9 [type='checkbox']:checked { background-color: transparent; border-color: #dca54c }
+.theme-9 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dca54c'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Dark Luxury */
 
 /* for some reason, Tailwind applies bottom-right padding to the below elements, so have to manually reset them */
 input, select, textarea {
@@ -282,6 +293,7 @@ svg {
     19 #ffffff
 }
 
+/* Uthmani V4 Fonts - Normal Palettes */
 .theme-1 .theme-palette-normal { font-palette: --palette3; } /* Golden Glint */
 .theme-2 .theme-palette-normal { font-palette: --palette3; } /* Classic Light */
 .theme-3 .theme-palette-normal { font-palette: --palette5; } /* Silver Lining */
@@ -292,6 +304,7 @@ svg {
 .theme-8 .theme-palette-normal { font-palette: --palette4; } /* Oled Black */
 .theme-9 .theme-palette-normal { font-palette: --palette4; } /* Dark Luxury */
 
+/* Uthmani V4 Fonts - Tajweed Palettes */
 .theme-1 .theme-palette-tajweed { font-palette: --palette0; } /* Golden Glint */
 .theme-2 .theme-palette-tajweed { font-palette: --palette0; } /* Classic Light */
 .theme-3 .theme-palette-tajweed { font-palette: --palette2; } /* Silver Lining */
@@ -302,6 +315,7 @@ svg {
 .theme-8 .theme-palette-tajweed { font-palette: --palette1; } /* Oled Black */
 .theme-9 .theme-palette-tajweed { font-palette: --palette1; } /* Dark Luxury */
 
+/* Mushaf Header Palettes */
 .theme-1 .header { font-palette: --palette2; } /* Golden Glint */
 .theme-2 .header { font-palette: --palette0; } /* Classic Light */
 .theme-3 .header { font-palette: --palette3; } /* Silver Lining */
