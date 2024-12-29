@@ -3,7 +3,7 @@ import { createLink } from '$utils/createLink';
 export const websitechangelog = [
 	{
 		version: '4.1',
-		date: 'Dec 21, 2024',
+		date: 'Dec 29, 2024',
 		description: [
 			`In this update, we’ve enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, ensured verse translations display in your selected order, and added a button to listen to a word directly on the morphology page. Enjoy these fantastic enhancements!`
 		],
