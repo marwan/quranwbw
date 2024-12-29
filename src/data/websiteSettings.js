@@ -10,7 +10,7 @@ export const apiVersion = 131;
 
 export const useLocalAPI = false;
 
-export const apiEndpoint = useLocalAPI ? 'http://localhost:7500/v1' : 'https://api-proxy.quranwbw.com/v1';
+export const apiEndpoint = useLocalAPI ? 'http://localhost:7500/v1' : 'https://api.quranwbw.com/v1';
 
 export const staticEndpoint = 'https://static.quranwbw.com/data/v4';
 
