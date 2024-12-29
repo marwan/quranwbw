@@ -450,7 +450,7 @@ export const selectableWordTranslations = {
 	// 12: { id: 10, language: 'Ingush' },
 	13: { id: 12, language: 'Malayalam (Amani Thafseer)' },
 	14: { id: 13, language: 'Malayalam (Quran Lalithasaram)' },
-	15: { id: 19, language: 'Persian' },
+	// 15: { id: 19, language: 'Persian' },
 	// 16: { id: 9, language: 'Russian' },
 	17: { id: 7, language: 'Tamil' },
 	18: { id: 6, language: 'Turkish' },
