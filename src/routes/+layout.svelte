@@ -104,8 +104,8 @@
 		__fontType.set(userSettings.displaySettings.fontType);
 	}
 
-	// If wbw language was set to Russian or Ingush, switch back to English
-	$: if ([9, 10].includes($__wordTranslation)) {
+	// If wbw language was set to Russian, Ingush or Persian, switch back to English
+	$: if ([9, 10, 19].includes($__wordTranslation)) {
 		updateSettings({ type: 'wordTranslation', value: 1 });
 	}
 
