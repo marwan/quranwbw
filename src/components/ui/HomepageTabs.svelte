@@ -16,7 +16,7 @@
 
 	// CSS classes for chapter cards and tabs
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
-	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-3xl p-5 hover:cursor-pointer border ${window.theme('border')} ${window.theme('hover')}`;
+	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer bg-[#b1901f]/5 ${window.theme('hover')}`;
 
 	// Tab classes
 	const commontabClasses = 'p-2 md:p-3 text-xs md:text-md cursor-pointer border-b-4';
@@ -76,13 +76,12 @@
 </script>
 
 <div id="homepage-tabs" style="margin-top: 0px;">
-	<div class="flex items-center justify-center px-2 md:px-0 mb-4">
+	<div class="flex items-center justify-center px-2 md:px-0">
 		<div class="flex flex-row justify-center px-4">
 			<!-- main tabs -->
 			<div id="tab-buttons">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4">
 					<button on:click={() => (activeTab = 1)} class="{activeTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" type="button">
-						<!-- asc/dsc sort button -->
 						<div class="flex flex-row">
 							<button class="inline-flex p-2 rounded-full items-center {window.theme('bgSecondaryDark')}" on:click={() => sortChapters()}>
 								<span><AscendingSort size={3} /></span>
@@ -106,7 +105,7 @@
 		</div>
 	</div>
 
-	<div class="hidden md:block h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent to-transparent opacity-20 -mt-4 mx-auto {window.theme('via')}"></div>
+	<!-- <div class="hidden md:block h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent to-transparent opacity-20 -mt-4 mx-auto {window.theme('via')}"></div> -->
 
 	<div id="content-tab" class="my-6 px-">
 		<!-- chapters tab -->
@@ -143,14 +142,14 @@
 				{/if}
 
 				<!-- continue reading button -->
-				{#if $__lastRead.hasOwnProperty('key')}
+				<!-- {#if $__lastRead.hasOwnProperty('key')}
 					<div id="last-read" class="flex flex-row w-full md:w-max">
 						<a href="/{lastReadChapter}/{lastReadVerse}" class="py-2.5 w-full truncate {buttonClasses} !space-x-0">
 							<span class="hidden md:block">Continue Reading: {quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse} {@html '&#10230'}</span>
 							<span class="block md:hidden">Continue: {lastReadChapter}:{lastReadVerse} </span>
 						</a>
 					</div>
-				{/if}
+				{/if} -->
 			</div>
 
 			<!-- surahs tab -->
