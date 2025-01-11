@@ -15,7 +15,7 @@
 	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer ${window.theme('bgSecondaryLight')} ${window.theme('hover')}`;
 
 	// Tab classes
-	const commontabClasses = 'px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
+	const commontabClasses = 'px-2 md:px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
 	const tabDefaultBorder = `${commontabClasses} border-transparent`;
 	const tabActiveBorder = `${commontabClasses} ${window.theme('border')}`;
 
@@ -69,8 +69,8 @@
 </script>
 
 <div id="homepage-tabs" style="margin-top: 0px;">
-	<div class="flex items-center justify-center px-2 md:px-0">
-		<div class="flex flex-row justify-center px-4">
+	<div class="flex items-center justify-center">
+		<div class="flex flex-row justify-center">
 			<!-- main tabs -->
 			<div id="tab-buttons" class="pt-4">
 				<div class="flex text-sm font-medium text-center mt-4 -mb-4 justify-center space-x-1 md:space-x-4 rounded-full px-4 py-2">
@@ -104,30 +104,41 @@
 		<!-- chapters tab -->
 		<div class="homepage-tab-panels {activeTab === 1 ? 'block' : 'hidden'}" id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
 			<!-- surahs tab -->
-			<div class="{cardGridClasses} grid-cols-2">
+			<div class="{cardGridClasses} grid-cols-1">
 				{#each chapterListOrder as { id }, i}
 					{#if id > 0}
 						<a href="/{id}">
-							<div class="{cardInnerClasses} flex-col-reverse md:flex-row text-center items-center">
-								<div class="">
-									<!-- chapter name and icon -->
-									<div class="flex flex-row items-center space-x-1 justify-center md:justify-start truncate">
-										<div>{id}. {quranMetaData[id].transliteration}</div>
-										<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
-										<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
+							<div class="{cardInnerClasses} flex-row text-center items-center">
+								<div class="flex flex-row space-x-3">
+									<div class="flex items-center">
+										<!-- chapter number star -->
+										<div class="relative w-6 h-6 text-center rounded-sm transform rotate-[45deg] {window.theme('bgSecondary')}">
+											<div class="absolute top-0 left-0 w-6 h-6 rounded-sm transform rotate-[135deg] {window.theme('bgSecondary')}"></div>
+											<span class="absolute inset-0 flex items-center justify-center text-xs font-bold transform rotate-[-45deg] {window.theme('textBgColor')} {id > 99 && 'ml-[-1px]'}">{id}</span>
+										</div>
 									</div>
 
-									<!-- chapter translation -->
-									<div class="block text-xs truncate opacity-70">
-										{quranMetaData[id].translation}
-									</div>
+									<div class="text-left">
+										<!-- chapter name and icon -->
+										<div class="flex flex-row items-center space-x-1 justify-start truncate">
+											<div>{quranMetaData[id].transliteration}</div>
+											<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
+											<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
+										</div>
 
-									<!-- chapter verses -->
-									<div class="block text-xs opacity-70">
-										{quranMetaData[id].verses}
-										{term('verses')}
+										<!-- chapter translation -->
+										<div class="block text-xs truncate opacity-70">
+											{quranMetaData[id].translation}
+										</div>
+
+										<!-- chapter verses -->
+										<div class="block text-xs opacity-70">
+											{quranMetaData[id].verses}
+											{term('verses')}
+										</div>
 									</div>
 								</div>
+
 								<div class="invisible chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
 							</div>
 						</a>

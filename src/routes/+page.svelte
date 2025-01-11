@@ -86,16 +86,20 @@
 					{#if $__timeSpecificChapters.isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full">
 							<span class="-mt-1"><Cave size={4} /></span>
-							<span class="hidden md:block">It's Friday:</span>
-							<span>Al-Kahf</span>
+							<div class="flex flex-row">
+								<span class="hidden md:block mr-1">Friday Reminder:</span>
+								<span>Al-Kahf</span>
+							</div>
 						</a>
 					{/if}
 
 					{#if $__timeSpecificChapters.isNight}
 						<a href="/67" class="{topButtonClasses} truncate w-full">
 							<span><Moon size={3.5} /></span>
-							<span class="hidden md:block">Before Sleeping:</span>
-							<span>Al-Mulk</span>
+							<div class="flex flex-row">
+								<span class="hidden md:block mr-1">Night Reminder:</span>
+								<span>Al-Mulk</span>
+							</div>
 						</a>
 					{/if}
 				{/if}
