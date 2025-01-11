@@ -37,9 +37,9 @@
 	<div class="flex flex-col mt-4">
 		<div class="w-full flex flex-row justify-between">
 			<div>
-				<button class={topButtonClasses}><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></button>
-				<button class={topButtonClasses}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></button>
-				<button class={topButtonClasses}><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></button>
+				<a href={`/${term('supplications').toLowerCase()}`} class={topButtonClasses}><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
+				<a href={$__lastRead.hasOwnProperty('page') ? `/page/${$__lastRead.page}` : '/page/1'} class={topButtonClasses}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
+				<a href="/morphology/1:1" class={topButtonClasses}><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
 			</div>
 			<button class={topButtonClasses} on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
 		</div>
