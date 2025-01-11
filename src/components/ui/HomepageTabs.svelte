@@ -19,9 +19,9 @@
 	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer bg-[#b1901f]/5 ${window.theme('hover')}`;
 
 	// Tab classes
-	const commontabClasses = 'px-3 py-2 text-xs md:text-md cursor-pointer';
-	const tabDefaultBorder = `${commontabClasses}`;
-	const tabActiveBorder = `${commontabClasses} bg-[#b1901f]/5 rounded-3xl`;
+	const commontabClasses = 'px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
+	const tabDefaultBorder = `${commontabClasses} border-transparent`;
+	const tabActiveBorder = `${commontabClasses} ${window.theme('border')}`;
 
 	let lastReadChapter = 1;
 	let lastReadVerse = 1;
@@ -79,7 +79,7 @@
 	<div class="flex items-center justify-center px-2 md:px-0">
 		<div class="flex flex-row justify-center px-4">
 			<!-- main tabs -->
-			<!-- <div id="tab-buttons" class="pt-4">
+			<div id="tab-buttons" class="pt-4">
 				<div class="flex text-sm font-medium text-center mt-4 -mb-4 justify-center space-x-1 md:space-x-4 rounded-full px-4 py-2">
 					<button on:click={() => (activeTab = 1)} class="{activeTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" type="button"><span>{term('chapters')}</span></button>
 					<button on:click={() => (activeTab = 2)} class={activeTab === 2 ? tabActiveBorder : tabDefaultBorder} type="button">Suggested</button>
@@ -92,7 +92,7 @@
 						<span class="hidden xs:block">{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 					</button>
 				</div>
-			</div> -->
+			</div>
 
 			<!-- <div id="tab-buttons">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4">
