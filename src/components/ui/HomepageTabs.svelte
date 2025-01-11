@@ -65,7 +65,7 @@
 	<div class="flex items-center justify-center">
 		<div class="flex flex-row justify-center">
 			<!-- main tabs -->
-			<div id="tab-buttons" class="pt-4">
+			<div id="tab-buttons">
 				<div class="flex text-sm font-medium text-center mt-4 -mb-4 justify-center space-x-1 md:space-x-4 rounded-full px-4 py-2">
 					<button on:click={() => (activeTab = 1)} class="{activeTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" type="button">
 						<div class="flex flex-row">

@@ -43,7 +43,7 @@ export const defaultSettings = {
 		wrongAnswers: 0
 	},
 	lastRead: {
-		key: '1:1',
+		key: {},
 		page: 1
 	},
 	userBookmarks: [],

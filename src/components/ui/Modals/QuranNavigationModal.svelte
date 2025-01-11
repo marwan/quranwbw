@@ -32,7 +32,7 @@
 	let morphologyKey = '1:1';
 
 	// Extract last read chapter and verse from the user's last read data
-	$: if ($__lastRead.hasOwnProperty('key')) {
+	$: if ($__lastRead.hasOwnProperty('key') && Object.keys($__lastRead.key).length > 0) {
 		[lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number);
 	}
 

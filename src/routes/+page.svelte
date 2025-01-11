@@ -74,7 +74,7 @@
 	<div class="flex flex-col mt-4 text-sm">
 		<div class="w-full flex flex-row space-x-4 items-center">
 			<div class="flex flex-row space-x-2 w-full">
-				{#if $__lastRead.hasOwnProperty('key')}
+				{#if $__lastRead.hasOwnProperty('key') && Object.keys($__lastRead.key).length > 0}
 					{@const [lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number)}
 					<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full">
 						<span><ContinueReading size={4} /></span>
