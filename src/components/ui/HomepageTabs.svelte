@@ -3,20 +3,16 @@
 	import Madinah from '$svgs/Madinah.svelte';
 	import CrossSolid from '$svgs/CrossSolid.svelte';
 	import AscendingSort from '$svgs/AscendingSort.svelte';
-	import Moon from '$svgs/Moon.svelte';
-	import Cave from '$svgs/Cave.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, mostRead } from '$data/quranMeta';
 	import { __lastRead, __favouriteChapters, __userBookmarks, __userNotes, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
-	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
-	import { checkTimeSpecificChapters } from '$utils/checkTimeSpecificChapters';
 	import { term } from '$utils/terminologies';
 	import { staticEndpoint } from '$data/websiteSettings';
 
 	// CSS classes for chapter cards and tabs
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
-	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer bg-[#b1901f]/5 ${window.theme('hover')}`;
+	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer ${window.theme('bgSecondaryLight')} ${window.theme('hover')}`;
 
 	// Tab classes
 	const commontabClasses = 'px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
@@ -57,9 +53,6 @@
 			element.classList.remove('invisible');
 		});
 	});
-
-	// Check if it's Friday and nighttime
-	checkTimeSpecificChapters();
 
 	// Function to sort the chapter list in ascending or descending order
 	function sortChapters() {
@@ -125,48 +118,6 @@
 	<div id="content-tab" class="my-6 px-">
 		<!-- chapters tab -->
 		<div class="homepage-tab-panels {activeTab === 1 ? 'block' : 'hidden'}" id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
-			<!-- time specific chapters and continue reading button -->
-			<div class="flex flex-row justify-between text-xs mb-2 space-x-1 md:space-x-2">
-				<!-- time specific chapters buttons -->
-				<!-- show Al Kahf on Friday -->
-				<!-- show Al Mulk at night/evening -->
-				<!-- {#if $__timeSpecificChapters.isFriday || $__timeSpecificChapters.isNight}
-					<div class="flex flex-row space-x-1 md:space-x-2 w-full md:w-max">
-						{#if $__timeSpecificChapters.isFriday}
-							<div id="al-kahf" class="w-full md:w-max">
-								<a href="/18" class="py-2.5 w-full truncate {buttonOutlineClasses}">
-									<span class="mr-1 md:-mr-1 -mt-1"><Cave size={4} /></span>
-									<span class="hidden md:block">It's Friday:&nbsp;</span>
-									Al-Kahf
-									<span class="hidden md:block">{@html '&#10230'}</span>
-								</a>
-							</div>
-						{/if}
-
-						{#if $__timeSpecificChapters.isNight}
-							<div id="al-mulk" class="w-full md:w-max">
-								<a href="/67" class="py-2.5 w-full truncate {buttonOutlineClasses}">
-									<span class="mr-1 md:-mr-1"><Moon size={3.5} /></span>
-									<span class="hidden md:block">Night Reminder:&nbsp;</span>
-									Al-Mulk
-									<span class="hidden md:block">{@html '&#10230'}</span>
-								</a>
-							</div>
-						{/if}
-					</div>
-				{/if} -->
-
-				<!-- continue reading button -->
-				<!-- {#if $__lastRead.hasOwnProperty('key')}
-					<div id="last-read" class="flex flex-row w-full md:w-max">
-						<a href="/{lastReadChapter}/{lastReadVerse}" class="py-2.5 w-full truncate {buttonClasses} !space-x-0">
-							<span class="hidden md:block">Continue Reading: {quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse} {@html '&#10230'}</span>
-							<span class="block md:hidden">Continue: {lastReadChapter}:{lastReadVerse} </span>
-						</a>
-					</div>
-				{/if} -->
-			</div>
-
 			<!-- surahs tab -->
 			<div class="{cardGridClasses} grid-cols-2">
 				{#each chapterListOrder as { id }, i}

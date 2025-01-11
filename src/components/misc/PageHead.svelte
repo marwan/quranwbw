@@ -13,9 +13,4 @@
 	<meta name="og:title" content="{title} - {websiteTagline} in {wbwLanguages} - {websiteURL}" />
 	<meta name="og:image" content="" />
 	<meta name="og:url" content={$page.url.href} />
-
-	<!-- Use Tailwind CDN for local development -->
-	{#if location.hostname === 'localhost'}
-		<script src="https://cdn.tailwindcss.com"></script>
-	{/if}
 </svelte:head>

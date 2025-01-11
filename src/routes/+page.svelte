@@ -1,12 +1,11 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import HomepageTabs from '$ui/HomepageTabs.svelte';
-	import Logo from '$svgs/Logo.svelte';
 	import Quran from '$svgs/Quran.svelte';
 	import Megaphone from '$svgs/Megaphone.svelte';
 	import Banner from '$ui/FlowbiteSvelte/banner/Banner.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __changelogModalVisible, __timeSpecificChapters, __quranNavigationModalVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __changelogModalVisible, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
 	import { linkClasses } from '$data/commonClasses';
 	import { websitechangelog } from '$data/changelog';
 	import { quranMetaData } from '$data/quranMeta';
@@ -25,7 +24,7 @@
 	// Check if it's Friday and nighttime
 	checkTimeSpecificChapters();
 
-	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-3 space-x-2 justify-center bg-[#b1901f]/5';
+	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-3 space-x-2 justify-center ${window.theme('bgSecondaryLight')}`;
 
 	__currentPage.set('home');
 </script>
@@ -42,16 +41,13 @@
 					<button class={topButtonClasses}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></button>
 					<button class={topButtonClasses}><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></button>
 				</div>
-
-				<button class={topButtonClasses}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
-
-				<!-- <span>Menu</span> -->
+				<button class={topButtonClasses} on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
 			</div>
 		</div>
 	</div>
 
 	<!-- mid section -->
-	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl bg-[#b1901f]/5">
+	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl {window.theme('bgSecondaryLight')}">
 		<a href="/" class="flex flex-row space-x-4 items-center justify-left" aria-label="Home">
 			<div class="hidden mb:block"><Quran size={100} /></div>
 			<div class="block mb:hidden"><Quran size={80} /></div>
@@ -64,7 +60,7 @@
 				<div class="text-sm opacity-70 block md:hidden">Your companion for reading, listening to, and learning the Holy Quran, word by word.</div>
 			</div>
 		</a>
-		<button id="search-bar" class="mt-8 rounded-full text-center text-black/50 bg-[#b1901f]/5 px-4 py-2 flex flex-row items-center justify-center space-x-1 w-full" on:click={() => __quranNavigationModalVisible.set(true)}>
+		<button id="search-bar" class="mt-8 rounded-full text-center opacity-50 {window.theme('bgSecondaryDark')} px-4 py-2 flex flex-row items-center justify-center space-x-1 w-full" on:click={() => __quranNavigationModalVisible.set(true)}>
 			<Search size={7} classes="pt-1" />
 			<span>Navigate or search Quran</span>
 		</button>
@@ -105,6 +101,8 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="hidden md:block h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent to-transparent opacity-20 -mt-4 mx-auto {window.theme('via')}"></div>
 
 	<!-- chapter and most read tabs -->
 	<HomepageTabs />

@@ -1289,10 +1289,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-left: auto;
 }
 
-.mr-1 {
-  margin-right: 0.25rem;
-}
-
 .mr-2 {
   margin-right: 0.5rem;
 }
@@ -1818,10 +1814,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   justify-content: space-between;
 }
 
-.justify-items-start {
-  justify-items: start;
-}
-
 .justify-items-end {
   justify-items: end;
 }
@@ -1841,12 +1833,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 .gap-x-8 {
   -moz-column-gap: 2rem;
        column-gap: 2rem;
-}
-
-.\!space-x-0 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0 !important;
-  margin-right: calc(0px * var(--tw-space-x-reverse)) !important;
-  margin-left: calc(0px * calc(1 - var(--tw-space-x-reverse))) !important;
 }
 
 .space-x-1 > :not([hidden]) ~ :not([hidden]) {
@@ -2142,6 +2128,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   border-bottom-width: 2px;
 }
 
+.border-b-4 {
+  border-bottom-width: 4px;
+}
+
 .border-e {
   border-inline-end-width: 1px;
 }
@@ -2164,10 +2154,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .border-t-2 {
   border-top-width: 2px;
-}
-
-.border-b-4 {
-  border-bottom-width: 4px;
 }
 
 .\!border-\[\#000000\] {
@@ -2601,11 +2587,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   padding-bottom: 0.5rem;
 }
 
-.py-2\.5 {
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
-}
-
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -2963,14 +2944,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   color: rgb(0 0 0 / var(--tw-text-opacity));
 }
 
-.text-black\/40 {
-  color: rgb(0 0 0 / 0.4);
-}
-
-.text-black\/50 {
-  color: rgb(0 0 0 / 0.5);
-}
-
 .text-gray-900 {
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity));
@@ -2994,6 +2967,10 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .opacity-30 {
   opacity: 0.3;
+}
+
+.opacity-50 {
+  opacity: 0.5;
 }
 
 .opacity-70 {
@@ -4271,10 +4248,6 @@ svg {
     margin-bottom: 2rem;
   }
 
-  .md\:-mr-1 {
-    margin-right: -0.25rem;
-  }
-
   .md\:mt-6 {
     margin-top: 1.5rem;
   }
@@ -4305,11 +4278,6 @@ svg {
 
   .md\:w-3\/4 {
     width: 75%;
-  }
-
-  .md\:w-max {
-    width: -moz-max-content;
-    width: max-content;
   }
 
   .md\:max-w-2xl {
