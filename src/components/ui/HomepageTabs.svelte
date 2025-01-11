@@ -74,21 +74,6 @@
 			<!-- main tabs -->
 			<div id="tab-buttons" class="pt-4">
 				<div class="flex text-sm font-medium text-center mt-4 -mb-4 justify-center space-x-1 md:space-x-4 rounded-full px-4 py-2">
-					<button on:click={() => (activeTab = 1)} class="{activeTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" type="button"><span>{term('chapters')}</span></button>
-					<button on:click={() => (activeTab = 2)} class={activeTab === 2 ? tabActiveBorder : tabDefaultBorder} type="button">Suggested</button>
-					<button on:click={() => (activeTab = 3)} class="{activeTab === 3 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" type="button">
-						<span>Bookmarks</span>
-						<span class="hidden xs:block">{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
-					</button>
-					<button on:click={() => (activeTab = 4)} class="{activeTab === 4 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" type="button">
-						<span>Notes</span>
-						<span class="hidden xs:block">{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
-					</button>
-				</div>
-			</div>
-
-			<!-- <div id="tab-buttons">
-				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4">
 					<button on:click={() => (activeTab = 1)} class="{activeTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" type="button">
 						<div class="flex flex-row">
 							<button class="inline-flex p-2 rounded-full items-center {window.theme('bgSecondaryDark')}" on:click={() => sortChapters()}>
@@ -109,7 +94,7 @@
 						<span class="hidden xs:block">{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 					</button>
 				</div>
-			</div> -->
+			</div>
 		</div>
 	</div>
 

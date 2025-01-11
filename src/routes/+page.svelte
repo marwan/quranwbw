@@ -35,7 +35,7 @@
 <div class="max-w-4xl mx-auto flex flex-col space-y-4 md:px-4">
 	<!-- top menu -->
 	<div class="flex flex-col mt-4">
-		<div class="w-full flex flex-row justify-between">
+		<div class="w-full flex flex-row justify-between text-sm">
 			<div>
 				<a href={`/${term('supplications').toLowerCase()}`} class={topButtonClasses}><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
 				<a href={$__lastRead.hasOwnProperty('page') ? `/page/${$__lastRead.page}` : '/page/1'} class={topButtonClasses}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
@@ -102,8 +102,6 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="hidden md:block h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent to-transparent opacity-20 -mt-4 mx-auto {window.theme('via')}"></div>
 
 	<!-- chapter and most read tabs -->
 	<HomepageTabs />
