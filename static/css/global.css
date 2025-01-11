@@ -1213,6 +1213,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-bottom: 2rem;
 }
 
+.-mb-4 {
+  margin-bottom: -1rem;
+}
+
 .-mt-1 {
   margin-top: -0.25rem;
 }
@@ -2134,10 +2138,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   border-bottom-width: 2px;
 }
 
-.border-b-4 {
-  border-bottom-width: 4px;
-}
-
 .border-e {
   border-inline-end-width: 1px;
 }
@@ -2231,10 +2231,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .border-inherit {
   border-color: inherit;
-}
-
-.border-transparent {
-  border-color: transparent;
 }
 
 .bg-\[\#000000\] {
@@ -2953,6 +2949,14 @@ input[type="range"].range-lg::-moz-range-thumb {
 .text-black {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.text-black\/40 {
+  color: rgb(0 0 0 / 0.4);
+}
+
+.text-black\/50 {
+  color: rgb(0 0 0 / 0.5);
 }
 
 .text-gray-900 {
@@ -4374,10 +4378,6 @@ svg {
     padding: 0.5rem;
   }
 
-  .md\:p-3 {
-    padding: 0.75rem;
-  }
-
   .md\:p-4 {
     padding: 1rem;
   }
@@ -4394,6 +4394,11 @@ svg {
   .md\:px-4 {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  .md\:px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 
   .md\:pt-8 {

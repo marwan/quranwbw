@@ -19,9 +19,9 @@
 	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer bg-[#b1901f]/5 ${window.theme('hover')}`;
 
 	// Tab classes
-	const commontabClasses = 'p-2 md:p-3 text-xs md:text-md cursor-pointer border-b-4';
-	const tabDefaultBorder = `${commontabClasses} border-transparent`;
-	const tabActiveBorder = `${commontabClasses} ${window.theme('border')}`;
+	const commontabClasses = 'px-3 py-2 text-xs md:text-md cursor-pointer';
+	const tabDefaultBorder = `${commontabClasses}`;
+	const tabActiveBorder = `${commontabClasses} bg-[#b1901f]/5 rounded-3xl`;
 
 	let lastReadChapter = 1;
 	let lastReadVerse = 1;
@@ -79,7 +79,22 @@
 	<div class="flex items-center justify-center px-2 md:px-0">
 		<div class="flex flex-row justify-center px-4">
 			<!-- main tabs -->
-			<div id="tab-buttons">
+			<!-- <div id="tab-buttons" class="pt-4">
+				<div class="flex text-sm font-medium text-center mt-4 -mb-4 justify-center space-x-1 md:space-x-4 rounded-full px-4 py-2">
+					<button on:click={() => (activeTab = 1)} class="{activeTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" type="button"><span>{term('chapters')}</span></button>
+					<button on:click={() => (activeTab = 2)} class={activeTab === 2 ? tabActiveBorder : tabDefaultBorder} type="button">Suggested</button>
+					<button on:click={() => (activeTab = 3)} class="{activeTab === 3 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" type="button">
+						<span>Bookmarks</span>
+						<span class="hidden xs:block">{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
+					</button>
+					<button on:click={() => (activeTab = 4)} class="{activeTab === 4 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" type="button">
+						<span>Notes</span>
+						<span class="hidden xs:block">{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
+					</button>
+				</div>
+			</div> -->
+
+			<!-- <div id="tab-buttons">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4">
 					<button on:click={() => (activeTab = 1)} class="{activeTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" type="button">
 						<div class="flex flex-row">
@@ -101,7 +116,7 @@
 						<span class="hidden xs:block">{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 					</button>
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 
@@ -114,7 +129,8 @@
 			<div class="flex flex-row justify-between text-xs mb-2 space-x-1 md:space-x-2">
 				<!-- time specific chapters buttons -->
 				<!-- show Al Kahf on Friday -->
-				{#if $__timeSpecificChapters.isFriday || $__timeSpecificChapters.isNight}
+				<!-- show Al Mulk at night/evening -->
+				<!-- {#if $__timeSpecificChapters.isFriday || $__timeSpecificChapters.isNight}
 					<div class="flex flex-row space-x-1 md:space-x-2 w-full md:w-max">
 						{#if $__timeSpecificChapters.isFriday}
 							<div id="al-kahf" class="w-full md:w-max">
@@ -127,7 +143,6 @@
 							</div>
 						{/if}
 
-						<!-- show Al Mulk at night/evening -->
 						{#if $__timeSpecificChapters.isNight}
 							<div id="al-mulk" class="w-full md:w-max">
 								<a href="/67" class="py-2.5 w-full truncate {buttonOutlineClasses}">
@@ -139,7 +154,7 @@
 							</div>
 						{/if}
 					</div>
-				{/if}
+				{/if} -->
 
 				<!-- continue reading button -->
 				<!-- {#if $__lastRead.hasOwnProperty('key')}

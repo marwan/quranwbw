@@ -6,7 +6,7 @@ export function checkTimeSpecificChapters() {
 	const isFridayToday = new Date().getDay() === 5;
 
 	__timeSpecificChapters.set({
-		isFriday: isFridayToday,
-		isNight: isNightTime
+		isFriday: true,
+		isNight: true
 	});
 }
