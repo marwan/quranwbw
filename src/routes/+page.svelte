@@ -63,10 +63,11 @@
 				</div>
 			</div>
 		</a>
-		<button id="search-bar" class="mt-8 rounded-full text-center px-4 py-2 flex flex-row items-center justify-center space-x-1 w-full {window.theme('bgSecondaryDark')}" on:click={() => __quranNavigationModalVisible.set(true)}>
-			<Search size={7} classes="pt-1" />
-			<span class="opacity-70">Navigate or search Quran</span>
-		</button>
+		<button id="search-bar" class="mt-8 rounded-full text-center px-4 py-3 flex flex-row items-center justify-center space-x-1 w-full z-10 opacity-10 {window.theme('bgSecondary')}" on:click={() => __quranNavigationModalVisible.set(true)}> ... </button>
+		<div class="flex flex-row justify-center mt-[-2.3rem]">
+			<span class="mt-[2px] mr-1"><Search size={6} /></span>
+			<span class="opacity-70">Navigate or Search Quran</span>
+		</div>
 	</div>
 
 	<!-- extras: continue reading, time specific chapters -->
