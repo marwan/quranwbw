@@ -2,17 +2,17 @@
 	import PageHead from '$misc/PageHead.svelte';
 	import HomepageTabs from '$ui/HomepageTabs.svelte';
 	import Quran from '$svgs/Quran.svelte';
-	import Megaphone from '$svgs/Megaphone.svelte';
-	import Banner from '$ui/FlowbiteSvelte/banner/Banner.svelte';
+	// import Megaphone from '$svgs/Megaphone.svelte';
+	// import Banner from '$ui/FlowbiteSvelte/banner/Banner.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
 	import { __currentPage, __lastRead, __changelogModalVisible, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
 	import { linkClasses } from '$data/commonClasses';
 	import { websitechangelog } from '$data/changelog';
 	import { quranMetaData } from '$data/quranMeta';
 	import { checkTimeSpecificChapters } from '$utils/checkTimeSpecificChapters';
+	import { term } from '$utils/terminologies';
 
 	import Menu from '$svgs/Menu.svelte';
-	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
 	import MorphologyBold from '$svgs/MorphologyBold.svelte';
 	import BookFilled from '$svgs/BookFilled.svelte';
@@ -24,7 +24,8 @@
 	// Check if it's Friday and nighttime
 	checkTimeSpecificChapters();
 
-	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-3 space-x-2 justify-center ${window.theme('bgSecondaryLight')}`;
+	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-4 space-x-2 justify-center ${window.theme('bgSecondaryLight')}`;
+	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 
 	__currentPage.set('home');
 </script>
@@ -34,15 +35,13 @@
 <div class="max-w-4xl mx-auto flex flex-col space-y-4 md:px-4">
 	<!-- top menu -->
 	<div class="flex flex-col mt-4">
-		<div class="flex flex-row space-x-2 items-center justify-center">
-			<div class="w-full flex flex-row justify-between">
-				<div>
-					<button class={topButtonClasses}><SupplicationBold size={4} /><span class="hidden md:block">Duas</span></button>
-					<button class={topButtonClasses}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></button>
-					<button class={topButtonClasses}><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></button>
-				</div>
-				<button class={topButtonClasses} on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
+		<div class="w-full flex flex-row justify-between">
+			<div>
+				<button class={topButtonClasses}><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></button>
+				<button class={topButtonClasses}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></button>
+				<button class={topButtonClasses}><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></button>
 			</div>
+			<button class={topButtonClasses} on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
 		</div>
 	</div>
 
@@ -51,53 +50,55 @@
 		<a href="/" class="flex flex-row space-x-4 items-center justify-left" aria-label="Home">
 			<div class="hidden mb:block"><Quran size={100} /></div>
 			<div class="block mb:hidden"><Quran size={80} /></div>
+
 			<div class="flex flex-col">
-				<span class="text-xl md:text-3xl font-bold pb-2 block md:hidden" style="color: {window.theme('icon')}">QuranWBW</span>
-				<span class="text-xl md:text-3xl font-bold pb-2 hidden md:block" style="color: {window.theme('icon')}">Quran Word By Word</span>
-				<!-- <Logo /> -->
-				<!-- <div class="text-sm">Word By Word & Morphology.</div> -->
-				<div class="text-sm opacity-70 hidden md:block">Your companion for reading, listening to, and learning the Holy Quran, word by word. With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.</div>
-				<div class="text-sm opacity-70 block md:hidden">Your companion for reading, listening to, and learning the Holy Quran, word by word.</div>
+				<div id="site-title" class="text-xl md:text-3xl font-bold pb-2" style="color: {window.theme('icon')}">
+					<span class="block md:hidden">QuranWBW</span>
+					<span class="hidden md:block">Quran Word By Word</span>
+				</div>
+
+				<div id="site-description" class="text-sm opacity-70">
+					<div class="block md:hidden">{siteDescriptionText[0]}</div>
+					<div class="hidden md:block">{siteDescriptionText[0]} {siteDescriptionText[1]}</div>
+				</div>
 			</div>
 		</a>
-		<button id="search-bar" class="mt-8 rounded-full text-center opacity-50 {window.theme('bgSecondaryDark')} px-4 py-2 flex flex-row items-center justify-center space-x-1 w-full" on:click={() => __quranNavigationModalVisible.set(true)}>
+		<button id="search-bar" class="mt-8 rounded-full text-center px-4 py-2 flex flex-row items-center justify-center space-x-1 w-full {window.theme('bgSecondaryDark')}" on:click={() => __quranNavigationModalVisible.set(true)}>
 			<Search size={7} classes="pt-1" />
-			<span>Navigate or search Quran</span>
+			<span class="opacity-70">Navigate or search Quran</span>
 		</button>
 	</div>
 
 	<!-- extras: continue reading, time specific chapters -->
 	<div class="flex flex-col mt-4 text-sm">
-		<div class="flex flex-row space-x-2 items-center justify-center">
-			<div class="w-full flex flex-row space-x-4 items-center">
-				<div class="flex flex-row space-x-2 w-full">
-					{#if $__lastRead.hasOwnProperty('key')}
-						{@const [lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number)}
-						<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} w-full">
-							<span><ContinueReading size={4} /></span>
-							<span class="hidden md:block">Continue Reading: {quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}</span>
-							<span class="block md:hidden">{lastReadChapter}:{lastReadVerse} </span>
+		<div class="w-full flex flex-row space-x-4 items-center">
+			<div class="flex flex-row space-x-2 w-full">
+				{#if $__lastRead.hasOwnProperty('key')}
+					{@const [lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number)}
+					<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full">
+						<span><ContinueReading size={4} /></span>
+						<span class="hidden md:block">Continue Reading: {quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}</span>
+						<span class="block md:hidden">{lastReadChapter}:{lastReadVerse} </span>
+					</a>
+				{/if}
+
+				{#if $__timeSpecificChapters.isFriday || $__timeSpecificChapters.isNight}
+					{#if $__timeSpecificChapters.isFriday}
+						<a href="/18" class="{topButtonClasses} truncate w-full">
+							<span class="-mt-1"><Cave size={4} /></span>
+							<span class="hidden md:block">It's Friday:</span>
+							<span>Al-Kahf</span>
 						</a>
 					{/if}
 
-					{#if $__timeSpecificChapters.isFriday || $__timeSpecificChapters.isNight}
-						{#if $__timeSpecificChapters.isFriday}
-							<a href="/18" class="{topButtonClasses} w-full">
-								<span class="-mt-1"><Cave size={4} /></span>
-								<span class="hidden md:block">It's Friday:</span>
-								<span>Al-Kahf</span>
-							</a>
-						{/if}
-
-						{#if $__timeSpecificChapters.isNight}
-							<a href="/67" class="{topButtonClasses} w-full">
-								<span><Moon size={3.5} /></span>
-								<span class="hidden md:block">Before Sleeping:</span>
-								<span>Al-Mulk</span>
-							</a>
-						{/if}
+					{#if $__timeSpecificChapters.isNight}
+						<a href="/67" class="{topButtonClasses} truncate w-full">
+							<span><Moon size={3.5} /></span>
+							<span class="hidden md:block">Before Sleeping:</span>
+							<span>Al-Mulk</span>
+						</a>
 					{/if}
-				</div>
+				{/if}
 			</div>
 		</div>
 	</div>
