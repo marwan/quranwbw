@@ -32,7 +32,7 @@
 
 <PageHead title={`Quran ${websiteTagline}`} />
 
-<div class="max-w-4xl mx-auto flex flex-col space-y-4 md:px-4">
+<div class="max-w-5xl mx-auto flex flex-col space-y-4 md:px-4">
 	<!-- top menu -->
 	<div class="flex flex-col mt-4">
 		<div class="w-full flex flex-row justify-between text-sm">
