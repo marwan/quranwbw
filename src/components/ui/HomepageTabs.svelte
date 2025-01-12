@@ -12,6 +12,7 @@
 	import { __lastRead, __favouriteChapters, __userBookmarks, __userNotes, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { staticEndpoint } from '$data/websiteSettings';
+	import { disabledClasses } from '$data/commonClasses';
 
 	// CSS classes for chapter cards and tabs
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
@@ -79,7 +80,7 @@
 
 	<div id="extras-tabs" class="flex items-center justify-between">
 		<div class="flex flex-row justify-center">
-			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
+			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!extrasPanelVisible && disabledClasses}">
 				<button on:click={() => (extrasActiveTab = 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" type="button">
 					<span>Bookmarks</span>
 					<span class="hidden xs:block">{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
