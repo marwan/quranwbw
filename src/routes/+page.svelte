@@ -35,7 +35,7 @@
 
 <div class="max-w-5xl mx-auto flex flex-col space-y-4 md:px-4">
 	<!-- top menu -->
-	<div class="flex flex-col mt-4">
+	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">
 			<div>
 				<a href={`/${term('supplications').toLowerCase()}`} class={topButtonClasses}><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
@@ -106,7 +106,7 @@
 
 					{#if isNight}
 						<a href="/67" class="{topButtonClasses} truncate w-full">
-							<span><Moon size={3.5} /></span>
+							<span><Moon size={4} /></span>
 							<div class="flex flex-row">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
 								<span>Al-Mulk</span>

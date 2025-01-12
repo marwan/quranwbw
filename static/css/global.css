@@ -1663,6 +1663,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   max-width: 64rem;
 }
 
+.max-w-\[70vw\] {
+  max-width: 70vw;
+}
+
 .max-w-full {
   max-width: 100%;
 }
@@ -2125,10 +2129,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .border-2 {
   border-width: 2px;
-}
-
-.\!border {
-  border-width: 1px !important;
 }
 
 .\!border-t-0 {
@@ -4354,6 +4354,10 @@ svg {
 
   .md\:max-w-7xl {
     max-width: 80rem;
+  }
+
+  .md\:max-w-\[15vw\] {
+    max-width: 15vw;
   }
 
   .md\:max-w-\[40rem\] {

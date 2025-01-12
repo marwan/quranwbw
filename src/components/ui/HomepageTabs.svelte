@@ -121,10 +121,10 @@
 								<a href="{bookmarkChapter}/{bookmarkVerse}" class="!justify-start {cardInnerClasses} w-full flex-col">
 									<div class="text-sm">{quranMetaData[bookmarkChapter].transliteration} ({bookmark})</div>
 
-									{#if extrasActiveTab === 11111 && totalBookmarks > 0}
-										<div class="text-sm truncate direction-rtl text-right arabic-font-1 opacity-70">
+									{#if extrasActiveTab === 1 && totalBookmarks > 0}
+										<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70">
 											{#await fullQuranData then data}
-												{data[`${bookmarkChapter}:${bookmarkVerse}`]}
+												<div class="truncate max-w-[70vw] md:max-w-[15vw]">{data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
 											{:catch error}
 												<p></p>
 											{/await}
@@ -162,7 +162,7 @@
 		</div>
 
 		<!-- suggestions tab -->
-		<div class="homepage-tab-panels space-y-12 {extrasActiveTab === 3 ? 'block' : 'hidden'}" id="suggestions-tab-panel" role="tabpanel" aria-labelledby="suggestions-tab">
+		<div class="space-y-12 {extrasActiveTab === 3 ? 'block' : 'hidden'}" id="suggestions-tab-panel" role="tabpanel" aria-labelledby="suggestions-tab">
 			<div id="suggestions-chapters" class="flex flex-col space-y-4">
 				<div class="{cardGridClasses} grid-cols-1">
 					{#each Object.entries(mostRead) as [id, item]}
@@ -201,7 +201,7 @@
 	<div id="quran-divisions-panel" class="mb-6">
 		<!-- chapters tab -->
 		{#if divisionsActiveTab === 1}
-			<div class="homepage-tab-panels" id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
+			<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
 				<div class="{cardGridClasses} grid-cols-1">
 					{#each chapterListOrder as { id }, i}
 						{#if id > 0}
@@ -251,7 +251,7 @@
 
 		<!-- juz tab -->
 		{#if divisionsActiveTab === 2}
-			<div class="homepage-tab-panels" id="juz-tab-panel" role="tabpanel" aria-labelledby="juz-tab">
+			<div id="juz-tab-panel" role="tabpanel" aria-labelledby="juz-tab">
 				<div class="space-y-2">
 					{#each juzVerses as juz}
 						<div class="py-2 space-y-2">
