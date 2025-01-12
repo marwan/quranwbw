@@ -6,10 +6,9 @@
 	// import Banner from '$ui/FlowbiteSvelte/banner/Banner.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
 	import { __currentPage, __lastRead, __changelogModalVisible, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
-	import { linkClasses } from '$data/commonClasses';
-	import { websitechangelog } from '$data/changelog';
+	// import { linkClasses } from '$data/commonClasses';
+	// import { websitechangelog } from '$data/changelog';
 	import { quranMetaData } from '$data/quranMeta';
-	import { checkTimeSpecificChapters } from '$utils/checkTimeSpecificChapters';
 	import { term } from '$utils/terminologies';
 
 	import Menu from '$svgs/Menu.svelte';
@@ -21,11 +20,13 @@
 	import Cave from '$svgs/Cave.svelte';
 	import Search from '$svgs/Search.svelte';
 
-	// Check if it's Friday and nighttime
-	checkTimeSpecificChapters();
-
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-4 space-x-2 justify-center ${window.theme('bgSecondaryLight')}`;
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
+	const currentHour = new Date().getHours();
+
+	$: isFriday = new Date().getDay() === 5;
+	$: isNight = currentHour < 4 || currentHour > 19;
+	$: lastReadExists = $__lastRead.hasOwnProperty('key') && Object.keys($__lastRead.key).length > 0;
 
 	__currentPage.set('home');
 </script>
@@ -74,17 +75,27 @@
 	<div class="flex flex-col mt-4 text-sm">
 		<div class="w-full flex flex-row space-x-4 items-center">
 			<div class="flex flex-row space-x-2 w-full">
-				{#if $__lastRead.hasOwnProperty('key') && Object.keys($__lastRead.key).length > 0}
+				{#if lastReadExists}
 					{@const [lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number)}
 					<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full">
 						<span><ContinueReading size={4} /></span>
-						<span class="hidden md:block">Continue Reading: {quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}</span>
-						<span class="block md:hidden">{lastReadChapter}:{lastReadVerse} </span>
+						<span class="hidden md:block">
+							Continue:
+							{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
+						</span>
+						<span class="block md:hidden">
+							{#if !isFriday && !isNight}
+								Continue:
+								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
+							{:else}
+								{lastReadChapter}:{lastReadVerse}
+							{/if}
+						</span>
 					</a>
 				{/if}
 
-				{#if $__timeSpecificChapters.isFriday || $__timeSpecificChapters.isNight}
-					{#if $__timeSpecificChapters.isFriday}
+				{#if isFriday || isNight}
+					{#if isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full">
 							<span class="-mt-1"><Cave size={4} /></span>
 							<div class="flex flex-row">
@@ -94,7 +105,7 @@
 						</a>
 					{/if}
 
-					{#if $__timeSpecificChapters.isNight}
+					{#if isNight}
 						<a href="/67" class="{topButtonClasses} truncate w-full">
 							<span><Moon size={3.5} /></span>
 							<div class="flex flex-row">
