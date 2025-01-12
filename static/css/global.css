@@ -1213,15 +1213,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-bottom: 2rem;
 }
 
-.mx-1 {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
-.-mb-4 {
-  margin-bottom: -1rem;
-}
-
 .-mt-1 {
   margin-top: -0.25rem;
 }
@@ -1334,12 +1325,12 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-top: -2.3rem;
 }
 
-.mt-\[2px\] {
-  margin-top: 2px;
-}
-
 .mt-\[-4px\] {
   margin-top: -4px;
+}
+
+.mt-\[2px\] {
+  margin-top: 2px;
 }
 
 .block {
@@ -1482,10 +1473,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-auto {
-  height: auto;
 }
 
 .max-h-40 {
@@ -2428,11 +2415,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5;
 }
@@ -2754,10 +2736,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .pt-8 {
   padding-top: 2rem;
-}
-
-.pl-5 {
-  padding-left: 1.25rem;
 }
 
 .text-left {
@@ -4089,6 +4067,41 @@ svg {
   cursor: pointer;
 }
 
+.hover\:border-\[\#000000\]:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
+
+.hover\:border-\[\#553c0f\]:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(85 60 15 / var(--tw-border-opacity));
+}
+
+.hover\:border-\[\#b1901f\]:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(177 144 31 / var(--tw-border-opacity));
+}
+
+.hover\:border-\[\#c2c2c2\]:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(194 194 194 / var(--tw-border-opacity));
+}
+
+.hover\:border-\[\#c59f60\]:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(197 159 96 / var(--tw-border-opacity));
+}
+
+.hover\:border-\[\#dca54c\]:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(220 165 76 / var(--tw-border-opacity));
+}
+
+.hover\:border-\[\#dddddd\]:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(221 221 221 / var(--tw-border-opacity));
+}
+
 .hover\:bg-\[\#000000\]\/5:hover {
   background-color: rgb(0 0 0 / 0.05);
 }
@@ -4236,10 +4249,6 @@ svg {
     margin-right: auto;
   }
 
-  .sm\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .sm\:divide-x > :not([hidden]) ~ :not([hidden]) {
     --tw-divide-x-reverse: 0;
     border-right-width: calc(1px * var(--tw-divide-x-reverse));
@@ -4351,24 +4360,16 @@ svg {
     max-width: 28rem;
   }
 
+  .md\:\!grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .md\:grid-cols-6 {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-
-  .md\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .md\:\!grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  }
-
-  .md\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .md\:flex-row {

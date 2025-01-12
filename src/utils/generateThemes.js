@@ -39,6 +39,7 @@ function generateThemes() {
 			toggle: `bg-[${color2}]/5 after:bg-[${color1}] after:border-[${color1}] peer-checked:bg-[${color2}]`,
 			slider: `bg-[${color2}]/10 [&::-webkit-slider-thumb]:!bg-[${color2}]`,
 			hover: `hover:bg-[${color2}]/5`,
+			hoverBorder: `border border-transparent hover:border-[${color2}]`,
 			via: `via-[${color2}]`,
 			placeholder: `placeholder:text-[${color2}]/50`
 		};

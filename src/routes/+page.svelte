@@ -20,7 +20,7 @@
 	import Cave from '$svgs/Cave.svelte';
 	import Search from '$svgs/Search.svelte';
 
-	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-4 space-x-2 justify-center ${window.theme('bgSecondaryLight')}`;
+	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-4 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 	const currentHour = new Date().getHours();
 
