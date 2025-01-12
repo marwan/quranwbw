@@ -75,18 +75,20 @@
 		</DropdownItem>
 
 		<!-- bookmark button -->
-		<DropdownItem class={dropdownItemClasses} on:click={() => updateSettings({ type: 'userBookmarks', key: $__verseKey, set: true })}>
+		<DropdownItem id="bookmark-btn" class={dropdownItemClasses} on:click={() => updateSettings({ type: 'userBookmarks', key: $__verseKey, set: true })} track-click>
 			<svelte:component this={userBookmarks.includes($__verseKey) ? BookmarkFilled : Bookmark} />
 			<span>{userBookmarks.includes($__verseKey) ? 'Unbookmark' : 'Bookmark'}</span>
 		</DropdownItem>
 
 		<!-- verse notes button -->
 		<DropdownItem
+			id="notes-btn"
 			class={dropdownItemClasses}
 			on:click={() => {
 				__notesModalVisible.set(true);
 				dropdownOpen = false;
 			}}
+			track-click
 		>
 			<svelte:component this={$__userNotes.hasOwnProperty($__verseKey) ? NotesFilled : Notes} />
 			<span>Notes</span>
@@ -114,11 +116,13 @@
 			<!-- verse translation button - only show on Mushaf page or on continuous display -->
 			{#if selectableDisplays[$__displayType].continuous}
 				<DropdownItem
+					id="verse-translation-btn"
 					class={dropdownItemClasses}
 					on:click={() => {
 						__verseTranslationModalVisible.set(true);
 						dropdownOpen = false;
 					}}
+					track-click
 				>
 					<VerseTranslation />
 					<span>Translation</span>
@@ -127,11 +131,13 @@
 
 			<!-- tafsir button -->
 			<DropdownItem
+				id="verse-tafsir-btn"
 				class={dropdownItemClasses}
 				on:click={() => {
 					__tafsirModalVisible.set(true);
 					dropdownOpen = false;
 				}}
+				track-click
 			>
 				<Tafsir />
 				<span>{term('tafsir')}</span>
@@ -139,12 +145,12 @@
 
 			<!-- mode change buttons -->
 			{#if $__currentPage === 'mushaf'}
-				<DropdownItem class={dropdownItemClasses} href="/{chapter}/{verse}">
+				<DropdownItem id="chapter-mode-btn" class={dropdownItemClasses} href="/{chapter}/{verse}" track-click>
 					<ChapterMode />
 					<span>{term('chapter')} Mode</span>
 				</DropdownItem>
 			{:else}
-				<DropdownItem class={dropdownItemClasses} href="/page/{page}">
+				<DropdownItem id="mushaf-mode-btn" class={dropdownItemClasses} href="/page/{page}" track-click>
 					<Book />
 					<span>Mushaf Mode</span>
 				</DropdownItem>
@@ -161,7 +167,7 @@
 			{/if} -->
 
 			<!-- verse morphology button -->
-			<DropdownItem class={dropdownItemClasses} href="/morphology/{$__verseKey}">
+			<DropdownItem id="verse-morphology-btn" class={dropdownItemClasses} href="/morphology/{$__verseKey}" track-click>
 				<Morphology />
 				<span>Morphology</span>
 			</DropdownItem>
@@ -169,11 +175,13 @@
 			<!-- copy verse button (only for hafs digital and indopak) -->
 			{#if [1, 4].includes($__fontType)}
 				<DropdownItem
+					id="copy-verse-btn"
 					class={dropdownItemClasses}
 					on:click={() => {
 						__copyShareVerseModalVisible.set(true);
 						dropdownOpen = false;
 					}}
+					track-click
 				>
 					<Copy />
 					<span>Copy</span>

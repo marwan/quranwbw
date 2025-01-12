@@ -24,6 +24,7 @@
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { trackElementClick } from '$utils/trackElementClick';
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();
@@ -131,6 +132,30 @@
 	window.addEventListener('offline', () => {
 		__websiteOnline.set(false);
 	});
+
+	// Track clicked elements
+	document.addEventListener(
+		'click',
+		async function (e) {
+			e = e || window.event;
+			let target = e.target || e.srcElement;
+
+			// Find the closest parent element with 'track-click' attribute
+			const parent = target.closest('[track-click]');
+
+			// If a parent element with 'track-click' exists, proceed
+			if (parent) {
+				const elementId = parent.id; // Get the ID of the parent element
+
+				// Make sure the element has an ID before sending the request
+				if (elementId) {
+					// Call the trackElementClick function to record the click
+					await trackElementClick(elementId);
+				}
+			}
+		},
+		false
+	);
 </script>
 
 <div class="max-w-screen-lg mx-auto {paddingTop} {paddingBottom} {paddingX}">

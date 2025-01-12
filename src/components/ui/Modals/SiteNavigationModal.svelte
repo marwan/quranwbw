@@ -28,7 +28,7 @@
 			<div class="font-semibold">Navigate</div>
 			<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
 				<!-- Search -->
-				<a href="/search" class={linkClasses}>
+				<a id="site-nav-modal-search-btn" href="/search" class={linkClasses} track-click>
 					<Search2 size={4} />
 					<span class={linkTextClasses}>Search</span>
 				</a>
@@ -53,11 +53,13 @@
 
 				<!-- tajweed rules modal -->
 				<button
+					id="tajweed-modal-btn"
 					on:click={() => {
 						__siteNavigationModalVisible.set(false);
 						__tajweedRulesModalVisible.set(true);
 					}}
 					class={linkClasses}
+					track-click
 				>
 					<TajweedRules size={4} />
 					<span class={linkTextClasses}>{term('tajweed')} Rules</span>
@@ -88,7 +90,7 @@
 				</a>
 
 				<!-- legacy site link -->
-				<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses}>
+				<a id="legacy-site-btn" href="https://old.quranwbw.com/" target="_blank" class={linkClasses} track-click>
 					<LegacySite size={4} />
 					<span class={linkTextClasses}>Old Website</span>
 				</a>
