@@ -2127,6 +2127,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   border-width: 2px;
 }
 
+.\!border {
+  border-width: 1px !important;
+}
+
 .\!border-t-0 {
   border-top-width: 0px !important;
 }
