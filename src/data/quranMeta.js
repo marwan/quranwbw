@@ -797,6 +797,189 @@ export const pageNumberKeys = [
 
 export const juzNumberKeys = ['1:1', '2:142', '2:253', '3:93', '4:24', '4:148', '5:82', '6:111', '7:88', '8:41', '9:93', '11:6', '12:53', '15:1', '17:1', '18:75', '21:1', '23:1', '25:21', '27:56', '29:46', '33:31', '36:28', '39:32', '41:47', '46:1', '51:31', '58:1', '67:1', '78:1'];
 
+export const juzVerses = [
+	{
+		juz: 1,
+		from: '1:1',
+		to: '2:141',
+		chapters: [1, 2]
+	},
+	{
+		juz: 2,
+		from: '2:142',
+		to: '2:252',
+		chapters: [2]
+	},
+	{
+		juz: 3,
+		from: '2:253',
+		to: '3:92',
+		chapters: [2, 3]
+	},
+	{
+		juz: 4,
+		from: '3:93',
+		to: '4:23',
+		chapters: [3, 4]
+	},
+	{
+		juz: 5,
+		from: '4:24',
+		to: '4:147',
+		chapters: [4]
+	},
+	{
+		juz: 6,
+		from: '4:148',
+		to: '5:81',
+		chapters: [4, 5]
+	},
+	{
+		juz: 7,
+		from: '5:82',
+		to: '6:110',
+		chapters: [5, 6]
+	},
+	{
+		juz: 8,
+		from: '6:111',
+		to: '7:87',
+		chapters: [6, 7]
+	},
+	{
+		juz: 9,
+		from: '7:88',
+		to: '8:40',
+		chapters: [7, 8]
+	},
+	{
+		juz: 10,
+		from: '8:41',
+		to: '9:92',
+		chapters: [8, 9]
+	},
+	{
+		juz: 11,
+		from: '9:93',
+		to: '11:5',
+		chapters: [9, 10, 11]
+	},
+	{
+		juz: 12,
+		from: '11:6',
+		to: '12:52',
+		chapters: [11, 12]
+	},
+	{
+		juz: 13,
+		from: '12:53',
+		to: '14:52',
+		chapters: [12, 13, 14]
+	},
+	{
+		juz: 14,
+		from: '15:1',
+		to: '16:128',
+		chapters: [15, 16]
+	},
+	{
+		juz: 15,
+		from: '17:1',
+		to: '18:74',
+		chapters: [17, 18]
+	},
+	{
+		juz: 16,
+		from: '18:75',
+		to: '20:135',
+		chapters: [18, 19, 20]
+	},
+	{
+		juz: 17,
+		from: '21:1',
+		to: '22:78',
+		chapters: [21, 22]
+	},
+	{
+		juz: 18,
+		from: '23:1',
+		to: '25:20',
+		chapters: [23, 24, 25]
+	},
+	{
+		juz: 19,
+		from: '25:21',
+		to: '27:55',
+		chapters: [25, 26, 27]
+	},
+	{
+		juz: 20,
+		from: '27:56',
+		to: '29:45',
+		chapters: [27, 28, 29]
+	},
+	{
+		juz: 21,
+		from: '29:46',
+		to: '33:30',
+		chapters: [29, 30, 31, 32, 33]
+	},
+	{
+		juz: 22,
+		from: '33:31',
+		to: '36:27',
+		chapters: [33, 34, 35, 36]
+	},
+	{
+		juz: 23,
+		from: '36:28',
+		to: '39:31',
+		chapters: [36, 37, 38, 39]
+	},
+	{
+		juz: 24,
+		from: '39:32',
+		to: '41:46',
+		chapters: [39, 40, 41]
+	},
+	{
+		juz: 25,
+		from: '41:47',
+		to: '45:37',
+		chapters: [41, 42, 43, 44, 45]
+	},
+	{
+		juz: 26,
+		from: '46:1',
+		to: '51:30',
+		chapters: [46, 47, 48, 49, 50, 51]
+	},
+	{
+		juz: 27,
+		from: '51:31',
+		to: '57:29',
+		chapters: [51, 52, 53, 54, 55, 56, 57]
+	},
+	{
+		juz: 28,
+		from: '58:1',
+		to: '66:12',
+		chapters: [58, 59, 60, 61, 62, 63, 64, 65, 66]
+	},
+	{
+		juz: 29,
+		from: '67:1',
+		to: '77:50',
+		chapters: [67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77]
+	},
+	{
+		juz: 30,
+		from: '78:1',
+		to: '114:6',
+		chapters: [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114]
+	}
+];
+
 export const mostRead = [
 	{ id: 1, chapter: 2, verses: 'Verse 255', title: "Whoever recites the 'verse of the Throne' after every prescribed prayer, there will be nothing standing between him and entry into Paradise but his death.", url: '/2/255' },
 	{ id: 2, chapter: 2, verses: 'Verses 285-286', title: 'If anyone recited two verses from the last of Surah al-Baqarah at night, they will be sufficient for him.', url: '/2/285-286' },
