@@ -1,8 +1,9 @@
 <script>
 	export let size = 4;
+	export let classes = null;
 </script>
 
-<svg class="w-{size} h-{size}" fill={window.theme('icon')} id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="512" height="512"
+<svg class="w-{size} h-{size} {classes}" fill={window.theme('icon')} id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="512" height="512"
 	><path
 		d="M12.009,23.665c-.476,0-.955-.168-1.337-.507l-3.748-3.157h-2.923c-2.206,0-4-1.794-4-4V4C0,1.794,1.794,0,4,0H20c2.206,0,4,1.794,4,4v12c0,2.206-1.794,4-4,4h-2.852l-3.847,3.18c-.362,.322-.825,.484-1.293,.484ZM4,2c-1.103,0-2,.897-2,2v12c0,1.103,.897,2,2,2h3.289c.236,0,.464,.083,.645,.235l4.047,3.41,4.17-3.416c.18-.148,.405-.229,.638-.229h3.212c1.103,0,2-.897,2-2V4c0-1.103-.897-2-2-2H4Z"
 	/></svg

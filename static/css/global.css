@@ -1213,6 +1213,11 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-bottom: 2rem;
 }
 
+.mx-1 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
 .-mb-4 {
   margin-bottom: -1rem;
 }
@@ -1331,6 +1336,10 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .mt-\[2px\] {
   margin-top: 2px;
+}
+
+.mt-\[-4px\] {
+  margin-top: -4px;
 }
 
 .block {

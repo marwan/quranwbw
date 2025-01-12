@@ -4,6 +4,8 @@
 	import CrossSolid from '$svgs/CrossSolid.svelte';
 	import AscendingSort from '$svgs/AscendingSort.svelte';
 	import Eye from '$svgs/Eye.svelte';
+	import Bookmark from '$svgs/Bookmark.svelte';
+	import Notes from '$svgs/Notes.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzVerses, mostRead } from '$data/quranMeta';
@@ -106,7 +108,9 @@
 		<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 			<div id="bookmark-cards" class="flex flex-col space-y-4">
 				{#if totalBookmarks === 0}
-					<div class="flex items-center justify-start text-sm">You currently do not have any bookmarks.</div>
+					<div class="flex flex-row justify-start text-sm opacity-70">
+						<span>You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')} that speaks to you. It's a great way to keep track of your favorite {term('verses')}. </span>
+					</div>
 				{:else}
 					<div class="{cardGridClasses} grid-cols-1 md:!grid-cols-4">
 						{#each $__userBookmarks as bookmark}
@@ -140,7 +144,9 @@
 		<div class="notes-tab-panels space-y-12 {extrasActiveTab === 2 ? 'block' : 'hidden'}" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab">
 			<div id="notes-cards" class="flex flex-col space-y-4">
 				{#if totalNotes === 0}
-					<div class="flex items-center justify-start text-sm">You currently do not have any saved notes.</div>
+					<div class="flex items-center justify-start text-sm opacity-70">
+						<span>You haven't saved any notes yet! Start jotting down your thoughts by clicking the <Notes classes="inline mt-[-4px]" /> icon. It's like creating your own personal treasure chest of wisdom. </span>
+					</div>
 				{:else}
 					<div class="{cardGridClasses} grid-cols-1 md:!grid-cols-4">
 						{#each Object.entries($__userNotes) as [verse, note]}
