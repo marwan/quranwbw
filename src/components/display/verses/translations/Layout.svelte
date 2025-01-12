@@ -12,7 +12,7 @@
 	const searchQuery = params.get('query') === null ? '' : params.get('query');
 
 	const translationFootnoteClasses = `hidden my-2 footnote-block px-2 py-2 border-2 ${window.theme('border')} rounded-2xl footnote-${value.meta.chapter}-${value.meta.verse}-${verseTranslationID}`;
-	const footnoteSupClasses = `ml-1 mt-1 px-2 py-1 rounded-full font-semibold cursor-pointer system-font ${window.theme('bgSecondaryDark')}`;
+	const footnoteSupClasses = `ml-1 mt-1 px-2 py-1 rounded-full font-semibold cursor-pointer system-font ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 
 	let footnoteId;
 	let footnoteChapter;

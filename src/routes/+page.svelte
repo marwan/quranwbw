@@ -48,9 +48,8 @@
 
 	<!-- mid section -->
 	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl {window.theme('bgSecondaryLight')}">
-		<a href="/" class="flex flex-row space-x-4 items-center justify-left" aria-label="Home">
-			<div class="hidden mb:block"><Quran size={100} /></div>
-			<div class="block mb:hidden"><Quran size={80} /></div>
+		<a href="/" class="flex flex-row space-x-4 px-2 items-center justify-left" aria-label="Home">
+			<div><Quran /></div>
 
 			<div class="flex flex-col">
 				<div id="site-title" class="text-xl md:text-3xl font-bold pb-2" style="color: {window.theme('icon')}">

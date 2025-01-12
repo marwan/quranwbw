@@ -94,7 +94,7 @@
 		</div>
 
 		<button
-			class="inline-flex p-2 rounded-full items-center {window.theme('bgSecondaryDark')}"
+			class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}"
 			on:click={() => {
 				extrasPanelVisible = !extrasPanelVisible;
 			}}
@@ -191,7 +191,7 @@
 				</button>
 			</div>
 
-			<button class="inline-flex p-2 rounded-full items-center {window.theme('bgSecondaryDark')}" on:click={() => sortChapters()}>
+			<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortChapters()}>
 				<AscendingSort size={4} />
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Sort Asc/Dsc</Tooltip>

@@ -1378,6 +1378,11 @@ input[type="range"].range-lg::-moz-range-thumb {
   height: 2.5rem;
 }
 
+.size-24 {
+  width: 6rem;
+  height: 6rem;
+}
+
 .h-1 {
   height: 0.25rem;
 }
@@ -1693,12 +1698,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .rotate-45 {
   --tw-rotate: 45deg;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.scale-\[0\.80\] {
-  --tw-scale-x: 0.80;
-  --tw-scale-y: 0.80;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -2608,10 +2607,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .pb-10 {
   padding-bottom: 2.5rem;
-}
-
-.pb-12 {
-  padding-bottom: 3rem;
 }
 
 .pb-16 {
@@ -4318,6 +4313,11 @@ svg {
 
   .md\:hidden {
     display: none;
+  }
+
+  .md\:size-32 {
+    width: 8rem;
+    height: 8rem;
   }
 
   .md\:h-full {

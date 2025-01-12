@@ -21,7 +21,7 @@
 	const buttonClasses = `inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 rounded-3xl focus:shadow-outline print:hidden ${window.theme('hover')}`;
 
 	// For chapter page, just show the key, else show the complete chapter transliteration & key
-	$: verseKeyClasses = `${buttonClasses} w-fit px-4 border font-medium ${window.theme('border')} ${window.theme('textSecondary')}`;
+	$: verseKeyClasses = `${buttonClasses} w-fit px-4 font-medium ${window.theme('textSecondary')} ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 
 	// Update userBookmarks whenever the __userSettings changes
 	$: userBookmarks = JSON.parse($__userSettings).userBookmarks;
@@ -66,7 +66,7 @@
 	<div class="flex flex-row w-full space-x-2">
 		<!-- verse key -->
 		<div class="flex flex-row space-x-2">
-			<a href={$__currentPage === 'chapter' ? `#${key}` : `/${chapter}/${verse}`} class={verseKeyClasses} data-html2canvas-ignore>
+			<a href={$__currentPage === 'chapter' ? `#${key}` : `/${chapter}/${verse}`} class={verseKeyClasses}>
 				{#if $__currentPage === 'chapter'}
 					<div class="text-xs">{key}</div>
 				{:else}
