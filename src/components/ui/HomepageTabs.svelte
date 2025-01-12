@@ -109,22 +109,22 @@
 		<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 			<div id="bookmark-cards" class="flex flex-col space-y-4">
 				{#if totalBookmarks === 0}
-					<div class="flex flex-row justify-start text-sm opacity-70">
+					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 text-center">
 						<span>You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you. </span>
 					</div>
 				{:else}
-					<div class="{cardGridClasses} grid-cols-1 md:!grid-cols-4">
+					<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
 						{#each $__userBookmarks as bookmark}
 							{@const [bookmarkChapter, bookmarkVerse] = bookmark.split(':').map(Number)}
 
 							<div class="flex flex-row space-x-2">
 								<a href="{bookmarkChapter}/{bookmarkVerse}" class="!justify-start {cardInnerClasses} w-full flex-col">
-									<div class="text-sm">{quranMetaData[bookmarkChapter].transliteration} ({bookmark})</div>
+									<div class="text-sm truncate max-w-[28vw] md:max-w-[15vw]">{quranMetaData[bookmarkChapter].transliteration} ({bookmark})</div>
 
 									{#if extrasActiveTab === 1 && totalBookmarks > 0}
 										<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70">
 											{#await fullQuranData then data}
-												<div class="truncate max-w-[70vw] md:max-w-[15vw]">{data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
+												<div class="truncate max-w-[28vw] md:max-w-[15vw]">{data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
 											{:catch error}
 												<p></p>
 											{/await}
@@ -145,14 +145,14 @@
 		<div class="notes-tab-panels space-y-12 {extrasActiveTab === 2 ? 'block' : 'hidden'}" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab">
 			<div id="notes-cards" class="flex flex-col space-y-4">
 				{#if totalNotes === 0}
-					<div class="flex items-center justify-start text-sm opacity-70">
+					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 text-center">
 						<span>You haven't saved any notes yet! Start jotting down your thoughts by clicking the <Notes classes="inline mt-[-4px]" /> icon. It's like creating your own personal treasure chest of wisdom. </span>
 					</div>
 				{:else}
-					<div class="{cardGridClasses} grid-cols-1 md:!grid-cols-4">
+					<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
 						{#each Object.entries($__userNotes) as [verse, note]}
 							<a href="{verse.split(':')[0]}/{verse.split(':')[1]}" class="!justify-start {cardInnerClasses} w-full flex-col">
-								<div class="text-sm">{quranMetaData[verse.split(':')[0]].transliteration} ({verse})</div>
+								<div class="text-sm truncate max-w-[30vw] md:max-w-[15vw]">{quranMetaData[verse.split(':')[0]].transliteration} ({verse})</div>
 								<span class="text-xs truncate opacity-70">{note.note}</span>
 							</a>
 						{/each}

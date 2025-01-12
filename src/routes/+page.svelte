@@ -86,6 +86,9 @@
 							{#if !isFriday && !isNight}
 								Continue:
 								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
+							{:else if (isFriday || isNight) && !(isFriday && isNight)}
+								Continue:
+								{lastReadChapter}:{lastReadVerse}
 							{:else}
 								{lastReadChapter}:{lastReadVerse}
 							{/if}

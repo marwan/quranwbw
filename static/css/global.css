@@ -1663,8 +1663,12 @@ input[type="range"].range-lg::-moz-range-thumb {
   max-width: 64rem;
 }
 
-.max-w-\[70vw\] {
-  max-width: 70vw;
+.max-w-\[28vw\] {
+  max-width: 28vw;
+}
+
+.max-w-\[30vw\] {
+  max-width: 30vw;
 }
 
 .max-w-full {
