@@ -109,7 +109,7 @@
 			<div id="bookmark-cards" class="flex flex-col space-y-4">
 				{#if totalBookmarks === 0}
 					<div class="flex flex-row justify-start text-sm opacity-70">
-						<span>You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')} that speaks to you. It's a great way to keep track of your favorite {term('verses')}. </span>
+						<span>You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you. </span>
 					</div>
 				{:else}
 					<div class="{cardGridClasses} grid-cols-1 md:!grid-cols-4">
