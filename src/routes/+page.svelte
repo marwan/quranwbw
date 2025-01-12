@@ -80,7 +80,7 @@
 					<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full">
 						<span><ContinueReading size={4} /></span>
 						<span class="hidden md:block">
-							Continue:
+							Continue Reading:
 							{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
 						</span>
 						<span class="block md:hidden">
