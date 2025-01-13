@@ -75,7 +75,7 @@
 		</DropdownItem>
 
 		<!-- bookmark button -->
-		<DropdownItem id="bookmark-btn" class={dropdownItemClasses} on:click={() => updateSettings({ type: 'userBookmarks', key: $__verseKey, set: true })} track-click>
+		<DropdownItem id="bookmark-btn" class={dropdownItemClasses} on:click={() => updateSettings({ type: 'userBookmarks', key: $__verseKey, set: true })} log-click>
 			<svelte:component this={userBookmarks.includes($__verseKey) ? BookmarkFilled : Bookmark} />
 			<span>{userBookmarks.includes($__verseKey) ? 'Unbookmark' : 'Bookmark'}</span>
 		</DropdownItem>
@@ -88,7 +88,7 @@
 				__notesModalVisible.set(true);
 				dropdownOpen = false;
 			}}
-			track-click
+			log-click
 		>
 			<svelte:component this={$__userNotes.hasOwnProperty($__verseKey) ? NotesFilled : Notes} />
 			<span>Notes</span>
@@ -122,7 +122,7 @@
 						__verseTranslationModalVisible.set(true);
 						dropdownOpen = false;
 					}}
-					track-click
+					log-click
 				>
 					<VerseTranslation />
 					<span>Translation</span>
@@ -137,7 +137,7 @@
 					__tafsirModalVisible.set(true);
 					dropdownOpen = false;
 				}}
-				track-click
+				log-click
 			>
 				<Tafsir />
 				<span>{term('tafsir')}</span>
@@ -145,12 +145,12 @@
 
 			<!-- mode change buttons -->
 			{#if $__currentPage === 'mushaf'}
-				<DropdownItem id="chapter-mode-btn" class={dropdownItemClasses} href="/{chapter}/{verse}" track-click>
+				<DropdownItem id="chapter-mode-btn" class={dropdownItemClasses} href="/{chapter}/{verse}" log-click>
 					<ChapterMode />
 					<span>{term('chapter')} Mode</span>
 				</DropdownItem>
 			{:else}
-				<DropdownItem id="mushaf-mode-btn" class={dropdownItemClasses} href="/page/{page}" track-click>
+				<DropdownItem id="mushaf-mode-btn" class={dropdownItemClasses} href="/page/{page}" log-click>
 					<Book />
 					<span>Mushaf Mode</span>
 				</DropdownItem>
@@ -167,7 +167,7 @@
 			{/if} -->
 
 			<!-- verse morphology button -->
-			<DropdownItem id="verse-morphology-btn" class={dropdownItemClasses} href="/morphology/{$__verseKey}" track-click>
+			<DropdownItem id="verse-morphology-btn" class={dropdownItemClasses} href="/morphology/{$__verseKey}" log-click>
 				<Morphology />
 				<span>Morphology</span>
 			</DropdownItem>
@@ -181,7 +181,7 @@
 						__copyShareVerseModalVisible.set(true);
 						dropdownOpen = false;
 					}}
-					track-click
+					log-click
 				>
 					<Copy />
 					<span>Copy</span>

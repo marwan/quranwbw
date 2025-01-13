@@ -81,15 +81,15 @@
 	<div id="extras-tabs" class="flex items-center justify-between">
 		<div class="flex flex-row justify-center">
 			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!extrasPanelVisible && disabledClasses}">
-				<button id="bookmarks-tab-button" on:click={() => (extrasActiveTab = 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" track-click>
+				<button id="bookmarks-tab-button" on:click={() => (extrasActiveTab = 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" log-click>
 					<span>Bookmarks</span>
 					<span class="hidden xs:block">{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
 				</button>
-				<button id="notes-tab-button" on:click={() => (extrasActiveTab = 2)} class="{extrasActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" track-click>
+				<button id="notes-tab-button" on:click={() => (extrasActiveTab = 2)} class="{extrasActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" log-click>
 					<span>Notes</span>
 					<span class="hidden xs:block">{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 				</button>
-				<button id="suggestions-tab-button" on:click={() => (extrasActiveTab = 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} track-click>Suggestions</button>
+				<button id="suggestions-tab-button" on:click={() => (extrasActiveTab = 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} log-click>Suggestions</button>
 			</div>
 		</div>
 
@@ -99,7 +99,7 @@
 			on:click={() => {
 				extrasPanelVisible = !extrasPanelVisible;
 			}}
-			track-click
+			log-click
 		>
 			<Eye size={4} />
 		</button>
@@ -185,15 +185,15 @@
 	<div id="quran-division-tabs">
 		<div class="flex flex-row items-center justify-between">
 			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
-				<button id="chapters-tab-button" on:click={() => (divisionsActiveTab = 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" track-click>
+				<button id="chapters-tab-button" on:click={() => (divisionsActiveTab = 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" log-click>
 					<span>{term('chapters')}</span>
 				</button>
-				<button id="juz-tab-button" on:click={() => (divisionsActiveTab = 2)} class="{divisionsActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" track-click>
+				<button id="juz-tab-button" on:click={() => (divisionsActiveTab = 2)} class="{divisionsActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" log-click>
 					<span>{term('juz')}</span>
 				</button>
 			</div>
 
-			<button id="chapters-sort-button" class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortChapters()} track-click>
+			<button id="chapters-sort-button" class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortChapters()} log-click>
 				<AscendingSort size={4} />
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Sort Asc/Dsc</Tooltip>
