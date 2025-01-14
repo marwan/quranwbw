@@ -23,11 +23,20 @@
 	const tabDefaultBorder = `${commontabClasses} border-transparent`;
 	const tabActiveBorder = `${commontabClasses} ${window.theme('border')}`;
 
+	const dividerClasses = `
+		flex flex-col text-center mx-auto w-full 
+		py-2 px-4 text-sm rounded-full
+		${window.theme('hoverBorder')}
+		${window.theme('bgSecondaryDark')}
+	`;
+
 	let divisionsActiveTab = 1; // Default to chapters tab
 	let extrasActiveTab = 1; // Default to bookmarks
 	let extrasPanelVisible = true;
 	let chapterSortIsAscending = true;
 	let chapterListOrder = [...quranMetaData];
+	let juzSortIsAscending = true;
+	let juzListOrder = [...juzVerses];
 	let fullQuranData;
 
 	// Fetch full Quran data (uthmani) for bookmarked verses
@@ -56,10 +65,18 @@
 		});
 	});
 
-	// Function to sort the chapter list in ascending or descending order
-	function sortChapters() {
-		chapterSortIsAscending = !chapterSortIsAscending;
-		chapterListOrder = chapterSortIsAscending ? [...quranMetaData] : [...quranMetaData].reverse();
+	function sortDivisions() {
+		// Sort chapters
+		if (divisionsActiveTab === 1) {
+			chapterSortIsAscending = !chapterSortIsAscending;
+			chapterListOrder = chapterSortIsAscending ? [...quranMetaData] : [...quranMetaData].reverse();
+		}
+
+		// Sort Juz
+		else if (divisionsActiveTab === 2) {
+			juzSortIsAscending = !juzSortIsAscending;
+			juzListOrder = juzSortIsAscending ? [...juzVerses] : [...juzVerses].reverse();
+		}
 
 		// Ensure chapter icons are visible after sorting
 		renderChapterIcons();
@@ -111,7 +128,7 @@
 		<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 			<div id="bookmark-cards" class="flex flex-col space-y-4">
 				{#if totalBookmarks === 0}
-					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70">
+					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 pl-2">
 						<span>You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you. </span>
 					</div>
 				{:else}
@@ -147,7 +164,7 @@
 		<div class="notes-tab-panels space-y-12 {extrasActiveTab === 2 ? 'block' : 'hidden'}" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab">
 			<div id="notes-cards" class="flex flex-col space-y-4">
 				{#if totalNotes === 0}
-					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70">
+					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 pl-2">
 						<span>You haven't saved any notes yet! Start jotting down your thoughts by clicking the <Notes classes="inline mt-[-4px]" /> icon. It's like creating your own personal treasure chest of wisdom. </span>
 					</div>
 				{:else}
@@ -193,7 +210,7 @@
 				</button>
 			</div>
 
-			<button id="chapters-sort-button" class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortChapters()} log-click>
+			<button id="chapters-sort-button" class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} log-click>
 				<AscendingSort size={4} />
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Sort Asc/Dsc</Tooltip>
@@ -254,10 +271,11 @@
 		<!-- juz tab -->
 		{#if divisionsActiveTab === 2}
 			<div id="juz-tab-panel" role="tabpanel" aria-labelledby="juz-tab">
-				<div class="space-y-2">
-					{#each juzVerses as juz}
+				<div class="space-y-4">
+					{#each juzListOrder as juz}
 						<div class="py-2 space-y-2">
-							<h3 class="text-lg">Juz {juz.juz}</h3>
+							<!-- <h3 class="text-lg">Juz {juz.juz}</h3> -->
+							<div class={dividerClasses}>Juz {juz.juz} ({juz.from} - {juz.to})</div>
 							<div class="{cardGridClasses} grid-cols-1">
 								{#each juz.chapters as id}
 									<a href="/{id}">
@@ -302,7 +320,7 @@
 							</div>
 						</div>
 
-						<div class="border-b {window.theme('border')}"></div>
+						<!-- <div class="border-b {window.theme('border')}"></div> -->
 					{/each}
 				</div>
 			</div>
