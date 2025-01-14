@@ -8,7 +8,7 @@
 	import Notes from '$svgs/Notes.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { updateSettings } from '$utils/updateSettings';
-	import { quranMetaData, juzVerses, mostRead } from '$data/quranMeta';
+	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { __lastRead, __favouriteChapters, __userBookmarks, __userNotes, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { staticEndpoint } from '$data/websiteSettings';
@@ -36,7 +36,7 @@
 	let chapterSortIsAscending = true;
 	let chapterListOrder = [...quranMetaData];
 	let juzSortIsAscending = true;
-	let juzListOrder = [...juzVerses];
+	let juzListOrder = [...juzMeta];
 	let fullQuranData;
 
 	// Fetch full Quran data (uthmani) for bookmarked verses
@@ -75,7 +75,7 @@
 		// Sort Juz
 		else if (divisionsActiveTab === 2) {
 			juzSortIsAscending = !juzSortIsAscending;
-			juzListOrder = juzSortIsAscending ? [...juzVerses] : [...juzVerses].reverse();
+			juzListOrder = juzSortIsAscending ? [...juzMeta] : [...juzMeta].reverse();
 		}
 
 		// Ensure chapter icons are visible after sorting
@@ -274,7 +274,6 @@
 				<div class="space-y-4">
 					{#each juzListOrder as juz}
 						<div class="py-2 space-y-2">
-							<!-- <h3 class="text-lg">Juz {juz.juz}</h3> -->
 							<div class={dividerClasses}>Juz {juz.juz} ({juz.from} - {juz.to})</div>
 							<div class="{cardGridClasses} grid-cols-1">
 								{#each juz.chapters as id}

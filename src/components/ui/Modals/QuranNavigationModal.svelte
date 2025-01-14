@@ -4,7 +4,7 @@
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search from '$svgs/Search.svelte';
-	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzNumberKeys, supplicationsFromQuran, mostRead } from '$data/quranMeta';
+	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, supplicationsFromQuran, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
 	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey } from '$utils/stores';
 	import { inview } from 'svelte-inview';
@@ -186,7 +186,7 @@
 											{#if key === 'juz'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/page/{verseKeyData[juzNumberKeys[value - 1]].page}" class={linkTextClasses}>{term('juz')} {value}</a>
+													<a href="/page/{verseKeyData[juzMeta[value - 1]].page}" class={linkTextClasses}>{term('juz')} {value}</a>
 												</div>
 											{:else if key === 'key'}
 												<div class={linkClasses}>
@@ -202,9 +202,10 @@
 												<a href="/{value}" class={linkTextClasses}>{term('chapter')} {value} ({quranMetaData[value].transliteration})</a>
 											</div>
 										{:else if key === 'page'}
+											{@const [pageChapter, pageVerse] = pageNumberKeys[value - 1].split(':').map(Number)}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/{pageNumberKeys[value - 1].split(':')[0]}/{pageNumberKeys[value - 1].split(':')[1]}" class={linkTextClasses}>Page {value} ({quranMetaData[pageNumberKeys[value - 1].split(':')[0]].transliteration})</a>
+												<a href="/{pageChapter}/{pageVerse}" class={linkTextClasses}>Page {value} ({quranMetaData[pageChapter].transliteration})</a>
 											</div>
 
 											<div class={linkClasses}>
@@ -212,14 +213,16 @@
 												<a href="/page/{value}" class={linkTextClasses}>Mushaf Page {value} ({quranMetaData[pageNumberKeys[value - 1].split(':')[0]].transliteration})</a>
 											</div>
 										{:else if key === 'juz'}
+											{@const [juzChapter, juzVerse] = juzMeta[value - 1]['from'].split(':').map(Number)}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/{juzNumberKeys[value - 1].split(':')[0]}/{juzNumberKeys[value - 1].split(':')[1]}" class={linkTextClasses}>{term('juz')} {value} ({quranMetaData[juzNumberKeys[value - 1].split(':')[0]].transliteration})</a>
+												<a href="/{juzChapter}/{juzVerse}" class={linkTextClasses}>{term('juz')} {value} ({quranMetaData[juzChapter].transliteration})</a>
 											</div>
 										{:else if key === 'key'}
+											{@const [keyChapter, keyVerse] = value.split(':').map(Number)}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/{value.split(':')[0]}/{value.split(':')[1]}" class={linkTextClasses}>{quranMetaData[value.split(':')[0]].transliteration}, {term('verse')} {value.split(':')[1]}</a>
+												<a href="/{keyChapter}/{keyVerse}" class={linkTextClasses}>{quranMetaData[keyChapter].transliteration}, {term('verse')} {keyVerse}</a>
 											</div>
 										{:else if key === 'supplications'}
 											<div class={linkClasses}>
