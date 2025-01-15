@@ -69,7 +69,7 @@
 				showAudioModal($__verseKey);
 				dropdownOpen = false;
 			}}
-			data-umami-event="Advanced Play Button"
+			data-umami-event="Advanced Play Modal Button"
 		>
 			<Play />
 			<span>Advanced Play</span>
@@ -88,7 +88,7 @@
 				__notesModalVisible.set(true);
 				dropdownOpen = false;
 			}}
-			data-umami-event="Verse Notes Button"
+			data-umami-event="Verse Notes Modal Button"
 		>
 			<svelte:component this={$__userNotes.hasOwnProperty($__verseKey) ? NotesFilled : Notes} />
 			<span>Notes</span>
@@ -121,7 +121,7 @@
 						__verseTranslationModalVisible.set(true);
 						dropdownOpen = false;
 					}}
-					data-umami-event="Verse Translation Button"
+					data-umami-event="Verse Translation Modal Button"
 				>
 					<VerseTranslation />
 					<span>Translation</span>
@@ -135,7 +135,7 @@
 					__tafsirModalVisible.set(true);
 					dropdownOpen = false;
 				}}
-				data-umami-event="Verse Tafsir Button"
+				data-umami-event="Verse Tafsir Modal Button"
 			>
 				<Tafsir />
 				<span>{term('tafsir')}</span>
@@ -178,7 +178,7 @@
 						__copyShareVerseModalVisible.set(true);
 						dropdownOpen = false;
 					}}
-					data-umami-event="Copy Verse Button"
+					data-umami-event="Copy Verse Modal Button"
 				>
 					<Copy />
 					<span>Copy</span>

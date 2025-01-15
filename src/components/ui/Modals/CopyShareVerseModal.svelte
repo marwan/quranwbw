@@ -268,7 +268,7 @@
 			<div class="text-xs opacity-70 mb-6 text-left">
 				{#if copyType === 1 || copyType === 3}
 					<span>Text copied to clipboard.</span>
-					<button on:click={downloadTextFile(`quran-${chapter}-${verse}`, generatedVerseData)} class={linkClasses}>Click here to download it as a file.</button>
+					<button on:click={downloadTextFile(`quran-${chapter}-${verse}`, generatedVerseData)} class={linkClasses} data-umami-event="Download Verse File Button">Click here to download it as a file.</button>
 				{:else}
 					<span>Link copied to clipboard.</span>
 				{/if}
@@ -276,7 +276,7 @@
 		{/if}
 
 		<div class="flex flex-row">
-			<button class="w-full {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData}>{fetchingData ? 'Please wait...' : 'Copy'}</button>
+			<button class="w-full {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">{fetchingData ? 'Please wait...' : 'Copy'}</button>
 			<!-- <button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={shareVerse}>Share</button> -->
 		</div>
 	</div>

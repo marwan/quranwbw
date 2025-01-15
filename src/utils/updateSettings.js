@@ -35,7 +35,7 @@ import {
 export function updateSettings(props) {
 	// get the settings from localStorage
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-	let logInteraction = false;
+	let trackEvent = false;
 	// let uploadSettings = false;
 
 	switch (props.type) {
@@ -49,7 +49,7 @@ export function updateSettings(props) {
 			__fontType.set(props.value);
 			if (props.skipSave) return;
 			userSettings.displaySettings.fontType = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for display types
@@ -57,21 +57,21 @@ export function updateSettings(props) {
 			__displayType.set(props.value);
 			if (props.skipSave) return;
 			userSettings.displaySettings.displayType = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for word tooltip
 		case 'wordTooltip':
 			__wordTooltip.set(props.value);
 			userSettings.displaySettings.wordTooltip = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for terminologies language
 		case 'englishTerminology':
 			__englishTerminology.set(props.value);
 			userSettings.displaySettings.englishTerminology = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			location.reload();
 			break;
 
@@ -79,10 +79,8 @@ export function updateSettings(props) {
 		case 'websiteTheme':
 			__websiteTheme.set(props.value);
 			userSettings.displaySettings.websiteTheme = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			location.reload();
-			// document.documentElement.classList = '';
-			// document.documentElement.classList = `theme-${props.value} ${window.bodyColors[props.value]}`;
 			break;
 
 		// for word translation view
@@ -101,14 +99,14 @@ export function updateSettings(props) {
 		case 'wordTranslation':
 			__wordTranslation.set(props.value);
 			userSettings.translations.word = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for word transliteration
 		case 'wordTransliteration':
 			__wordTransliteration.set(props.value);
 			userSettings.transliteration.word = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for verse translations
@@ -127,21 +125,21 @@ export function updateSettings(props) {
 		case 'verseTafsir':
 			__verseTafsir.set(props.value);
 			userSettings.translations.tafsir = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for verse reciter
 		case 'reciter':
 			__reciter.set(props.value);
 			userSettings.audioSettings.reciter = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for translation reciter
 		case 'translationReciter':
 			__translationReciter.set(props.value);
 			userSettings.audioSettings.translationReciter = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for playback speed
@@ -248,7 +246,7 @@ export function updateSettings(props) {
 		case 'hideNonDuaPart':
 			__hideNonDuaPart.set(props.value);
 			userSettings.displaySettings.hideNonDuaPart = props.value;
-			logInteraction = true;
+			trackEvent = true;
 			break;
 
 		// for quiz correct answers
@@ -307,9 +305,8 @@ export function updateSettings(props) {
 			break;
 	}
 
-	// Track element/setting change if required
-	// if (logInteraction) interactionLogger(`settings-${props.type}-${props.value}`);
-	console.log(logInteraction);
+	// Track event change
+	if (trackEvent) window.umami.track('Setting Change', { type: props.type, value: props.value });
 
 	// update the settings back into localStorage and global store
 	__userSettings.set(JSON.stringify(userSettings));
