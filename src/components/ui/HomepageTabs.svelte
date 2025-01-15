@@ -98,25 +98,24 @@
 	<div id="extras-tabs" class="flex items-center justify-between">
 		<div class="flex flex-row justify-center">
 			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!extrasPanelVisible && disabledClasses}">
-				<button id="bookmarks-tab-button" on:click={() => (extrasActiveTab = 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" log-click>
+				<button on:click={() => (extrasActiveTab = 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
 					<span>Bookmarks</span>
 					<span class="hidden xs:block">{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
 				</button>
-				<button id="notes-tab-button" on:click={() => (extrasActiveTab = 2)} class="{extrasActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" log-click>
+				<button on:click={() => (extrasActiveTab = 2)} class="{extrasActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Notes Tab Button">
 					<span>Notes</span>
 					<span class="hidden xs:block">{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 				</button>
-				<button id="suggestions-tab-button" on:click={() => (extrasActiveTab = 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} log-click>Suggestions</button>
+				<button on:click={() => (extrasActiveTab = 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
 			</div>
 		</div>
 
 		<button
-			id="extras-tab-toggle-button"
 			class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}"
 			on:click={() => {
 				extrasPanelVisible = !extrasPanelVisible;
 			}}
-			log-click
+			data-umami-event="Toggle Panel Button"
 		>
 			<Eye size={4} />
 		</button>
@@ -202,15 +201,15 @@
 	<div id="quran-division-tabs">
 		<div class="flex flex-row items-center justify-between">
 			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
-				<button id="chapters-tab-button" on:click={() => (divisionsActiveTab = 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" log-click>
+				<button on:click={() => (divisionsActiveTab = 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
 					<span>{term('chapters')}</span>
 				</button>
-				<button id="juz-tab-button" on:click={() => (divisionsActiveTab = 2)} class="{divisionsActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" log-click>
+				<button on:click={() => (divisionsActiveTab = 2)} class="{divisionsActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Juz Tab Button">
 					<span>{term('juz')}</span>
 				</button>
 			</div>
 
-			<button id="chapters-sort-button" class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} log-click>
+			<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Chapters/Juz Sort Button">
 				<AscendingSort size={4} />
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Sort Asc/Dsc</Tooltip>

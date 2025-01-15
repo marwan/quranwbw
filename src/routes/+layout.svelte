@@ -24,7 +24,6 @@
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { interactionLogger } from '$utils/interactionLogger';
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();
@@ -132,30 +131,6 @@
 	window.addEventListener('offline', () => {
 		__websiteOnline.set(false);
 	});
-
-	// Track clicked elements
-	document.addEventListener(
-		'click',
-		async function (e) {
-			e = e || window.event;
-			let target = e.target || e.srcElement;
-
-			// Find the closest parent element with 'log-click' attribute
-			const parent = target.closest('[log-click]');
-
-			// If a parent element with 'log-click' exists, proceed
-			if (parent) {
-				const elementId = parent.id; // Get the ID of the parent element
-
-				// Make sure the element has an ID before sending the request
-				if (elementId) {
-					// Call the interactionLogger function to record the click
-					await interactionLogger(elementId);
-				}
-			}
-		},
-		false
-	);
 </script>
 
 <div class="max-w-screen-lg mx-auto {paddingTop} {paddingBottom} {paddingX}">

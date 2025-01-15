@@ -29,7 +29,6 @@ import {
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick
 } from '$utils/stores';
-import { interactionLogger } from '$utils/interactionLogger';
 // import { uploadSettingsToCloud } from '$utils/cloudSettings';
 
 // function to update website settings
@@ -309,7 +308,8 @@ export function updateSettings(props) {
 	}
 
 	// Track element/setting change if required
-	if (logInteraction) interactionLogger(`settings-${props.type}-${props.value}`);
+	// if (logInteraction) interactionLogger(`settings-${props.type}-${props.value}`);
+	console.log(logInteraction);
 
 	// update the settings back into localStorage and global store
 	__userSettings.set(JSON.stringify(userSettings));

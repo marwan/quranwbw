@@ -69,26 +69,26 @@
 				showAudioModal($__verseKey);
 				dropdownOpen = false;
 			}}
+			data-umami-event="Advanced Play Button"
 		>
 			<Play />
 			<span>Advanced Play</span>
 		</DropdownItem>
 
 		<!-- bookmark button -->
-		<DropdownItem id="bookmark-btn" class={dropdownItemClasses} on:click={() => updateSettings({ type: 'userBookmarks', key: $__verseKey, set: true })} log-click>
+		<DropdownItem class={dropdownItemClasses} on:click={() => updateSettings({ type: 'userBookmarks', key: $__verseKey, set: true })} data-umami-event="Bookmark Verse Button">
 			<svelte:component this={userBookmarks.includes($__verseKey) ? BookmarkFilled : Bookmark} />
 			<span>{userBookmarks.includes($__verseKey) ? 'Unbookmark' : 'Bookmark'}</span>
 		</DropdownItem>
 
 		<!-- verse notes button -->
 		<DropdownItem
-			id="notes-btn"
 			class={dropdownItemClasses}
 			on:click={() => {
 				__notesModalVisible.set(true);
 				dropdownOpen = false;
 			}}
-			log-click
+			data-umami-event="Verse Notes Button"
 		>
 			<svelte:component this={$__userNotes.hasOwnProperty($__verseKey) ? NotesFilled : Notes} />
 			<span>Notes</span>
@@ -116,13 +116,12 @@
 			<!-- verse translation button - only show on Mushaf page or on continuous display -->
 			{#if selectableDisplays[$__displayType].continuous}
 				<DropdownItem
-					id="verse-translation-btn"
 					class={dropdownItemClasses}
 					on:click={() => {
 						__verseTranslationModalVisible.set(true);
 						dropdownOpen = false;
 					}}
-					log-click
+					data-umami-event="Verse Translation Button"
 				>
 					<VerseTranslation />
 					<span>Translation</span>
@@ -131,13 +130,12 @@
 
 			<!-- tafsir button -->
 			<DropdownItem
-				id="verse-tafsir-btn"
 				class={dropdownItemClasses}
 				on:click={() => {
 					__tafsirModalVisible.set(true);
 					dropdownOpen = false;
 				}}
-				log-click
+				data-umami-event="Verse Tafsir Button"
 			>
 				<Tafsir />
 				<span>{term('tafsir')}</span>
@@ -145,12 +143,12 @@
 
 			<!-- mode change buttons -->
 			{#if $__currentPage === 'mushaf'}
-				<DropdownItem id="chapter-mode-btn" class={dropdownItemClasses} href="/{chapter}/{verse}" log-click>
+				<DropdownItem class={dropdownItemClasses} href="/{chapter}/{verse}" data-umami-event="Chapter Mode Button">
 					<ChapterMode />
 					<span>{term('chapter')} Mode</span>
 				</DropdownItem>
 			{:else}
-				<DropdownItem id="mushaf-mode-btn" class={dropdownItemClasses} href="/page/{page}" log-click>
+				<DropdownItem class={dropdownItemClasses} href="/page/{page}" data-umami-event="Mushaf Mode Button">
 					<Book />
 					<span>Mushaf Mode</span>
 				</DropdownItem>
@@ -167,7 +165,7 @@
 			{/if} -->
 
 			<!-- verse morphology button -->
-			<DropdownItem id="verse-morphology-btn" class={dropdownItemClasses} href="/morphology/{$__verseKey}" log-click>
+			<DropdownItem class={dropdownItemClasses} href="/morphology/{$__verseKey}" data-umami-event="Verse Morphology Button">
 				<Morphology />
 				<span>Morphology</span>
 			</DropdownItem>
@@ -175,13 +173,12 @@
 			<!-- copy verse button (only for hafs digital and indopak) -->
 			{#if [1, 4].includes($__fontType)}
 				<DropdownItem
-					id="copy-verse-btn"
 					class={dropdownItemClasses}
 					on:click={() => {
 						__copyShareVerseModalVisible.set(true);
 						dropdownOpen = false;
 					}}
-					log-click
+					data-umami-event="Copy Verse Button"
 				>
 					<Copy />
 					<span>Copy</span>

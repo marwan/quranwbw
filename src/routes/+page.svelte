@@ -42,7 +42,7 @@
 				<a href={$__lastRead.hasOwnProperty('page') ? `/page/${$__lastRead.page}` : '/page/1'} class={topButtonClasses}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
 				<a href="/morphology/1:1" class={topButtonClasses}><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
 			</div>
-			<button id="homepage-menu-icon" class={topButtonClasses} on:click={() => __siteNavigationModalVisible.set(true)} log-click><Menu size={4} /><span class="hidden md:block">Menu</span></button>
+			<button class={topButtonClasses} on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
 		</div>
 	</div>
 
@@ -63,7 +63,7 @@
 				</div>
 			</div>
 		</a>
-		<button id="homepage-search-bar" class="mt-8 rounded-full text-center px-4 py-3 flex flex-row items-center justify-center space-x-1 w-full z-10 {window.theme('bgSecondaryDark')}" on:click={() => __quranNavigationModalVisible.set(true)} log-click>
+		<button class="mt-8 rounded-full text-center px-4 py-3 flex flex-row items-center justify-center space-x-1 w-full z-10 {window.theme('bgSecondaryDark')}" on:click={() => __quranNavigationModalVisible.set(true)} data-umami-event="Homepage Search Bar">
 			<div class="flex flex-row justify-center">
 				<span class="mt-[2px] mr-1"><Search size={6} /></span>
 				<span class="opacity-70">Navigate or Search Quran</span>
@@ -77,7 +77,7 @@
 			<div class="flex flex-row space-x-2 w-full">
 				{#if lastReadExists}
 					{@const [lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number)}
-					<a id="continue-last-read-button" href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full" log-click>
+					<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full" data-umami-event="Continue Reading Button">
 						<span><ContinueReading size={4} /></span>
 						<span class="hidden md:block">
 							Continue Reading:
@@ -99,7 +99,7 @@
 
 				{#if isFriday || isNight}
 					{#if isFriday}
-						<a id="surah-kahf-reminder-button" href="/18" class="{topButtonClasses} truncate w-full" log-click>
+						<a href="/18" class="{topButtonClasses} truncate w-full" data-umami-event="Al-Kahf Reminder Button">
 							<span class="-mt-1"><Cave size={4} /></span>
 							<div class="flex flex-row">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
@@ -109,7 +109,7 @@
 					{/if}
 
 					{#if isNight}
-						<a id="surah-mulk-reminder-button" href="/67" class="{topButtonClasses} truncate w-full" log-click>
+						<a href="/67" class="{topButtonClasses} truncate w-full" data-umami-event="Al-Mulk Reminder Button">
 							<span><Moon size={4} /></span>
 							<div class="flex flex-row">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
