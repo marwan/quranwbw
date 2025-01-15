@@ -5,7 +5,7 @@
 	import { __settingsDrawerHidden } from '$utils/stores';
 </script>
 
-<button type="button" title="Settings" on:click={() => ($__settingsDrawerHidden = false)} class="inline-flex flex-col items-center justify-center px-5 group {window.theme('hover')}">
+<button type="button" title="Settings" on:click={() => ($__settingsDrawerHidden = false)} class="inline-flex flex-col items-center justify-center px-5 group {window.theme('hover')}" data-umami-event="Toolbar Settings Button">
 	<SettingsFilled size={5} />
 	<span class="sr-only">Settings</span>
 </button>
