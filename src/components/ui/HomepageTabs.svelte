@@ -318,8 +318,6 @@
 								{/each}
 							</div>
 						</div>
-
-						<!-- <div class="border-b {window.theme('border')}"></div> -->
 					{/each}
 				</div>
 			</div>
