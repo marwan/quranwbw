@@ -77,7 +77,7 @@
 			<div class="flex flex-row space-x-2 w-full">
 				{#if lastReadExists}
 					{@const [lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number)}
-					<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full" data-umami-event="Continue Reading Button">
+					<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Continue Reading Button')}>
 						<span><ContinueReading size={4} /></span>
 						<span class="hidden md:block">
 							Continue Reading:
@@ -99,7 +99,7 @@
 
 				{#if isFriday || isNight}
 					{#if isFriday}
-						<a href="/18" class="{topButtonClasses} truncate w-full" data-umami-event="Al-Kahf Reminder Button">
+						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
 							<span class="-mt-1"><Cave size={4} /></span>
 							<div class="flex flex-row">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
@@ -109,7 +109,7 @@
 					{/if}
 
 					{#if isNight}
-						<a href="/67" class="{topButtonClasses} truncate w-full" data-umami-event="Al-Mulk Reminder Button">
+						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
 							<span><Moon size={4} /></span>
 							<div class="flex flex-row">
 								<span class="hidden md:block mr-1">Night Reminder:</span>

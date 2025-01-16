@@ -112,7 +112,7 @@
 		{/await}
 	</div>
 
-	<div id="word-summary" class="text-center mx-auto md:w-3/4 text-sm pb-6 border-b-2 {window.theme('border')} md:text-lg">
+	<div id="word-summary" class="text-center mx-auto md:w-3/4 text-sm md:text-lg pb-6 border-b-2 {window.theme('border')}">
 		{#await fetchWordSummary}
 			<span>...</span>
 		{:then fetchWordSummary}
@@ -121,17 +121,19 @@
 				<!-- <button class="text-lg font-bold underline" on:click={() => showLexiconModal()}>View Lanes Lexicon Data &rarr;</button> -->
 			</div>
 
-			<!-- word audio button -->
-			<div class="pt-4 text-xs">
+			<!-- Buttons -->
+			<div class="pt-4 flex flex-row justify-center space-x-2 text-xs">
 				<button
 					class={buttonClasses}
 					on:click={() =>
 						wordAudioController({
 							key: data.key,
-							chapter: +data.key.split(':')[0],
-							verse: +data.key.split(':')[1]
-						})}>Listen To Word</button
+							chapter: chapter,
+							verse: verse
+						})}>Play Word</button
 				>
+
+				<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
 			</div>
 		{:catch error}
 			<p>{errorLoadingDataMessage}</p>

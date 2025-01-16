@@ -143,12 +143,12 @@
 
 			<!-- mode change buttons -->
 			{#if $__currentPage === 'mushaf'}
-				<DropdownItem class={dropdownItemClasses} href="/{chapter}/{verse}" data-umami-event="Chapter Mode Button">
+				<DropdownItem class={dropdownItemClasses} href="/{chapter}/{verse}" on:click={() => window.umami.track('Chapter Mode Button')}>
 					<ChapterMode />
 					<span>{term('chapter')} Mode</span>
 				</DropdownItem>
 			{:else}
-				<DropdownItem class={dropdownItemClasses} href="/page/{page}" data-umami-event="Mushaf Mode Button">
+				<DropdownItem class={dropdownItemClasses} href="/page/{page}" on:click={() => window.umami.track('Mushaf Mode Button')}>
 					<Book />
 					<span>Mushaf Mode</span>
 				</DropdownItem>
@@ -165,7 +165,7 @@
 			{/if} -->
 
 			<!-- verse morphology button -->
-			<DropdownItem class={dropdownItemClasses} href="/morphology/{$__verseKey}" data-umami-event="Verse Morphology Button">
+			<DropdownItem class={dropdownItemClasses} href="/morphology/{$__verseKey}" on:click={() => window.umami.track('Verse Morphology Button')}>
 				<Morphology />
 				<span>Morphology</span>
 			</DropdownItem>
