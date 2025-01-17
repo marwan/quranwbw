@@ -10,8 +10,8 @@
 </script>
 
 {#if value}
-	<!-- show page number  -->
-	<PageDivider {key} page={value.meta.page} />
+	<!-- show page/juz number  -->
+	<PageDivider {key} />
 
 	<div id={key} class="verse flex flex-col py-8 space-y-8 verse-{value.meta.chapter}-{value.meta.verse}" data-words={value.meta.words} data-page={value.meta.page} data-juz={value.meta.juz} use:inview on:inview_enter={(event) => updateSettings({ type: 'lastRead', value: { key, page: value.meta.page } })}>
 		<VerseOptionButtons {key} {value} />

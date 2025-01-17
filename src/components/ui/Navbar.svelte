@@ -124,7 +124,7 @@
 			</div>
 			<div class="flex flex-row items-center py-2">
 				<span>{lastReadPage ? `Page ${lastReadPage}` : '...'}</span>
-				<span class="px-1">/</span>
+				<span class="px-1 opacity-70">/</span>
 				<span>{lastReadJuz ? `${term('juz')} ${lastReadJuz}` : '...'}</span>
 			</div>
 		</div>
