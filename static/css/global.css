@@ -1213,6 +1213,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-bottom: 2rem;
 }
 
+.\!mt-2 {
+  margin-top: 0.5rem !important;
+}
+
 .\!mt-\[-0rem\] {
   margin-top: -0rem !important;
 }
@@ -1323,10 +1327,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .mt-8 {
   margin-top: 2rem;
-}
-
-.mt-\[-2\.3rem\] {
-  margin-top: -2.3rem;
 }
 
 .mt-\[-4px\] {
@@ -2985,10 +2985,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   opacity: 0;
 }
 
-.opacity-10 {
-  opacity: 0.1;
-}
-
 .opacity-100 {
   opacity: 1;
 }
@@ -4424,6 +4420,10 @@ svg {
 
   .md\:rounded-tl-3xl {
     border-top-left-radius: 1.5rem;
+  }
+
+  .md\:bg-transparent {
+    background-color: transparent;
   }
 
   .md\:p-2 {

@@ -10,6 +10,7 @@
 	// import { websitechangelog } from '$data/changelog';
 	import { quranMetaData } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
+	import { fetchChapterData } from '$utils/fetchData';
 
 	import Menu from '$svgs/Menu.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
@@ -28,6 +29,28 @@
 	$: isNight = currentHour < 4 || currentHour > 19;
 	$: lastReadExists = $__lastRead.hasOwnProperty('key') && Object.keys($__lastRead.key).length > 0;
 
+	let chaptersFetched = false;
+
+	// Check if the user is on WiFi
+	function isOnWifi() {
+		if ('connection' in navigator) {
+			const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+			return connection.type === 'wifi';
+		}
+		return false; // Assume not on WiFi if the API is unavailable
+	}
+
+	// Fetch chapters data once the scroll starts and the user is on WiFi
+	window.addEventListener('scroll', () => {
+		if (!chaptersFetched && window.scrollY > 200 && isOnWifi()) {
+			chaptersFetched = true;
+
+			for (let chapter = 1; chapter <= 114; chapter++) {
+				fetchChapterData({ chapter, skipSave: true });
+			}
+		}
+	});
+
 	__currentPage.set('home');
 </script>
 
@@ -38,16 +61,16 @@
 	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">
 			<div>
-				<a href={`/${term('supplications').toLowerCase()}`} class={topButtonClasses}><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
-				<a href={$__lastRead.hasOwnProperty('page') ? `/page/${$__lastRead.page}` : '/page/1'} class={topButtonClasses}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
-				<a href="/morphology/1:1" class={topButtonClasses}><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
+				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
+				<a href={$__lastRead.hasOwnProperty('page') ? `/page/${$__lastRead.page}` : '/page/1'} class="{topButtonClasses} md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
+				<a href="/morphology/1:1" class="{topButtonClasses} md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
 			</div>
 			<button class={topButtonClasses} on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
 		</div>
 	</div>
 
 	<!-- mid section -->
-	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl {window.theme('bgSecondaryLight')}">
+	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl !mt-2 {window.theme('bgSecondaryLight')}">
 		<a href="/" class="flex flex-row space-x-4 px-2 items-center justify-left" aria-label="Home">
 			<div><Quran /></div>
 
