@@ -29,27 +29,27 @@
 	$: isNight = currentHour < 4 || currentHour > 19;
 	$: lastReadExists = $__lastRead.hasOwnProperty('key') && Object.keys($__lastRead.key).length > 0;
 
-	let chaptersFetched = false;
+	// let chaptersFetched = false;
 
-	// Check if the user is on a 4G connection
-	function isOn4G() {
-		if ('connection' in navigator) {
-			const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-			return connection.effectiveType === '4g';
-		}
-		return false; // Assume not on 4G if the API is unavailable
-	}
+	// // Check if the user is on a 4G connection
+	// function isOn4G() {
+	// 	if ('connection' in navigator) {
+	// 		const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+	// 		return connection.effectiveType === '4g';
+	// 	}
+	// 	return false; // Assume not on 4G if the API is unavailable
+	// }
 
-	// Fetch chapters data once the scroll starts and the user is on 4G
-	window.addEventListener('scroll', () => {
-		if (!chaptersFetched && window.scrollY > 200 && isOn4G()) {
-			chaptersFetched = true;
+	// // Fetch chapters data once the scroll starts and the user is on 4G
+	// window.addEventListener('scroll', () => {
+	// 	if (!chaptersFetched && window.scrollY > 200 && isOn4G()) {
+	// 		chaptersFetched = true;
 
-			for (let chapter = 1; chapter <= 114; chapter++) {
-				fetchChapterData({ chapter, skipSave: true });
-			}
-		}
-	});
+	// 		for (let chapter = 1; chapter <= 114; chapter++) {
+	// 			fetchChapterData({ chapter, skipSave: true });
+	// 		}
+	// 	}
+	// });
 
 	__currentPage.set('home');
 </script>
