@@ -31,18 +31,18 @@
 
 	let chaptersFetched = false;
 
-	// Check if the user is on WiFi
-	function isOnWifi() {
+	// Check if the user is on a 4G connection
+	function isOn4G() {
 		if ('connection' in navigator) {
 			const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-			return connection.type === 'wifi';
+			return connection.effectiveType === '4g';
 		}
-		return false; // Assume not on WiFi if the API is unavailable
+		return false; // Assume not on 4G if the API is unavailable
 	}
 
-	// Fetch chapters data once the scroll starts and the user is on WiFi
+	// Fetch chapters data once the scroll starts and the user is on 4G
 	window.addEventListener('scroll', () => {
-		if (!chaptersFetched && window.scrollY > 200 && isOnWifi()) {
+		if (!chaptersFetched && window.scrollY > 200 && isOn4G()) {
 			chaptersFetched = true;
 
 			for (let chapter = 1; chapter <= 114; chapter++) {
