@@ -57,8 +57,8 @@
 	}
 
 	// Function to toggle words block for display mode #7
-	function wordsBlockToggler(verse) {
-		document.querySelector(`#verse-${verse}-words`).classList.toggle('hidden');
+	function wordsBlockToggler(chapter, verse) {
+		document.querySelector(`#verse-${chapter}-${verse}-words`).classList.toggle('hidden');
 	}
 </script>
 
@@ -125,7 +125,7 @@
 	<!-- words block toggle button for display #7 -->
 	{#if $__displayType === 7}
 		<div class="flex flex-row">
-			<button class={buttonClasses} aria-label="Toggle Words" on:click={() => wordsBlockToggler(verse)}>
+			<button class={buttonClasses} aria-label="Toggle Words" on:click={() => wordsBlockToggler(chapter, verse)}>
 				<div>
 					<Eye />
 				</div>

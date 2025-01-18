@@ -1,10 +1,10 @@
 export const selectableDisplays = {
 	1: { displayID: 1, displayName: 'Word by Word', displayComponent: 'WBWDisplay', layout: 'wbw', continuous: false, customClasses: null, disallowedIn: [] },
 	2: { displayID: 2, displayName: 'Normal', displayComponent: 'NormalDisplay', layout: 'normal', continuous: false, customClasses: null, disallowedIn: [] },
-	3: { displayID: 3, displayName: 'Continuous Word by Word', displayComponent: 'ContinuousDisplay', layout: 'wbw', continuous: true, customClasses: 'text-center direction-rtl', disallowedIn: ['supplications', 'bookmarks', 'morphology', 'search'] },
-	4: { displayID: 4, displayName: 'Continuous Normal', displayComponent: 'ContinuousDisplay', layout: 'normal', continuous: true, customClasses: 'text-center direction-rtl', disallowedIn: ['supplications', 'bookmarks', 'morphology', 'search'] },
-	5: { displayID: 5, displayName: 'Side By Side', displayComponent: 'SideBySideDisplay', layout: 'normal', continuous: false, customClasses: null, disallowedIn: ['supplications', 'bookmarks', 'morphology', 'search'] },
-	6: { displayID: 6, displayName: 'Mushaf', continuous: true, disallowedIn: ['supplications', 'bookmarks', 'morphology', 'search'] },
+	3: { displayID: 3, displayName: 'Continuous Word by Word', displayComponent: 'ContinuousDisplay', layout: 'wbw', continuous: true, customClasses: 'text-center direction-rtl', disallowedIn: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'] },
+	4: { displayID: 4, displayName: 'Continuous Normal', displayComponent: 'ContinuousDisplay', layout: 'normal', continuous: true, customClasses: 'text-center direction-rtl', disallowedIn: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'] },
+	5: { displayID: 5, displayName: 'Side By Side', displayComponent: 'SideBySideDisplay', layout: 'normal', continuous: false, customClasses: null, disallowedIn: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'] },
+	6: { displayID: 6, displayName: 'Mushaf', continuous: true, disallowedIn: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'] },
 	7: { displayID: 7, displayName: 'Translation/Transliteration', displayComponent: 'TranslationTransliteration', layout: 'wbw', continuous: false, customClasses: null, disallowedIn: ['morphology', 'search'] }
 };
 

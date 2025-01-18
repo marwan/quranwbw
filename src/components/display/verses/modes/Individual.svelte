@@ -53,7 +53,7 @@
 	let keyToStartWith = null;
 
 	// Update the layout for the previous/next verse buttons
-	$: loadPrevNextVerseButtons = `flex ${selectableDisplays[JSON.parse($__userSettings).displaySettings.displayType].continuous ? 'flex-row-reverse' : 'flex-row'} space-x-4 justify-center`;
+	$: loadPrevNextVerseButtons = `flex ${selectableDisplays[$__displayType].continuous ? 'flex-row-reverse' : 'flex-row'} space-x-4 justify-center`;
 
 	// Checking if a start key was provided
 	if (params.get('startKey') !== undefined || params.get('startKey') !== null) {

@@ -17,7 +17,7 @@
 		<VerseOptionButtons {key} {value} />
 
 		<!-- words -->
-		<div id="verse-{value.meta.verse}-words" class="flex flex-row-reverse flex-wrap hidden">
+		<div id="verse-{value.meta.chapter}-{value.meta.verse}-words" class="flex flex-row-reverse flex-wrap hidden">
 			<WordsBlock {key} {value} />
 		</div>
 
