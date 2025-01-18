@@ -33,7 +33,7 @@
 	$: chapterRevelation = quranMetaData[$__chapterNumber].revelation;
 
 	// Calculate the scroll progress percentage for the current chapter
-	$: chapterProgress = Object.keys($__lastRead).length > 0 ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
+	$: chapterProgress = $__lastRead.hasOwnProperty('chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
 
 	// Get the chapter name for the navbar
 	$: {

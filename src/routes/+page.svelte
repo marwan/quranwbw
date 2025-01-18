@@ -94,7 +94,7 @@
 	</div>
 
 	<!-- extras: continue reading, time specific chapters -->
-	{#if isFriday || isNight}
+	<!-- {#if isFriday || isNight}
 		<div class="flex flex-col mt-4 text-sm">
 			<div class="w-full flex flex-row space-x-4 items-center">
 				<div class="flex flex-row space-x-2 w-full">
@@ -120,7 +120,7 @@
 				</div>
 			</div>
 		</div>
-	{/if}
+	{/if} -->
 
 	<!-- chapter and most read tabs -->
 	<HomepageTabs />

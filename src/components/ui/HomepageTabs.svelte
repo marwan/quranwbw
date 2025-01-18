@@ -45,7 +45,7 @@
 		})();
 	}
 
-	$: lastReadExists = Object.keys($__lastRead).length > 0;
+	$: lastReadExists = $__lastRead.hasOwnProperty('chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 
