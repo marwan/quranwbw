@@ -11,18 +11,20 @@ export const englishTerms = {
 		tafsir: 'Exegesis',
 		tajweed: 'Pronunciation',
 		juz: 'Part',
+		juzs: 'Parts',
 		meccan: 'Meccan',
 		medinan: 'Medinan'
 	},
 	false: {
 		chapter: 'Surah',
-		chapters: 'Surahs',
+		chapters: 'Surah',
 		verse: 'Ayah',
-		verses: 'Ayahs',
+		verses: 'Ayat',
 		supplications: 'Duas',
 		tafsir: 'Tafsir',
 		tajweed: 'Tajweed',
 		juz: 'Juz',
+		juzs: 'Juz',
 		meccan: 'Makki',
 		medinan: 'Madani'
 	}

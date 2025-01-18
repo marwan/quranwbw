@@ -4,6 +4,7 @@
 	import { pageNumberKeys, juzNumberKeys } from '$data/quranMeta';
 	import { __currentPage, __displayType } from '$utils/stores';
 	import { selectableDisplays } from '$data/options';
+	import { term } from '$utils/terminologies';
 
 	const dividerClasses = `
 		flex flex-row justify-center text-center mx-auto w-full mt-8 
@@ -27,7 +28,8 @@
 			{/if}
 			{#if juzNumberKeys.includes(key)}
 				{@const juzIndex = juzNumberKeys.indexOf(key) + 1}
-				Juz {juzIndex}
+				{term('juz')}
+				{juzIndex}
 			{/if}
 		</div>
 	{/if}

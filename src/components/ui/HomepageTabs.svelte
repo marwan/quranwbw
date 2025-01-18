@@ -199,7 +199,7 @@
 					<span>{term('chapters')}</span>
 				</button>
 				<button on:click={() => (divisionsActiveTab = 2)} class="{divisionsActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Juz Tab Button">
-					<span>{term('juz')}</span>
+					<span>{term('juzs')}</span>
 				</button>
 			</div>
 
@@ -280,7 +280,8 @@
 					<a href="/juz/{lastReadJuz}?startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
 						<span><ContinueReading size={4} /></span>
 						<span>
-							Continue Reading: Juz {lastReadJuz}, {lastReadChapter}:{lastReadVerse}
+							Continue Reading: {term('juz')}
+							{lastReadJuz}, {lastReadChapter}:{lastReadVerse}
 						</span>
 					</a>
 				{/if}

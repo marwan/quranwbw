@@ -5,6 +5,7 @@
 	import Individual from '$display/verses/modes/Individual.svelte';
 	import { __currentPage, __displayType, __userBookmarks, __keysToFetch, __keysToFetchData, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { staticEndpoint } from '$data/websiteSettings';
+	import { term } from '$utils/terminologies';
 
 	// only allow display type 1 & 2, and don't save the layout in settings
 	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
@@ -37,7 +38,7 @@
 	__currentPage.set('juz');
 </script>
 
-<PageHead title={`Juz ${juzNumber}`} />
+<PageHead title={`${term('juz')} ${juzNumber}`} />
 
 {#await fetchJuzKeys}
 	<!-- <Spinner /> -->
