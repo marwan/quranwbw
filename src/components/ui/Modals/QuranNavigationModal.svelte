@@ -27,14 +27,7 @@
 	let placeholder = 'Navigate or Search Quran';
 	let verseKeyData;
 	let searchResults;
-	let lastReadChapter = 1;
-	let lastReadVerse = 1;
 	let morphologyKey = '1:1';
-
-	// Extract last read chapter and verse from the user's last read data
-	$: if ($__lastRead.hasOwnProperty('key') && Object.keys($__lastRead.key).length > 0) {
-		[lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number);
-	}
 
 	// Hide the navigation modal when page URL or chapter/page number changes
 	$: if ($page.url.href || $__pageURL || $__chapterNumber || $__pageNumber) {
@@ -120,7 +113,9 @@
 				{#if searchedKey.length === 0 && $__currentPage === 'home'}
 					<div id="search-suggestions" class="flex flex-col text-base md:text-lg max-h-52 min-h-52 overflow-y-auto">
 						<!-- Last Read -->
-						{#if $__lastRead.hasOwnProperty('key')}
+						{#if Object.keys($__lastRead).length > 0}
+							{@const lastReadChapter = $__lastRead.chapter}
+							{@const lastReadVerse = $__lastRead.verse}
 							<div id="last-read-links" class="py-2 space-y-2">
 								<span class="text-xs font-semibold pt-2">Last Read</span>
 								<div class={linkClasses}>

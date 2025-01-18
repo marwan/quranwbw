@@ -5,7 +5,7 @@
 	import AudioButton from '$ui/BottomToolbar/AudioButton.svelte';
 	import SettingsButton from '$ui/BottomToolbar/SettingsButton.svelte';
 	import MushafMinimalMode from '$ui/BottomToolbar/MushafMinimalMode.svelte';
-	import { __currentPage, __siteNavigationModalVisible, __quranNavigationModalVisible, __lastRead } from '$utils/stores';
+	import { __currentPage } from '$utils/stores';
 </script>
 
 <LeftNavigationButton />

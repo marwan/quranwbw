@@ -42,10 +42,7 @@ export const defaultSettings = {
 		correctAnswers: 0,
 		wrongAnswers: 0
 	},
-	lastRead: {
-		key: {},
-		page: 1
-	},
+	lastRead: {},
 	userBookmarks: [],
 	userNotes: {},
 	favouriteChapters: [1, 5, 18],

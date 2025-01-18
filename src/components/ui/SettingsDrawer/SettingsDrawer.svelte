@@ -36,7 +36,6 @@
 		__settingsDrawerHidden,
 		__wakeLockEnabled,
 		__englishTerminology,
-		__lastRead,
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick

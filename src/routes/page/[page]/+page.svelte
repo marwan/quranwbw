@@ -10,7 +10,7 @@
 	// import BottomToolbarButtons from '$ui/BottomToolbar/BottomToolbarButtons.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { goto } from '$app/navigation';
-	import { __chapterNumber, __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __lastRead, __displayType, __topNavbarVisible, __bottomToolbarVisible, __mushafMinimalModeEnabled } from '$utils/stores';
+	import { __chapterNumber, __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __topNavbarVisible, __bottomToolbarVisible, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { apiEndpoint, apiVersion, apiByPassCache, errorLoadingDataMessage, mushafWordFontLink, mushafFontVersion } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
@@ -85,6 +85,9 @@
 				juz: apiData[Object.keys(apiData)[0]].meta.juz
 			});
 
+			// Update the last read page
+			updateSettings({ type: 'lastRead', value: apiData[Object.keys(apiData)[0]].meta });
+
 			// Event listeners for swipe gestures
 			const pageBlock = document.getElementById('page-block');
 			pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
@@ -93,10 +96,8 @@
 			return apiData;
 		})();
 
-		// Update the page number and last read page
+		// Update the page number
 		__pageNumber.set(page);
-		const key = JSON.parse(localStorage.getItem('userSettings')).lastRead.key;
-		updateSettings({ type: 'lastRead', value: { key: key !== undefined ? key : '1:1', page } });
 	}
 
 	// Only allow continuous normal mode, without saving the setting

@@ -16,7 +16,7 @@
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
 	import MorphologyBold from '$svgs/MorphologyBold.svelte';
 	import BookFilled from '$svgs/BookFilled.svelte';
-	import ContinueReading from '$svgs/ContinueReading.svelte';
+
 	import Moon from '$svgs/Moon.svelte';
 	import Cave from '$svgs/Cave.svelte';
 	import Search from '$svgs/Search.svelte';
@@ -27,7 +27,6 @@
 
 	$: isFriday = new Date().getDay() === 5;
 	$: isNight = currentHour < 4 || currentHour > 19;
-	$: lastReadExists = $__lastRead.hasOwnProperty('key') && Object.keys($__lastRead.key).length > 0;
 
 	// let chaptersFetched = false;
 
@@ -95,32 +94,10 @@
 	</div>
 
 	<!-- extras: continue reading, time specific chapters -->
-	<div class="flex flex-col mt-4 text-sm">
-		<div class="w-full flex flex-row space-x-4 items-center">
-			<div class="flex flex-row space-x-2 w-full">
-				{#if lastReadExists}
-					{@const [lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number)}
-					<a href="/{lastReadChapter}/{lastReadVerse}" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Continue Reading Button')}>
-						<span><ContinueReading size={4} /></span>
-						<span class="hidden md:block">
-							Continue Reading:
-							{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
-						</span>
-						<span class="block md:hidden">
-							{#if !isFriday && !isNight}
-								Continue:
-								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
-							{:else if (isFriday || isNight) && !(isFriday && isNight)}
-								Continue:
-								{lastReadChapter}:{lastReadVerse}
-							{:else}
-								{lastReadChapter}:{lastReadVerse}
-							{/if}
-						</span>
-					</a>
-				{/if}
-
-				{#if isFriday || isNight}
+	{#if isFriday || isNight}
+		<div class="flex flex-col mt-4 text-sm">
+			<div class="w-full flex flex-row space-x-4 items-center">
+				<div class="flex flex-row space-x-2 w-full">
 					{#if isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
 							<span class="-mt-1"><Cave size={4} /></span>
@@ -140,10 +117,10 @@
 							</div>
 						</a>
 					{/if}
-				{/if}
+				</div>
 			</div>
 		</div>
-	</div>
+	{/if}
 
 	<!-- chapter and most read tabs -->
 	<HomepageTabs />

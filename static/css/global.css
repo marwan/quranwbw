@@ -4356,8 +4356,8 @@ svg {
     max-width: 80rem;
   }
 
-  .md\:max-w-\[15vw\] {
-    max-width: 15vw;
+  .md\:max-w-\[115px\] {
+    max-width: 115px;
   }
 
   .md\:max-w-\[40rem\] {

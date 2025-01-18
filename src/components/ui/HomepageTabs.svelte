@@ -6,6 +6,7 @@
 	import Eye from '$svgs/Eye.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import Notes from '$svgs/Notes.svelte';
+	import ContinueReading from '$svgs/ContinueReading.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
@@ -14,21 +15,13 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { disabledClasses } from '$data/commonClasses';
 
-	// CSS classes for chapter cards and tabs
+	const svgData = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
+	const continueReadingButtonClasses = `inline-flex items-center rounded-full px-4 py-4 space-x-2 justify-center text-sm ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
 	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')} ${window.theme('hover')}`;
-
-	// Tab classes
 	const commontabClasses = 'px-2 md:px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
 	const tabDefaultBorder = `${commontabClasses} border-transparent`;
 	const tabActiveBorder = `${commontabClasses} ${window.theme('border')}`;
-
-	const dividerClasses = `
-		flex flex-col text-center mx-auto w-full 
-		py-2 px-4 text-sm rounded-full
-		${window.theme('hoverBorder')}
-		${window.theme('bgSecondaryDark')}
-	`;
 
 	let divisionsActiveTab = 1; // Default to chapters tab
 	let extrasActiveTab = 1; // Default to bookmarks
@@ -52,6 +45,7 @@
 		})();
 	}
 
+	$: lastReadExists = Object.keys($__lastRead).length > 0;
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 
@@ -137,12 +131,12 @@
 
 							<div class="flex flex-row space-x-2">
 								<a href="{bookmarkChapter}/{bookmarkVerse}" class="!justify-start {cardInnerClasses} w-full flex-col">
-									<div class="text-sm truncate max-w-[28vw] md:max-w-[15vw]">{quranMetaData[bookmarkChapter].transliteration} ({bookmark})</div>
+									<div class="text-sm truncate max-w-[28vw] md:max-w-[115px]">{quranMetaData[bookmarkChapter].transliteration} ({bookmark})</div>
 
 									{#if extrasActiveTab === 1 && totalBookmarks > 0}
 										<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70">
 											{#await fullQuranData then data}
-												<div class="truncate max-w-[28vw] md:max-w-[15vw]">{data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
+												<div class="truncate max-w-[28vw] md:max-w-[115px]">{data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
 											{:catch error}
 												<p></p>
 											{/await}
@@ -170,7 +164,7 @@
 					<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
 						{#each Object.entries($__userNotes) as [verse, note]}
 							<a href="{verse.split(':')[0]}/{verse.split(':')[1]}" class="!justify-start {cardInnerClasses} w-full flex-col">
-								<div class="text-sm truncate max-w-[30vw] md:max-w-[15vw]">{quranMetaData[verse.split(':')[0]].transliteration} ({verse})</div>
+								<div class="text-sm truncate max-w-[30vw] md:max-w-[115px]">{quranMetaData[verse.split(':')[0]].transliteration} ({verse})</div>
 								<span class="text-xs truncate opacity-70">{note.note}</span>
 							</a>
 						{/each}
@@ -220,6 +214,18 @@
 		<!-- chapters tab -->
 		{#if divisionsActiveTab === 1}
 			<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
+				{#if lastReadExists}
+					{@const lastReadChapter = $__lastRead.chapter}
+					{@const lastReadVerse = $__lastRead.verse}
+					<a href="/{lastReadChapter}/{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
+						<span><ContinueReading size={4} /></span>
+						<span>
+							Continue Reading:
+							{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
+						</span>
+					</a>
+				{/if}
+
 				<div class="{cardGridClasses} grid-cols-1">
 					{#each chapterListOrder as { id }, i}
 						{#if id > 0}
@@ -229,10 +235,7 @@
 										<div class="flex items-center">
 											<!-- chapter number star -->
 											<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-												<path
-													class="opacity-15"
-													d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z"
-												/>
+												{@html svgData}
 												<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{id}</text>
 											</svg>
 										</div>
@@ -270,53 +273,43 @@
 		<!-- juz tab -->
 		{#if divisionsActiveTab === 2}
 			<div id="juz-tab-panel" role="tabpanel" aria-labelledby="juz-tab">
-				<div class="space-y-4">
+				{#if lastReadExists}
+					{@const lastReadChapter = $__lastRead.chapter}
+					{@const lastReadVerse = $__lastRead.verse}
+					{@const lastReadJuz = $__lastRead.juz}
+					<a href="/juz/{lastReadJuz}?startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
+						<span><ContinueReading size={4} /></span>
+						<span>
+							Continue Reading: Juz {lastReadJuz}, {lastReadChapter}:{lastReadVerse}
+						</span>
+					</a>
+				{/if}
+
+				<div class="{cardGridClasses} grid-cols-1">
 					{#each juzListOrder as juz}
-						<div class="py-2 space-y-2">
-							<div class={dividerClasses}>Juz {juz.juz} ({juz.from} - {juz.to})</div>
-							<div class="{cardGridClasses} grid-cols-1">
-								{#each juz.chapters as id}
-									<a href="/{id}">
-										<div class="{cardInnerClasses} flex-row text-center items-center">
-											<div class="flex flex-row space-x-2">
-												<div class="flex items-center">
-													<!-- chapter number star -->
-													<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-														<path
-															class="opacity-15"
-															d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z"
-														/>
-														<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{id}</text>
-													</svg>
-												</div>
+						<a href="/juz/{juz.juz}">
+							<div class="{cardInnerClasses} flex-row text-center items-center">
+								<div class="flex flex-row space-x-2">
+									<div class="flex items-center">
+										<!-- chapter number star -->
+										<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
+											{@html svgData}
+											<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{juz.juz}</text>
+										</svg>
+									</div>
 
-												<div class="text-left">
-													<!-- chapter name and icon -->
-													<div class="flex flex-row items-center space-x-1 justify-start truncate">
-														<div>{quranMetaData[id].transliteration}</div>
-														<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
-														<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
-													</div>
-
-													<!-- chapter translation -->
-													<div class="block text-xs truncate opacity-70">
-														{quranMetaData[id].translation}
-													</div>
-
-													<!-- chapter verses -->
-													<div class="block text-xs opacity-70">
-														{quranMetaData[id].verses}
-														{term('verses')}
-													</div>
-												</div>
-											</div>
-
-											<div class="invisible chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+									<div class="text-left">
+										<div class="flex flex-row items-center space-x-1 justify-start truncate">
+											<div>{juz.name}</div>
 										</div>
-									</a>
-								{/each}
+
+										<div class="block text-xs truncate opacity-70">
+											{juz.from} - {juz.to}
+										</div>
+									</div>
+								</div>
 							</div>
-						</div>
+						</a>
 					{/each}
 				</div>
 			</div>

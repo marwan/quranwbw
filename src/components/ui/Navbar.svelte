@@ -8,8 +8,6 @@
 
 	let lastReadPage;
 	let lastReadJuz;
-	let lastReadChapter = 1;
-	let lastReadVerse = 1;
 	let navbarChapterName;
 	let mushafChapters = [];
 	let mushafJuz = '...';
@@ -23,25 +21,19 @@
 	`;
 
 	// Update last read details
-	$: {
-		try {
-			const lastReadElement = document.getElementById($__lastRead.key);
-			lastReadPage = lastReadElement?.getAttribute('data-page');
-			lastReadJuz = lastReadElement?.getAttribute('data-juz');
-
-			if ($__lastRead.hasOwnProperty('key')) {
-				[lastReadChapter, lastReadVerse] = $__lastRead.key.split(':').map(Number);
-			}
-		} catch (error) {
-			console.log(error);
-		}
+	$: try {
+		const lastReadElement = document.getElementById(`${$__lastRead.chapter}:${$__lastRead.verse}`);
+		lastReadPage = lastReadElement?.getAttribute('data-page');
+		lastReadJuz = lastReadElement?.getAttribute('data-juz');
+	} catch (error) {
+		console.log(error);
 	}
 
 	// Get the revelation type of the current chapter
 	$: chapterRevelation = quranMetaData[$__chapterNumber].revelation;
 
 	// Calculate the scroll progress percentage for the current chapter
-	$: chapterProgress = (lastReadVerse / quranMetaData[lastReadChapter].verses) * 100;
+	$: chapterProgress = Object.keys($__lastRead).length > 0 ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
 
 	// Get the chapter name for the navbar
 	$: {
