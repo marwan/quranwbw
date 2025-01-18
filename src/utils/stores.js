@@ -65,6 +65,7 @@ let __websiteOnline,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
+	__keysToFetchData,
 	__wordMorphologyOnClick;
 
 if (browser) {
@@ -240,6 +241,9 @@ if (browser) {
 	// storing the total keys to fetch by Individual component
 	__keysToFetch = writable(null);
 
+	// storing the keys data fetched by Individual component
+	__keysToFetchData = writable({});
+
 	// what happens when a user clicks on a word
 	__wordMorphologyOnClick = writable(userSettings.displaySettings.wordMorphologyOnClick);
 }
@@ -309,5 +313,6 @@ export {
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
+	__keysToFetchData,
 	__wordMorphologyOnClick
 };

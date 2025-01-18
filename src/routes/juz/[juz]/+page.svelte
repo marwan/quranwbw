@@ -3,7 +3,7 @@
 
 	import PageHead from '$misc/PageHead.svelte';
 	import Individual from '$display/verses/modes/Individual.svelte';
-	import { __currentPage, __displayType, __userBookmarks, __keysToFetch, __pageURL } from '$utils/stores';
+	import { __currentPage, __displayType, __userBookmarks, __keysToFetch, __keysToFetchData, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { staticEndpoint } from '$data/websiteSettings';
 
 	// only allow display type 1 & 2, and don't save the layout in settings
@@ -14,8 +14,9 @@
 
 	__pageURL.set(1);
 
-	// Fetch words data for morphology
-	$: if ($__pageURL > 0) {
+	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
+		__keysToFetchData.set({});
+
 		fetchJuzKeys = (async () => {
 			try {
 				const response = await fetch(`${staticEndpoint}/meta/keysInJuz.json`);
@@ -32,6 +33,8 @@
 			}
 		})();
 	}
+
+	$: console.log($__keysToFetchData);
 
 	__currentPage.set('juz');
 </script>

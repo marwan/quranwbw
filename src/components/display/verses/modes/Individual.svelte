@@ -6,7 +6,7 @@
 	import Normal from '$display/layouts/Normal.svelte';
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
 	import Bismillah from '$display/Bismillah.svelte';
-	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __currentPage, __pageURL, __userSettings } from '$utils/stores';
+	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData, __currentPage, __pageURL, __userSettings } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { isValidVerseKey } from '$utils/validateKey';
@@ -154,19 +154,26 @@
 		__pageURL.set(Math.random());
 	}
 
-	// This function fetches the data for all chapters within the specified startIndex and endIndex range, stores the data in a dataMap object,
-	// and then renders the fetched data on the page.
-	// Instead of rendering each chapter immediately upon retrieval, the function waits until all the chapter data is fetched,
-	// ensuring the complete data set is rendered at once, improving the user experience by avoiding partial rendering.
 	async function fetchAllChapterData() {
 		const promises = Array.from(Array(endIndex + 1).keys())
 			.slice(startIndex)
-			.map((index) =>
-				fetchChapterData({
-					chapter: keysArray[index].split(':')[0],
-					reRenderWhenTheseUpdates: [$__fontType, $__wordTranslation, $__wordTransliteration]
-				})
-			);
+			.map(async (index) => {
+				const chapterKey = keysArray[index].split(':')[0];
+
+				if (__keysToFetchData.hasOwnProperty(chapterKey)) {
+					// Return cached data if available
+					console.log('returning cache...');
+					return __keysToFetchData[chapterKey];
+				} else {
+					// Fetch from API and store in the cache
+					const data = await fetchChapterData({ chapter: chapterKey });
+
+					// Store fetched data in the cache
+					// __keysToFetchData[chapterKey] = data;
+
+					return data;
+				}
+			});
 
 		const results = await Promise.all(promises);
 
