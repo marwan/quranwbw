@@ -16,14 +16,9 @@
 	$: chapterToFetch = $__currentPage === 'mushaf' ? parseInt($__verseKey.split(':')[0], 10) : value.meta.chapter;
 
 	// Fetch verse translations and transliteration data for pages other than chapter
-	$: if ($__currentPage !== 'chapter' || $__keysToFetchData) {
+	$: if ($__currentPage !== 'chapter') {
 		verseTranslationData = fetchVerseTranslationData(chapterToFetch, $__verseTranslations.toString());
-
-		if (__keysToFetchData.hasOwnProperty(value.meta.chapter)) {
-			verseTransliterationData = __keysToFetchData[value.meta.chapter];
-		} else {
-			verseTransliterationData = fetchChapterData({ chapter: value.meta.chapter, reRenderWhenTheseUpdates: $__verseTranslations });
-		}
+		verseTransliterationData = fetchChapterData({ chapter: value.meta.chapter, reRenderWhenTheseUpdates: $__verseTranslations });
 	}
 
 	// This function takes two arguments: translationsObject and translationsSelected.

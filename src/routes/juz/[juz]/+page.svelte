@@ -34,8 +34,6 @@
 		})();
 	}
 
-	$: console.log($__keysToFetchData);
-
 	__currentPage.set('juz');
 </script>
 
