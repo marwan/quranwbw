@@ -1333,6 +1333,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-top: 2px;
 }
 
+.mb-0\.5 {
+  margin-bottom: 0.125rem;
+}
+
 .block {
   display: block;
 }

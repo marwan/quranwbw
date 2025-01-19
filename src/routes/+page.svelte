@@ -21,7 +21,7 @@
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 	const currentHour = new Date().getHours();
 
-	$: isFriday = new Date().getDay() === 5;
+	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 
 	// let chaptersFetched = false;
@@ -94,10 +94,10 @@
 		<div class="flex flex-col mt-4 text-sm">
 			<div class="w-full flex flex-row space-x-4 items-center">
 				<div class="flex flex-row space-x-2 w-full">
-					{#if !isFriday}
+					{#if isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
-							<span class="invisible chapter-icons text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[18].icon};`}</span>
-							<div class="flex flex-row hidden xs:flex">
+							<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[18].icon};`}</span>
+							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
 								<span>Al Kahf</span>
 							</div>
@@ -105,19 +105,19 @@
 					{/if}
 
 					{#if isNight}
-						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
-							<span class="invisible chapter-icons text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[67].icon};`}</span>
-							<div class="flex flex-row hidden xs:flex">
-								<span class="hidden md:block mr-1">Night Reminder:</span>
-								<span>Al Mulk</span>
+						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Waaqia Reminder Button')}>
+							<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[56].icon};`}</span>
+							<div class="flex flex-row truncate">
+								<span class="hidden md:block mr-1">Evening Reminder:</span>
+								<span>Al Waaqia</span>
 							</div>
 						</a>
 
-						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Waaqia Reminder Button')}>
-							<span class="invisible chapter-icons text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[56].icon};`}</span>
-							<div class="flex flex-row hidden xs:flex">
+						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
+							<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[67].icon};`}</span>
+							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
-								<span>Al Waaqia</span>
+								<span>Al Mulk</span>
 							</div>
 						</a>
 					{/if}
