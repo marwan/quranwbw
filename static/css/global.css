@@ -1484,10 +1484,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   height: 100vh;
 }
 
-.max-h-40 {
-  max-height: 10rem;
-}
-
 .max-h-52 {
   max-height: 13rem;
 }
@@ -4238,12 +4234,6 @@ svg {
 
 .disabled\:opacity-50:disabled {
   opacity: 0.5;
-}
-
-@media (min-width: 374px) {
-  .xs\:block {
-    display: block;
-  }
 }
 
 @media (min-width: 640px) {

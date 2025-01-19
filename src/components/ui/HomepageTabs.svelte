@@ -4,13 +4,14 @@
 	import CrossSolid from '$svgs/CrossSolid.svelte';
 	import AscendingSort from '$svgs/AscendingSort.svelte';
 	import Eye from '$svgs/Eye.svelte';
+	import EyeCrossed from '$svgs/EyeCrossed.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import Notes from '$svgs/Notes.svelte';
 	import ContinueReading from '$svgs/ContinueReading.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
-	import { __lastRead, __favouriteChapters, __userBookmarks, __userNotes, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
+	import { __lastRead, __favouriteChapters, __userBookmarks, __userNotes, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible, __homepageExtrasPanelVisible } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { disabledClasses } from '$data/commonClasses';
@@ -25,7 +26,6 @@
 
 	let divisionsActiveTab = 1; // Default to chapters tab
 	let extrasActiveTab = 1; // Default to bookmarks
-	let extrasPanelVisible = true;
 	let chapterSortIsAscending = true;
 	let chapterListOrder = [...quranMetaData];
 	let juzSortIsAscending = true;
@@ -91,14 +91,14 @@
 
 	<div id="extras-tabs" class="flex items-center justify-between">
 		<div class="flex flex-row justify-center">
-			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!extrasPanelVisible && disabledClasses}">
+			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!$__homepageExtrasPanelVisible && disabledClasses}">
 				<button on:click={() => (extrasActiveTab = 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
 					<span>Bookmarks</span>
-					<span class="hidden xs:block">{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
+					<span>{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
 				</button>
 				<button on:click={() => (extrasActiveTab = 2)} class="{extrasActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Notes Tab Button">
 					<span>Notes</span>
-					<span class="hidden xs:block">{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
+					<span>{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 				</button>
 				<button on:click={() => (extrasActiveTab = 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
 			</div>
@@ -107,16 +107,16 @@
 		<button
 			class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}"
 			on:click={() => {
-				extrasPanelVisible = !extrasPanelVisible;
+				updateSettings({ type: 'homepageExtrasPanelVisible', value: !$__homepageExtrasPanelVisible });
 			}}
 			data-umami-event="Toggle Panel Button"
 		>
-			<Eye size={4} />
+			<svelte:component this={$__homepageExtrasPanelVisible ? EyeCrossed : Eye} size={4} />
 		</button>
-		<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Toggle Panel</Tooltip>
+		<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{$__homepageExtrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
 	</div>
 
-	<div id="extras-panel" class="mb-6 max-h-40 overflow-y-scroll pt-1 {extrasPanelVisible ? 'block' : 'hidden'}">
+	<div id="extras-panel" class="mb-6 pt-1 {$__homepageExtrasPanelVisible ? 'block' : 'hidden'}">
 		<!-- bookmarks tab -->
 		<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 			<div id="bookmark-cards" class="flex flex-col space-y-4">

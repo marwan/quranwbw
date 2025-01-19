@@ -66,7 +66,8 @@ let __websiteOnline,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__keysToFetchData,
-	__wordMorphologyOnClick;
+	__wordMorphologyOnClick,
+	__homepageExtrasPanelVisible;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -246,6 +247,9 @@ if (browser) {
 
 	// what happens when a user clicks on a word
 	__wordMorphologyOnClick = writable(userSettings.displaySettings.wordMorphologyOnClick);
+
+	// visibiliy of the extras panel on homepage (bookmarks, notes, etc...)
+	__homepageExtrasPanelVisible = writable(userSettings.displaySettings.homepageExtrasPanelVisible);
 }
 
 export {
@@ -314,5 +318,6 @@ export {
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__keysToFetchData,
-	__wordMorphologyOnClick
+	__wordMorphologyOnClick,
+	__homepageExtrasPanelVisible
 };

@@ -27,7 +27,8 @@ import {
 	__englishTerminology,
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
-	__wordMorphologyOnClick
+	__wordMorphologyOnClick,
+	__homepageExtrasPanelVisible
 } from '$utils/stores';
 // import { uploadSettingsToCloud } from '$utils/cloudSettings';
 
@@ -276,6 +277,12 @@ export function updateSettings(props) {
 		case 'wordMorphologyOnClick':
 			__wordMorphologyOnClick.set(props.value);
 			userSettings.displaySettings.wordMorphologyOnClick = props.value;
+			break;
+
+		// for homepage's extras panel
+		case 'homepageExtrasPanelVisible':
+			__homepageExtrasPanelVisible.set(props.value);
+			userSettings.displaySettings.homepageExtrasPanelVisible = props.value;
 			break;
 
 		// for increasing/decreasing font sizes

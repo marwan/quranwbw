@@ -12,6 +12,7 @@ export const defaultSettings = {
 		englishTerminology: false,
 		hideNonDuaPart: false,
 		wordMorphologyOnClick: false,
+		homepageExtrasPanelVisible: true,
 		fontSizes: {
 			arabicText: window.matchMedia('(min-width: 1280px)').matches || window.matchMedia('(min-width: 1024px)').matches || window.matchMedia('(min-width: 768px)').matches ? 'text-4xl' : 'text-2xl',
 			wordTranslationText: 'text-sm',
