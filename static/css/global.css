@@ -2609,6 +2609,11 @@ input[type="range"].range-lg::-moz-range-thumb {
   padding-bottom: 2rem;
 }
 
+.\!py-4 {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
 .pb-0 {
   padding-bottom: 0px;
 }
