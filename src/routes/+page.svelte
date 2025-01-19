@@ -70,7 +70,7 @@
 			<div><Quran /></div>
 
 			<div class="flex flex-col">
-				<div id="site-title" class="text-xl md:text-3xl font-bold pb-2" style="color: {window.theme('icon')}">
+				<div id="site-title" class="text-2xl md:text-3xl font-bold pb-2" style="color: {window.theme('icon')}">
 					<span class="block md:hidden">QuranWBW</span>
 					<span class="hidden md:block">Quran Word By Word</span>
 				</div>
