@@ -144,8 +144,21 @@
 									{/if}
 								</a>
 
-								<!-- delete/cross button -->
-								<button on:click={() => updateSettings({ type: 'userBookmarks', key: bookmark })} class="pointer h-7 w-7 opacity-100" style="margin-left: -20px; margin-top: -5px;" title="Remove bookmark"><CrossSolid size={7} /></button>
+								<!-- delete bookmark button -->
+								<button
+									on:click={() => {
+										const userResponse = confirm(`Are you sure you want to delete this bookmark (${bookmark})?`);
+										if (userResponse) {
+											updateSettings({ type: 'userBookmarks', key: bookmark });
+											window.umami.track('Delete Bookmark Icon');
+										}
+									}}
+									class="pointer h-7 w-7 opacity-100"
+									style="margin-left: -20px; margin-top: -5px;"
+									title="Delete bookmark"
+								>
+									<CrossSolid size={7} />
+								</button>
 							</div>
 						{/each}
 					</div>

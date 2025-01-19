@@ -1484,8 +1484,8 @@ input[type="range"].range-lg::-moz-range-thumb {
   height: 100vh;
 }
 
-.max-h-52 {
-  max-height: 13rem;
+.max-h-64 {
+  max-height: 16rem;
 }
 
 .max-h-\[32em\] {
@@ -1512,8 +1512,8 @@ input[type="range"].range-lg::-moz-range-thumb {
   max-height: 100%;
 }
 
-.min-h-52 {
-  min-height: 13rem;
+.min-h-64 {
+  min-height: 16rem;
 }
 
 .min-h-\[calc\(100\%-3\.5rem\)\] {

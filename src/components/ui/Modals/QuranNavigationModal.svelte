@@ -111,7 +111,7 @@
 
 				<!-- suggestions (only for home page) -->
 				{#if searchedKey.length === 0 && $__currentPage === 'home'}
-					<div id="search-suggestions" class="flex flex-col text-base md:text-lg max-h-52 min-h-52 overflow-y-auto">
+					<div id="search-suggestions" class="flex flex-col text-base md:text-lg max-h-64 min-h-64 overflow-y-auto">
 						<!-- Last Read -->
 						{#if $__lastRead.hasOwnProperty('chapter')}
 							{@const lastReadChapter = $__lastRead.chapter}
@@ -140,7 +140,7 @@
 
 				<!-- results -->
 				{#if searchedKey.length > 0}
-					<div id="search-results" class="flex flex-col text-base md:text-lg max-h-52 min-h-52 overflow-y-auto">
+					<div id="search-results" class="flex flex-col text-base md:text-lg max-h-64 min-h-64 overflow-y-auto">
 						{#if searchResults}
 							<!-- stuff for current chapter -->
 							{#each Object.entries(searchResults) as [key, value]}
@@ -265,7 +265,7 @@
 
 		<!-- chapter and verse selectors -->
 		{#if $__currentPage !== 'home'}
-			<div id="chapter-and-verses-block" class="flex flex-row space-x-4 !mt-[-0rem] max-h-52 max-h-52 {searchedKey.length > 0 ? 'hidden' : 'block'}">
+			<div id="chapter-and-verses-block" class="flex flex-row space-x-4 !mt-[-0rem] max-h-64 min-h-64 {searchedKey.length > 0 ? 'hidden' : 'block'}">
 				<!-- chapter selector -->
 				{#if !['morphology'].includes($__currentPage)}
 					<div class="flex flex-col py-2 space-y-2 w-full">
