@@ -82,9 +82,9 @@
 			</div>
 		</a>
 		<button class="mt-8 rounded-full text-center px-4 py-3 flex flex-row items-center justify-center space-x-1 w-full z-10 {window.theme('bgSecondaryDark')}" on:click={() => __quranNavigationModalVisible.set(true)} data-umami-event="Homepage Search Bar">
-			<div class="flex flex-row justify-center">
+			<div class="flex flex-row justify-center truncate">
 				<span class="mt-[2px] mr-1"><Search size={6} /></span>
-				<span class="opacity-70">Navigate or Search Quran</span>
+				<span class="opacity-70 truncate">Navigate or Search Quran</span>
 			</div>
 		</button>
 	</div>
