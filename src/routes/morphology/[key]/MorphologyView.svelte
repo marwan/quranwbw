@@ -53,9 +53,9 @@
 		// Fetch word summary data
 		fetchWordSummary = (async () => {
 			try {
-				const response = await fetch(`${staticEndpoint}/words-summary/${chapter}.json`);
+				const response = await fetch(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=1`);
 				const data = await response.json();
-				return data.data;
+				return data;
 			} catch (error) {
 				console.error(errorLoadingDataMessage, error);
 				return {};
