@@ -98,7 +98,7 @@
 	} else {
 		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
 
-		updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType });
+		updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
 		__selectedDisplayId.set(userSettings.displaySettings.displayType);
 
 		__fontType.set(userSettings.displaySettings.fontType);

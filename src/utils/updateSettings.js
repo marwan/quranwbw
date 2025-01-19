@@ -58,7 +58,7 @@ export function updateSettings(props) {
 			__displayType.set(props.value);
 			if (props.skipSave) return;
 			userSettings.displaySettings.displayType = props.value;
-			trackEvent = true;
+			if (!props.skipTrackEvent) trackEvent = true;
 			break;
 
 		// for word tooltip
