@@ -485,7 +485,20 @@
 
 			<!-- reset settings button -->
 			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 {settingsDrawerOpacity}">
-				<button on:click={() => resetSettings()} class="text-sm {buttonClasses}">Reset Settings</button>
+				<!-- Reset Settings button -->
+				<button
+					on:click={() => {
+						// Show the confirm dialog
+						const userResponse = confirm('Are you sure you want to reset settings? This action cannot be reversed.');
+						if (userResponse) {
+							resetSettings();
+						}
+					}}
+					class="text-sm {buttonClasses}"
+				>
+					Reset Settings
+				</button>
+
 				<p class={settingsDescriptionClasses}>Your bookmarks and notes will remain unaffected.</p>
 			</div>
 		</div>
