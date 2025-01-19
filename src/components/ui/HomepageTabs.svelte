@@ -2,7 +2,8 @@
 	import Mecca from '$svgs/Mecca.svelte';
 	import Madinah from '$svgs/Madinah.svelte';
 	import CrossSolid from '$svgs/CrossSolid.svelte';
-	import AscendingSort from '$svgs/AscendingSort.svelte';
+	import SortAscending from '$svgs/SortAscending.svelte';
+	import SortDescending from '$svgs/SortDescending.svelte';
 	import Eye from '$svgs/Eye.svelte';
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
@@ -26,9 +27,8 @@
 
 	let divisionsActiveTab = 1; // Default to chapters tab
 	let extrasActiveTab = 1; // Default to bookmarks
-	let chapterSortIsAscending = true;
+	let divisionsSortIsAscending = true;
 	let chapterListOrder = [...quranMetaData];
-	let juzSortIsAscending = true;
 	let juzListOrder = [...juzMeta];
 	let fullQuranData;
 
@@ -60,17 +60,9 @@
 	});
 
 	function sortDivisions() {
-		// Sort chapters
-		if (divisionsActiveTab === 1) {
-			chapterSortIsAscending = !chapterSortIsAscending;
-			chapterListOrder = chapterSortIsAscending ? [...quranMetaData] : [...quranMetaData].reverse();
-		}
-
-		// Sort Juz
-		else if (divisionsActiveTab === 2) {
-			juzSortIsAscending = !juzSortIsAscending;
-			juzListOrder = juzSortIsAscending ? [...juzMeta] : [...juzMeta].reverse();
-		}
+		divisionsSortIsAscending = !divisionsSortIsAscending;
+		chapterListOrder = divisionsSortIsAscending ? [...quranMetaData] : [...quranMetaData].reverse();
+		juzListOrder = divisionsSortIsAscending ? [...juzMeta] : [...juzMeta].reverse();
 
 		// Ensure chapter icons are visible after sorting
 		renderChapterIcons();
@@ -121,7 +113,7 @@
 		<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 			<div id="bookmark-cards" class="flex flex-col space-y-4">
 				{#if totalBookmarks === 0}
-					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 pl-2">
+					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
 						<span>You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you. </span>
 					</div>
 				{:else}
@@ -170,7 +162,7 @@
 		<div class="notes-tab-panels space-y-12 {extrasActiveTab === 2 ? 'block' : 'hidden'}" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab">
 			<div id="notes-cards" class="flex flex-col space-y-4">
 				{#if totalNotes === 0}
-					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 pl-2">
+					<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
 						<span>You haven't saved any notes yet! Start jotting down your thoughts by clicking the <Notes classes="inline mt-[-4px]" /> icon. It's like creating your own personal treasure chest of wisdom. </span>
 					</div>
 				{:else}
@@ -216,10 +208,10 @@
 				</button>
 			</div>
 
-			<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Chapters/Juz Sort Button">
-				<AscendingSort size={4} />
+			<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
+				<svelte:component this={divisionsSortIsAscending ? SortDescending : SortAscending} size={4} />
 			</button>
-			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Sort Asc/Dsc</Tooltip>
+			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
 		</div>
 	</div>
 

@@ -24,7 +24,6 @@
 		${window.theme('bgSecondaryLight')}
 	`;
 
-	const allowedDisplayTypes = [1, 2, 7];
 	const displayComponents = {
 		1: { component: WordByWord },
 		2: { component: Normal },
@@ -52,6 +51,11 @@
 	let dataMap = {};
 	let keyToStartWith = null;
 
+	// Only allow display types listed in displayComponents, else default to type 1, and don't save the layout in settings if not allowed
+	$: if (!displayComponents.hasOwnProperty($__displayType)) {
+		$__displayType = 1;
+	}
+
 	// Update the layout for the previous/next verse buttons
 	$: loadPrevNextVerseButtons = `flex ${selectableDisplays[$__displayType].continuous ? 'flex-row-reverse' : 'flex-row'} space-x-4 justify-center`;
 
@@ -78,11 +82,6 @@
 	// Basic checks
 	if (startIndex < 0) startIndex = 0;
 	if (endIndex > keysArrayLength) endIndex = keysArrayLength;
-
-	// Only allow display type 1, 2, & 7, and don't save the layout in settings if not allowed
-	if (!allowedDisplayTypes.includes($__displayType)) {
-		__displayType.set(1);
-	}
 
 	function loadNextVerses() {
 		try {

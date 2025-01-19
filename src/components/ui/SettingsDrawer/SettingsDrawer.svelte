@@ -20,7 +20,6 @@
 		__chapterNumber,
 		__fontType,
 		__displayType,
-		__selectedDisplayId,
 		__websiteTheme,
 		__wordTranslation,
 		__wordTransliteration,
@@ -211,7 +210,7 @@
 					<div id="display-type-setting" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Display Type</div>
-							<button class={selectorClasses} on:click={() => gotoIndividualSetting('display-type')}>{selectableDisplays[$__selectedDisplayId].displayName}</button>
+							<button class={selectorClasses} on:click={() => gotoIndividualSetting('display-type')}>{selectableDisplays[$__displayType].displayName}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Different {term('verse')} layouts that you can choose from.</p>
 					</div>

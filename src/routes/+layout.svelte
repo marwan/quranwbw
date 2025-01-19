@@ -18,7 +18,7 @@
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 
-	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __selectedDisplayId, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible } from '$utils/stores';
+	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
@@ -91,16 +91,14 @@
 
 	// Update display and font type based on current page
 	$: if ($__currentPage === 'mushaf') {
-		__selectedDisplayId.set(6); // Mushaf Mode
+		$__displayType = 6;
+		// We do not need Uthmani digital and Indopak fonts in mushaf page
 		if (![2, 3].includes($__fontType)) {
-			__fontType.set(2); // Default font
+			__fontType.set(2);
 		}
 	} else {
 		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-
 		updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
-		__selectedDisplayId.set(userSettings.displaySettings.displayType);
-
 		__fontType.set(userSettings.displaySettings.fontType);
 	}
 
