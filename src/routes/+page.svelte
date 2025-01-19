@@ -10,23 +10,19 @@
 	// import { websitechangelog } from '$data/changelog';
 	import { quranMetaData } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
-	import { fetchChapterData } from '$utils/fetchData';
-
+	// import { fetchChapterData } from '$utils/fetchData';
 	import Menu from '$svgs/Menu.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
 	import MorphologyBold from '$svgs/MorphologyBold.svelte';
 	import BookFilled from '$svgs/BookFilled.svelte';
-
-	import Moon from '$svgs/Moon.svelte';
-	import Cave from '$svgs/Cave.svelte';
 	import Search from '$svgs/Search.svelte';
 
-	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-4 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
+	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 	const currentHour = new Date().getHours();
 
 	$: isFriday = new Date().getDay() === 5;
-	$: isNight = currentHour < 4 || currentHour > 19;
+	$: isNight = currentHour < 4 || currentHour > 18;
 
 	// let chaptersFetched = false;
 
@@ -94,33 +90,41 @@
 	</div>
 
 	<!-- extras: continue reading, time specific chapters -->
-	<!-- {#if isFriday || isNight}
+	{#if isFriday || isNight}
 		<div class="flex flex-col mt-4 text-sm">
 			<div class="w-full flex flex-row space-x-4 items-center">
 				<div class="flex flex-row space-x-2 w-full">
-					{#if isFriday}
+					{#if !isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
-							<span class="-mt-1"><Cave size={4} /></span>
-							<div class="flex flex-row">
+							<span class="invisible chapter-icons text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[18].icon};`}</span>
+							<div class="flex flex-row hidden xs:flex">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
-								<span>Al-Kahf</span>
+								<span>Al Kahf</span>
 							</div>
 						</a>
 					{/if}
 
 					{#if isNight}
 						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
-							<span><Moon size={4} /></span>
-							<div class="flex flex-row">
+							<span class="invisible chapter-icons text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[67].icon};`}</span>
+							<div class="flex flex-row hidden xs:flex">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
-								<span>Al-Mulk</span>
+								<span>Al Mulk</span>
+							</div>
+						</a>
+
+						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Waaqia Reminder Button')}>
+							<span class="invisible chapter-icons text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[56].icon};`}</span>
+							<div class="flex flex-row hidden xs:flex">
+								<span class="hidden md:block mr-1">Night Reminder:</span>
+								<span>Al Waaqia</span>
 							</div>
 						</a>
 					{/if}
 				</div>
 			</div>
 		</div>
-	{/if} -->
+	{/if}
 
 	<!-- chapter and most read tabs -->
 	<HomepageTabs />

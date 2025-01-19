@@ -11,7 +11,7 @@ export default {
 				lightGray: '#ebebeb'
 			},
 			screens: {
-				xs: '374px'
+				xs: '400px'
 			}
 		}
 	},

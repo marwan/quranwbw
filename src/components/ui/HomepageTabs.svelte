@@ -219,6 +219,7 @@
 		<!-- chapters tab -->
 		{#if divisionsActiveTab === 1}
 			<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
+				<!-- continue readin button -->
 				{#if lastReadExists}
 					{@const lastReadChapter = $__lastRead.chapter}
 					{@const lastReadVerse = $__lastRead.verse}
