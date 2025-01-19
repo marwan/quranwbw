@@ -108,7 +108,7 @@
 		<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{$__homepageExtrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
 	</div>
 
-	<div id="extras-panel" class="mb-6 pt-1 {$__homepageExtrasPanelVisible ? 'block' : 'hidden'}">
+	<div id="extras-panel" class="mb-4 pt-1 {$__homepageExtrasPanelVisible ? 'block' : 'hidden'}">
 		<!-- bookmarks tab -->
 		<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 			<div id="bookmark-cards" class="flex flex-col space-y-4">
@@ -197,7 +197,7 @@
 
 	<div class="border-b {window.theme('border')}"></div>
 
-	<div id="quran-division-tabs">
+	<div id="quran-division-tabs" class="mt-4">
 		<div class="flex flex-row items-center justify-between">
 			<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
 				<button on:click={() => (divisionsActiveTab = 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
