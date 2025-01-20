@@ -34,6 +34,8 @@
 	"type": "module",
 	"dependencies": {
 		"@macfja/svelte-persistent-store": "^2.4.1",
+		"@tailwindcss/typography": "^0.5.16",
+		"marked": "^15.0.6",
 		"party-js": "^2.2.0",
 		"svelte-gestures": "^5.0.4",
 		"svelte-inview": "^4.0.2"

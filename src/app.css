@@ -379,3 +379,67 @@ svg {
   display: none;
   color: rgb(0, 255, 0);
 }
+
+.markdown {
+  @apply space-y-4; /* Add spacing between block elements */
+}
+
+.markdown h1 {
+  @apply text-3xl font-bold mb-4;
+}
+
+.markdown h2 {
+  @apply text-2xl font-semibold mb-3;
+}
+
+.markdown h3 {
+  @apply text-xl font-medium mb-2;
+}
+
+.markdown p {
+  @apply text-base leading-relaxed mb-4;
+}
+
+.markdown ul {
+  @apply list-disc pl-6;
+}
+
+.markdown ol {
+  @apply list-decimal pl-6;
+}
+
+.markdown li {
+  @apply mb-1;
+}
+
+.markdown a {
+  @apply underline;
+}
+
+.markdown blockquote {
+  @apply italic border-l-4 pl-4 ml-2;
+}
+
+.markdown code {
+  @apply font-mono text-sm px-1 py-0.5 border rounded;
+}
+
+.markdown pre {
+  @apply bg-gray-100 p-4 rounded-md overflow-x-auto text-sm;
+}
+
+.markdown img {
+  @apply max-w-full rounded-md;
+}
+
+.markdown table {
+  @apply table-auto border-collapse border border-gray-300 w-full text-left;
+}
+
+.markdown th {
+  @apply px-4 py-2 border border-gray-300 font-semibold;
+}
+
+.markdown td {
+  @apply px-4 py-2 border border-gray-300;
+}
