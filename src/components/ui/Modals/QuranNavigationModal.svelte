@@ -302,7 +302,7 @@
 							{#key $__chapterNumber}
 								{#each { length: maxVersesToLoad } as _, verse}
 									<li>
-										<a href="/{$__chapterNumber}/{verse + 1}" on:click={() => __pageURL.set(Math.random())}>
+										<a href="/{$__chapterNumber}?startVerse={verse + 1}" on:click={() => __pageURL.set(Math.random())}>
 											<div class={listItemClasses}>{term('verse')} {verse + 1}</div>
 										</a>
 									</li>

@@ -35,6 +35,8 @@
 		// Parse URL to get the range of verses to load
 		[startVerse, endVerse] = parseURL();
 
+		// console.log({ startVerse, endVerse });
+
 		// If no specific range is selected, load verses from 1 to threshold or total chapter verses
 		if (startVerse === 1 && endVerse === chapterTotalVerses) {
 			startVerse = 1;
