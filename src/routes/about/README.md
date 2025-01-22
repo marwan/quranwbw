@@ -1,10 +1,10 @@
-## **"Indeed, this (book) is a reminder, so he who wills may take to his Lord a way. And you do not will except that Allah wills. Indeed, Allah is ever Knowing and Wise." [(76:29-30)](/76/29-30)**
+<!-- ## "Indeed, this (book) is a reminder, so he who wills may take to his Lord a way. And you do not will except that Allah wills. Indeed, Allah is ever Knowing and Wise." [(76:29-30)](/76/29-30)
 
 _In the name of Allah and prayers & blessings be upon His messenger, Muhammad (ﷺ)._
 
----
+--- -->
 
-## About the Website
+<!-- ## About the Website -->
 
 QuranWBW.com is your companion for reading, listening to, and learning the Holy Quran, word by word. With features like word audios, Tajweed colors, and transliteration, you can delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.
 
@@ -43,10 +43,8 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 
 ---
 
-### Notes
+_\* The Mushaf fonts are developed by and are a property of [King Fahad Glorious Quran Printing Complex](https://qurancomplex.gov.sa/) based in Madinah, Saudi Arabia. Tajweed Colors are based on [Tajweed Quran (Easy Quran) Mushaf by Dar-Al-Marifa](https://easyquran.com/ar/) developed by Dr. Eng. Taha Subhi, Damascus - Syria. Tajweed Color Font Features on King Fahad Glorious Quran Printing Complex V4 Mushaf fonts were invented and developed by [Ayman Siddiqui](https://zoopernet.com) and co-developed by the team: Rania, Amena, Naveed Ahmed, Mohammed Zahid, Tooba, and Anza for Sadaqa-e-jaria (non-commercial) purposes only. Development was permitted with prior permissions secured from King Fahad Glorious Quran Printing Complex and Dar-Al-Marifa by the [Quran.com](https://quran.com) (Quran Foundation) team._
 
-- **The Mushaf fonts** are developed by and are a property of [King Fahad Glorious Quran Printing Complex](https://qurancomplex.gov.sa/).
-- **Tajweed Colors** are based on [Tajweed Quran (Easy Quran) Mushaf by Dar-Al-Marifa](https://easyquran.com/ar/) developed by Dr. Eng. Taha Subhi.
-- Special thanks to everyone involved in the development and support of this project for Sadaqa-e-jaria purposes.
+_\*\* We express our heartfelt gratitude to everyone who contributed to the Chinese word-by-word Quran translation, particularly Brother Ma Zhiren for his meticulous translation work completed in 2014, Brother Adam Voo from Malaysia, and Brother Usama Nonnenmacher for digitalizing the data, as well as Brothers Max Ma from Canada and Suleyman Abdullah from China for their collaboration. May Allah reward them all abundantly in this world and the hereafter. We pray that Allah blesses our Chinese brothers and sisters through the Quran app._
 
-May Allah reward all contributors abundantly in this world and the hereafter.
+_\*\*\* Original sources for the Malayalam translations are [Amani Thafseer](https://amanithafseer.com) and [Lalithasaram](https://www.lalithasaram.net/). For the Amani Thafseer translation, Brother Usama Nonnenmacher assisted in formatting the data and adjusting word splitting where knowledge of Malayalam was not required. Brother Ameen Abdussalam, whom he collaborated with via the Amani Thafseer team, provided crucial support for cases needing Malayalam expertise. Regarding the Lalithasaram translation, minimal adjustments were necessary beyond converting the format from an SQL file to a standard database file._

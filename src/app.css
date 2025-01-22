@@ -397,7 +397,7 @@ svg {
 }
 
 .markdown p {
-  @apply text-base leading-relaxed mb-4;
+  @apply text-sm leading-relaxed mb-4;
 }
 
 .markdown ul {
@@ -409,7 +409,7 @@ svg {
 }
 
 .markdown li {
-  @apply mb-1;
+  @apply text-sm mb-1;
 }
 
 .markdown a {
@@ -442,4 +442,8 @@ svg {
 
 .markdown td {
   @apply px-4 py-2 border border-gray-300;
+}
+
+.markdown hr {
+  @apply opacity-15;
 }

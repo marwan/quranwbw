@@ -3783,8 +3783,8 @@ svg {
 
 .markdown p {
   margin-bottom: 1rem;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
   line-height: 1.625;
 }
 
@@ -3800,6 +3800,8 @@ svg {
 
 .markdown li {
   margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .markdown a {
@@ -3869,6 +3871,10 @@ svg {
   padding-right: 1rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+.markdown hr {
+  opacity: 0.15;
 }
 
 .placeholder\:text-\[\#000000\]\/50::-moz-placeholder {
