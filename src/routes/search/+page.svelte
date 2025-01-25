@@ -8,7 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { __currentPage, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __settingsSelectorModal } from '$utils/stores';
 	import { fetchVersesData } from '$utils/fetchData';
-	import { apiEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
+	import { errorLoadingDataMessage } from '$data/websiteSettings';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { selectableVerseTranslations } from '$data/options';
@@ -34,10 +34,10 @@
 	$: fetchVerses = (async () => {
 		try {
 			if (searchQuery.length > 0) {
-				const urlParameters = `query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}&filter_translations=`;
-				let response = await fetch(`${apiEndpoint}/search-translations?${urlParameters}`);
+				const urlParameters = `query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`;
+				let response = await fetch(`https://search.quranwbw.workers.dev?${urlParameters}`);
 				let data = await response.json();
-				let versesKeyData = data.data;
+				let versesKeyData = data;
 
 				const { pagination } = versesKeyData;
 				totalResults = pagination.total_records;
@@ -60,18 +60,19 @@
 	function generateKeys(data) {
 		const verseKeys = [];
 
-		// Check if there are verses and extract their keys
-		if (data.result.verses && Object.keys(data.result.verses).length > 0) {
-			Object.keys(data.result.verses).forEach(function (key) {
-				verseKeys.push(data.result.verses[key].verse_key);
-			});
-		}
-		// If verses are empty, extract keys from navigation
-		else if (data.result.navigation && data.result.navigation.length > 0) {
+		// If the exact verse was found, extract its key
+		if (data.result.navigation && data.result.navigation.length > 0) {
 			data.result.navigation.forEach(function (item) {
 				if (item.key) {
 					verseKeys.push(item.key);
 				}
+			});
+		}
+
+		// Check if there are verses and extract their keys
+		else if (data.result.verses && Object.keys(data.result.verses).length > 0) {
+			Object.keys(data.result.verses).forEach(function (key) {
+				verseKeys.push(data.result.verses[key].verse_key);
 			});
 		}
 
