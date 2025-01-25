@@ -4,7 +4,7 @@
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search from '$svgs/Search.svelte';
-	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, supplicationsFromQuran, mostRead } from '$data/quranMeta';
+	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
 	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey } from '$utils/stores';
 	import { inview } from 'svelte-inview';
@@ -181,7 +181,7 @@
 											{#if key === 'juz'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/page/{verseKeyData[juzMeta[value - 1]].page}" class={linkTextClasses}>{term('juz')} {value}</a>
+													<a href="/page/{verseKeyData[juzMeta[value - 1].from].page}" class={linkTextClasses}>{term('juz')} {value}</a>
 												</div>
 											{:else if key === 'key'}
 												<div class={linkClasses}>
