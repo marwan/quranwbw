@@ -57,22 +57,25 @@
 		}
 	})();
 
+	// Function to generate keys from the API response
 	function generateKeys(data) {
 		const verseKeys = [];
 
-		// If the exact verse was found, extract its key
+		// Check if navigation exists and has a valid entry
 		if (data.result.navigation && data.result.navigation.length > 0) {
-			data.result.navigation.forEach(function (item) {
-				if (item.key) {
-					verseKeys.push(item.key);
-				}
-			});
+			const firstItem = data.result.navigation[0];
+
+			// Check if result_type is 'ayah'
+			if (firstItem.result_type === 'ayah') {
+				verseKeys.push(firstItem.key);
+				return verseKeys.toString();
+			}
 		}
 
-		// Check if there are verses and extract their keys
-		else if (data.result.verses && Object.keys(data.result.verses).length > 0) {
-			Object.keys(data.result.verses).forEach(function (key) {
-				verseKeys.push(data.result.verses[key].verse_key);
+		// If not 'ayah', check verses and extract their keys
+		if (data.result.verses && Array.isArray(data.result.verses) && data.result.verses.length > 0) {
+			data.result.verses.forEach(function (verse) {
+				verseKeys.push(verse.verse_key);
 			});
 		}
 
