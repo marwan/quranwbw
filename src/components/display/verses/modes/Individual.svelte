@@ -12,7 +12,6 @@
 	import { isValidVerseKey } from '$utils/validateKey';
 	import { goto } from '$app/navigation';
 	import { inview } from 'svelte-inview';
-	import { onMount } from 'svelte';
 	import { term } from '$utils/terminologies';
 	import { selectableDisplays } from '$data/options';
 	import { quranMetaData } from '$data/quranMeta';
