@@ -43,12 +43,14 @@
 					</thead>
 					<tbody>
 						{#each Array.from(Array(lastWordToLoad + 1).keys()).slice(1) as word}
+							{@const wordChapter = wordData[word - 1].key.split(':')[0]}
+							{@const wordVerse = wordData[word - 1].key.split(':')[1]}
 							<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
 								<td class="px-6 py-4"> {word} </td>
 								<td class="px-6 py-4 arabic-font-{$__fontType} text-xl md:text-2xl"> {wordData[word - 1].arabic} </td>
 								<td class="px-6 py-4"> {wordData[word - 1].translation} </td>
 								<td class="px-6 py-4"> {wordData[word - 1].transliteration} </td>
-								<td class="px-6 py-4"> <a class={linkClasses} href="/{wordData[word - 1].key.split(':')[0]}/{wordData[word - 1].key.split(':')[1]}">{wordData[word - 1].key.split(':')[0]}:{wordData[word - 1].key.split(':')[1]}</a> </td>
+								<td class="px-6 py-4"> <a class={linkClasses} href="/{wordChapter}?startVerse={wordVerse}">{wordChapter}:{wordVerse}</a> </td>
 								<td class="px-6 py-4"> <a class={linkClasses} href="/morphology/{wordData[word - 1].key}">{wordData[word - 1].key}</a> </td>
 							</tr>
 						{/each}

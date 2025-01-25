@@ -151,7 +151,7 @@
 											<span class="text-xs font-semibold">Current {term('chapter')}</span>
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/{$__chapterNumber}/{value}" class={linkTextClasses}>{term('verse')} {value}</a>
+												<a href="/{$__chapterNumber}?startVerse={value}" class={linkTextClasses}>{term('verse')} {value}</a>
 											</div>
 										</div>
 									{/if}

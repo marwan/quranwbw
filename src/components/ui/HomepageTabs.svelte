@@ -223,7 +223,7 @@
 				{#if lastReadExists}
 					{@const lastReadChapter = $__lastRead.chapter}
 					{@const lastReadVerse = $__lastRead.verse}
-					<a href="/{lastReadChapter}/{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
+					<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
 						<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 						<span class="truncate">
 							Continue Reading:
