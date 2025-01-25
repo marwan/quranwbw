@@ -35,7 +35,7 @@
 		try {
 			if (searchQuery.length > 0) {
 				const urlParameters = `query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`;
-				let response = await fetch(`https://search.quranwbw.workers.dev?${urlParameters}`);
+				let response = await fetch(`https://search.quranwbw.com?${urlParameters}`);
 				let data = await response.json();
 				let versesKeyData = data;
 
