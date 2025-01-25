@@ -34,20 +34,24 @@
 	$: fetchVerses = (async () => {
 		try {
 			if (searchQuery.length > 0) {
-				const urlParameters = `query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}&filter_translations=${selectedTranslations}`;
+				const urlParameters = `query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}&filter_translations=`;
 				let versesKeyData;
 
 				// Fetching from Quran.com default search API
-				let response = await fetch(`https://api.qurancdn.com/api/qdc/search?${urlParameters}`);
-				let data = await response.json();
-				versesKeyData = data;
+				// let response = await fetch(`https://api.qurancdn.com/api/qdc/search?${urlParameters}`);
+				// let data = await response.json();
+				// versesKeyData = data;
 
-				// If no data, then fetch from our API
-				if (!versesKeyData.result.verses.length) {
-					response = await fetch(`${apiEndpoint}/search-translations?${urlParameters}`);
-					data = await response.json();
-					versesKeyData = data.data;
-				}
+				// // If no data, then fetch from our API
+				// if (!versesKeyData.result.verses.length) {
+				// 	let response = await fetch(`${apiEndpoint}/search-translations?${urlParameters}`);
+				// 	let data = await response.json();
+				// 	versesKeyData = data.data;
+				// }
+
+				let response = await fetch(`${apiEndpoint}/search-translations?${urlParameters}`);
+				let data = await response.json();
+				versesKeyData = data.data;
 
 				const { pagination } = versesKeyData;
 				totalResults = pagination.total_records;
@@ -70,9 +74,20 @@
 	function generateKeys(data) {
 		const verseKeys = [];
 
-		Object.keys(data.result.verses).forEach(function (key) {
-			verseKeys.push(data.result.verses[key].verse_key);
-		});
+		// Check if there are verses and extract their keys
+		if (data.result.verses && Object.keys(data.result.verses).length > 0) {
+			Object.keys(data.result.verses).forEach(function (key) {
+				verseKeys.push(data.result.verses[key].verse_key);
+			});
+		}
+		// If verses are empty, extract keys from navigation
+		else if (data.result.navigation && data.result.navigation.length > 0) {
+			data.result.navigation.forEach(function (item) {
+				if (item.key) {
+					verseKeys.push(item.key);
+				}
+			});
+		}
 
 		return verseKeys.toString();
 	}
@@ -90,7 +105,7 @@
 		const firstResourceName = resourceNames[0];
 		const othersCount = resourceNames.length - 1;
 
-		return `Searching in ${firstResourceName}${othersCount > 0 ? `, and ${othersCount} other${othersCount > 1 ? 's' : ''}` : ''}.`;
+		return `Displaying ${firstResourceName}${othersCount > 0 ? `, and ${othersCount} other${othersCount > 1 ? 's' : ''}` : ''}.`;
 	}
 
 	function updateSearchQuery(query) {
