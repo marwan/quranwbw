@@ -50,6 +50,7 @@
 	let showContinueReadingButton = false;
 	let dataMap = {};
 	let keyToStartWith = null;
+	let isLoading = false; // Tracks the loading state of dataMap
 
 	// Only allow display types listed in displayComponents, else default to type 1, and don't save the layout in settings if not allowed
 	$: if (!displayComponents.hasOwnProperty($__displayType)) {
@@ -154,78 +155,86 @@
 	}
 
 	async function fetchAllChapterData() {
-		const promises = Array.from(Array(endIndex + 1).keys())
-			.slice(startIndex)
-			.map(async (index) => {
-				const chapterKey = keysArray[index].split(':')[0];
+		isLoading = true; // Start loading
+		try {
+			const promises = Array.from(Array(endIndex + 1).keys())
+				.slice(startIndex)
+				.map(async (index) => {
+					const chapterKey = keysArray[index].split(':')[0];
 
-				if (__keysToFetchData.hasOwnProperty(chapterKey)) {
-					// Return cached data if available
-					console.log('returning cache...');
-					return __keysToFetchData[chapterKey];
-				} else {
-					// Fetch from API and store in the cache
-					const data = await fetchChapterData({ chapter: chapterKey });
+					if (__keysToFetchData.hasOwnProperty(chapterKey)) {
+						// Return cached data if available
+						return __keysToFetchData[chapterKey];
+					} else {
+						// Fetch from API
+						const data = await fetchChapterData({ chapter: chapterKey });
+						return data;
+					}
+				});
 
-					// Store fetched data in the cache
-					// __keysToFetchData[chapterKey] = data;
+			const results = await Promise.all(promises);
 
-					return data;
-				}
+			// Update dataMap
+			results.forEach((data, i) => {
+				const index = startIndex + i;
+				const key = keysArray[index];
+				dataMap[key] = data[key];
 			});
-
-		const results = await Promise.all(promises);
-
-		results.forEach((data, i) => {
-			const index = startIndex + i;
-			const key = keysArray[index];
-			dataMap[key] = data[key];
-		});
+		} catch (error) {
+			console.error('Error fetching chapter data:', error);
+		} finally {
+			isLoading = false; // End loading
+		}
 	}
 
-	onMount(() => {
+	// Initial fetching / re-fetch the data if any of these changes
+	$: if ($__fontType || $__wordTranslation || $__wordTransliteration) {
 		fetchAllChapterData();
-	});
+	}
 </script>
 
-{#if showLoadPreviousVerseButton}
-	{@const previousKey = keysArray[getIndexOfKey(keyToStartWith) - 1]}
-	<div class={loadPrevNextVerseButtons}>
-		<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {term('juz')}</button>
-		<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>Previous {term('verse')}</button>
-	</div>
-{/if}
-
-{#if Object.keys(dataMap).length === endIndex - startIndex + 1}
-	{#each Array.from(Array(endIndex + 1).keys()).slice(startIndex) as index}
-		{@const key = keysArray[index]}
-		{@const value = dataMap[key]}
-
-		<!-- Only show Bismillah when its the Juz page, because the verses there can continue to next chapters -->
-		{#if $__currentPage === 'juz' && +key.split(':')[1] === 1}
-			{@const chapter = +key.split(':')[0]}
-			<div class="mt-4">
-				<div class={dividerClasses}>{term('chapter')} {chapter} - {quranMetaData[chapter].transliteration}</div>
-
-				<Bismillah {chapter} startVerse={+key.split(':')[1]} />
+{#key dataMap}
+	{#if isLoading}
+		<Spinner />
+	{:else}
+		{#if showLoadPreviousVerseButton}
+			{@const previousKey = keysArray[getIndexOfKey(keyToStartWith) - 1]}
+			<div class={loadPrevNextVerseButtons}>
+				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {term('juz')}</button>
+				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>Previous {term('verse')}</button>
 			</div>
 		{/if}
-		<section use:versesRendered>
-			<svelte:component this={displayComponents[$__displayType]?.component} {key} {value} />
-		</section>
-	{/each}
-{:else}
-	<Spinner height="screen" margin="-mt-20" />
-{/if}
 
-{#if showContinueReadingButton}
-	{#if endIndex < keysArrayLength && document.getElementById('loadVersesButton') === null}
-		<div id="loadVersesButton" class="flex justify-center pt-6 pb-18" use:inview={loadButtonOptions} on:inview_enter={(event) => document.querySelector('#loadVersesButton > button').click()}>
-			<button on:click={loadNextVerses} class="text-sm {buttonClasses}"> Continue Reading </button>
-		</div>
+		{#if Object.keys(dataMap).length === endIndex - startIndex + 1}
+			{#each Array.from(Array(endIndex + 1).keys()).slice(startIndex) as index}
+				{@const key = keysArray[index]}
+				{@const value = dataMap[key]}
+
+				<!-- Only show Bismillah when its the Juz page -->
+				{#if $__currentPage === 'juz' && +key.split(':')[1] === 1}
+					{@const chapter = +key.split(':')[0]}
+					<div class="mt-4">
+						<div class={dividerClasses}>{term('chapter')} {chapter} - {quranMetaData[chapter].transliteration}</div>
+						<Bismillah {chapter} startVerse={+key.split(':')[1]} />
+					</div>
+				{/if}
+
+				<section use:versesRendered>
+					<svelte:component this={displayComponents[$__displayType]?.component} {key} {value} />
+				</section>
+			{/each}
+		{/if}
+
+		{#if showContinueReadingButton}
+			{#if endIndex < keysArrayLength && document.getElementById('loadVersesButton') === null}
+				<div id="loadVersesButton" class="flex justify-center pt-6 pb-18" use:inview={loadButtonOptions} on:inview_enter={(event) => document.querySelector('#loadVersesButton > button').click()}>
+					<button on:click={loadNextVerses} class="text-sm {buttonClasses}"> Continue Reading </button>
+				</div>
+			{/if}
+		{/if}
+
+		{#if versesLoadType === 'next'}
+			<svelte:component this={Individual} {...nextVersesProps} />
+		{/if}
 	{/if}
-{/if}
-
-{#if versesLoadType === 'next'}
-	<svelte:component this={Individual} {...nextVersesProps} />
-{/if}
+{/key}

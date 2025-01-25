@@ -99,7 +99,6 @@
 	} else {
 		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
 		updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
-		__fontType.set(userSettings.displaySettings.fontType);
 	}
 
 	// If wbw language was set to Russian, Ingush or Persian, switch back to English
