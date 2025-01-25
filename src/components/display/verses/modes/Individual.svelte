@@ -187,18 +187,15 @@
 		}
 	}
 
+	// Initial fetching / re-fetch the data if any of these changes
 	$: if ($__fontType || $__wordTranslation || $__wordTransliteration) {
 		fetchAllChapterData();
 	}
-
-	onMount(() => {
-		fetchAllChapterData();
-	});
 </script>
 
 {#key dataMap}
 	{#if isLoading}
-		<Spinner height="screen" margin="-mt-20" />
+		<Spinner />
 	{:else}
 		{#if showLoadPreviousVerseButton}
 			{@const previousKey = keysArray[getIndexOfKey(keyToStartWith) - 1]}
