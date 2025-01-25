@@ -29,6 +29,8 @@
 		7: { component: TranslationTransliteration }
 	};
 
+	const urlParams = new URLSearchParams(window.location.search);
+	const startVerseParam = urlParams.get('startVerse');
 	const chapterTotalVerses = quranMetaData[$__chapterNumber].verses;
 	let Chapter; // for the "Chapter" component
 	let versesLoadType; // previous/next
@@ -64,7 +66,18 @@
 		};
 	}
 
-	console.log({ startVerse });
+	// If the startVerse parameter was set, overide the current start and end verse
+	if (
+		startVerseParam !== null && // Ensure it's not null
+		startVerseParam !== undefined && // Ensure it's not undefined
+		startVerseParam.trim() !== '' && // Ensure it's not empty
+		!isNaN(startVerseParam) // Ensure it's a valid number
+	) {
+		nextVersesProps = {
+			startVerse: Number(startVerseParam),
+			endVerse: Number(startVerseParam)
+		};
+	}
 </script>
 
 {#if $__currentPage === 'chapter' && $__chapterData}
@@ -77,9 +90,9 @@
 		<!-- only show the button when the last verse on page is less than total verses in chapter -->
 		<!-- invisible for now... -->
 		{#if endVerse < chapterTotalVerses && document.getElementById('loadVersesButton') === null}
-			<!-- <div id="loadVersesButton" class="flex justify-center pt-6 pb-18 invisible" use:inview={loadButtonOptions} on:inview_enter={(event) => document.querySelector('#loadVersesButton > button').click()}>
+			<div id="loadVersesButton" class="flex justify-center pt-6 pb-18 invisible" use:inview={loadButtonOptions} on:inview_enter={(event) => document.querySelector('#loadVersesButton > button').click()}>
 				<button on:click={loadNextVerses} class="text-sm {buttonOutlineClasses}"> Continue Reading </button>
-			</div> -->
+			</div>
 		{/if}
 	{/if}
 

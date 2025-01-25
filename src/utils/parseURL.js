@@ -17,7 +17,7 @@ export function parseURL() {
 	const url = window.location.pathname;
 	const hash = window.location.hash.slice(1); // Get the hash part of the URL
 	const queryParams = new URLSearchParams(window.location.search);
-	const startVerseParam = parseInt(queryParams.get('startVerse'), 10);
+	const startVerseParam = Number(queryParams.get('startVerse'));
 
 	let startVerse, endVerse;
 
@@ -51,9 +51,8 @@ export function parseURL() {
 	// Override startVerse if ?startVerse parameter is present
 	if (!isNaN(startVerseParam)) {
 		const chapter = parseInt(urlParts[0], 10) || 1;
-		startVerse = startVerseParam;
+		startVerse = Math.max(1, Math.min(startVerseParam, quranMetaData[chapter].verses));
 		endVerse = startVerse; // If only startVerse is provided, set endVerse to the same
-		// console.log({ startVerseParam });
 	}
 
 	// Check for hash-based verse
