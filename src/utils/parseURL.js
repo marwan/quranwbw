@@ -17,7 +17,7 @@ export function parseURL() {
 	const url = window.location.pathname;
 	const hash = window.location.hash.slice(1); // Get the hash part of the URL
 	const queryParams = new URLSearchParams(window.location.search);
-	const startVerseParam = Number(queryParams.get('startVerse'));
+	const startVerseParam = parseInt(queryParams.get('startVerse'), 10);
 
 	let startVerse, endVerse;
 

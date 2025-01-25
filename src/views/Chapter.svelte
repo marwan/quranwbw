@@ -49,7 +49,7 @@
 		__firstVerseOnPage.set(startVerse);
 
 		// Check for store updates (page URL, display type, font type, word translation, transliteration)
-		if ($page.url.href || $__pageURL || $__displayType || $__fontType || $__wordTranslation || $__wordTransliteration) {
+		if ($page.url.href || $__displayType || $__fontType || $__wordTranslation || $__wordTransliteration) {
 			// Do nothing except re-run the block
 		}
 	}
