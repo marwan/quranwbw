@@ -477,7 +477,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Enable this option to view morphology on word click, instead of playing audio.</p>
+						<p class={settingsDescriptionClasses}>Show morphology on word click, instead of playing audio.</p>
 					</div>
 				</div>
 			</div>
