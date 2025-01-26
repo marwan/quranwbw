@@ -39,8 +39,8 @@
 			goto(`/morphology/${props.key}`, { replaceState: false });
 		}
 
-		// If the user clicks on a word in a non-Morphology page
-		else if ($__currentPage !== 'morphology' && props.type === 'word' && $__wordMorphologyOnClick) {
+		// If the user clicks on a word
+		else if (!['morphology', 'mushaf'].includes($__currentPage) && props.type === 'word' && $__wordMorphologyOnClick) {
 			__morphologyKey.set(props.key);
 			__morphologyModalVisible.set(true);
 		}
