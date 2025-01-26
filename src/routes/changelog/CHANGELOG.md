@@ -1,11 +1,11 @@
-## Update 4.3 (Jan 26, 2025)
+### Update 4.3 (Jan 26, 2025)
 
 - **Word Morphology Feature:** Added the option to view word morphology when clicking on a word, just like the previous website. This feature is off by default and can be enabled from the settings under the "Miscellaneous" options.
 - **Improved Search Page Logic:** Enhanced the search functionality to show results more accurately, ensuring a smoother and more effective search experience.
 
 ---
 
-## Update 4.2 (Jan 19, 2025)
+### Update 4.2 (Jan 19, 2025)
 
 - **Homepage Redesign:**
   - Introduced a new search bar for easier navigation.
@@ -18,7 +18,7 @@
 
 ---
 
-## Update 4.1 (Dec 29, 2024)
+### Update 4.1 (Dec 29, 2024)
 
 In this update, we’ve enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, ensured verse translations display in your selected order, and added a button to listen to a word directly on the morphology page. Enjoy these fantastic enhancements!
 
@@ -31,7 +31,7 @@ In this update, we’ve enhanced audio playback with translation support and set
 
 ---
 
-## Update 4.0.1: Shine with Golden Glint (Dec 7, 2024)
+### Update 4.0.1: Shine with Golden Glint (Dec 7, 2024)
 
 Golden Glint has arrived, bringing a dazzling upgrade to our signature gold look. We've infused various elements with shimmering gold accents that'll make your reading experience feel extra special. Not on the new theme yet? No worries! Just head over to settings and switch to bask in the glow.
 
@@ -39,7 +39,7 @@ But wait, there's more! We've polished up other themes and even added a couple o
 
 ---
 
-## Update 4.0: Introducing QuranWBW v4.0 (Dec 2, 2024)
+### Update 4.0: Introducing QuranWBW v4.0 (Dec 2, 2024)
 
 Alhamdulillah, we are thrilled to announce the release of QuranWBW v4, featuring a completely redesigned website with significant performance enhancements and a multitude of new and improved features.
 

@@ -1,10 +1,4 @@
-<!-- ## "Indeed, this (book) is a reminder, so he who wills may take to his Lord a way. And you do not will except that Allah wills. Indeed, Allah is ever Knowing and Wise." [(76:29-30)](/76/29-30)
-
-_In the name of Allah and prayers & blessings be upon His messenger, Muhammad (ﷺ)._
-
---- -->
-
-<!-- ## About the Website -->
+### About the Website
 
 QuranWBW.com is your companion for reading, listening to, and learning the Holy Quran, word by word. With features like word audios, Tajweed colors, and transliteration, you can delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.
 
@@ -12,7 +6,7 @@ This website is a passion project, not a full-time endeavor. For issues, suggest
 
 ---
 
-## Website Credits
+### Website Credits
 
 QuranWBW.com owes its existence to the contributions of the following remarkable individuals and organizations:
 
@@ -40,6 +34,8 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 - [Quran Pro](https://quran-pro.com/) for their pictures of different reciters.
 - [Flaticon](https://www.flaticon.com/uicons/) for their great range of interface icons.
 - [Quranic Universal Library (QUL)](https://qul.tarteel.ai/) for their Persian words database.
+
+All data used on this website belongs to their respective owners and authors. Permission must be obtained from them before copying any content.
 
 ---
 
