@@ -21,7 +21,7 @@
 	import Link from '$svgs/Link.svelte';
 	import { showAudioModal } from '$utils/audioController';
 	import { selectableDisplays } from '$data/options';
-	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType } from '$utils/stores';
+	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType, __morphologyKey } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { staticEndpoint } from '$data/websiteSettings';
@@ -165,7 +165,15 @@
 			{/if} -->
 
 			<!-- verse morphology button -->
-			<DropdownItem class={dropdownItemClasses} href="/morphology/{$__verseKey}" on:click={() => window.umami.track('Verse Morphology Button')}>
+			<DropdownItem
+				class={dropdownItemClasses}
+				on:click={() => {
+					__morphologyKey.set($__verseKey);
+					__morphologyModalVisible.set(true);
+					dropdownOpen = false;
+					window.umami.track('Verse Morphology Modal Button');
+				}}
+			>
 				<Morphology />
 				<span>Morphology</span>
 			</DropdownItem>
