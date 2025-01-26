@@ -15,9 +15,13 @@
 	$: chapterData = $__currentPage === 'mushaf' ? JSON.parse(localStorage.getItem('pageData')) : $__chapterData;
 	$: chapterToFetch = $__currentPage === 'mushaf' ? parseInt($__verseKey.split(':')[0], 10) : value.meta.chapter;
 
-	// Fetch verse translations and transliteration data for pages other than chapter
+	// Fetch verse translations for pages other than chapter (reactive)
 	$: if ($__currentPage !== 'chapter') {
 		verseTranslationData = fetchVerseTranslationData(chapterToFetch, $__verseTranslations.toString());
+	}
+
+	// Fetch verse transliteration for pages other than chapter (non-reactive)
+	if ($__currentPage !== 'chapter') {
 		verseTransliterationData = fetchChapterData({ chapter: value.meta.chapter, reRenderWhenTheseUpdates: $__verseTranslations });
 	}
 
