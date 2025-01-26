@@ -34,7 +34,7 @@
 	$: fetchVerses = (async () => {
 		try {
 			if (searchQuery.length > 0) {
-				let response = await fetch(`${apiEndpoint}/search?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
+				let response = await fetch(`${apiEndpoint}/search/translations?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
 				let data = await response.json();
 				let versesKeyData = data;
 
@@ -88,7 +88,7 @@
 	}
 
 	// Make a random hit to the search endpoint to warm it
-	fetch(`${apiEndpoint}/search?query=mary&random_id=${Math.floor(10000 + Math.random() * 90000)}&bypass_cache=true`);
+	fetch(`${apiEndpoint}/search/translations?query=mary&random_id=${Math.floor(10000 + Math.random() * 90000)}&bypass_cache=true`);
 
 	__currentPage.set('search');
 </script>
