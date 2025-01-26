@@ -40,7 +40,7 @@
 		}
 
 		// If the user clicks on a word
-		else if (!['morphology', 'mushaf'].includes($__currentPage) && props.type === 'word' && $__wordMorphologyOnClick) {
+		else if ((!['morphology', 'mushaf'].includes($__currentPage) && props.type === 'word' && $__wordMorphologyOnClick) || $__morphologyModalVisible) {
 			__morphologyKey.set(props.key);
 			__morphologyModalVisible.set(true);
 		}
