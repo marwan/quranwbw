@@ -1516,6 +1516,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   min-height: calc(100% - 3.5rem);
 }
 
+.min-h-\[70vh\] {
+  min-height: 70vh;
+}
+
 .w-1\/2 {
   width: 50%;
 }

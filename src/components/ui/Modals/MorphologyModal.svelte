@@ -23,5 +23,5 @@
 		</a>
 	</div>
 
-	<div class="max-h-[70vh] overflow-y-scroll w-full pr-2"><MorphologyView data={wordKeyData} /></div>
+	<div class="max-h-[70vh] min-h-[70vh] overflow-y-scroll w-full pr-2"><MorphologyView data={wordKeyData} /></div>
 </Modal>
