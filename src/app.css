@@ -444,6 +444,10 @@ svg {
   @apply px-4 py-2 border border-gray-300;
 }
 
+.markdown strong {
+  @apply font-semibold;
+}
+
 .theme-1 .markdown hr { @apply border-[#b1901f]/20; } /* Golden Glint */
 .theme-1 .markdown a { @apply text-[#b1901f]; } /* Golden Glint */
 .theme-1 .markdown h3 { @apply text-[#b1901f]; } /* Golden Glint */

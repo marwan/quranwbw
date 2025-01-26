@@ -3855,6 +3855,10 @@ svg {
   padding-bottom: 0.5rem;
 }
 
+.markdown strong {
+  font-weight: 600;
+}
+
 .theme-1 .markdown hr {
   border-color: rgb(177 144 31 / 0.2);
 }
