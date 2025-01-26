@@ -393,7 +393,7 @@ svg {
 }
 
 .markdown h3 {
-  @apply text-xl mb-2;
+  @apply text-xl font-semibold mb-2;
 }
 
 .markdown p {
@@ -446,19 +446,28 @@ svg {
 
 .theme-1 .markdown hr { @apply border-[#b1901f]/20; } /* Golden Glint */
 .theme-1 .markdown a { @apply text-[#b1901f]; } /* Golden Glint */
+.theme-1 .markdown h3 { @apply text-[#b1901f]; } /* Golden Glint */
 .theme-2 .markdown hr { @apply border-[#000000]/20; } /* Classic Light */
 .theme-2 .markdown a { @apply text-[#000000]; } /* Classic Light */
+.theme-2 .markdown h3 { @apply text-[#000000]; } /* Classic Light */
 .theme-3 .markdown hr { @apply border-[#000000]/20; } /* Silver Lining */
 .theme-3 .markdown a { @apply text-[#000000]; } /* Silver Lining */
+.theme-3 .markdown h3 { @apply text-[#000000]; } /* Silver Lining */
 .theme-4 .markdown hr { @apply border-[#553c0f]/20; } /* Vintage Sepia */
 .theme-4 .markdown a { @apply text-[#553c0f]; } /* Vintage Sepia */
+.theme-4 .markdown h3 { @apply text-[#553c0f]; } /* Vintage Sepia */
 .theme-5 .markdown hr { @apply border-[#c59f60]/20; } /* Mocha Night */
 .theme-5 .markdown a { @apply text-[#c59f60]; } /* Mocha Night */
+.theme-5 .markdown h3 { @apply text-[#c59f60]; } /* Mocha Night */
 .theme-6 .markdown hr { @apply border-[#c2c2c2]/20; } /* Midnight Blue */
 .theme-6 .markdown a { @apply text-[#c2c2c2]; } /* Midnight Blue */
+.theme-6 .markdown h3 { @apply text-[#c2c2c2]; } /* Midnight Blue */
 .theme-7 .markdown hr { @apply border-[#dddddd]/20; } /* Forest Green */
 .theme-7 .markdown a { @apply text-[#dddddd]; } /* Forest Green */
+.theme-7 .markdown h3 { @apply text-[#dddddd]; } /* Forest Green */
 .theme-8 .markdown hr { @apply border-[#dddddd]/20; } /* Oled Black */
 .theme-8 .markdown a { @apply text-[#dddddd]; } /* Oled Black */
+.theme-8 .markdown h3 { @apply text-[#dddddd]; } /* Oled Black */
 .theme-9 .markdown hr { @apply border-[#dca54c]/20; } /* Dark Luxury */
 .theme-9 .markdown a { @apply text-[#dca54c]; } /* Dark Luxury */
+.theme-9 .markdown h3 { @apply text-[#dca54c]; } /* Dark Luxury */

@@ -3760,6 +3760,7 @@ svg {
   margin-bottom: 0.5rem;
   font-size: 1.25rem;
   line-height: 1.75rem;
+  font-weight: 600;
 }
 
 .markdown p {
@@ -3867,6 +3868,13 @@ svg {
 
 /* Golden Glint */
 
+.theme-1 .markdown h3 {
+  --tw-text-opacity: 1;
+  color: rgb(177 144 31 / var(--tw-text-opacity));
+}
+
+/* Golden Glint */
+
 .theme-2 .markdown hr {
   border-color: rgb(0 0 0 / 0.2);
 }
@@ -3874,6 +3882,13 @@ svg {
 /* Classic Light */
 
 .theme-2 .markdown a {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+/* Classic Light */
+
+.theme-2 .markdown h3 {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
 }
@@ -3893,6 +3908,13 @@ svg {
 
 /* Silver Lining */
 
+.theme-3 .markdown h3 {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+/* Silver Lining */
+
 .theme-4 .markdown hr {
   border-color: rgb(85 60 15 / 0.2);
 }
@@ -3900,6 +3922,13 @@ svg {
 /* Vintage Sepia */
 
 .theme-4 .markdown a {
+  --tw-text-opacity: 1;
+  color: rgb(85 60 15 / var(--tw-text-opacity));
+}
+
+/* Vintage Sepia */
+
+.theme-4 .markdown h3 {
   --tw-text-opacity: 1;
   color: rgb(85 60 15 / var(--tw-text-opacity));
 }
@@ -3919,6 +3948,13 @@ svg {
 
 /* Mocha Night */
 
+.theme-5 .markdown h3 {
+  --tw-text-opacity: 1;
+  color: rgb(197 159 96 / var(--tw-text-opacity));
+}
+
+/* Mocha Night */
+
 .theme-6 .markdown hr {
   border-color: rgb(194 194 194 / 0.2);
 }
@@ -3926,6 +3962,13 @@ svg {
 /* Midnight Blue */
 
 .theme-6 .markdown a {
+  --tw-text-opacity: 1;
+  color: rgb(194 194 194 / var(--tw-text-opacity));
+}
+
+/* Midnight Blue */
+
+.theme-6 .markdown h3 {
   --tw-text-opacity: 1;
   color: rgb(194 194 194 / var(--tw-text-opacity));
 }
@@ -3945,6 +3988,13 @@ svg {
 
 /* Forest Green */
 
+.theme-7 .markdown h3 {
+  --tw-text-opacity: 1;
+  color: rgb(221 221 221 / var(--tw-text-opacity));
+}
+
+/* Forest Green */
+
 .theme-8 .markdown hr {
   border-color: rgb(221 221 221 / 0.2);
 }
@@ -3958,6 +4008,13 @@ svg {
 
 /* Oled Black */
 
+.theme-8 .markdown h3 {
+  --tw-text-opacity: 1;
+  color: rgb(221 221 221 / var(--tw-text-opacity));
+}
+
+/* Oled Black */
+
 .theme-9 .markdown hr {
   border-color: rgb(220 165 76 / 0.2);
 }
@@ -3965,6 +4022,13 @@ svg {
 /* Dark Luxury */
 
 .theme-9 .markdown a {
+  --tw-text-opacity: 1;
+  color: rgb(220 165 76 / var(--tw-text-opacity));
+}
+
+/* Dark Luxury */
+
+.theme-9 .markdown h3 {
   --tw-text-opacity: 1;
   color: rgb(220 165 76 / var(--tw-text-opacity));
 }

@@ -60,6 +60,7 @@ function generateThemes() {
 		headerPaletteStyles.push(`.theme-${themeIndex} .header { font-palette: --palette${selectableThemes[themeIndex].paletteHeader}; } ${cssComment}`);
 		markdownStyles.push(`.theme-${themeIndex} .markdown hr { @apply border-[${color2}]/20; } ${cssComment}`);
 		markdownStyles.push(`.theme-${themeIndex} .markdown a { @apply text-[${color2}]; } ${cssComment}`);
+		markdownStyles.push(`.theme-${themeIndex} .markdown h3 { @apply text-[${color2}]; } ${cssComment}`);
 	});
 
 	window.websiteColors = websiteColors;
