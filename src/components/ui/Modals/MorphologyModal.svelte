@@ -3,6 +3,7 @@
 	import MorphologyView from '$src/routes/morphology/[key]/MorphologyView.svelte';
 	import ExternalLink from '$svgs/ExternalLink.svelte';
 	import { __morphologyModalVisible, __morphologyKey } from '$utils/stores';
+	import { resetAudioSettings } from '$utils/audioController';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { page } from '$app/stores';
 
@@ -11,6 +12,7 @@
 	};
 
 	$: if ($page.url.href) __morphologyModalVisible.set(false);
+	$: if ($__morphologyModalVisible) resetAudioSettings();
 </script>
 
 <Modal bind:open={$__morphologyModalVisible} id="morphologyModal" transitionParams={getModalTransition('bottom')} size="lg" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
