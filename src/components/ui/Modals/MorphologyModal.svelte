@@ -12,7 +12,7 @@
 	$: if ($page.url.href) __morphologyModalVisible.set(false);
 </script>
 
-<Modal bind:open={$__morphologyModalVisible} id="morphologyModal" transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
+<Modal bind:open={$__morphologyModalVisible} id="morphologyModal" transitionParams={getModalTransition('bottom')} size="lg" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
 	<h3 id="modal-title" class="mb-6 text-xl font-medium">Word {$__morphologyKey}</h3>
 	<div class="max-h-[70vh] overflow-y-scroll w-full pr-2"><MorphologyView data={wordKeyData} /></div>
 </Modal>
