@@ -8,7 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { __currentPage, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __settingsSelectorModal } from '$utils/stores';
 	import { fetchVersesData } from '$utils/fetchData';
-	import { errorLoadingDataMessage } from '$data/websiteSettings';
+	import { apiEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { selectableVerseTranslations } from '$data/options';
@@ -34,8 +34,7 @@
 	$: fetchVerses = (async () => {
 		try {
 			if (searchQuery.length > 0) {
-				const urlParameters = `query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`;
-				let response = await fetch(`https://search.quranwbw.com?${urlParameters}`);
+				let response = await fetch(`${apiEndpoint}/search?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
 				let data = await response.json();
 				let versesKeyData = data;
 
@@ -87,6 +86,9 @@
 		searchQuery = query;
 		if (previousSearchQuery !== searchPage) searchPage = 1;
 	}
+
+	// Make a random hit to the search endpoint to warm it
+	fetch(`${apiEndpoint}/search?query=mary&random_id=${Math.floor(10000 + Math.random() * 90000)}&bypass_cache=true`);
 
 	__currentPage.set('search');
 </script>
