@@ -143,7 +143,7 @@
 
 			<!-- mode change buttons -->
 			{#if $__currentPage === 'mushaf'}
-				<DropdownItem class={dropdownItemClasses} href="/{chapter}/{verse}" on:click={() => window.umami.track('Chapter Mode Button')}>
+				<DropdownItem class={dropdownItemClasses} href="/{chapter}?startVerse={verse}" on:click={() => window.umami.track('Chapter Mode Button')}>
 					<ChapterMode />
 					<span>{term('chapter')} Mode</span>
 				</DropdownItem>

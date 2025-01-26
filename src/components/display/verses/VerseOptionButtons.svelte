@@ -66,7 +66,7 @@
 	<div class="flex flex-row w-full space-x-2">
 		<!-- verse key -->
 		<div class="flex flex-row space-x-2">
-			<a href={$__currentPage === 'chapter' ? `#${key}` : `/${chapter}/${verse}`} class={verseKeyClasses}>
+			<a href={$__currentPage === 'chapter' ? `#${key}` : `/${chapter}?startVerse=${verse}`} class={verseKeyClasses}>
 				{#if $__currentPage === 'chapter'}
 					<div class="text-xs">{key}</div>
 				{:else}

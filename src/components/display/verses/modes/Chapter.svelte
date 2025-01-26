@@ -29,6 +29,8 @@
 		7: { component: TranslationTransliteration }
 	};
 
+	const urlParams = new URLSearchParams(window.location.search);
+	const startVerseParam = urlParams.get('startVerse');
 	const chapterTotalVerses = quranMetaData[$__chapterNumber].verses;
 	let Chapter; // for the "Chapter" component
 	let versesLoadType; // previous/next
@@ -61,6 +63,19 @@
 		nextVersesProps = {
 			startVerse: nextVersesStart,
 			endVerse: nextVersesEnd
+		};
+	}
+
+	// If the startVerse parameter was set, overide the current start and end verse
+	if (
+		startVerseParam !== null && // Ensure it's not null
+		startVerseParam !== undefined && // Ensure it's not undefined
+		startVerseParam.trim() !== '' && // Ensure it's not empty
+		!isNaN(startVerseParam) // Ensure it's a valid number
+	) {
+		nextVersesProps = {
+			startVerse: Number(startVerseParam),
+			endVerse: Number(startVerseParam)
 		};
 	}
 </script>

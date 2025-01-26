@@ -4,7 +4,7 @@
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search from '$svgs/Search.svelte';
-	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, supplicationsFromQuran, mostRead } from '$data/quranMeta';
+	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
 	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey } from '$utils/stores';
 	import { inview } from 'svelte-inview';
@@ -151,7 +151,7 @@
 											<span class="text-xs font-semibold">Current {term('chapter')}</span>
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/{$__chapterNumber}/{value}" class={linkTextClasses}>{term('verse')} {value}</a>
+												<a href="/{$__chapterNumber}?startVerse={value}" class={linkTextClasses}>{term('verse')} {value}</a>
 											</div>
 										</div>
 									{/if}
@@ -181,7 +181,7 @@
 											{#if key === 'juz'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/page/{verseKeyData[juzMeta[value - 1]].page}" class={linkTextClasses}>{term('juz')} {value}</a>
+													<a href="/page/{verseKeyData[juzMeta[value - 1].from].page}" class={linkTextClasses}>{term('juz')} {value}</a>
 												</div>
 											{:else if key === 'key'}
 												<div class={linkClasses}>
@@ -302,7 +302,7 @@
 							{#key $__chapterNumber}
 								{#each { length: maxVersesToLoad } as _, verse}
 									<li>
-										<a href="/{$__chapterNumber}/{verse + 1}" on:click={() => __pageURL.set(Math.random())}>
+										<a href="/{$__chapterNumber}?startVerse={verse + 1}">
 											<div class={listItemClasses}>{term('verse')} {verse + 1}</div>
 										</a>
 									</li>

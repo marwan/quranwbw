@@ -34,20 +34,9 @@
 	$: fetchVerses = (async () => {
 		try {
 			if (searchQuery.length > 0) {
-				const urlParameters = `query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}&filter_translations=${selectedTranslations}`;
-				let versesKeyData;
-
-				// Fetching from Quran.com default search API
-				let response = await fetch(`https://api.qurancdn.com/api/qdc/search?${urlParameters}`);
+				let response = await fetch(`${apiEndpoint}/search/translations?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
 				let data = await response.json();
-				versesKeyData = data;
-
-				// If no data, then fetch from our API
-				if (!versesKeyData.result.verses.length) {
-					response = await fetch(`${apiEndpoint}/search-translations?${urlParameters}`);
-					data = await response.json();
-					versesKeyData = data.data;
-				}
+				let versesKeyData = data;
 
 				const { pagination } = versesKeyData;
 				totalResults = pagination.total_records;
@@ -67,30 +56,29 @@
 		}
 	})();
 
+	// Function to generate keys from the API response
 	function generateKeys(data) {
 		const verseKeys = [];
 
-		Object.keys(data.result.verses).forEach(function (key) {
-			verseKeys.push(data.result.verses[key].verse_key);
-		});
+		// Check if navigation exists and has a valid entry
+		if (data.result.navigation && data.result.navigation.length > 0) {
+			const firstItem = data.result.navigation[0];
 
-		return verseKeys.toString();
-	}
-
-	function generateTranslationText(idsString) {
-		if (idsString === '') return '';
-
-		const ids = idsString.split(',').map((id) => parseInt(id.trim()));
-		const resourceNames = ids.map((id) => selectableVerseTranslations[id]?.resource_name).filter((name) => name);
-
-		if (resourceNames.length === 2) {
-			return `Searching in ${resourceNames[0]} and ${resourceNames[1]}.`;
+			// Check if result_type is 'ayah'
+			if (firstItem.result_type === 'ayah') {
+				verseKeys.push(firstItem.key);
+				return verseKeys.toString();
+			}
 		}
 
-		const firstResourceName = resourceNames[0];
-		const othersCount = resourceNames.length - 1;
+		// If not 'ayah', check verses and extract their keys
+		if (data.result.verses && Array.isArray(data.result.verses) && data.result.verses.length > 0) {
+			data.result.verses.forEach(function (verse) {
+				verseKeys.push(verse.verse_key);
+			});
+		}
 
-		return `Searching in ${firstResourceName}${othersCount > 0 ? `, and ${othersCount} other${othersCount > 1 ? 's' : ''}` : ''}.`;
+		return verseKeys.toString();
 	}
 
 	function updateSearchQuery(query) {
@@ -98,6 +86,9 @@
 		searchQuery = query;
 		if (previousSearchQuery !== searchPage) searchPage = 1;
 	}
+
+	// Make a random hit to the search endpoint to warm it
+	fetch(`${apiEndpoint}/search/translations?query=mary&random_id=${Math.floor(10000 + Math.random() * 90000)}&bypass_cache=true`);
 
 	__currentPage.set('search');
 </script>
@@ -124,7 +115,7 @@
 	<!-- search instructions -->
 	{#if searchQuery.length === 0}
 		<div id="how-to-search" class="flex flex-col text-center text-xs space-y-2 max-w-2xl mx-auto">
-			<span>Explore {Object.keys(selectableVerseTranslations).length} translations from diverse languages and authors. Search for any text, regardless of English or Arabic terminology, and find the nearest or related results. Additionally, you can select specific translations using the button on the left. </span>
+			<span>Explore {Object.keys(selectableVerseTranslations).length} translations from diverse languages and authors. Search for any text, regardless of English or Arabic terminology, and find the nearest or related results. Additionally, you can display specific translations using the button on the left. </span>
 		</div>
 	{/if}
 
@@ -135,12 +126,14 @@
 			{:then data}
 				{#if data !== undefined}
 					<!-- search results info -->
-					<div class="flex flex-col space-y-4 text-center text-xs">
-						<div>{generateTranslationText(selectedTranslations)}</div>
+					<div class="text-center text-xs">
+						<span>Showing {totalResults}</span>
+						<span>{totalResults === 1 ? 'result' : 'results'} related to</span>
 						{#if pagePagination.total_pages > 1}
-							<div>Displaying {totalResults} results for "{searchQuery}" (page {pagePagination.current_page}).</div>
+							"{searchQuery}"
+							<span>(page {pagePagination.current_page}).</span>
 						{:else}
-							<div>Displaying {totalResults} results for "{searchQuery}".</div>
+							"{searchQuery}".
 						{/if}
 					</div>
 
@@ -166,7 +159,7 @@
 						</div>
 					{/if}
 				{:else}
-					<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results from the selected translations. Please try using a different keyword or consider switching to another translation for better results.</div>
+					<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results. Please try using a different keyword.</div>
 				{/if}
 			{:catch error}
 				<p>{errorLoadingDataMessage}</p>

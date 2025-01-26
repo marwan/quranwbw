@@ -13,6 +13,7 @@
 	import { buttonClasses } from '$data/commonClasses';
 	import { goto } from '$app/navigation';
 	import { term } from '$utils/terminologies';
+	import { page } from '$app/stores';
 
 	// Export data and verse range variables
 	export let data, startVerse, endVerse;
@@ -48,7 +49,7 @@
 		__firstVerseOnPage.set(startVerse);
 
 		// Check for store updates (page URL, display type, font type, word translation, transliteration)
-		if ($__pageURL || $__displayType || $__fontType || $__wordTranslation || $__wordTransliteration) {
+		if ($page.url.href || $__displayType || $__fontType || $__wordTranslation || $__wordTransliteration) {
 			// Do nothing except re-run the block
 		}
 	}
@@ -69,12 +70,11 @@
 		}
 	}
 
-	// Function to load the previous set of verses
+	// Function to load the previous verse
 	function loadPreviousVerse() {
 		const versesOnPage = document.getElementsByClassName('verse');
 		const firstVerseOnPage = +versesOnPage[0].id.split(':')[1];
-		const lastVerseOnPage = +versesOnPage[versesOnPage.length - 1].id.split(':')[1];
-		goto(`/${$__chapterNumber}/${+firstVerseOnPage - 1}-${+lastVerseOnPage}`, { replaceState: false });
+		goto(`?startVerse=${+firstVerseOnPage - 1}`, { replaceState: false });
 	}
 
 	// Set the current page to 'chapter'

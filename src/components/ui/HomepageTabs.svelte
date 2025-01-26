@@ -122,7 +122,7 @@
 							{@const [bookmarkChapter, bookmarkVerse] = bookmark.split(':').map(Number)}
 
 							<div class="flex flex-row space-x-2">
-								<a href="{bookmarkChapter}/{bookmarkVerse}" class="!justify-start {cardInnerClasses} w-full flex-col">
+								<a href="{bookmarkChapter}?startVerse={bookmarkVerse}" class="!justify-start {cardInnerClasses} w-full flex-col">
 									<div class="text-sm truncate max-w-[28vw] md:max-w-[115px]">{quranMetaData[bookmarkChapter].transliteration} ({bookmark})</div>
 
 									{#if extrasActiveTab === 1 && totalBookmarks > 0}
@@ -168,7 +168,7 @@
 				{:else}
 					<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
 						{#each Object.entries($__userNotes) as [verse, note]}
-							<a href="{verse.split(':')[0]}/{verse.split(':')[1]}" class="!justify-start {cardInnerClasses} w-full flex-col">
+							<a href="{verse.split(':')[0]}?startVerse={verse.split(':')[1]}" class="!justify-start {cardInnerClasses} w-full flex-col">
 								<div class="text-sm truncate max-w-[30vw] md:max-w-[115px]">{quranMetaData[verse.split(':')[0]].transliteration} ({verse})</div>
 								<span class="text-xs truncate opacity-70">{note.note}</span>
 							</a>
@@ -223,7 +223,7 @@
 				{#if lastReadExists}
 					{@const lastReadChapter = $__lastRead.chapter}
 					{@const lastReadVerse = $__lastRead.verse}
-					<a href="/{lastReadChapter}/{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
+					<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
 						<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 						<span class="truncate">
 							Continue Reading:
