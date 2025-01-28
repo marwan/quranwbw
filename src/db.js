@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 
-export const db = new Dexie('quranwbw_local_db');
+export const db = new Dexie('quranwbw');
 db.version(1).stores({
-	data: 'key' // 'key' is the primary key
+	api_data: 'key' // 'key' is the primary key
 });

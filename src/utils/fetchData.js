@@ -15,7 +15,7 @@ export async function fetchChapterData(props) {
 	const cacheKey = `${props.chapter}--${selectableFontTypes[fontType].apiId}--${wordTranslation}--${wordTransliteration}`;
 
 	// Check if data exists in the database
-	const cachedRecord = await db.data.get(cacheKey);
+	const cachedRecord = await db.api_data.get(cacheKey);
 	if (cachedRecord && cachedRecord.data) {
 		if (!props.skipSave) __chapterData.set(cachedRecord.data);
 		return cachedRecord.data;
@@ -42,7 +42,7 @@ export async function fetchChapterData(props) {
 	const data = await response.json();
 
 	// Save the fetched data to the database with the custom key
-	await db.data.put({ key: cacheKey, data: data.data.verses });
+	await db.api_data.put({ key: cacheKey, data: data.data.verses });
 
 	// Update the store if required
 	if (!props.skipSave) __chapterData.set(data.data.verses);
@@ -59,7 +59,7 @@ export async function fetchVerseTranslationData(chapter, translations = get(__ve
 	const cacheKey = `${chapter}--${translations}`;
 
 	// Check if data exists in the database
-	const cachedRecord = await db.data.get(cacheKey);
+	const cachedRecord = await db.api_data.get(cacheKey);
 	if (cachedRecord && cachedRecord.data) {
 		__verseTranslationData.set(cachedRecord.data);
 		return cachedRecord.data;
@@ -81,7 +81,7 @@ export async function fetchVerseTranslationData(chapter, translations = get(__ve
 	const data = await response.json();
 
 	// Save the fetched data to the database with the custom key
-	await db.data.put({ key: cacheKey, data: data.verses });
+	await db.api_data.put({ key: cacheKey, data: data.verses });
 
 	// Update the store
 	__verseTranslationData.set(data.verses);
