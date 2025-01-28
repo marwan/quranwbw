@@ -1,15 +1,27 @@
+import { db } from '../db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
 import { apiEndpoint, staticEndpoint, apiVersion, apiByPassCache } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
 
-// Fetch specific verses (startVerse to endVerse) and then fetch the complete chapter data to be cached by the user's browser
+// Fetch specific verses (startVerse to endVerse) and cache chapter data
 export async function fetchChapterData(props) {
 	__chapterData.set(null);
 	const fontType = get(__fontType);
 	const wordTranslation = get(__wordTranslation);
 	const wordTransliteration = get(__wordTransliteration);
 
+	// Generate a unique key for the data
+	const cacheKey = `${props.chapter}--${selectableFontTypes[fontType].apiId}--${wordTranslation}--${wordTransliteration}`;
+
+	// Check if data exists in the database
+	const cachedRecord = await db.data.get(cacheKey);
+	if (cachedRecord && cachedRecord.data) {
+		if (!props.skipSave) __chapterData.set(cachedRecord.data);
+		return cachedRecord.data;
+	}
+
+	// Build the API URL
 	const apiURL =
 		`${apiEndpoint}/chapter?` +
 		new URLSearchParams({
@@ -22,19 +34,38 @@ export async function fetchChapterData(props) {
 			bypass_cache: apiByPassCache
 		});
 
-	// Fetch and set the data in store if the user is on the chapter page
+	// Fetch data from the API
 	const response = await fetch(apiURL);
+	if (!response.ok) {
+		throw new Error('Failed to fetch data from the API');
+	}
 	const data = await response.json();
 
-	// 'skipSave' = true means we are just fetching API data without updating the __chapterData store (for downloadData)
+	// Save the fetched data to the database with the custom key
+	await db.data.put({ key: cacheKey, data: data.data.verses });
+
+	// Update the store if required
 	if (!props.skipSave) __chapterData.set(data.data.verses);
+
 	return data.data.verses;
 }
 
 // Get verse translations from Quran.com's API as a separate request compared to the rest of the verse data (from our API)
+// Fetch verse translation data and cache it
 export async function fetchVerseTranslationData(chapter, translations = get(__verseTranslations).toString()) {
 	__verseTranslationData.set(null);
 
+	// Generate a unique key for the data
+	const cacheKey = `${chapter}--${translations}`;
+
+	// Check if data exists in the database
+	const cachedRecord = await db.data.get(cacheKey);
+	if (cachedRecord && cachedRecord.data) {
+		__verseTranslationData.set(cachedRecord.data);
+		return cachedRecord.data;
+	}
+
+	// Build the API URL
 	const apiURL =
 		`https://api.qurancdn.com/api/qdc/verses/by_chapter/${chapter}?` +
 		new URLSearchParams({
@@ -42,9 +73,19 @@ export async function fetchVerseTranslationData(chapter, translations = get(__ve
 			translations: translations
 		});
 
+	// Fetch data from the API
 	const response = await fetch(apiURL);
+	if (!response.ok) {
+		throw new Error('Failed to fetch data from the API');
+	}
 	const data = await response.json();
+
+	// Save the fetched data to the database with the custom key
+	await db.data.put({ key: cacheKey, data: data.verses });
+
+	// Update the store
 	__verseTranslationData.set(data.verses);
+
 	return data.verses;
 }
 

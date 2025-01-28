@@ -35,6 +35,7 @@
 	"dependencies": {
 		"@macfja/svelte-persistent-store": "^2.4.1",
 		"@tailwindcss/typography": "^0.5.16",
+		"dexie": "^4.0.11",
 		"marked": "^15.0.6",
 		"party-js": "^2.2.0",
 		"svelte-gestures": "^5.0.4",
