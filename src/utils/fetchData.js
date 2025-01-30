@@ -6,7 +6,7 @@ import { selectableFontTypes } from '$data/options';
 
 // Fetch specific verses (startVerse to endVerse) and cache chapter data
 export async function fetchChapterData(props) {
-	__chapterData.set(null);
+	if (!props.skipSave) __chapterData.set(null);
 	const fontType = get(__fontType);
 	const wordTranslation = get(__wordTranslation);
 	const wordTransliteration = get(__wordTransliteration);
@@ -52,11 +52,13 @@ export async function fetchChapterData(props) {
 
 // Get verse translations from Quran.com's API as a separate request compared to the rest of the verse data (from our API)
 // Fetch verse translation data and cache it
-export async function fetchVerseTranslationData(chapter, translations = get(__verseTranslations).toString()) {
-	__verseTranslationData.set(null);
+export async function fetchVerseTranslationData(props) {
+	if (!props.skipSave) __verseTranslationData.set(null);
+
+	if (!props.translations) props.translations = get(__verseTranslations).toString();
 
 	// Generate a unique key for the data
-	const cacheKey = `${chapter}--${translations}`;
+	const cacheKey = `${props.chapter}--${props.translations}`;
 
 	// Check if data exists in the database
 	const cachedRecord = await db.api_data.get(cacheKey);
@@ -67,10 +69,10 @@ export async function fetchVerseTranslationData(chapter, translations = get(__ve
 
 	// Build the API URL
 	const apiURL =
-		`https://api.qurancdn.com/api/qdc/verses/by_chapter/${chapter}?` +
+		`https://api.qurancdn.com/api/qdc/verses/by_chapter/${props.chapter}?` +
 		new URLSearchParams({
 			per_page: 286,
-			translations: translations
+			translations: props.translations
 		});
 
 	// Fetch data from the API
@@ -84,7 +86,7 @@ export async function fetchVerseTranslationData(chapter, translations = get(__ve
 	await db.api_data.put({ key: cacheKey, data: data.verses });
 
 	// Update the store
-	__verseTranslationData.set(data.verses);
+	if (!props.skipSave) __verseTranslationData.set(data.verses);
 
 	return data.verses;
 }

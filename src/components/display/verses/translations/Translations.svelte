@@ -17,7 +17,7 @@
 
 	// Fetch verse translations for pages other than chapter (reactive)
 	$: if ($__currentPage !== 'chapter') {
-		verseTranslationData = fetchVerseTranslationData(chapterToFetch, $__verseTranslations.toString());
+		verseTranslationData = fetchVerseTranslationData({ chapter: chapterToFetch, translations: $__verseTranslations.toString() });
 	}
 
 	// Fetch verse transliteration for pages other than chapter (non-reactive)
