@@ -48,7 +48,8 @@ export const defaultSettings = {
 	userNotes: {},
 	favouriteChapters: [1, 5, 18],
 	initialSetupCompleted: false,
-	chapter: 1
+	chapter: 1,
+	downloadedDataInfo: {}
 };
 
 // Do not continue without setting the default user's settings first

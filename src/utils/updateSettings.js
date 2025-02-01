@@ -28,7 +28,8 @@ import {
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible
+	__homepageExtrasPanelVisible,
+	__downloadedDataInfo
 } from '$utils/stores';
 // import { uploadSettingsToCloud } from '$utils/cloudSettings';
 
@@ -283,6 +284,12 @@ export function updateSettings(props) {
 		case 'homepageExtrasPanelVisible':
 			__homepageExtrasPanelVisible.set(props.value);
 			userSettings.displaySettings.homepageExtrasPanelVisible = props.value;
+			break;
+
+		// for offline data settings
+		case 'downloadedDataInfo':
+			__downloadedDataInfo.set(props.value);
+			userSettings.downloadedDataInfo = props.value;
 			break;
 
 		// for increasing/decreasing font sizes

@@ -38,7 +38,7 @@ let __websiteOnline,
 	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataSettings,
+	__downloadedDataInfo,
 	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
@@ -179,10 +179,7 @@ if (browser) {
 	__morphologyKey = writable(null);
 
 	// to store all the offline data settings
-	__downloadedDataSettings = writable({
-		allChaptersDownloaded: false,
-		downloadedChapters: []
-	});
+	__downloadedDataInfo = writable(userSettings.downloadedDataInfo);
 
 	// to store the auto scroll speed
 	__autoScrollSpeed = writable(userSettings.displaySettings.autoScrollSpeed);
@@ -290,7 +287,7 @@ export {
 	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataSettings,
+	__downloadedDataInfo,
 	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
