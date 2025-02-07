@@ -156,12 +156,12 @@
 
 		<!-- Buttons for Download and Delete -->
 		<div class="flex flex-row space-x-2 w-full !mt-6 {downloading && disabledClasses}">
-			<button class="{buttonClasses} w-full" on:click={downloadAllChapters} disabled={downloading}>
+			<button class="{buttonClasses} w-full truncate" on:click={downloadAllChapters} disabled={downloading}>
 				{$__downloadedDataInfo.allChaptersDownloaded ? 'Download Again' : 'Download Data'}
 			</button>
 
 			{#if $__downloadedDataInfo.allChaptersDownloaded}
-				<button class="{buttonClasses} w-full" on:click={deleteApiDataTable}> Delete Data </button>
+				<button class="{buttonClasses} w-full truncate" on:click={deleteApiDataTable}> Delete Data </button>
 			{/if}
 		</div>
 	</div>
