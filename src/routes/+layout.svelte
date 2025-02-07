@@ -129,6 +129,18 @@
 	window.addEventListener('offline', () => {
 		__websiteOnline.set(false);
 	});
+
+	// Service Worker
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker
+			.register('/service-worker.js')
+			.then((registration) => {
+				console.log('Service Worker Registered', registration);
+			})
+			.catch((error) => {
+				console.error('Service Worker Registration Failed', error);
+			});
+	}
 </script>
 
 <div class="max-w-screen-lg mx-auto {paddingTop} {paddingBottom} {paddingX}">

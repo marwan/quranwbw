@@ -74,6 +74,7 @@
 				// Stop the loop if download is cancelled
 				if (!downloading || !abortController) break;
 
+				await fetch(`/${chapter}`);
 				await fetchChapterData({ chapter, skipSave: true, signal: abortController.signal });
 				await fetchVerseTranslationData({ chapter, skipSave: true, signal: abortController.signal });
 
@@ -142,7 +143,7 @@
 	<h3 id="modal-title" class="mb-4 text-xl font-medium">Download</h3>
 
 	<div class="flex flex-col space-y-4 text-sm">
-		<p>You can download the basic chapter data based on your preferred settings. Once downloaded, the chapter page will be accessible offline unless the data is deleted.</p>
+		<p>By default, the website caches pages as you browse. However, you can use this feature to download chapter data all at once based on your settings. Once downloaded, the chapter page will remain accessible offline unless deleted.</p>
 
 		<div>
 			<div>Font Type: {selectableFontTypes[$__fontType].font}</div>
