@@ -1,4 +1,4 @@
-import { db } from '../db';
+import { db } from '$lib/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
 import { apiEndpoint, staticEndpoint, apiVersion, apiByPassCache } from '$data/websiteSettings';
@@ -63,7 +63,7 @@ export async function fetchVerseTranslationData(props) {
 	// Check if data exists in the database
 	const cachedRecord = await db.api_data.get(cacheKey);
 	if (cachedRecord && cachedRecord.data) {
-		__verseTranslationData.set(cachedRecord.data);
+		if (!props.skipSave) __verseTranslationData.set(cachedRecord.data);
 		return cachedRecord.data;
 	}
 
