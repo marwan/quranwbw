@@ -508,6 +508,13 @@ export const selectableReciters = [
 		url: 'https://everyayah.com/data/Ibrahim_Akhdar_32kbps',
 		image: 'ibrahim-al-akhdar-medium.webp'
 	},
+
+	{
+		id: 18,
+		reciter: 'Khalifah Al Tunaiji',
+		url: 'https://everyayah.com/data/khalefa_al_tunaiji_64kbps',
+		image: 'khalifah-al-tunaiji-medium.webp'
+	},
 	{
 		id: 7,
 		reciter: 'Maher Al-Muaiqly',
