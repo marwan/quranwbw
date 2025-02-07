@@ -1097,14 +1097,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   right: 0px;
 }
 
-.right-2 {
-  right: 0.5rem;
-}
-
-.right-2\.5 {
-  right: 0.625rem;
-}
-
 .start-0 {
   inset-inline-start: 0px;
 }
@@ -1215,6 +1207,10 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .\!mt-2 {
   margin-top: 0.5rem !important;
+}
+
+.\!mt-4 {
+  margin-top: 1rem !important;
 }
 
 .\!mt-\[-0rem\] {
@@ -1331,6 +1327,10 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .mt-\[2px\] {
   margin-top: 2px;
+}
+
+.\!mt-6 {
+  margin-top: 1.5rem !important;
 }
 
 .block {
@@ -1508,12 +1508,12 @@ input[type="range"].range-lg::-moz-range-thumb {
   min-height: 16rem;
 }
 
-.min-h-\[calc\(100\%-3\.5rem\)\] {
-  min-height: calc(100% - 3.5rem);
-}
-
 .min-h-\[70vh\] {
   min-height: 70vh;
+}
+
+.min-h-\[calc\(100\%-3\.5rem\)\] {
+  min-height: calc(100% - 3.5rem);
 }
 
 .w-1\/2 {
@@ -1669,10 +1669,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .max-w-screen-lg {
   max-width: 1024px;
-}
-
-.max-w-xl {
-  max-width: 36rem;
 }
 
 .max-w-xs {
@@ -4795,11 +4791,6 @@ svg {
 
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .lg\:px-8 {
-    padding-left: 2rem;
-    padding-right: 2rem;
   }
 
   .lg\:text-\[195px\] {
