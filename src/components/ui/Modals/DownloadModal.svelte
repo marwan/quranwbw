@@ -1,7 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Info from '$svgs/Info.svelte';
-	import { buttonClasses, disabledClasses } from '$data/commonClasses';
+	import { buttonClasses } from '$data/commonClasses';
 	import { __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __downloadModalVisible, __downloadedDataInfo } from '$utils/stores';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
@@ -15,10 +15,12 @@
 	let progressMessage = '';
 	let downloading = false;
 	let settingsChanged = false;
-	let messageTimeout;
+	let abortController = null; // Used for stopping downloads
+	let downloadStopped = false;
 
 	$: wordTranslationKey = Object.keys(selectableWordTranslations).find((key) => selectableWordTranslations[key].id === $__wordTranslation);
 	$: wordTransliterationKey = Object.keys(selectableWordTransliterations).find((key) => selectableWordTransliterations[key].id === $__wordTransliteration);
+	$: if ($__downloadModalVisible) progressMessage = '';
 
 	/**
 	 * Check if user settings have changed compared to previously downloaded data.
@@ -33,18 +35,23 @@
 	}
 
 	/**
-	 * Displays a message and ensures it disappears after a few seconds.
+	 * Displays a message and ensures it disappears **only after the whole download completes**.
 	 */
 	function showMessage(message) {
 		progressMessage = message;
+	}
 
-		// Clear any existing timeout before setting a new one
-		if (messageTimeout) clearTimeout(messageTimeout);
-
-		// Hide the message after 5 seconds
-		messageTimeout = setTimeout(() => {
-			progressMessage = '';
-		}, 2000);
+	/**
+	 * Stops the ongoing download by aborting all network requests.
+	 */
+	function stopDownload() {
+		if (abortController) {
+			abortController.abort(); // Abort ongoing requests
+			abortController = null;
+		}
+		downloading = false;
+		downloadStopped = true;
+		showMessage('Download stopped!');
 	}
 
 	/**
@@ -53,42 +60,60 @@
 	async function downloadAllChapters() {
 		if (downloading) return;
 		downloading = true;
+		downloadStopped = false;
 		showMessage('Starting download...');
+		abortController = new AbortController();
 
 		await db.api_data.clear(); // Clear old cached data
 
-		const totalChapters = 5; // Change to 114 for full Quran
+		const totalChapters = 114;
 		let completed = 0;
 
 		try {
 			for (let chapter = 1; chapter <= totalChapters; chapter++) {
-				await fetchChapterData({ chapter, skipSave: true });
-				await fetchVerseTranslationData({ chapter, skipSave: true });
+				// Stop the loop if download is cancelled
+				if (!downloading || !abortController) break;
+
+				await fetchChapterData({ chapter, skipSave: true, signal: abortController.signal });
+				await fetchVerseTranslationData({ chapter, skipSave: true, signal: abortController.signal });
 
 				completed++;
-				showMessage(`Downloading... ${Math.round((completed / totalChapters) * 100)}%`);
+
+				if (!downloadStopped) {
+					progressMessage = `Downloading... ${Math.round((completed / totalChapters) * 100)}%`;
+				}
 			}
 
-			// Update settings after successful download
-			updateSettings({
-				type: 'downloadedDataInfo',
-				value: {
-					allChaptersDownloaded: true,
-					fontType: $__fontType,
-					wordTranslation: $__wordTranslation,
-					wordTransliteration: $__wordTransliteration,
-					verseTranslations: $__verseTranslations,
-					lastDownloadAt: new Date().toISOString(),
-					apiVersion
-				}
-			});
-
-			showMessage('Download complete!');
+			if (downloading) {
+				// Update settings after successful download
+				updateSettings({
+					type: 'downloadedDataInfo',
+					value: {
+						allChaptersDownloaded: true,
+						fontType: $__fontType,
+						wordTranslation: $__wordTranslation,
+						wordTransliteration: $__wordTransliteration,
+						verseTranslations: $__verseTranslations,
+						lastDownloadAt: new Date().toISOString(),
+						apiVersion
+					}
+				});
+				showMessage('Download complete!');
+			}
 		} catch (error) {
-			console.error('Download failed:', error);
-			showMessage('Error downloading data.');
+			if (error.name === 'AbortError') {
+				showMessage('Download stopped!');
+			} else {
+				if (downloadStopped) {
+					downloadStopped = false;
+				} else {
+					console.error('Download failed:', error);
+					showMessage('Error downloading data.');
+				}
+			}
 		} finally {
 			downloading = false;
+			abortController = null;
 		}
 	}
 
@@ -99,6 +124,7 @@
 		try {
 			await db.api_data.clear(); // Clear the database
 			showMessage('Data deleted!');
+			downloadStopped = false;
 
 			// Reset stored settings
 			updateSettings({
@@ -122,7 +148,7 @@
 			<div>Font Type: {selectableFontTypes[$__fontType].font}</div>
 			<div>Word Translation: {selectableWordTranslations[wordTranslationKey]?.language || 'N/A'}</div>
 			<div>Word Transliteration: {selectableWordTransliterations[wordTransliterationKey]?.language || 'N/A'}</div>
-			<div>Verse Translations: {$__verseTranslations.length ? $__verseTranslations.toString() : 'None'}</div>
+			<div>Verse Translations/Transliterations: {$__verseTranslations.length ? `${$__verseTranslations.length} Selected` : 'None'}</div>
 
 			<div>
 				Last Download:
@@ -154,14 +180,18 @@
 			<div id="progress-message" class="font-medium">{progressMessage}</div>
 		{/if}
 
-		<!-- Buttons for Download and Delete -->
-		<div class="flex flex-row space-x-2 w-full !mt-6 {downloading && disabledClasses}">
-			<button class="{buttonClasses} w-full truncate" on:click={downloadAllChapters} disabled={downloading}>
-				{$__downloadedDataInfo.allChaptersDownloaded ? 'Download Again' : 'Download Data'}
-			</button>
+		<!-- Buttons for Download, Stop, and Delete -->
+		<div class="flex flex-row space-x-2 w-full !mt-6">
+			{#if downloading}
+				<button class="{buttonClasses} w-full truncate" on:click={stopDownload}> Stop Download </button>
+			{:else}
+				<button class="{buttonClasses} w-full truncate" on:click={downloadAllChapters} disabled={downloading}>
+					{$__downloadedDataInfo.allChaptersDownloaded ? 'Download Again' : 'Download Data'}
+				</button>
 
-			{#if $__downloadedDataInfo.allChaptersDownloaded}
-				<button class="{buttonClasses} w-full truncate" on:click={deleteApiDataTable}> Delete Data </button>
+				{#if $__downloadedDataInfo.allChaptersDownloaded}
+					<button class="{buttonClasses} w-full truncate" on:click={deleteApiDataTable}> Delete Data </button>
+				{/if}
 			{/if}
 		</div>
 	</div>
