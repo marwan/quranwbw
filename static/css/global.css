@@ -1508,12 +1508,12 @@ input[type="range"].range-lg::-moz-range-thumb {
   min-height: 16rem;
 }
 
-.min-h-\[calc\(100\%-3\.5rem\)\] {
-  min-height: calc(100% - 3.5rem);
-}
-
 .min-h-\[70vh\] {
   min-height: 70vh;
+}
+
+.min-h-\[calc\(100\%-3\.5rem\)\] {
+  min-height: calc(100% - 3.5rem);
 }
 
 .w-1\/2 {
@@ -3044,8 +3044,7 @@ input[type="range"].range-lg::-moz-range-thumb {
 @font-face {
   font-family: "Uthmani-Hafs";
 
-  src: url("../fonts/hafs/uthmanic_hafs_v22.woff2") format("woff2"), 
-      url("../fonts/hafs/uthmanic_hafs_v22.woff") format("woff");
+  src: url("../fonts/uthmanic_hafs_v22.woff2") format("woff2");
 
   font-weight: normal;
 
@@ -3057,7 +3056,7 @@ input[type="range"].range-lg::-moz-range-thumb {
 @font-face {
   font-family: "IndoPak";
 
-  src: url("../fonts/indopak/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2") format("woff2"), url("../fonts/indopak/AlQuranIndoPakv5byQuranWBW.com-Regular.woff") format("woff");
+  src: url("../fonts/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2") format("woff2");
 
   font-weight: normal;
 
@@ -3069,7 +3068,7 @@ input[type="range"].range-lg::-moz-range-thumb {
 @font-face {
   font-family: "chapter-icons";
 
-  src: url("../fonts/chapter-icons/surahs_v4-Regular.woff") format("woff2"), url("../fonts/chapter-icons/surahs_v4-Regular.woff") format("woff");
+  src: url("../fonts/surahs_v4-Regular.woff") format("woff");
 
   font-weight: normal;
 
@@ -3081,7 +3080,7 @@ input[type="range"].range-lg::-moz-range-thumb {
 @font-face {
   font-family: "tajweed-rules";
 
-  src: url("../fonts/tajweed-rules/QCF4_TajweedRules-Regular.woff2") format("woff2"), url("../fonts/tajweed-rules/QCF4_TajweedRules-Regular.woff") format("woff");
+  src: url("../fonts/QCF4_TajweedRules-Regular.woff2") format("woff2");
 
   font-weight: normal;
 
@@ -3093,7 +3092,7 @@ input[type="range"].range-lg::-moz-range-thumb {
 @font-face {
   font-family: "bismillah";
 
-  src: url("../fonts/bismillah/QCF_Bismillah_COLOR-Regular.woff2") format("woff2"), url("../fonts/bismillah/QCF_Bismillah_COLOR-Regular.woff") format("woff");
+  src: url("../fonts/QCF_Bismillah_COLOR-Regular.woff2") format("woff2");
 
   font-weight: normal;
 
@@ -3105,7 +3104,7 @@ input[type="range"].range-lg::-moz-range-thumb {
 @font-face {
   font-family: "urdu";
 
-  src: url("../fonts/languages/Mehr-Nastaliq.ttf") format("truetype");
+  src: url("../fonts/Mehr-Nastaliq.ttf") format("truetype");
 
   font-weight: normal;
 
@@ -3117,7 +3116,7 @@ input[type="range"].range-lg::-moz-range-thumb {
 @font-face {
   font-family: "lexicon";
 
-  src: url("../fonts/lexicon/lexicon.ttf") format("truetype");
+  src: url("../fonts/lexicon.ttf") format("truetype");
 
   font-weight: normal;
 
