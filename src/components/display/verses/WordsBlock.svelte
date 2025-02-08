@@ -13,14 +13,14 @@
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { mushafWordFontLink, mushafFontVersion } from '$data/websiteSettings';
+	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	$: displayIsContinuous = selectableDisplays[$__displayType].continuous;
 
 	// Dynamically load the fonts if mushaf fonts are selected
 	if ([2, 3].includes($__fontType)) {
-		loadFont(`p${value.meta.page}`, `${mushafWordFontLink}/QCF4${`00${value.meta.page}`.slice(-3)}_COLOR-Regular.woff?version=${mushafFontVersion}`).then(() => {
+		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			// Hide the v4 words by default and show when the font is loaded...
 			document.querySelectorAll(`.p${value.meta.page}`).forEach((element) => {
 				element.classList.remove('invisible');

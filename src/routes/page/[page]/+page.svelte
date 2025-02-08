@@ -12,11 +12,12 @@
 	import { goto } from '$app/navigation';
 	import { __chapterNumber, __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __topNavbarVisible, __bottomToolbarVisible, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
-	import { apiEndpoint, apiVersion, apiByPassCache, errorLoadingDataMessage, mushafWordFontLink, mushafFontVersion } from '$data/websiteSettings';
+	import { apiEndpoint, apiVersion, apiByPassCache, errorLoadingDataMessage } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { splitDelimiter } from '$data/websiteSettings';
+	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import '$lib/swiped-events.min.js';
 
 	// Lines to be centered instead of justified
@@ -35,7 +36,7 @@
 	// Prefetch adjacent pages for better UX
 	$: if ([2, 3].includes($__fontType)) {
 		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
-			fetch(`${mushafWordFontLink}/QCF4${`00${thisPage}`.slice(-3)}_COLOR-Regular.woff?version=${mushafFontVersion}`);
+			fetch(getMushafWordFontLink(thisPage));
 			fetch(`${apiEndpoint}/page?page=${thisPage}&word_type=${selectableFontTypes[$__fontType].apiId}&word_translation=${$__wordTranslation}&version=${apiVersion}&bypass_cache=${apiByPassCache}`);
 		}
 	}
