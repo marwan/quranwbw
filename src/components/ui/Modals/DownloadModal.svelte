@@ -17,14 +17,16 @@
 	let settingsChanged = false;
 	let abortController = null; // Used for stopping downloads
 	let downloadStopped = false;
+	let swRegistered = null; // Store to track service worker status
 
 	$: wordTranslationKey = Object.keys(selectableWordTranslations).find((key) => selectableWordTranslations[key].id === $__wordTranslation);
 	$: wordTransliterationKey = Object.keys(selectableWordTransliterations).find((key) => selectableWordTransliterations[key].id === $__wordTransliteration);
-	$: if ($__downloadModalVisible) progressMessage = '';
+	$: if ($__downloadModalVisible) {
+		progressMessage = '';
+		checkServiceWorker();
+	}
 
-	/**
-	 * Check if user settings have changed compared to previously downloaded data.
-	 */
+	// Check if user settings have changed compared to previously downloaded data.
 	$: {
 		const savedSettings = $__downloadedDataInfo;
 		if (savedSettings?.allChaptersDownloaded) {
@@ -34,16 +36,12 @@
 		}
 	}
 
-	/**
-	 * Displays a message and ensures it disappears **only after the whole download completes**.
-	 */
+	// Displays a message and ensures it disappears **only after the whole download completes**.
 	function showMessage(message) {
 		progressMessage = message;
 	}
 
-	/**
-	 * Stops the ongoing download by aborting all network requests.
-	 */
+	// Stops the ongoing download by aborting all network requests.
 	function stopDownload() {
 		if (abortController) {
 			abortController.abort(); // Abort ongoing requests
@@ -54,9 +52,7 @@
 		showMessage('Download stopped!');
 	}
 
-	/**
-	 * Downloads all chapters and updates settings.
-	 */
+	// Downloads all chapters and updates settings.
 	async function downloadAllChapters() {
 		if (downloading) return;
 		downloading = true;
@@ -118,9 +114,7 @@
 		}
 	}
 
-	/**
-	 * Deletes all stored data from IndexedDB and resets settings.
-	 */
+	// Deletes all stored data from IndexedDB and resets settings.
 	async function deleteApiDataTable() {
 		try {
 			await db.api_data.clear(); // Clear the database
@@ -135,6 +129,20 @@
 		} catch (error) {
 			console.error('Error deleting api_data:', error);
 			showMessage('Error deleting data.');
+		}
+	}
+
+	// Checks if service worker is enabled or not
+	async function checkServiceWorker() {
+		if ('serviceWorker' in navigator) {
+			try {
+				const registrations = await navigator.serviceWorker.getRegistrations();
+				swRegistered = registrations.length > 0;
+			} catch (error) {
+				swRegistered = false;
+			}
+		} else {
+			swRegistered = false;
 		}
 	}
 </script>
@@ -157,6 +165,15 @@
 					Never
 				{:else}
 					{timeAgo($__downloadedDataInfo.lastDownloadAt) || 'Just Now'}
+				{/if}
+			</div>
+
+			<div>
+				Service Worker Registered:
+				{#if swRegistered === null}
+					Checking...
+				{:else}
+					{swRegistered ? 'Yes' : 'No'}
 				{/if}
 			</div>
 		</div>

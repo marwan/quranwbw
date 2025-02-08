@@ -25,6 +25,7 @@
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();
@@ -131,16 +132,7 @@
 	});
 
 	// Service Worker
-	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker
-			.register('/service-worker.js')
-			.then((registration) => {
-				console.log('Service Worker Registered', registration);
-			})
-			.catch((error) => {
-				console.error('Service Worker Registration Failed', error);
-			});
-	}
+	checkAndRegisterServiceWorker();
 </script>
 
 <div class="max-w-screen-lg mx-auto {paddingTop} {paddingBottom} {paddingX}">

@@ -1,5 +1,8 @@
 const CACHE_NAME = 'qwbw-app-cache-v1';
 
+// List of URLs to exclude from caching
+const EXCLUDED_URLS = ['/service-worker-settings.json', '/v1/random-words'];
+
 self.addEventListener('install', (event) => {
 	self.skipWaiting(); // Activate worker immediately
 	event.waitUntil(
@@ -10,8 +13,12 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-	// Ignore non-GET requests (POST, PUT, DELETE)
-	if (event.request.method !== 'GET') return;
+	const url = new URL(event.request.url);
+
+	// Check if the request should be excluded from caching
+	if (event.request.method !== 'GET' || EXCLUDED_URLS.some((excluded) => url.pathname.includes(excluded))) {
+		return;
+	}
 
 	event.respondWith(
 		caches.match(event.request).then((cachedResponse) => {
