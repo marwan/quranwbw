@@ -239,7 +239,7 @@
 								<div class="{cardInnerClasses} flex-row text-center items-center">
 									<div class="flex flex-row space-x-2">
 										<div class="flex items-center">
-											<!-- chapter number star -->
+											<!-- number star -->
 											<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
 												{@html svgData}
 												<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{id}</text>
@@ -298,7 +298,7 @@
 							<div class="{cardInnerClasses} flex-row text-center items-center">
 								<div class="flex flex-row space-x-2">
 									<div class="flex items-center">
-										<!-- chapter number star -->
+										<!-- number star -->
 										<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
 											{@html svgData}
 											<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{juz.juz}</text>
@@ -315,6 +315,8 @@
 										</div>
 									</div>
 								</div>
+
+								<div class="juz-icons justify-items-end text-xl md:text-2xl" style="color: {window.theme('icon')}">{juz.icon}</div>
 							</div>
 						</a>
 					{/each}

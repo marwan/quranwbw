@@ -3125,6 +3125,18 @@ input[type="range"].range-lg::-moz-range-thumb {
   font-display: swap;
 }
 
+@font-face {
+  font-family: "juz-icons";
+
+  src: url("../fonts/juz_names-Regular.woff2") format("woff2");
+
+  font-weight: normal;
+
+  font-style: normal;
+
+  font-display: swap;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -3370,6 +3382,13 @@ svg {
 
 .chapter-icons {
   font-family: chapter-icons !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-display: block;
+}
+
+.juz-icons {
+  font-family: juz-icons !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-display: block;
