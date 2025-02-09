@@ -133,7 +133,7 @@
 
 			const fetchPromises = Object.entries(chaptersWithVerses).map(async ([chapter, verses]) => {
 				try {
-					const data = await fetchChapterData({ chapter });
+					const data = await fetchChapterData({ chapter, skipSave: true });
 
 					// Filter only the required verses
 					verses.forEach((verse) => {

@@ -2,20 +2,26 @@
 	export let key;
 
 	import Spinner from '$svgs/Spinner.svelte';
-	import { fetchVersesData } from '$utils/fetchData';
+	import { fetchChapterData } from '$utils/fetchData';
 	import { __fontType } from '$utils/stores';
 	import { splitDelimiter } from '$data/websiteSettings';
 
+	const [chapter, verse] = key.split(':').map(Number);
+
 	$: fontType = [1, 2, 3].includes($__fontType) ? 1 : 4;
-	$: fetchData = fetchVersesData({ verses: key, fontType: fontType, skipSave: true });
+
+	$: fetchData = (async () => {
+		const data = await fetchChapterData({ chapter, skipSave: true, reRenderWhenTheseUpdates: [$__fontType] });
+		return data[`${chapter}:${verse}`];
+	})();
 </script>
 
 {#await fetchData}
 	<Spinner size="10" />
 {:then data}
 	<div class="direction-rtl text-3xl leading-normal arabic-font-{fontType}">
-		{data[key].words.arabic.split(splitDelimiter).join(' ')}
-		{data[key].words.end}
+		{data.words.arabic.split(splitDelimiter).join(' ')}
+		{data.words.end}
 	</div>
 {:catch error}
 	<p>error.</p>
