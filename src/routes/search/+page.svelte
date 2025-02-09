@@ -14,9 +14,8 @@
 
 	const params = new URLSearchParams(window.location.search);
 	let searchQuery = params.get('query') === null || params.get('query') === '' ? '' : params.get('query'); // Search text
-	let previousSearchQuery = '';
-	let selectedTranslations = $__verseTranslations.toString();
 	let searchPage = params.get('page') === null || params.get('page') === '' ? 1 : +params.get('page'); // Selected page
+	let previousSearchQuery = '';
 	let resultsPerPage = 50;
 	let totalResults;
 	let pagePagination = null;
@@ -30,10 +29,12 @@
 	$: if (searchPage < 1 || isNaN(searchPage)) searchPage = 1;
 
 	// Update the search results whenever query changes
-	// $: if (searchQuery.length > 0) goto(`/search?query=${searchQuery}&page=${searchPage}`, { replaceState: false });
+	$: if (searchQuery.length > 0) goto(`/search?query=${searchQuery}&page=${searchPage}`, { replaceState: false });
 
-	// Update the selected translations whenever user changes it
-	$: if ($__verseTranslations) selectedTranslations = $__verseTranslations.toString();
+	// Get and set the new verse keys when the search term or page is changed
+	$: if (searchQuery.length > 0 || (searchPage && pageChanged === true)) {
+		setVerseKeys();
+	}
 
 	// Get verse keys from the API
 	async function getVerseKeys(searchQuery) {
@@ -85,11 +86,6 @@
 		resultsFound = keys === null || keys === '' ? false : true;
 		__keysToFetch.set(keys);
 		fetchingNewData = false;
-	}
-
-	// Get and set the new verse keys when the page is changed
-	$: if (searchPage && pageChanged === true) {
-		setVerseKeys();
 	}
 
 	// Make a random hit to the search endpoint to warm it
