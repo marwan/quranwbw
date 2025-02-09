@@ -22,6 +22,7 @@
 	let pageChanged = false;
 	let fetchingNewData = false;
 	let resultsFound = false;
+	let badRequest = false;
 
 	__keysToFetch.set(null);
 
@@ -38,13 +39,19 @@
 
 	// Get verse keys from the API
 	async function getVerseKeys(searchQuery) {
-		let response = await fetch(`${apiEndpoint}/search/translations?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
-		let data = await response.json();
-		let versesKeyData = data;
-		const { pagination } = versesKeyData;
-		totalResults = pagination.total_records;
-		pagePagination = pagination;
-		return generateKeys(versesKeyData);
+		try {
+			let response = await fetch(`${apiEndpoint}/search/translations?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
+			if (response.status !== 200) return (badRequest = true);
+			let data = await response.json();
+			let versesKeyData = data;
+			const { pagination } = versesKeyData;
+			totalResults = pagination.total_records;
+			pagePagination = pagination;
+			return generateKeys(versesKeyData);
+		} catch (error) {
+			console.error('Error fetching verse keys:', error);
+			badRequest = true;
+		}
 	}
 
 	// Generate keys from the API response (string format, after parsing)
@@ -82,6 +89,7 @@
 
 	async function setVerseKeys() {
 		fetchingNewData = true;
+		badRequest = false;
 		const keys = await getVerseKeys(searchQuery);
 		resultsFound = keys === null || keys === '' ? false : true;
 		__keysToFetch.set(keys);
@@ -121,7 +129,9 @@
 	{/if}
 
 	{#if searchQuery.length > 0}
-		{#if fetchingNewData}
+		{#if badRequest}
+			<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Something went wrong.</div>
+		{:else if !badRequest && fetchingNewData}
 			<Spinner />
 		{:else}
 			<div id="search-block">

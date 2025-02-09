@@ -92,31 +92,31 @@ export async function fetchVerseTranslationData(props) {
 }
 
 // Fetch individual verses
-export async function fetchVersesData(props) {
-	if (!props.skipSave) __chapterData.set(null);
+// export async function fetchVersesData(props) {
+// 	if (!props.skipSave) __chapterData.set(null);
 
-	// Set default props, we still try to get the props from function invokations for reactivity
-	if (!props.fontType) props.fontType = get(__fontType);
-	if (!props.wordTranslation) props.wordTranslation = get(__wordTranslation);
-	if (!props.wordTransliteration) props.wordTransliteration = get(__wordTransliteration);
+// 	// Set default props, we still try to get the props from function invokations for reactivity
+// 	if (!props.fontType) props.fontType = get(__fontType);
+// 	if (!props.wordTranslation) props.wordTranslation = get(__wordTranslation);
+// 	if (!props.wordTransliteration) props.wordTransliteration = get(__wordTransliteration);
 
-	const apiURL =
-		`${apiEndpoint}/verses?` +
-		new URLSearchParams({
-			verses: props.verses,
-			word_type: selectableFontTypes[props.fontType].apiId,
-			word_translation: props.wordTranslation,
-			word_transliteration: props.wordTransliteration,
-			verse_translation: '1,3',
-			version: apiVersion,
-			bypass_cache: apiByPassCache
-		});
+// 	const apiURL =
+// 		`${apiEndpoint}/verses?` +
+// 		new URLSearchParams({
+// 			verses: props.verses,
+// 			word_type: selectableFontTypes[props.fontType].apiId,
+// 			word_translation: props.wordTranslation,
+// 			word_transliteration: props.wordTransliteration,
+// 			verse_translation: '1,3',
+// 			version: apiVersion,
+// 			bypass_cache: apiByPassCache
+// 		});
 
-	const response = await fetch(apiURL);
-	const data = await response.json();
-	if (!props.skipSave) __chapterData.set(data.data.verses);
-	return data.data.verses;
-}
+// 	const response = await fetch(apiURL);
+// 	const data = await response.json();
+// 	if (!props.skipSave) __chapterData.set(data.data.verses);
+// 	return data.data.verses;
+// }
 
 // Fetch timestamps for word-by-word highlighting
 export async function fetchTimestampData(chapter) {
