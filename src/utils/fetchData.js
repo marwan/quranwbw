@@ -7,9 +7,9 @@ import { selectableFontTypes } from '$data/options';
 // Fetch specific verses (startVerse to endVerse) and cache chapter data
 export async function fetchChapterData(props) {
 	if (!props.skipSave) __chapterData.set(null);
-	const fontType = get(__fontType);
-	const wordTranslation = get(__wordTranslation);
-	const wordTransliteration = get(__wordTransliteration);
+	const fontType = props.fontType || get(__fontType);
+	const wordTranslation = props.wordTranslation || get(__wordTranslation);
+	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
 
 	// Generate a unique key for the data
 	const cacheKey = `${props.chapter}--${selectableFontTypes[fontType].apiId}--${wordTranslation}--${wordTransliteration}`;
