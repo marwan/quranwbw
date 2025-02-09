@@ -22,6 +22,7 @@
 	let pagePagination = null;
 	let pageChanged = false;
 	let fetchingNewData = false;
+	let resultsFound = false;
 
 	__keysToFetch.set(null);
 
@@ -81,6 +82,7 @@
 	async function setVerseKeys() {
 		fetchingNewData = true;
 		const keys = await getVerseKeys(searchQuery);
+		resultsFound = keys === null || keys === '' ? false : true;
 		__keysToFetch.set(keys);
 		fetchingNewData = false;
 	}
@@ -126,19 +128,22 @@
 		{#if fetchingNewData}
 			<Spinner />
 		{:else}
-			<div>
-				<!-- search results info -->
-				<div class="text-center text-xs">
-					<span>Showing {totalResults}</span>
-					<span>{totalResults === 1 ? 'result' : 'results'} related to</span>
-					{#key pagePagination}
-						{#if pagePagination.total_pages > 1}
-							"{searchQuery}"
-							<span>(page {pagePagination.current_page}).</span>
-						{:else}
-							"{searchQuery}".
-						{/if}
-					{/key}
+			<div id="search-block">
+				<div id="search-results-information" class="text-center text-xs">
+					{#if resultsFound}
+						<span>Showing {totalResults}</span>
+						<span>{totalResults === 1 ? 'result' : 'results'} related to</span>
+						{#key pagePagination}
+							{#if pagePagination.total_pages > 1}
+								"{searchQuery}"
+								<span>(page {pagePagination.current_page}).</span>
+							{:else}
+								"{searchQuery}".
+							{/if}
+						{/key}
+					{:else}
+						<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results. Please try using a different keyword.</div>
+					{/if}
 				</div>
 
 				<div id="individual-verses-block">
@@ -149,7 +154,6 @@
 					{/key}
 				</div>
 
-				<!-- pagination -->
 				{#if pagePagination !== null}
 					<div class="flex flex-row space-x-4 mt-8 justify-center">
 						{#if pagePagination.current_page > 1}
