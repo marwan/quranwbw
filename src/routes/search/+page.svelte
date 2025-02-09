@@ -7,7 +7,7 @@
 	import VerseTranslationSelector from '$ui/SettingsDrawer/VerseTranslationSelector.svelte';
 	import { goto } from '$app/navigation';
 	import { __currentPage, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __settingsSelectorModal, __keysToFetch } from '$utils/stores';
-	import { apiEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
+	import { apiEndpoint } from '$data/websiteSettings';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { selectableVerseTranslations } from '$data/options';
