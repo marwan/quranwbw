@@ -148,7 +148,7 @@
 </script>
 
 <Modal id="downloadModal" bind:open={$__downloadModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
-	<h3 id="modal-title" class="mb-4 text-xl font-medium">Download</h3>
+	<h3 id="modal-title" class="mb-4 text-xl font-medium">Offline Mode</h3>
 
 	<div class="flex flex-col space-y-4 text-sm">
 		<p>By default, the website caches pages as you browse. However, you can use this feature to download chapter data all at once based on your settings. Once downloaded, the chapter page will remain accessible offline unless deleted.</p>

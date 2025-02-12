@@ -1,7 +1,7 @@
 const CACHE_NAME = 'qwbw-app-cache-v1';
 
 // List of URLs to exclude from caching
-const EXCLUDED_URLS = ['/service-worker-settings.json', '/v1/random-words'];
+const EXCLUDED_URLS = ['/service-worker.js', '/service-worker-settings.json', '/v1/random-words'];
 
 self.addEventListener('install', (event) => {
 	self.skipWaiting(); // Activate worker immediately

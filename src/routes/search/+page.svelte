@@ -33,9 +33,7 @@
 	$: if (searchQuery.length > 0) goto(`/search?query=${searchQuery}&page=${searchPage}`, { replaceState: false });
 
 	// Get and set the new verse keys when the search term or page is changed
-	$: if (searchQuery.length > 0 || (searchPage && pageChanged === true)) {
-		setVerseKeys();
-	}
+	$: if (searchQuery.length > 0 || (searchPage && pageChanged === true)) setVerseKeys();
 
 	// Get verse keys from the API
 	async function getVerseKeys(searchQuery) {

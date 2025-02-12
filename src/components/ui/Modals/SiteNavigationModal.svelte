@@ -108,7 +108,7 @@
 					}}
 					class={linkClasses}
 				>
-					<span class={linkTextClasses}>Download Data</span>
+					<span class={linkTextClasses}>Offline Mode</span>
 				</button>
 			</div>
 		</div>
