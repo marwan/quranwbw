@@ -2,8 +2,10 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
+	import VerseReciterSelector from '$ui/SettingsDrawer/VerseReciterSelector.svelte';
+	import ExternalLink from '$svgs/ExternalLink.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch } from '$utils/stores';
+	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal } from '$utils/stores';
 	import { updateAudioSettings, prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
@@ -94,7 +96,7 @@
 	}
 </script>
 
-<Modal id="audioModal" bind:open={$__audioModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme" bodyClass="p-6" placement="center" position="bottom" autoclose outsideclose>
+<Modal id="audioModal" bind:open={$__audioModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme" bodyClass="p-6" placement="center" position="bottom" outsideclose>
 	<!-- Modal content -->
 	<h3 id="modal-title" class="mb-2 text-xl font-medium">{quranMetaData[$__audioSettings.playingChapter || 1].transliteration}, {$__audioSettings.playingKey}</h3>
 
@@ -158,6 +160,11 @@
 						</Radio>
 					</div>
 				</div>
+
+				<button class="text-xs flex flex-row items-center {buttonClasses} w-max" on:click={() => __settingsSelectorModal.set({ component: VerseReciterSelector, visible: true, title: 'Reciter' })}>
+					<div>Select Reciter</div>
+					<ExternalLink size={4} />
+				</button>
 			</div>
 
 			<!-- range options -->
