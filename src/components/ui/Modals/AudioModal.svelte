@@ -3,7 +3,7 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
 	import VerseReciterSelector from '$ui/SettingsDrawer/VerseReciterSelector.svelte';
-	import ExternalLink from '$svgs/ExternalLink.svelte';
+	import Reciter from '$svgs/Reciter.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal } from '$utils/stores';
 	import { updateAudioSettings, prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
@@ -162,8 +162,8 @@
 				</div>
 
 				<button class="text-xs flex flex-row items-center {buttonClasses} w-max" on:click={() => __settingsSelectorModal.set({ component: VerseReciterSelector, visible: true, title: 'Reciter' })}>
+					<Reciter size={4} />
 					<div>Select Reciter</div>
-					<ExternalLink size={4} />
 				</button>
 			</div>
 
