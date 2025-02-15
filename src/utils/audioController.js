@@ -99,9 +99,9 @@ export function playWordAudio(props) {
 
 	const audioSettings = get(__audioSettings);
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
-
 	const currentWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber).padStart(3, '0')}.mp3`;
 	const nextWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
+	const currentAudioType = audioSettings.audioType;
 
 	// Prefetch the next word audio
 	fetch(`${wordsAudioURL}/${nextWordFileName}?version=2`);
@@ -125,6 +125,7 @@ export function playWordAudio(props) {
 			return playWordAudio({ key: `${wordChapter}:${wordVerse}:${wordNumber + 1}`, playAllWords: true });
 		}
 		resetAudioSettings({ location: 'end' });
+		audioSettings.audioType = currentAudioType;
 	};
 
 	__audioSettings.set(audioSettings);
