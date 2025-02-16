@@ -112,7 +112,7 @@
 	}
 </script>
 
-<Modal id="audioModal" bind:open={$__audioModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme" bodyClass="p-6" placement="center" position="bottom" outsideclose>
+<Modal id="audioModal" bind:open={$__audioModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl !theme" bodyClass="p-6" placement="center" position="bottom" outsideclose>
 	<!-- Modal content -->
 	<h3 id="modal-title" class="mb-2 text-xl font-medium">{quranMetaData[$__audioSettings.playingChapter || 1].transliteration}, {$__audioSettings.playingKey}</h3>
 
@@ -289,7 +289,17 @@
 			<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
 				<div class="flex flex-row space-x-4">
 					<div class="flex flex-row space-x-2">
-						<span class="m-auto text-sm mr-2">Repeat </span>
+						<span class="m-auto text-sm mr-2"
+							>Repeat
+
+							{#if ['playThisVerse', 'playFromHere'].includes($__audioSettings.audioRange)}
+								each {term('verse')}
+							{:else if $__audioSettings.audioRange === 'playRange' && $__audioSettings.repeatType === 'repeatVerse'}
+								each {term('verse')}
+							{:else}
+								{term('verse')} range
+							{/if}
+						</span>
 						<input id="timesToRepeat" type="number" bind:value={$__audioSettings.timesToRepeat} min="1" max="20" on:change={updateAudioSettings} class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} block p-2.5 mb-0" />
 						<span class="m-auto text-sm">{$__audioSettings.timesToRepeat > 1 ? 'times' : 'time'} </span>
 					</div>
