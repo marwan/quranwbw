@@ -19,11 +19,10 @@
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;
 	$: versesInChapter = quranMetaData[$__chapterNumber].verses;
+	$: endVerseValue = versesInChapter;
 
 	// Update settings and validate verses when audio modal is visible
 	$: if ($__audioModalVisible) {
-		const thisChapter = $__audioSettings.playingKey.split(':')[0];
-		const versesInChapter = quranMetaData[thisChapter].verses;
 		const { startVerse, endVerse, timesToRepeat } = $__audioSettings;
 
 		// Set verses to play based on audio range setting
@@ -65,6 +64,11 @@
 
 	// Properly set the max verses allowed
 	$: if ($__chapterNumber && $__audioSettings.endVerse > versesInChapter) {
+		$__audioSettings.endVerse = versesInChapter;
+	}
+
+	// Update the end verse whenever the audio modal opens
+	$: if ($__audioModalVisible) {
 		$__audioSettings.endVerse = versesInChapter;
 	}
 
@@ -245,8 +249,8 @@
 									id="endVerse"
 									type="number"
 									min={$__audioSettings.startVerse}
-									max={versesInChapter}
-									bind:value={$__audioSettings.endVerse}
+									max={quranMetaData[$__chapterNumber].verses}
+									bind:value={endVerseValue}
 									on:change={updateAudioSettings}
 									aria-describedby="helper-text-explanation"
 									class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')} {window.theme('placeholder')} block p-2.5 mb-0"
