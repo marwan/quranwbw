@@ -436,25 +436,27 @@ export const selectableVerseTranslations = {
 export const selectableVerseTransliterations = [1, 3, 57];
 
 export const selectableWordTranslations = {
-	1: { id: 5, language: 'Bangla' },
-	2: { id: 14, language: 'Chinese (Traditional)' },
-	3: { id: 15, language: 'Chinese (Zhuyin)' },
-	4: { id: 16, language: 'Chinese (Simplified)' },
-	5: { id: 17, language: 'Chinese (Pinyin)' },
-	6: { id: 18, language: 'Divehi' },
-	7: { id: 1, language: 'English' },
-	8: { id: 11, language: 'French' },
-	9: { id: 8, language: 'German' },
-	10: { id: 3, language: 'Hindi' },
-	11: { id: 4, language: 'Indonesian' },
-	// 12: { id: 10, language: 'Ingush' },
-	13: { id: 12, language: 'Malayalam (Amani Thafseer)' },
-	14: { id: 13, language: 'Malayalam (Quran Lalithasaram)' },
-	// 15: { id: 19, language: 'Persian' },
-	// 16: { id: 9, language: 'Russian' },
-	17: { id: 7, language: 'Tamil' },
-	18: { id: 6, language: 'Turkish' },
-	19: { id: 2, language: 'Urdu' }
+	1: { id: 1, language: 'English' },
+	2: { id: 2, language: 'Urdu' },
+	3: { id: 3, language: 'Hindi' },
+	4: { id: 4, language: 'Indonesian' },
+	5: { id: 5, language: 'Bangla' },
+	6: { id: 6, language: 'Turkish' },
+	7: { id: 7, language: 'Tamil' },
+	8: { id: 8, language: 'German' },
+	// 9: { id: 9, language: 'Russian' },
+	// 10: { id: 10, language: 'Ingush' },
+	11: { id: 11, language: 'French' },
+	12: { id: 12, language: 'Malayalam (Amani Thafseer)' },
+	13: { id: 13, language: 'Malayalam (Quran Lalithasaram)' },
+	14: { id: 14, language: 'Chinese (Traditional)' },
+	15: { id: 15, language: 'Chinese (Zhuyin)' },
+	16: { id: 16, language: 'Chinese (Simplified)' },
+	17: { id: 17, language: 'Chinese (Pinyin)' },
+	18: { id: 18, language: 'Divehi' },
+	// 19: { id: 19, language: 'Persian' },
+	20: { id: 20, language: 'Sindhi' },
+	21: { id: 21, language: 'Albanian' }
 };
 
 export const selectableWordTransliterations = {
