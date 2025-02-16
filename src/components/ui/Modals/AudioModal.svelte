@@ -261,7 +261,7 @@
 			<!-- repeat type options -->
 			{#if $__audioSettings.audioRange === 'playRange'}
 				<div id="repeat-type-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
-					<span class="text-sm">Repeat Type</span>
+					<span class="text-sm">Repeat</span>
 					<div class="flex flex-row space-x-2">
 						<!-- repeat each verse -->
 						<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
