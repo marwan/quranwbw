@@ -198,7 +198,6 @@ export function resetAudioSettings(props) {
 		if (props?.location === 'end') {
 			audioSettings.timesRepeated = 0;
 			window.versesToPlayArray = [];
-			// window.tempVerseArray = [];
 		}
 
 		__audioSettings.set(audioSettings);
@@ -337,7 +336,7 @@ export function setVersesToPlay(props) {
 			const audioSettings = get(__audioSettings);
 
 			// If repeatType is 'repeatRange' and timesToRepeat is more than 1, repeat the set of keys
-			if (audioSettings.repeatType === 'repeatRange' && audioSettings.timesToRepeat > 1) {
+			if (audioSettings.repeatType === 'repeatRange' && audioSettings.timesToRepeat > 1 && get(__audioModalVisible) === true) {
 				const originalSet = [...window.versesToPlayArray];
 				for (let i = 1; i < audioSettings.timesToRepeat; i++) {
 					window.versesToPlayArray.push(...originalSet);
@@ -345,7 +344,7 @@ export function setVersesToPlay(props) {
 			}
 
 			// If repeatType is 'repeatVerse' and timesToRepeat is more than 1, repeat each verse back to back
-			if (audioSettings.repeatType === 'repeatVerse' && audioSettings.timesToRepeat > 1) {
+			if (audioSettings.repeatType === 'repeatVerse' && audioSettings.timesToRepeat > 1 && get(__audioModalVisible) === true) {
 				const newArray = [];
 				for (let verse = props.startVerse; verse <= props.endVerse; verse++) {
 					const verseKey = `${props.chapter}:${verse}`;
