@@ -341,7 +341,8 @@ export const selectableVerseTranslations = {
 	238: {
 		resource_id: 238,
 		resource_name: 'Taj Mehmood Amroti',
-		language_id: 142
+		language_id: 142,
+		font: 'font-Sindhi'
 	},
 
 	// tamil
@@ -409,43 +410,49 @@ export const selectableVerseTranslations = {
 	156: {
 		resource_id: 156,
 		resource_name: "Fe Zilal al-Qur'an",
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	97: {
 		resource_id: 97,
 		resource_name: 'Tafheem Ul Quran - Abul Alaa Maududi',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	234: {
 		resource_id: 234,
 		resource_name: 'Fatah Muhammad Jalandhari',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	158: {
 		resource_id: 158,
 		resource_name: 'بیان القرآن (ڈاکٹر اسرار احمد)',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	151: {
 		resource_id: 151,
 		resource_name: 'Shaykh al-Hind Mahmud al-Hasan (with Tafsir E Usmani)',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	54: {
 		resource_id: 54,
 		resource_name: 'Maulana Muhammad Junagarhi',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	819: {
 		resource_id: 819,
 		resource_name: 'Maulana Wahiduddin Khan',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	831: {
 		resource_id: 831,
 		resource_name: 'Abul Alaa Maududi (Roman Urdu)',
-		language_id: 174,
-		is_roman: true
+		language_id: 174
 	}
 };
 
@@ -453,7 +460,7 @@ export const selectableVerseTransliterations = [1, 3, 57];
 
 export const selectableWordTranslations = {
 	1: { id: 1, language: 'English' },
-	2: { id: 2, language: 'Urdu' },
+	2: { id: 2, language: 'Urdu', font: 'font-Urdu' },
 	3: { id: 3, language: 'Hindi' },
 	4: { id: 4, language: 'Indonesian' },
 	5: { id: 5, language: 'Bangla' },
@@ -471,7 +478,7 @@ export const selectableWordTranslations = {
 	17: { id: 17, language: 'Chinese (Pinyin)' },
 	18: { id: 18, language: 'Divehi' },
 	// 19: { id: 19, language: 'Persian' },
-	20: { id: 20, language: 'Sindhi' },
+	20: { id: 20, language: 'Sindhi', font: 'font-Sindhi' },
 	21: { id: 21, language: 'Albanian' }
 };
 

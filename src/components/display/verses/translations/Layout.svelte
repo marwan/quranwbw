@@ -103,7 +103,7 @@
 </script>
 
 <div class="flex flex-col print:break-inside-avoid">
-	<span class="{isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {isTranslationUrduOrPersian(verseTranslation.resource_id) && 'font-Urdu'}">
+	<span class="{isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">
 		{@html verseTextModifier(verseTranslation.text)}
 	</span>
 
@@ -118,7 +118,7 @@
 			<!-- close footnote button -->
 			<button on:click={() => hideFootnote(value.meta.chapter, value.meta.verse, verseTranslationID)} title="Close footnote"><CrossSolid size={6} /></button>
 		</div>
-		<div class="text {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {isTranslationUrduOrPersian(verseTranslation.resource_id) && 'font-Urdu'}">...</div>
+		<div class="text {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">...</div>
 	</div>
 
 	<!-- show translaton author name only if more than 1 was selected -->

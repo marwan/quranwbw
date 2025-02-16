@@ -12,7 +12,7 @@
 	// import Popover from '$ui/FlowbiteSvelte/popover/Popover.svelte';
 	// import Spinner from '$svgs/Spinner.svelte';
 
-	import { selectableThemes } from '$data/options';
+	import { selectableThemes, selectableWordTranslations } from '$data/options';
 	import { supplicationsFromQuran } from '$data/quranMeta';
 	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __wordTranslation, __wordTranslationEnabled, __wordTransliterationEnabled, __morphologyKey, __wordTooltip, __verseKey, __websiteTheme, __hideNonDuaPart, __morphologyModalVisible } from '$utils/stores';
 	// import { tajweedRulings, tajweedColorIds } from '$data/tajweedRulings';
@@ -90,7 +90,7 @@
 		{#if [1, 3, 7].includes($__displayType)}
 			<div class={wordTranslationClasses} data-fontSize={fontSizes.wordTranslationText}>
 				<span class="leading-normal {$__wordTransliterationEnabled ? 'block' : 'hidden'}">{transliterationSplit[word]}</span>
-				<span class="leading-normal {$__wordTranslation === 2 && 'font-Urdu'} {$__wordTranslationEnabled ? 'block' : 'hidden'}">{translationSplit[word]}</span>
+				<span class="leading-normal {selectableWordTranslations[$__wordTranslation].font} {$__wordTranslationEnabled ? 'block' : 'hidden'}">{translationSplit[word]}</span>
 			</div>
 		{/if}
 	</div>

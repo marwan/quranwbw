@@ -3114,6 +3114,18 @@ input[type="range"].range-lg::-moz-range-thumb {
 }
 
 @font-face {
+  font-family: "sindhi";
+
+  src: url("../fonts/MBLateefi.otf") format("opentype");
+
+  font-weight: normal;
+
+  font-style: normal;
+
+  font-display: swap;
+}
+
+@font-face {
   font-family: "lexicon";
 
   src: url("../fonts/lexicon.ttf") format("truetype");
@@ -3391,6 +3403,10 @@ svg {
 
 .font-Urdu {
   font-family: "urdu";
+}
+
+.font-Sindhi {
+  font-family: "sindhi";
 }
 
 .direction-rtl {

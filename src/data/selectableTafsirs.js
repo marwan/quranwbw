@@ -209,7 +209,8 @@ export const selectableTafsirs = {
 		language: 'Urdu',
 		name: 'Fi Zilal al-Quran',
 		slug: 'ur-tafsir-fe-zalul-quran-syed-qatab',
-		url: 1
+		url: 1,
+		font: 'font-Urdu'
 	},
 	61: {
 		id: 61,
@@ -217,7 +218,8 @@ export const selectableTafsirs = {
 		language: 'Urdu',
 		name: 'Tafsir Ibn Kathir',
 		slug: 'ur-tafseer-ibn-e-kaseer',
-		url: 1
+		url: 1,
+		font: 'font-Urdu'
 	},
 	62: {
 		id: 62,
@@ -225,7 +227,8 @@ export const selectableTafsirs = {
 		language: 'Urdu',
 		name: 'Tafsir Bayan ul Quran',
 		slug: 'ur-tafsir-bayan-ul-quran',
-		url: 1
+		url: 1,
+		font: 'font-Urdu'
 	},
 	63: {
 		id: 63,
@@ -233,7 +236,8 @@ export const selectableTafsirs = {
 		language: 'Urdu',
 		name: 'Tazkirul Quran',
 		slug: 'ur-tazkirul-quran',
-		url: 1
+		url: 1,
+		font: 'font-Urdu'
 	},
 	64: {
 		id: 64,
@@ -241,6 +245,7 @@ export const selectableTafsirs = {
 		language: 'Urdu',
 		name: 'Tafheem Ul Quran',
 		slug: 'ur-tafheem-ul-quran',
-		url: 2
+		url: 2,
+		font: 'font-Urdu'
 	}
 };
