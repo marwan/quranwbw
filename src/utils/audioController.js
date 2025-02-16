@@ -265,6 +265,8 @@ function wordHighlighter() {
 
 // Generate an array of verses to play
 export function setVersesToPlay(props) {
+	const audioSettings = get(__audioSettings);
+
 	window.versesToPlayArray = [];
 
 	// If the verses were provided in an array, just use those
@@ -272,12 +274,8 @@ export function setVersesToPlay(props) {
 		for (const key of props.verses) {
 			window.versesToPlayArray.push(key);
 		}
-	}
-
-	// Handle play action based on the current page and options
-	else if (props?.allVersesOnPage) {
+	} else if (props?.allVersesOnPage) {
 		if (get(__currentPage) === 'mushaf') {
-			// For mushaf page
 			const wordsOnPage = document.getElementsByClassName('word');
 			for (const wordElement of wordsOnPage) {
 				const verseKey = `${wordElement.id.split(':')[0]}:${wordElement.id.split(':')[1]}`;
@@ -286,7 +284,6 @@ export function setVersesToPlay(props) {
 				}
 			}
 		} else if (get(__currentPage) === 'chapter') {
-			// For chapter page
 			const versesOnPage = document.getElementsByClassName('verse');
 			const startVerse = Number(versesOnPage[0].id.split(':')[1]);
 			const endVerse = quranMetaData[get(__chapterNumber)].verses;
@@ -298,7 +295,6 @@ export function setVersesToPlay(props) {
 				}
 			}
 		} else {
-			// For other pages (supplications, bookmarks)
 			const versesOnPage = document.getElementsByClassName('verse');
 			for (const verseElement of versesOnPage) {
 				const verseKey = verseElement.id;
@@ -308,9 +304,7 @@ export function setVersesToPlay(props) {
 			}
 		}
 	} else {
-		// Handle play action from verse options/modal
 		if (get(__currentPage) === 'mushaf' && props.audioRange === 'playFromHere') {
-			// For playFromHere, non-chapter page
 			const key = `${props.chapter}:${props.startVerse}`;
 			const wordsOnPage = document.getElementsByClassName('word');
 
@@ -321,41 +315,36 @@ export function setVersesToPlay(props) {
 				}
 			}
 
-			// Remove all verses before the specified key
 			const startIndex = window.versesToPlayArray.indexOf(key);
 			window.versesToPlayArray = window.versesToPlayArray.slice(startIndex);
 		} else {
-			// For chapter page, supplications, bookmarks
 			for (let verse = props.startVerse; verse <= props.endVerse; verse++) {
 				const verseKey = `${props.chapter}:${verse}`;
 				if (!window.versesToPlayArray.includes(verseKey)) {
 					window.versesToPlayArray.push(verseKey);
 				}
 			}
-
-			const audioSettings = get(__audioSettings);
-
-			// If repeatType is 'repeatRange' and timesToRepeat is more than 1, repeat the set of keys
-			if (audioSettings.repeatType === 'repeatRange' && audioSettings.timesToRepeat > 1 && get(__audioModalVisible) === true) {
-				const originalSet = [...window.versesToPlayArray];
-				for (let i = 1; i < audioSettings.timesToRepeat; i++) {
-					window.versesToPlayArray.push(...originalSet);
-				}
-			}
-
-			// If repeatType is 'repeatVerse' and timesToRepeat is more than 1, repeat each verse back to back
-			if (audioSettings.repeatType === 'repeatVerse' && audioSettings.timesToRepeat > 1 && get(__audioModalVisible) === true) {
-				const newArray = [];
-				for (let verse = props.startVerse; verse <= props.endVerse; verse++) {
-					const verseKey = `${props.chapter}:${verse}`;
-					for (let i = 0; i < audioSettings.timesToRepeat; i++) {
-						newArray.push(verseKey);
-					}
-				}
-				window.versesToPlayArray = newArray;
-			}
 		}
 	}
+
+	// Apply repeat logic at the end for consistency
+	if (audioSettings.repeatType === 'repeatRange' && audioSettings.timesToRepeat > 1 && get(__audioModalVisible) === true) {
+		const originalSet = [...window.versesToPlayArray];
+		for (let i = 1; i < audioSettings.timesToRepeat; i++) {
+			window.versesToPlayArray.push(...originalSet);
+		}
+	}
+
+	if (audioSettings.repeatType === 'repeatVerse' && audioSettings.timesToRepeat > 1 && get(__audioModalVisible) === true) {
+		const newArray = [];
+		for (const verseKey of window.versesToPlayArray) {
+			for (let i = 0; i < audioSettings.timesToRepeat; i++) {
+				newArray.push(verseKey);
+			}
+		}
+		window.versesToPlayArray = newArray;
+	}
+
 	console.log('versesToPlayArray', window.versesToPlayArray);
 }
 

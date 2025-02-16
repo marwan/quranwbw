@@ -53,6 +53,11 @@
 		$__audioSettings.repeatType = 'repeatVerse';
 	}
 
+	// For any page other than chapter page, default to verse repeat
+	$: if ($__currentPage !== 'chapter') {
+		$__audioSettings.repeatType = 'repeatVerse';
+	}
+
 	// If the audio settings had to be remembered, set them in localStorage whenever the a change is made
 	$: if ($__audioSettings && $__audioSettings.rememberSettings === true) {
 		savedPlaySettingsHandler('set');
