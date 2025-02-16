@@ -140,7 +140,7 @@ export const verseTranslationsLanguages = [
 	{ language_id: 174, language: 'Urdu' }
 ];
 
-export const rightToLeftVerseTranslations = [86, 840, 156, 97, 234, 158, 151, 54, 819, 135, 29];
+export const rightToLeftVerseTranslations = [86, 840, 156, 97, 234, 158, 151, 54, 819, 135, 29, 238];
 
 export const selectableVerseTranslations = {
 	// albanian
