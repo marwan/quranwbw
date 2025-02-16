@@ -19,12 +19,17 @@ export async function playVerseAudio(props) {
 	resetAudioSettings();
 	await fetchTimestampData(playChapter);
 
+	// Defaulting the language to Arabic
 	if (props.language === undefined) props.language = 'arabic';
+
+	// If the user has opted to play both languages:
+	// set current play language to Arabic and playBoth to true, so it can be used when the current audio has ended
 	if (props.language === 'both') {
 		props.language = 'arabic';
 		playBoth = true;
 	}
 
+	// For debugging purposes, needs not be removed
 	console.log('playing', '-', props.key, '-', props.language);
 
 	const reciterAudioUrl = props.language === 'arabic' ? selectableReciters[get(__reciter)].url : selectableTranslationReciters[get(__translationReciter)].url;
@@ -44,18 +49,16 @@ export async function playVerseAudio(props) {
 	audioSettings.playingKey = props.key;
 	audioSettings.audioType = 'verse';
 
+	// Attach word highlighting function for supported reciters
 	if (props.language === 'arabic' && selectableReciters[get(__reciter)].timestampSlug) {
 		audio.addEventListener('timeupdate', wordHighlighter);
 	}
 
+	// Scroll to the playing verse
 	try {
 		scrollSmoothly(document.getElementById(`${audioSettings.playingKey}`).offsetTop - 75, 500);
 	} catch (error) {
-		// do nothing
-	}
-
-	if (!window.tempVerseArray) {
-		window.tempVerseArray = [...window.versesToPlayArray];
+		// ...
 	}
 
 	audio.onended = async function () {
@@ -66,39 +69,26 @@ export async function playVerseAudio(props) {
 			return playVerseAudio({ key: `${props.key}`, timesToRepeat: +props.timesToRepeat, language: 'translation' });
 		}
 
-		if (audioSettings.repeatType === 'repeatRange') {
-			const index = window.tempVerseArray.indexOf(audioSettings.playingKey);
-			if (index > -1 && index < window.tempVerseArray.length - 1) {
-				return playVerseAudio({ key: `${window.tempVerseArray[index + 1]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
-			} else {
-				if (audioSettings.timesRepeated < audioSettings.timesToRepeat - 1) {
-					audioSettings.timesRepeated++;
-					return playVerseAudio({ key: `${window.tempVerseArray[0]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
-				} else {
-					audioSettings.timesRepeated = 0;
-					delete window.tempVerseArray;
-					resetAudioSettings({ location: 'end' });
-				}
-			}
-		} else {
-			if (audioSettings.timesRepeated <= audioSettings.timesToRepeat - 2) {
-				console.log('repeating verse: ', `${props.key}`);
-				audioSettings.timesRepeated++;
-				return playVerseAudio({ key: `${props.key}`, timesToRepeat: +props.timesToRepeat, language: 'arabic' });
+		// if (audioSettings.timesRepeated <= audioSettings.timesToRepeat - 2) {
+		// 	console.log('repeating verse: ', `${props.key}`);
+		// 	audioSettings.timesRepeated++;
+		// 	return playVerseAudio({ key: `${props.key}`, timesToRepeat: +props.timesToRepeat, language: 'arabic' });
+		// }
+
+		// audioSettings.timesRepeated = 0;
+
+		if (window.versesToPlayArray?.length > 0) {
+			const index = window.versesToPlayArray.indexOf(audioSettings.playingKey);
+			if (index > -1) {
+				window.versesToPlayArray.splice(index, 1); // Remove only the first occurrence
 			}
 
-			audioSettings.timesRepeated = 0;
-
-			if (window.versesToPlayArray?.length > 0) {
-				const index = window.versesToPlayArray.indexOf(audioSettings.playingKey);
-				if (index > -1) window.versesToPlayArray.splice(index, 1);
-
-				if (window.versesToPlayArray.length > 0) {
-					return playVerseAudio({ key: `${window.versesToPlayArray[0]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
-				}
+			if (window.versesToPlayArray.length > 0) {
+				return playVerseAudio({ key: `${window.versesToPlayArray[0]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
 			}
-			resetAudioSettings({ location: 'end' });
 		}
+
+		resetAudioSettings({ location: 'end' });
 	};
 
 	__audioSettings.set(audioSettings);
@@ -208,6 +198,7 @@ export function resetAudioSettings(props) {
 		if (props?.location === 'end') {
 			audioSettings.timesRepeated = 0;
 			window.versesToPlayArray = [];
+			// window.tempVerseArray = [];
 		}
 
 		__audioSettings.set(audioSettings);
@@ -341,6 +332,28 @@ export function setVersesToPlay(props) {
 				if (!window.versesToPlayArray.includes(verseKey)) {
 					window.versesToPlayArray.push(verseKey);
 				}
+			}
+
+			const audioSettings = get(__audioSettings);
+
+			// If repeatType is 'repeatRange' and timesToRepeat is more than 1, repeat the set of keys
+			if (audioSettings.repeatType === 'repeatRange' && audioSettings.timesToRepeat > 1) {
+				const originalSet = [...window.versesToPlayArray];
+				for (let i = 1; i < audioSettings.timesToRepeat; i++) {
+					window.versesToPlayArray.push(...originalSet);
+				}
+			}
+
+			// If repeatType is 'repeatVerse' and timesToRepeat is more than 1, repeat each verse back to back
+			if (audioSettings.repeatType === 'repeatVerse' && audioSettings.timesToRepeat > 1) {
+				const newArray = [];
+				for (let verse = props.startVerse; verse <= props.endVerse; verse++) {
+					const verseKey = `${props.chapter}:${verse}`;
+					for (let i = 0; i < audioSettings.timesToRepeat; i++) {
+						newArray.push(verseKey);
+					}
+				}
+				window.versesToPlayArray = newArray;
 			}
 		}
 	}

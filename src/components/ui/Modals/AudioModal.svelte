@@ -53,11 +53,6 @@
 		$__audioSettings.repeatType = 'repeatVerse';
 	}
 
-	// Default to playVerse if language is selected as Both
-	$: if ($__audioSettings.language === 'both') {
-		$__audioSettings.audioRange = 'playThisVerse';
-	}
-
 	// If the audio settings had to be remembered, set them in localStorage whenever the a change is made
 	$: if ($__audioSettings && $__audioSettings.rememberSettings === true) {
 		savedPlaySettingsHandler('set');
@@ -218,7 +213,7 @@
 						</Radio>
 					</div>
 					<!-- play range -->
-					<div class="flex items-center min-w-fit {!['chapter'].includes($__currentPage) && disabledClasses} {$__audioSettings.language === 'both' && disabledClasses}">
+					<div class="flex items-center min-w-fit {!['chapter'].includes($__currentPage) && disabledClasses}">
 						<Radio bind:group={$__audioSettings.audioRange} value="playRange" custom>
 							<div class="{radioClasses} {$__audioSettings.audioRange === 'playRange' && selectedRadioOrCheckboxClasses}">
 								<div class="w-full">Custom</div>
