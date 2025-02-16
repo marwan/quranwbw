@@ -9,6 +9,8 @@ import { scrollSmoothly } from '$utils/scrollSmoothly';
 // Getting the audio element
 let audio = document.querySelector('#player');
 
+const repeatVerseRange = true;
+
 // Function to play verse audio, either one time, or multiple times
 export async function playVerseAudio(props) {
 	const audioSettings = get(__audioSettings);
@@ -19,17 +21,12 @@ export async function playVerseAudio(props) {
 	resetAudioSettings();
 	await fetchTimestampData(playChapter);
 
-	// Defaulting the language to Arabic
 	if (props.language === undefined) props.language = 'arabic';
-
-	// If the user has opted to play both languages:
-	// set current play language to Arabic and playBoth to true, so it can be used when the current audio has ended
 	if (props.language === 'both') {
 		props.language = 'arabic';
 		playBoth = true;
 	}
 
-	// For debugging purposes, needs not be removed
 	console.log('playing', '-', props.key, '-', props.language);
 
 	const reciterAudioUrl = props.language === 'arabic' ? selectableReciters[get(__reciter)].url : selectableTranslationReciters[get(__translationReciter)].url;
@@ -49,16 +46,16 @@ export async function playVerseAudio(props) {
 	audioSettings.playingKey = props.key;
 	audioSettings.audioType = 'verse';
 
-	// Attach word highlighting function for supported reciters
 	if (props.language === 'arabic' && selectableReciters[get(__reciter)].timestampSlug) {
 		audio.addEventListener('timeupdate', wordHighlighter);
 	}
 
-	// Scroll to the playing verse
 	try {
 		scrollSmoothly(document.getElementById(`${audioSettings.playingKey}`).offsetTop - 75, 500);
-	} catch (error) {
-		// ...
+	} catch (error) {}
+
+	if (!window.tempVerseArray) {
+		window.tempVerseArray = [...window.versesToPlayArray];
 	}
 
 	audio.onended = async function () {
@@ -69,24 +66,39 @@ export async function playVerseAudio(props) {
 			return playVerseAudio({ key: `${props.key}`, timesToRepeat: +props.timesToRepeat, language: 'translation' });
 		}
 
-		if (audioSettings.timesRepeated <= audioSettings.timesToRepeat - 2) {
-			console.log('repeating verse: ', `${props.key}`);
-			audioSettings.timesRepeated++;
-			return playVerseAudio({ key: `${props.key}`, timesToRepeat: +props.timesToRepeat, language: 'arabic' });
-		}
-
-		audioSettings.timesRepeated = 0;
-
-		if (window.versesToPlayArray?.length > 0) {
-			const index = window.versesToPlayArray.indexOf(audioSettings.playingKey);
-			if (index > -1) window.versesToPlayArray.splice(index, 1);
-
-			if (window.versesToPlayArray.length > 0) {
-				return playVerseAudio({ key: `${window.versesToPlayArray[0]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
+		if (repeatVerseRange) {
+			const index = window.tempVerseArray.indexOf(audioSettings.playingKey);
+			if (index > -1 && index < window.tempVerseArray.length - 1) {
+				return playVerseAudio({ key: `${window.tempVerseArray[index + 1]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
+			} else {
+				if (audioSettings.timesRepeated < audioSettings.timesToRepeat - 1) {
+					audioSettings.timesRepeated++;
+					return playVerseAudio({ key: `${window.tempVerseArray[0]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
+				} else {
+					audioSettings.timesRepeated = 0;
+					delete window.tempVerseArray;
+					resetAudioSettings({ location: 'end' });
+				}
 			}
-		}
+		} else {
+			if (audioSettings.timesRepeated <= audioSettings.timesToRepeat - 2) {
+				console.log('repeating verse: ', `${props.key}`);
+				audioSettings.timesRepeated++;
+				return playVerseAudio({ key: `${props.key}`, timesToRepeat: +props.timesToRepeat, language: 'arabic' });
+			}
 
-		resetAudioSettings({ location: 'end' });
+			audioSettings.timesRepeated = 0;
+
+			if (window.versesToPlayArray?.length > 0) {
+				const index = window.versesToPlayArray.indexOf(audioSettings.playingKey);
+				if (index > -1) window.versesToPlayArray.splice(index, 1);
+
+				if (window.versesToPlayArray.length > 0) {
+					return playVerseAudio({ key: `${window.versesToPlayArray[0]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
+				}
+			}
+			resetAudioSettings({ location: 'end' });
+		}
 	};
 
 	__audioSettings.set(audioSettings);
