@@ -388,7 +388,7 @@ export function prepareVersesToPlay(key) {
 	// Split the key into chapter and verse
 	const [chapter, verse] = key.split(':');
 	// Destructure audio settings
-	const { audioRange, startVerse } = get(__audioSettings);
+	const { audioRange, startVerse, endVerse } = get(__audioSettings);
 	// Get the total number of verses in the chapter
 	const versesInChapter = quranMetaData[chapter].verses;
 	// Check if the current page is a special one (supplications, bookmarks, juz)
@@ -417,7 +417,7 @@ export function prepareVersesToPlay(key) {
 			break;
 		case 'playRange':
 			// Set verses to play from the startVerse to the end of the chapter
-			setVersesToPlay({ location: 'verseOptionsOrModal', chapter, startVerse, endVerse: versesInChapter });
+			setVersesToPlay({ location: 'verseOptionsOrModal', chapter, startVerse, endVerse: endVerse });
 			break;
 		default:
 			// Handle invalid audioRange values

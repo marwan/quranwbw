@@ -18,6 +18,7 @@
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;
+	$: versesInChapter = quranMetaData[$__chapterNumber].verses;
 
 	// Update settings and validate verses when audio modal is visible
 	$: if ($__audioModalVisible) {
@@ -62,7 +63,12 @@
 		savedPlaySettingsHandler('set');
 	}
 
-	// $: console.log($__audioSettings);
+	// Properly set the max verses allowed
+	$: if ($__chapterNumber && $__audioSettings.endVerse > versesInChapter) {
+		$__audioSettings.endVerse = versesInChapter;
+	}
+
+	$: console.log($__audioSettings);
 
 	// This function manages the saving, retrieving, and resetting of audio settings in the $__audioSettings object.
 	// It takes an action parameter that determines whether to get ('get'), set ('set'), or reset to default ('default') the audio settings.
@@ -231,16 +237,16 @@
 						<div class="flex flex-row space-x-4">
 							<div class="flex flex-row space-x-2">
 								<span class="m-auto text-sm mr-2">From {term('verse')}</span>
-								<input type="number" min="1" max={quranMetaData[$__chapterNumber].verses} bind:value={$__audioSettings.startVerse} id="startVerse" on:change={updateAudioSettings} aria-describedby="helper-text-explanation" class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')} block p-2.5 mb-0" placeholder="start" />
+								<input type="number" min="1" max={versesInChapter} bind:value={$__audioSettings.startVerse} id="startVerse" on:change={updateAudioSettings} aria-describedby="helper-text-explanation" class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')} block p-2.5 mb-0" placeholder="start" />
 							</div>
 							<div class="flex flex-row space-x-2">
 								<span class="m-auto text-sm mr-2">Till {term('verse')}</span>
 								<input
+									id="endVerse"
 									type="number"
 									min={$__audioSettings.startVerse}
-									max={quranMetaData[$__chapterNumber].verses}
-									bind:value={quranMetaData[$__chapterNumber].verses}
-									id="endVerse"
+									max={versesInChapter}
+									bind:value={$__audioSettings.endVerse}
 									on:change={updateAudioSettings}
 									aria-describedby="helper-text-explanation"
 									class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')} {window.theme('placeholder')} block p-2.5 mb-0"
