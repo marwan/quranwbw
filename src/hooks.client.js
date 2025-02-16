@@ -37,6 +37,7 @@ export const defaultSettings = {
 		audioRange: 'playThisVerse',
 		language: 'arabic',
 		timesToRepeat: 1,
+		repeatType: 'repeatVerse',
 		savedPlaySettings: {}
 	},
 	quiz: {

@@ -47,6 +47,16 @@
 		savedPlaySettingsHandler('get');
 	}
 
+	// Default to verse repeat
+	if ($__audioSettings.repeatType === undefined) {
+		$__audioSettings.repeatType = 'repeatVerse';
+	}
+
+	// Default to playVerse if language is selected as Both
+	$: if ($__audioSettings.language === 'both') {
+		$__audioSettings.audioRange = 'playThisVerse';
+	}
+
 	// If the audio settings had to be remembered, set them in localStorage whenever the a change is made
 	$: if ($__audioSettings && $__audioSettings.rememberSettings === true) {
 		savedPlaySettingsHandler('set');
@@ -202,7 +212,7 @@
 						</Radio>
 					</div>
 					<!-- play range -->
-					<div class="flex items-center min-w-fit {!['chapter'].includes($__currentPage) && disabledClasses}">
+					<div class="flex items-center min-w-fit {!['chapter'].includes($__currentPage) && disabledClasses} {$__audioSettings.language === 'both' && disabledClasses}">
 						<Radio bind:group={$__audioSettings.audioRange} value="playRange" custom>
 							<div class="{radioClasses} {$__audioSettings.audioRange === 'playRange' && selectedRadioOrCheckboxClasses}">
 								<div class="w-full">Custom</div>
@@ -241,6 +251,31 @@
 					</div>
 				</div>
 			{/if}
+
+			<!-- repeat type options -->
+			{#if $__audioSettings.audioRange === 'playRange'}
+				<div id="repeat-type-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
+					<span class="text-sm">Repeat Type</span>
+					<div class="flex flex-row space-x-2">
+						<!-- repeat each verse -->
+						<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
+							<Radio bind:group={$__audioSettings.repeatType} value="repeatVerse" custom>
+								<div class="{radioClasses} {$__audioSettings.repeatType === 'repeatVerse' && selectedRadioOrCheckboxClasses}">
+									<div class="w-full">Each {term('verse')}</div>
+								</div>
+							</Radio>
+						</div>
+						<!-- repeat whole range -->
+						<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
+							<Radio bind:group={$__audioSettings.repeatType} value="repeatRange" custom>
+								<div class="{radioClasses} {$__audioSettings.repeatType === 'repeatRange' && selectedRadioOrCheckboxClasses}">
+									<div class="w-full">{term('verse')} Range</div>
+								</div>
+							</Radio>
+						</div>
+					</div>
+				</div>
+			{/if}
 		</div>
 
 		<!-- repeat times -->
@@ -248,7 +283,7 @@
 			<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
 				<div class="flex flex-row space-x-4">
 					<div class="flex flex-row space-x-2">
-						<span class="m-auto text-sm mr-2">Repeat each {term($__audioSettings.audioType)}</span>
+						<span class="m-auto text-sm mr-2">Repeat </span>
 						<input id="timesToRepeat" type="number" bind:value={$__audioSettings.timesToRepeat} min="1" max="20" on:change={updateAudioSettings} class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} block p-2.5 mb-0" />
 						<span class="m-auto text-sm">{$__audioSettings.timesToRepeat > 1 ? 'times' : 'time'} </span>
 					</div>
@@ -257,7 +292,7 @@
 		{/if}
 
 		<Checkbox checked={$__audioSettings.rememberSettings} on:click={() => toggleRememberSettings()} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
-			<span>Remember Settings</span>
+			<span>Remember Settings (excludes custom/range options)</span>
 		</Checkbox>
 
 		<div class="mt-4">

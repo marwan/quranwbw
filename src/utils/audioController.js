@@ -9,8 +9,6 @@ import { scrollSmoothly } from '$utils/scrollSmoothly';
 // Getting the audio element
 let audio = document.querySelector('#player');
 
-const repeatVerseRange = true;
-
 // Function to play verse audio, either one time, or multiple times
 export async function playVerseAudio(props) {
 	const audioSettings = get(__audioSettings);
@@ -52,7 +50,9 @@ export async function playVerseAudio(props) {
 
 	try {
 		scrollSmoothly(document.getElementById(`${audioSettings.playingKey}`).offsetTop - 75, 500);
-	} catch (error) {}
+	} catch (error) {
+		// do nothing
+	}
 
 	if (!window.tempVerseArray) {
 		window.tempVerseArray = [...window.versesToPlayArray];
@@ -66,7 +66,7 @@ export async function playVerseAudio(props) {
 			return playVerseAudio({ key: `${props.key}`, timesToRepeat: +props.timesToRepeat, language: 'translation' });
 		}
 
-		if (repeatVerseRange) {
+		if (audioSettings.repeatType === 'repeatRange') {
 			const index = window.tempVerseArray.indexOf(audioSettings.playingKey);
 			if (index > -1 && index < window.tempVerseArray.length - 1) {
 				return playVerseAudio({ key: `${window.tempVerseArray[index + 1]}`, timesToRepeat: +props.timesToRepeat, language: audioSettings.language });
