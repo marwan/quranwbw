@@ -121,6 +121,7 @@ export const selectableThemes = {
 };
 
 export const verseTranslationsLanguages = [
+	{ language_id: 187, language: 'Albanian' },
 	{ language_id: 20, language: 'Bangla' },
 	{ language_id: 185, language: 'Chinese' },
 	{ language_id: 34, language: 'Divehi' },
@@ -132,6 +133,7 @@ export const verseTranslationsLanguages = [
 	{ language_id: 106, language: 'Malayalam' },
 	{ language_id: 43, language: 'Persian' },
 	{ language_id: 138, language: 'Russian' },
+	{ language_id: 142, language: 'Sindhi' },
 	{ language_id: 158, language: 'Tamil' },
 	{ language_id: 11115, language: 'Transliteration' },
 	{ language_id: 167, language: 'Turkish' },
@@ -141,6 +143,13 @@ export const verseTranslationsLanguages = [
 export const rightToLeftVerseTranslations = [86, 840, 156, 97, 234, 158, 151, 54, 819, 135, 29];
 
 export const selectableVerseTranslations = {
+	// albanian
+	88: {
+		resource_id: 88,
+		resource_name: 'Hasan Efendi Nahi',
+		language_id: 187
+	},
+
 	// bangla
 	161: {
 		resource_id: 161,
@@ -326,6 +335,13 @@ export const selectableVerseTranslations = {
 		resource_id: 45,
 		resource_name: 'Russian Translation ( Elmir Kuliev )',
 		language_id: 138
+	},
+
+	// sindhi
+	238: {
+		resource_id: 238,
+		resource_name: 'Taj Mehmood Amroti',
+		language_id: 142
 	},
 
 	// tamil
