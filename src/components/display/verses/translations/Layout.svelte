@@ -61,11 +61,6 @@
 		});
 	}
 
-	function isTranslationUrduOrPersian(id) {
-		const translation = selectableVerseTranslations[id];
-		return [43, 174].includes(translation.language_id) && !translation.is_roman;
-	}
-
 	function isTranslationRTL(id) {
 		return rightToLeftVerseTranslations.includes(selectableVerseTranslations[id].resource_id);
 	}
