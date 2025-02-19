@@ -619,6 +619,12 @@ export const selectableReciters = {
 		reciter: 'Nabil Ar Rifay',
 		url: 'https://everyayah.com/data/Nabil_Rifa3i_48kbps',
 		image: 'nabil-al-rifay-medium.webp'
+	},
+	22: {
+		id: 22,
+		reciter: 'Bandar Baleelah',
+		url: 'https://marwan.github.io/ayah-by-ayah-sheikh-baleelah/audio',
+		image: 'bandar-baleela-medium.webp'
 	}
 };
 
