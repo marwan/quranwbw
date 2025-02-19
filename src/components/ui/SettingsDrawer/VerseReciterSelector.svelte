@@ -8,7 +8,6 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 
 	$: reciterImageClasses = `rounded-full size-10`;
-	$: verseReciterKey = Object.keys(selectableReciters).find((item) => selectableReciters[item].id === $__reciter);
 </script>
 
 <div class="grid gap-3 w-full">
@@ -34,7 +33,7 @@
 	<div class="flex flex-col space-y-2 pb-6">
 		<div id="audio-name" class="text-md font-medium">Arabic</div>
 		<div id="audio-list" class="space-y-3">
-			{#each Object.entries(selectableReciters) as [id, reciter]}
+			{#each Object.entries(selectableReciters).sort((a, b) => a[1].reciter.localeCompare(b[1].reciter)) as [id, reciter]}
 				<Radio name="reciter" bind:group={$__reciter} value={reciter.id} on:change={(event) => updateSettings({ type: 'reciter', value: +event.target.value })} custom>
 					<div class="{individualRadioClasses} px-5 py-3 {$__reciter === reciter.id && selectedRadioOrCheckboxClasses}">
 						<div class="flex flex-row space-x-2 items-center w-full">

@@ -32,8 +32,7 @@ export async function playVerseAudio(props) {
 	// For debugging purposes, needs not be removed
 	console.log('playing', '-', props.key, '-', props.language);
 
-	const verseReciterKey = Object.keys(selectableReciters).find((item) => selectableReciters[item].id === get(__reciter));
-	const reciterAudioUrl = props.language === 'arabic' ? selectableReciters[verseReciterKey].url : selectableTranslationReciters[get(__translationReciter)].url;
+	const reciterAudioUrl = props.language === 'arabic' ? selectableReciters[get(__reciter)].url : selectableTranslationReciters[get(__translationReciter)].url;
 	const currentVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse).padStart(3, '0')}.mp3`;
 	const nextVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse + 1).padStart(3, '0')}.mp3`;
 
@@ -51,7 +50,7 @@ export async function playVerseAudio(props) {
 	audioSettings.audioType = 'verse';
 
 	// Attach word highlighting function for supported reciters
-	if (props.language === 'arabic' && selectableReciters[verseReciterKey].timestampSlug) {
+	if (props.language === 'arabic' && selectableReciters[get(__reciter)].timestampSlug) {
 		audio.addEventListener('timeupdate', wordHighlighter);
 	}
 
@@ -220,8 +219,7 @@ export function showAudioModal(key) {
 // Word audio controller
 export function wordAudioController(props) {
 	const audioSettings = get(__audioSettings);
-	const verseReciterKey = Object.keys(selectableReciters).find((item) => selectableReciters[item].id === get(__reciter));
-	const timestampSlug = selectableReciters[verseReciterKey].timestampSlug;
+	const timestampSlug = selectableReciters[get(__reciter)].timestampSlug;
 
 	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && timestampSlug) {
 		const verseTimestamp = get(__timestampData).data[`${props.chapter}:${props.verse}`][timestampSlug];
@@ -242,8 +240,7 @@ function wordHighlighter() {
 		const wordsInVerse = getWordsInVerse(audioSettings.playingKey);
 
 		// Retrieve verse timestamp data fetched in playVerseAudio function
-		const verseReciterKey = Object.keys(selectableReciters).find((item) => selectableReciters[item].id === get(__reciter));
-		const timestampSlug = selectableReciters[verseReciterKey].timestampSlug;
+		const timestampSlug = selectableReciters[get(__reciter)].timestampSlug;
 		const verseTimestamp = get(__timestampData).data[audioSettings.playingKey][timestampSlug];
 
 		// Loop through all the words to highlight them
