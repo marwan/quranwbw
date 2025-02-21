@@ -7,7 +7,7 @@
 	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
 	import { updateAudioSettings, prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
-	import { selectableReciters, selectableTranslationReciters } from '$data/options';
+	import { selectableReciters, selectableTranslationReciters, selectableAudioDelays } from '$data/options';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { updateSettings } from '$utils/updateSettings';
@@ -52,6 +52,16 @@
 		$__audioSettings.repeatType = 'repeatVerse';
 	}
 
+	// Default to no delay
+	if ($__audioSettings.audioDelay === undefined) {
+		$__audioSettings.audioDelay = 1;
+	}
+
+	// Default to no delay is repeat is less than 2
+	$: if ($__audioSettings.timesToRepeat < 2) {
+		$__audioSettings.audioDelay = 1;
+	}
+
 	// For any page other than chapter page, default to verse repeat
 	$: if ($__currentPage !== 'chapter') {
 		$__audioSettings.repeatType = 'repeatVerse';
@@ -72,7 +82,7 @@
 		$__audioSettings.endVerse = versesInChapter;
 	}
 
-	$: console.log($__audioSettings);
+	// $: console.log($__audioSettings);
 
 	// This function manages the saving, retrieving, and resetting of audio settings in the $__audioSettings object.
 	// It takes an action parameter that determines whether to get ('get'), set ('set'), or reset to default ('default') the audio settings.
@@ -293,21 +303,36 @@
 			<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
 				<div class="flex flex-row space-x-4">
 					<div class="flex flex-row space-x-2">
-						<span class="m-auto text-sm mr-2"
-							>Repeat
-
+						<span class="m-auto text-sm mr-2">
+							Repeat
 							{#if ['playThisVerse', 'playFromHere'].includes($__audioSettings.audioRange)}
-								each {term('verse')}
+								Each {term('verse')}
 							{:else if $__audioSettings.audioRange === 'playRange' && $__audioSettings.repeatType === 'repeatVerse'}
-								each {term('verse')}
+								Each {term('verse')}
 							{:else}
-								{term('verse')} range
+								{term('verse')} Range
 							{/if}
 						</span>
-						<input id="timesToRepeat" type="number" bind:value={$__audioSettings.timesToRepeat} min="1" max="20" on:change={updateAudioSettings} class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} block p-2.5 mb-0" />
-						<span class="m-auto text-sm">{$__audioSettings.timesToRepeat > 1 ? 'times' : 'time'} </span>
+
+						<!-- Dropdown for repeat times with "time" or "times" -->
+						<select id="timesToRepeat" bind:value={$__audioSettings.timesToRepeat} on:change={updateAudioSettings} class="bg-transparent text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} block p-2.5 mb-0">
+							{#each Array.from({ length: 20 }, (_, i) => i + 1) as n}
+								<option value={n}>{n} {n > 1 ? 'times' : 'time'}</option>
+							{/each}
+						</select>
 					</div>
 				</div>
+			</div>
+		{/if}
+
+		{#if $__audioSettings.timesToRepeat > 1}
+			<div class="flex flex-row space-y-4 py-4 border-t items-center {window.theme('border')}">
+				<span class="text-sm mr-2">Repeat Delay </span>
+				<select class="bg-transparent w-fit text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} p-2.5 mb-0" bind:value={$__audioSettings.audioDelay}>
+					{#each Object.values(selectableAudioDelays) as delay}
+						<option value={delay.id}>{delay.name}</option>
+					{/each}
+				</select>
 			</div>
 		{/if}
 

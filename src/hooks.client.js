@@ -38,6 +38,7 @@ export const defaultSettings = {
 		language: 'arabic',
 		timesToRepeat: 1,
 		repeatType: 'repeatVerse',
+		audioDelay: 1, // none
 		savedPlaySettings: {}
 	},
 	quiz: {

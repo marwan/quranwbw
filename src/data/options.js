@@ -678,3 +678,13 @@ export const selectableVersePlayButtonOptions = {
 	// 2: { id: 2, name: 'Play From That Verse' },
 	3: { id: 3, name: 'Show Advanced Options' }
 };
+
+export const selectableAudioDelays = {
+	1: { id: 1, name: 'None', milliseconds: 0 },
+	2: { id: 2, name: '1 second', milliseconds: 1000 },
+	3: { id: 3, name: '3 seconds', milliseconds: 3000 },
+	4: { id: 4, name: '5 seconds', milliseconds: 5000 },
+	5: { id: 5, name: '10 seconds', milliseconds: 10000 },
+	6: { id: 6, name: '15 seconds', milliseconds: 15000 },
+	7: { id: 7, name: 'Audio Length', milliseconds: 999 }
+};
