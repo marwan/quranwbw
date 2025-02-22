@@ -96,6 +96,11 @@
 		$__audioSettings.endVerse = versesInChapter;
 	}
 
+	// End verse checks
+	$: if ($__audioSettings.endVerse < $__audioSettings.startVerse) {
+		$__audioSettings.endVerse = $__audioSettings.startVerse;
+	}
+
 	$: console.log($__audioSettings);
 
 	// This function manages the saving, retrieving, and resetting of audio settings in the $__audioSettings object.
