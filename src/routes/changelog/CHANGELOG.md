@@ -1,3 +1,15 @@
+### Feb 22, 2025
+
+- **New Font Types:** Added **Nastaleeq Hafs Digital** and **Indopak Hanafi** fonts for improved readability and customization.
+
+---
+
+### Feb 17, 2025
+
+- **New Reciter:** Sheikh **Bandar Baleelah** joins our collection. Enjoy his melodious recitation!
+
+---
+
 ### Feb 16, 2025
 
 - **New Verse & Word-by-Word Languages:** Added support for **Albanian** and **Sindhi** translations, expanding accessibility for more users.
