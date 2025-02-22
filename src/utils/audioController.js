@@ -145,31 +145,6 @@ export function playWordAudio(props) {
 	__audioSettings.set(audioSettings);
 }
 
-// Function to update audio settings
-export function updateAudioSettings(event) {
-	const audioSettings = get(__audioSettings);
-	const { id, value } = event.target; // Remove valueAsNumber
-
-	try {
-		switch (id) {
-			case 'startVerse':
-				audioSettings.startVerse = +value;
-				break;
-			case 'endVerse':
-				audioSettings.endVerse = +value;
-				break;
-		}
-	} catch (error) {
-		console.error(error);
-	}
-
-	if (audioSettings.endVerse < audioSettings.startVerse || audioSettings.endVerse === undefined) {
-		audioSettings.endVerse = audioSettings.startVerse;
-	}
-
-	__audioSettings.set(audioSettings);
-}
-
 // Initialize audio settings based on key
 export function initializeAudioSettings(key) {
 	const audioSettings = get(__audioSettings);

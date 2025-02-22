@@ -8,7 +8,7 @@
 	import Input from '$ui/FlowbiteSvelte/forms/Input.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
-	import { updateAudioSettings, prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
+	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { selectableReciters, selectableTranslationReciters, selectableAudioDelays } from '$data/options';
 	import { term } from '$utils/terminologies';
