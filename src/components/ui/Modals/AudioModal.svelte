@@ -305,7 +305,7 @@
 								</div>
 
 								<!-- Scrollable List -->
-								<div class="max-h-48 overflow-y-auto my-2 px-2">
+								<div class="max-h-52 overflow-y-auto my-2 px-2">
 									{#each Array.from({ length: versesInChapter }, (_, i) => i + 1).filter((v) => v.toString().includes(startVerseSearch)) as verse}
 										<DropdownItem
 											class={dropdownItemClasses}
@@ -338,7 +338,7 @@
 								</div>
 
 								<!-- Scrollable List -->
-								<div class="max-h-48 overflow-y-auto my-2 px-2">
+								<div class="max-h-52 overflow-y-auto my-2 px-2">
 									{#each Array.from({ length: quranMetaData[$__chapterNumber].verses - $__audioSettings.startVerse + 1 }, (_, i) => i + $__audioSettings.startVerse).filter((v) => v.toString().includes(endVerseSearch)) as verse}
 										<DropdownItem
 											class={dropdownItemClasses}
@@ -369,7 +369,7 @@
 						<button class="{buttonClasses} text-sm">
 							<div>{$__audioSettings.timesToRepeat} {$__audioSettings.timesToRepeat > 1 ? 'times' : 'time'}</div>
 						</button>
-						<Dropdown bind:open={timesToRepeatDropdownOpen} class="max-h-48 overflow-y-auto my-2 px-2">
+						<Dropdown bind:open={timesToRepeatDropdownOpen} class="max-h-52 overflow-y-auto my-2 px-2">
 							{#each Array.from({ length: 20 }, (_, i) => i + 1) as n}
 								<DropdownItem
 									class={dropdownItemClasses}
@@ -389,7 +389,7 @@
 						<button class="{buttonClasses} text-sm">
 							<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
 						</button>
-						<Dropdown bind:open={audioDelayDropdownOpen} class="max-h-48 overflow-y-auto my-2 px-2">
+						<Dropdown bind:open={audioDelayDropdownOpen} class="max-h-52 overflow-y-auto my-2 px-2">
 							{#each Object.values(selectableAudioDelays) as delay}
 								<DropdownItem
 									class={dropdownItemClasses}
