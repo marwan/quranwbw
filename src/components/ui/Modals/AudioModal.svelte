@@ -71,11 +71,6 @@
 		$__audioSettings.timesToRepeat = 1;
 	}
 
-	// Default to no delay is repeat is less than 2
-	$: if ($__audioSettings.timesToRepeat < 2) {
-		$__audioSettings.audioDelay = 1;
-	}
-
 	// For any page other than chapter page, default to verse repeat
 	$: if ($__currentPage !== 'chapter') {
 		$__audioSettings.repeatType = 'repeatVerse';
@@ -101,7 +96,7 @@
 		$__audioSettings.endVerse = $__audioSettings.startVerse;
 	}
 
-	$: console.log($__audioSettings);
+	// $: console.log($__audioSettings);
 
 	// This function manages the saving, retrieving, and resetting of audio settings in the $__audioSettings object.
 	// It takes an action parameter that determines whether to get ('get'), set ('set'), or reset to default ('default') the audio settings.
@@ -371,26 +366,36 @@
 						</button>
 						<Dropdown bind:open={timesToRepeatDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-48 overflow-y-scroll">
 							{#each Array.from({ length: 20 }, (_, i) => i + 1) as n}
-								<DropdownItem class={dropdownItemClasses} on:click={() => ($__audioSettings.timesToRepeat = n)}>{n} {n > 1 ? 'times' : 'time'}</DropdownItem>
+								<DropdownItem
+									class={dropdownItemClasses}
+									on:click={() => {
+										$__audioSettings.timesToRepeat = n;
+										timesToRepeatDropdownOpen = !timesToRepeatDropdownOpen;
+									}}>{n} {n > 1 ? 'times' : 'time'}</DropdownItem
+								>
 							{/each}
 						</Dropdown>
 					</div>
 
 					<!-- repeat delay -->
-					{#if $__audioSettings.timesToRepeat > 1}
-						<div class="flex flex-row space-x-2">
-							<span class="m-auto text-sm">Delay </span>
+					<div class="flex flex-row space-x-2">
+						<span class="m-auto text-sm">Delay </span>
 
-							<button class="{buttonClasses} text-sm">
-								<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
-							</button>
-							<Dropdown bind:open={audioDelayDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-48 overflow-y-scroll">
-								{#each Object.values(selectableAudioDelays) as delay}
-									<DropdownItem class={dropdownItemClasses} on:click={() => ($__audioSettings.audioDelay = delay.id)}>{delay.name}</DropdownItem>
-								{/each}
-							</Dropdown>
-						</div>
-					{/if}
+						<button class="{buttonClasses} text-sm">
+							<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
+						</button>
+						<Dropdown bind:open={audioDelayDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-48 overflow-y-scroll">
+							{#each Object.values(selectableAudioDelays) as delay}
+								<DropdownItem
+									class={dropdownItemClasses}
+									on:click={() => {
+										$__audioSettings.audioDelay = delay.id;
+										audioDelayDropdownOpen = !audioDelayDropdownOpen;
+									}}>{delay.name}</DropdownItem
+								>
+							{/each}
+						</Dropdown>
+					</div>
 				</div>
 			</div>
 		{/if}
