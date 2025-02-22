@@ -70,11 +70,11 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div id={wordKey} class={wordDivClasses} on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}>
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
-			<!-- 1: Uthmanic Hafs Digital, 3: Indopak Madinah -->
-			{#if [1, 4].includes($__fontType)}
+			<!-- Everything except Mushaf fonts -->
+			{#if ![2, 3].includes($__fontType)}
 				{arabicSplit[word]}
-				<!-- 2: Uthmanic Hafs Mushaf -->
-			{:else if [2, 3].includes($__fontType)}
+				<!-- Mushaf fonts -->
+			{:else}
 				<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" class={v4hafsClasses}>
 					<!-- word fix, see fixedMushafWords -->
 					{#if fixedMushafWords.hasOwnProperty(wordKey)}

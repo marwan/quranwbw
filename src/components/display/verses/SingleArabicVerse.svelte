@@ -8,7 +8,7 @@
 
 	const [chapter, verse] = key.split(':').map(Number);
 
-	$: fontType = [1, 2, 3].includes($__fontType) ? 1 : 4;
+	$: fontType = [1, 2, 3, 5].includes($__fontType) ? 1 : 4;
 
 	$: fetchData = (async () => {
 		const data = await fetchChapterData({ chapter, fontType, skipSave: true, reRenderWhenTheseUpdates: [$__fontType] });
