@@ -3,7 +3,7 @@
 
 	import Layout from '$display/verses/translations/Layout.svelte';
 	import Skeleton from '$ui/FlowbiteSvelte/skeleton/Skeleton.svelte';
-	import { __currentPage, __verseKey, __verseTranslations, __verseTranslationData, __chapterData, __userSettings, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData } from '$utils/stores';
+	import { __currentPage, __verseKey, __verseTranslations, __verseTranslationData, __chapterData, __userSettings, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData } from '$utils/stores';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
 	let verseTranslationData, verseTransliterationData;

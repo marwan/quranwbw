@@ -6,7 +6,7 @@
 	import { __fontType } from '$utils/stores';
 	import { splitDelimiter } from '$data/websiteSettings';
 
-	$: fontType = [1, 2, 3].includes($__fontType) ? 1 : 4;
+	$: fontType = [1, 2, 3, 5].includes($__fontType) ? 1 : 4;
 	$: fetchData = fetchVersesData({ verses: key, fontType: fontType, skipSave: true });
 </script>
 

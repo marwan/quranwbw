@@ -113,11 +113,11 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
-			<!-- 1: Uthmanic Hafs Digital, 3: Indopak Madinah -->
-			{#if [1, 4].includes($__fontType)}
+			<!-- Everything except Mushaf fonts -->
+			{#if ![2, 3].includes($__fontType)}
 				{value.words.end}
-				<!-- 2: Uthmanic Hafs Mushaf -->
-			{:else if [2, 3].includes($__fontType)}
+				<!-- Mushaf fonts -->
+			{:else}
 				<span style="font-family: p{value.meta.page}" class="{v4hafsClasses} custom-ayah-icon-color">{value.words.end}</span>
 			{/if}
 		</span>
