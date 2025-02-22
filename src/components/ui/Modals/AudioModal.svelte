@@ -33,6 +33,8 @@
 
 	// Update settings and validate verses when audio modal is visible
 	$: if ($__audioModalVisible) {
+		window.versesToPlayArray = []; // clear verses just in case
+
 		const { startVerse, endVerse, timesToRepeat } = $__audioSettings;
 
 		// Set verses to play based on audio range setting
