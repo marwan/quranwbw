@@ -1229,10 +1229,6 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-top: -5rem;
 }
 
-.mb-0 {
-  margin-bottom: 0px;
-}
-
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -1504,6 +1500,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   max-height: 100%;
 }
 
+.max-h-48 {
+  max-height: 12rem;
+}
+
 .min-h-64 {
   min-height: 16rem;
 }
@@ -1538,10 +1538,6 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .w-14 {
   width: 3.5rem;
-}
-
-.w-16 {
-  width: 4rem;
 }
 
 .w-2 {
@@ -1641,6 +1637,10 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .max-w-2xl {
   max-width: 42rem;
+}
+
+.max-w-32 {
+  max-width: 8rem;
 }
 
 .max-w-3xl {

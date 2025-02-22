@@ -5,6 +5,7 @@
 	import VerseReciterSelector from '$ui/SettingsDrawer/VerseReciterSelector.svelte';
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
 	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
+	import Input from '$ui/FlowbiteSvelte/forms/Input.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
 	import { updateAudioSettings, prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
@@ -21,10 +22,13 @@
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;
+	let startVerseDropdownOpen = false;
+	let endVerseDropdownOpen = false;
 	let timesToRepeatDropdownOpen = false;
 	let audioDelayDropdownOpen = false;
+	let startVerseSearch = ''; // Holds search input for start verse
+	let endVerseSearch = ''; // Holds search input for end verse
 	$: versesInChapter = quranMetaData[$__chapterNumber].verses;
-	$: endVerseValue = versesInChapter;
 
 	// Update settings and validate verses when audio modal is visible
 	$: if ($__audioModalVisible) {
@@ -256,27 +260,68 @@
 			<!-- audio range options -->
 			{#if $__currentPage === 'chapter' && $__audioSettings.audioType === 'verse'}
 				<div id="audio-range-options" class={$__audioSettings.audioRange === 'playRange' ? 'block' : 'hidden'}>
-					<!-- from / till -->
 					<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
-						<!-- <span class="text-xs  ">Select the range of verses or words to be played.</span> -->
 						<div class="flex flex-row space-x-4">
+							<!-- Start Verse Dropdown -->
 							<div class="flex flex-row space-x-2">
-								<span class="m-auto text-sm mr-2">From {term('verse')}</span>
-								<input type="number" min="1" max={versesInChapter} bind:value={$__audioSettings.startVerse} id="startVerse" on:change={updateAudioSettings} aria-describedby="helper-text-explanation" class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')} block p-2.5 mb-0" placeholder="start" />
+								<span class="m-auto text-sm">From</span>
+
+								<button class="{buttonClasses} text-sm">
+									<div>{term('verse')} {$__audioSettings.startVerse}</div>
+								</button>
+								<Dropdown bind:open={startVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
+									<!-- Sticky Search Box -->
+									<div class="p-2 sticky top-0 z-10">
+										<Input type="text" bind:value={startVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
+									</div>
+
+									<!-- Scrollable List -->
+									<div class="max-h-48 overflow-y-auto">
+										{#each Array.from({ length: versesInChapter }, (_, i) => i + 1).filter((v) => v.toString().includes(startVerseSearch)) as verse}
+											<DropdownItem
+												class={dropdownItemClasses}
+												on:click={() => {
+													$__audioSettings.startVerse = verse;
+													startVerseDropdownOpen = !startVerseDropdownOpen;
+												}}
+											>
+												{term('verse')}
+												{verse}
+											</DropdownItem>
+										{/each}
+									</div>
+								</Dropdown>
 							</div>
+
+							<!-- End Verse Dropdown -->
 							<div class="flex flex-row space-x-2">
-								<span class="m-auto text-sm mr-2">Till {term('verse')}</span>
-								<input
-									id="endVerse"
-									type="number"
-									min={$__audioSettings.startVerse}
-									max={quranMetaData[$__chapterNumber].verses}
-									bind:value={endVerseValue}
-									on:change={updateAudioSettings}
-									aria-describedby="helper-text-explanation"
-									class="bg-transparent w-16 text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')} {window.theme('placeholder')} block p-2.5 mb-0"
-									placeholder="end"
-								/>
+								<span class="m-auto text-sm">Till</span>
+
+								<button class="{buttonClasses} text-sm">
+									<div>{term('verse')} {$__audioSettings.endVerse}</div>
+								</button>
+								<Dropdown bind:open={endVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
+									<!-- Sticky Search Box -->
+									<div class="p-2 sticky top-0 z-10">
+										<Input type="text" bind:value={endVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
+									</div>
+
+									<!-- Scrollable List -->
+									<div class="max-h-48 overflow-y-auto">
+										{#each Array.from({ length: quranMetaData[$__chapterNumber].verses - $__audioSettings.startVerse + 1 }, (_, i) => i + $__audioSettings.startVerse).filter((v) => v.toString().includes(endVerseSearch)) as verse}
+											<DropdownItem
+												class={dropdownItemClasses}
+												on:click={() => {
+													$__audioSettings.endVerse = verse;
+													endVerseDropdownOpen = !endVerseDropdownOpen;
+												}}
+											>
+												{term('verse')}
+												{verse}
+											</DropdownItem>
+										{/each}
+									</div>
+								</Dropdown>
 							</div>
 						</div>
 					</div>
@@ -328,7 +373,7 @@
 						<button class="{buttonClasses} text-sm">
 							<div>{$__audioSettings.timesToRepeat} {$__audioSettings.timesToRepeat > 1 ? 'times' : 'time'}</div>
 						</button>
-						<Dropdown bind:open={timesToRepeatDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-64 overflow-y-scroll">
+						<Dropdown bind:open={timesToRepeatDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-48 overflow-y-scroll">
 							{#each Array.from({ length: 20 }, (_, i) => i + 1) as n}
 								<DropdownItem class={dropdownItemClasses} on:click={() => ($__audioSettings.timesToRepeat = n)}>{n} {n > 1 ? 'times' : 'time'}</DropdownItem>
 							{/each}
@@ -347,7 +392,7 @@
 						<button class="{buttonClasses} text-sm">
 							<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
 						</button>
-						<Dropdown bind:open={audioDelayDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-64 overflow-y-scroll">
+						<Dropdown bind:open={audioDelayDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-48 overflow-y-scroll">
 							{#each Object.values(selectableAudioDelays) as delay}
 								<DropdownItem class={dropdownItemClasses} on:click={() => ($__audioSettings.audioDelay = delay.id)}>{delay.name}</DropdownItem>
 							{/each}
