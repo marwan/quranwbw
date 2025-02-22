@@ -158,9 +158,6 @@ export function updateAudioSettings(event) {
 			case 'endVerse':
 				audioSettings.endVerse = +value;
 				break;
-			case 'timesToRepeat':
-				audioSettings.timesToRepeat = Number(value);
-				break;
 		}
 	} catch (error) {
 		console.error(error);

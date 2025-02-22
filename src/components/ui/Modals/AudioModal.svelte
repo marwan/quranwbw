@@ -3,6 +3,8 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
 	import VerseReciterSelector from '$ui/SettingsDrawer/VerseReciterSelector.svelte';
+	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
+	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
 	import { updateAudioSettings, prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
@@ -15,9 +17,12 @@
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
+	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;
+	let timesToRepeatDropdownOpen = false;
+	let audioDelayDropdownOpen = false;
 	$: versesInChapter = quranMetaData[$__chapterNumber].verses;
 	$: endVerseValue = versesInChapter;
 
@@ -57,6 +62,11 @@
 		$__audioSettings.audioDelay = 1;
 	}
 
+	// Default to repeat 1 time
+	if ($__audioSettings.timesToRepeat === undefined) {
+		$__audioSettings.timesToRepeat = 1;
+	}
+
 	// Default to no delay is repeat is less than 2
 	$: if ($__audioSettings.timesToRepeat < 2) {
 		$__audioSettings.audioDelay = 1;
@@ -82,7 +92,7 @@
 		$__audioSettings.endVerse = versesInChapter;
 	}
 
-	// $: console.log($__audioSettings);
+	$: console.log($__audioSettings);
 
 	// This function manages the saving, retrieving, and resetting of audio settings in the $__audioSettings object.
 	// It takes an action parameter that determines whether to get ('get'), set ('set'), or reset to default ('default') the audio settings.
@@ -93,9 +103,10 @@
 		const assignSettings = (source, target) => {
 			Object.assign(target, {
 				audioType: source.audioType,
-				audioRange: source.audioRange,
 				language: source.language,
-				timesToRepeat: source.timesToRepeat
+				audioRange: source.audioRange,
+				timesToRepeat: source.timesToRepeat,
+				audioDelay: source.audioDelay
 			});
 		};
 
@@ -303,7 +314,7 @@
 			<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
 				<div class="flex flex-row space-x-4">
 					<div class="flex flex-row space-x-2">
-						<span class="m-auto text-sm mr-2">
+						<span class="m-auto text-sm">
 							Repeat
 							{#if ['playThisVerse', 'playFromHere'].includes($__audioSettings.audioRange)}
 								Each {term('verse')}
@@ -314,30 +325,40 @@
 							{/if}
 						</span>
 
-						<!-- Dropdown for repeat times with "time" or "times" -->
-						<select id="timesToRepeat" bind:value={$__audioSettings.timesToRepeat} on:change={updateAudioSettings} class="bg-transparent text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} block p-2.5 mb-0">
+						<button class="{buttonClasses} text-sm">
+							<div>{$__audioSettings.timesToRepeat} {$__audioSettings.timesToRepeat > 1 ? 'times' : 'time'}</div>
+						</button>
+						<Dropdown bind:open={timesToRepeatDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-64 overflow-y-scroll">
 							{#each Array.from({ length: 20 }, (_, i) => i + 1) as n}
-								<option value={n}>{n} {n > 1 ? 'times' : 'time'}</option>
+								<DropdownItem class={dropdownItemClasses} on:click={() => ($__audioSettings.timesToRepeat = n)}>{n} {n > 1 ? 'times' : 'time'}</DropdownItem>
 							{/each}
-						</select>
+						</Dropdown>
 					</div>
 				</div>
 			</div>
 		{/if}
 
 		{#if $__audioSettings.timesToRepeat > 1}
-			<div class="flex flex-row space-y-4 py-4 border-t items-center {window.theme('border')}">
-				<span class="text-sm mr-2">Repeat Delay </span>
-				<select class="bg-transparent w-fit text-xs rounded-3xl border {window.theme('border')} {window.theme('input')} p-2.5 mb-0" bind:value={$__audioSettings.audioDelay}>
-					{#each Object.values(selectableAudioDelays) as delay}
-						<option value={delay.id}>{delay.name}</option>
-					{/each}
-				</select>
+			<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
+				<div class="flex flex-row space-x-4">
+					<div class="flex flex-row space-x-2">
+						<span class="m-auto text-sm">Repeat Delay </span>
+
+						<button class="{buttonClasses} text-sm">
+							<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
+						</button>
+						<Dropdown bind:open={audioDelayDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-64 overflow-y-scroll">
+							{#each Object.values(selectableAudioDelays) as delay}
+								<DropdownItem class={dropdownItemClasses} on:click={() => ($__audioSettings.audioDelay = delay.id)}>{delay.name}</DropdownItem>
+							{/each}
+						</Dropdown>
+					</div>
+				</div>
 			</div>
 		{/if}
 
 		<Checkbox checked={$__audioSettings.rememberSettings} on:click={() => toggleRememberSettings()} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
-			<span>Remember Settings (excludes custom/range options)</span>
+			<span>Remember Settings</span>
 		</Checkbox>
 
 		<div class="mt-4">
