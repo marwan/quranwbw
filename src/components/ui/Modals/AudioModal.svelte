@@ -262,77 +262,6 @@
 				</div>
 			</div>
 
-			<!-- audio range options -->
-			{#if $__currentPage === 'chapter' && $__audioSettings.audioType === 'verse'}
-				<div id="audio-range-options" class={$__audioSettings.audioRange === 'playRange' ? 'block' : 'hidden'}>
-					<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
-						<div class="flex flex-row space-x-4">
-							<!-- Start Verse Dropdown -->
-							<div class="flex flex-row space-x-2">
-								<span class="m-auto text-sm">From</span>
-
-								<button class="{buttonClasses} text-sm">
-									<div>{term('verse')} {$__audioSettings.startVerse}</div>
-								</button>
-								<Dropdown bind:open={startVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
-									<!-- Sticky Search Box -->
-									<div class="p-2 sticky top-0 z-10">
-										<Input type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
-									</div>
-
-									<!-- Scrollable List -->
-									<div class="max-h-48 overflow-y-auto">
-										{#each Array.from({ length: versesInChapter }, (_, i) => i + 1).filter((v) => v.toString().includes(startVerseSearch)) as verse}
-											<DropdownItem
-												class={dropdownItemClasses}
-												on:click={() => {
-													$__audioSettings.startVerse = verse;
-													startVerseDropdownOpen = !startVerseDropdownOpen;
-												}}
-											>
-												{term('verse')}
-												{verse}
-											</DropdownItem>
-										{/each}
-									</div>
-								</Dropdown>
-							</div>
-
-							<!-- End Verse Dropdown -->
-							<div class="flex flex-row space-x-2">
-								<span class="m-auto text-sm">Till</span>
-
-								<button class="{buttonClasses} text-sm">
-									<div>{term('verse')} {$__audioSettings.endVerse}</div>
-								</button>
-								<Dropdown bind:open={endVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
-									<!-- Sticky Search Box -->
-									<div class="p-2 sticky top-0 z-10">
-										<Input type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
-									</div>
-
-									<!-- Scrollable List -->
-									<div class="max-h-48 overflow-y-auto">
-										{#each Array.from({ length: quranMetaData[$__chapterNumber].verses - $__audioSettings.startVerse + 1 }, (_, i) => i + $__audioSettings.startVerse).filter((v) => v.toString().includes(endVerseSearch)) as verse}
-											<DropdownItem
-												class={dropdownItemClasses}
-												on:click={() => {
-													$__audioSettings.endVerse = verse;
-													endVerseDropdownOpen = !endVerseDropdownOpen;
-												}}
-											>
-												{term('verse')}
-												{verse}
-											</DropdownItem>
-										{/each}
-									</div>
-								</Dropdown>
-							</div>
-						</div>
-					</div>
-				</div>
-			{/if}
-
 			<!-- repeat type options -->
 			{#if $__audioSettings.audioRange === 'playRange'}
 				<div id="repeat-type-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
@@ -359,21 +288,83 @@
 			{/if}
 		</div>
 
-		<!-- repeat times -->
+		<!-- from/till verse options -->
+		{#if $__currentPage === 'chapter' && $__audioSettings.audioType === 'verse'}
+			<div id="audio-range-options" class={$__audioSettings.audioRange === 'playRange' ? 'block' : 'hidden'}>
+				<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
+					<div class="flex flex-row space-x-4">
+						<!-- Start Verse Dropdown -->
+						<div class="flex flex-row space-x-2">
+							<span class="m-auto text-sm">From</span>
+
+							<button class="{buttonClasses} text-sm">
+								<div>{term('verse')} {$__audioSettings.startVerse}</div>
+							</button>
+							<Dropdown bind:open={startVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
+								<!-- Sticky Search Box -->
+								<div class="p-2 sticky top-0 z-10">
+									<Input type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
+								</div>
+
+								<!-- Scrollable List -->
+								<div class="max-h-48 overflow-y-auto">
+									{#each Array.from({ length: versesInChapter }, (_, i) => i + 1).filter((v) => v.toString().includes(startVerseSearch)) as verse}
+										<DropdownItem
+											class={dropdownItemClasses}
+											on:click={() => {
+												$__audioSettings.startVerse = verse;
+												startVerseDropdownOpen = !startVerseDropdownOpen;
+											}}
+										>
+											{term('verse')}
+											{verse}
+										</DropdownItem>
+									{/each}
+								</div>
+							</Dropdown>
+						</div>
+
+						<!-- End Verse Dropdown -->
+						<div class="flex flex-row space-x-2">
+							<span class="m-auto text-sm">Till</span>
+
+							<button class="{buttonClasses} text-sm">
+								<div>{term('verse')} {$__audioSettings.endVerse}</div>
+							</button>
+							<Dropdown bind:open={endVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
+								<!-- Sticky Search Box -->
+								<div class="p-2 sticky top-0 z-10">
+									<Input type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
+								</div>
+
+								<!-- Scrollable List -->
+								<div class="max-h-48 overflow-y-auto">
+									{#each Array.from({ length: quranMetaData[$__chapterNumber].verses - $__audioSettings.startVerse + 1 }, (_, i) => i + $__audioSettings.startVerse).filter((v) => v.toString().includes(endVerseSearch)) as verse}
+										<DropdownItem
+											class={dropdownItemClasses}
+											on:click={() => {
+												$__audioSettings.endVerse = verse;
+												endVerseDropdownOpen = !endVerseDropdownOpen;
+											}}
+										>
+											{term('verse')}
+											{verse}
+										</DropdownItem>
+									{/each}
+								</div>
+							</Dropdown>
+						</div>
+					</div>
+				</div>
+			</div>
+		{/if}
+
 		{#if $__audioSettings.audioType === 'verse'}
 			<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
 				<div class="flex flex-row space-x-4">
+					<!-- repeat times -->
 					<div class="flex flex-row space-x-2">
-						<span class="m-auto text-sm">
-							Repeat
-							{#if ['playThisVerse', 'playFromHere'].includes($__audioSettings.audioRange)}
-								Each {term('verse')}
-							{:else if $__audioSettings.audioRange === 'playRange' && $__audioSettings.repeatType === 'repeatVerse'}
-								Each {term('verse')}
-							{:else}
-								{term('verse')} Range
-							{/if}
-						</span>
+						<span class="m-auto text-sm"> Repeat </span>
 
 						<button class="{buttonClasses} text-sm">
 							<div>{$__audioSettings.timesToRepeat} {$__audioSettings.timesToRepeat > 1 ? 'times' : 'time'}</div>
@@ -384,35 +375,32 @@
 							{/each}
 						</Dropdown>
 					</div>
+
+					<!-- repeat delay -->
+					{#if $__audioSettings.timesToRepeat > 1}
+						<div class="flex flex-row space-x-2">
+							<span class="m-auto text-sm">Delay </span>
+
+							<button class="{buttonClasses} text-sm">
+								<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
+							</button>
+							<Dropdown bind:open={audioDelayDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-48 overflow-y-scroll">
+								{#each Object.values(selectableAudioDelays) as delay}
+									<DropdownItem class={dropdownItemClasses} on:click={() => ($__audioSettings.audioDelay = delay.id)}>{delay.name}</DropdownItem>
+								{/each}
+							</Dropdown>
+						</div>
+					{/if}
 				</div>
 			</div>
 		{/if}
 
-		{#if $__audioSettings.timesToRepeat > 1}
-			<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
-				<div class="flex flex-row space-x-4">
-					<div class="flex flex-row space-x-2">
-						<span class="m-auto text-sm">Repeat Delay </span>
-
-						<button class="{buttonClasses} text-sm">
-							<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
-						</button>
-						<Dropdown bind:open={audioDelayDropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr max-h-48 overflow-y-scroll">
-							{#each Object.values(selectableAudioDelays) as delay}
-								<DropdownItem class={dropdownItemClasses} on:click={() => ($__audioSettings.audioDelay = delay.id)}>{delay.name}</DropdownItem>
-							{/each}
-						</Dropdown>
-					</div>
-				</div>
-			</div>
-		{/if}
-
-		<Checkbox checked={$__audioSettings.rememberSettings} on:click={() => toggleRememberSettings()} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+		<Checkbox checked={$__audioSettings.rememberSettings} on:click={() => toggleRememberSettings()} class="space-x-2 pb-6 font-normal {window.theme('bgMain')}">
 			<span>Remember Settings</span>
 		</Checkbox>
+	</div>
 
-		<div class="mt-4">
-			<button on:click={() => playButtonHandler($__audioSettings.playingKey)} class="w-full {buttonClasses} {invalidStartVerse || invalidEndVerse || invalidTimesToRepeat ? disabledClasses : null}">Play</button>
-		</div>
+	<div>
+		<button on:click={() => playButtonHandler($__audioSettings.playingKey)} class="w-full {buttonClasses} {invalidStartVerse || invalidEndVerse || invalidTimesToRepeat ? disabledClasses : null}">Play</button>
 	</div>
 </Modal>
