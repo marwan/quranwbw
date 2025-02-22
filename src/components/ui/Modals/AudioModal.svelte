@@ -6,6 +6,7 @@
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
 	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
 	import Input from '$ui/FlowbiteSvelte/forms/Input.svelte';
+	import Search from '$svgs/Search.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
@@ -298,7 +299,9 @@
 							<Dropdown bind:open={startVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
 								<!-- Sticky Search Box -->
 								<div class="p-2 sticky top-0 z-10">
-									<Input type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
+									<Input type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}">
+										<Search slot="left" size={6} classes="pt-1 {startVerseSearch.length > 0 && 'hidden'}" />
+									</Input>
 								</div>
 
 								<!-- Scrollable List -->
@@ -329,7 +332,9 @@
 							<Dropdown bind:open={endVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
 								<!-- Sticky Search Box -->
 								<div class="p-2 sticky top-0 z-10">
-									<Input type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
+									<Input type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}">
+										<Search slot="left" size={6} classes="pt-1 {endVerseSearch.length > 0 && 'hidden'}" />
+									</Input>
 								</div>
 
 								<!-- Scrollable List -->
