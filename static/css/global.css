@@ -3066,6 +3066,18 @@ input[type="range"].range-lg::-moz-range-thumb {
 }
 
 @font-face {
+  font-family: "Nastaleeq-Hafs";
+
+  src: url("../fonts/KFGQPCNastaleeq-Regular.woff2") format("woff2");
+
+  font-weight: normal;
+
+  font-style: normal;
+
+  font-display: swap;
+}
+
+@font-face {
   font-family: "chapter-icons";
 
   src: url("../fonts/surahs_v4-Regular.woff") format("woff");
@@ -3368,7 +3380,9 @@ svg {
 .arabic-font-1,
 .arabic-font-2,
 .arabic-font-3,
-.arabic-font-4 {
+.arabic-font-4,
+.arabic-font-5,
+.arabic-font-6 {
   direction: rtl;
 }
 
@@ -3376,8 +3390,12 @@ svg {
   font-family: "Uthmani-Hafs";
 }
 
-.arabic-font-4 {
+.arabic-font-4, .arabic-font-6 {
   font-family: "IndoPak";
+}
+
+.arabic-font-5 {
+  font-family: "Nastaleeq-Hafs";
 }
 
 .chapter-icons {

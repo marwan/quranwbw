@@ -178,8 +178,8 @@
 				<span>Morphology</span>
 			</DropdownItem>
 
-			<!-- copy verse button (only for hafs digital and indopak) -->
-			{#if [1, 4].includes($__fontType)}
+			<!-- copy verse button (only for non-mushaf fonts) -->
+			{#if ![2, 3].includes($__fontType)}
 				<DropdownItem
 					class={dropdownItemClasses}
 					on:click={() => {

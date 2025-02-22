@@ -21,7 +21,7 @@
 	const chapterBismillahClasses = `
 		${window.theme('text')}
 		flex flex-col text-center flex-wrap block pt-6 pb-4 
-		${[1, 2, 3].includes($__fontType) ? `bismillah ${chapter === 2 ? 'text-3xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
+		${[1, 2, 3, 5].includes($__fontType) ? `bismillah ${chapter === 2 ? 'text-3xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
 		${commonClasses}
 		`;
 
@@ -38,8 +38,8 @@
 {#if ['chapter', 'juz'].includes($__currentPage)}
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
 		<div class={chapterBismillahClasses}>
-			<!-- uthmani font -->
-			{#if [1, 2, 3].includes($__fontType)}
+			<!-- uthmani fonts -->
+			{#if [1, 2, 3, 5].includes($__fontType)}
 				<span class={$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}>
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
@@ -48,8 +48,8 @@
 					{/if}
 				</span>
 
-				<!-- indopak font -->
-			{:else if $__fontType === 4}
+				<!-- indopak fonts -->
+			{:else if [4, 6].includes($__fontType)}
 				{bismillahTypes.indopakType}
 			{/if}
 		</div>

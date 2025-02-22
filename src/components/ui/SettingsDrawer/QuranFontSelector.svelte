@@ -8,13 +8,14 @@
 </script>
 
 <div class="grid gap-3 w-full">
-	{#each Object.entries(selectableFontTypes) as [id, font]}
-		{#if !font.disallowedIn.includes($__currentPage)}
-			<Radio name="fontType" bind:group={$__fontType} value={font.id} on:change={(event) => updateSettings({ type: 'fontType', value: +event.target.value })} custom>
-				<div class="{individualRadioClasses} {$__fontType === font.id && selectedRadioOrCheckboxClasses}">
-					<div class="w-full">{font.font}</div>
+	<!-- render the list in custom order -->
+	{#each [1, 2, 3, 4, 6, 5] as key}
+		{#if !selectableFontTypes[key].disallowedIn.includes($__currentPage)}
+			<Radio name="fontType" bind:group={$__fontType} value={selectableFontTypes[key].id} on:change={(event) => updateSettings({ type: 'fontType', value: +event.target.value })} custom>
+				<div class="{individualRadioClasses} {$__fontType === selectableFontTypes[key].id && selectedRadioOrCheckboxClasses}">
+					<div class="w-full">{selectableFontTypes[key].font}</div>
 
-					{#if $__fontType === font.id}
+					{#if $__fontType === selectableFontTypes[key].id}
 						<Check size={5} />
 					{/if}
 				</div>
