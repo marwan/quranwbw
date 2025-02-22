@@ -272,7 +272,7 @@
 								<Dropdown bind:open={startVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
 									<!-- Sticky Search Box -->
 									<div class="p-2 sticky top-0 z-10">
-										<Input type="text" bind:value={startVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
+										<Input type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
 									</div>
 
 									<!-- Scrollable List -->
@@ -303,7 +303,7 @@
 								<Dropdown bind:open={endVerseDropdownOpen} class="w-max text-left font-sans direction-ltr">
 									<!-- Sticky Search Box -->
 									<div class="p-2 sticky top-0 z-10">
-										<Input type="text" bind:value={endVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
+										<Input type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="Search " size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}"></Input>
 									</div>
 
 									<!-- Scrollable List -->
