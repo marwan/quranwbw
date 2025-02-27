@@ -18,7 +18,7 @@ export const staticEndpoint = 'https://static.quranwbw.com/data/v4';
 
 export const wordsAudioURL = 'https://audios.quranwbw.com/words';
 
-export const mushafFontVersion = 5;
+export const mushafFontVersion = 6;
 
 export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4/COLRv1`;
 
