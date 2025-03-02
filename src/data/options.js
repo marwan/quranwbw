@@ -314,12 +314,14 @@ export const selectableVerseTranslations = {
 	135: {
 		resource_id: 135,
 		resource_name: 'IslamHouse.com',
-		language_id: 43
+		language_id: 43,
+		font: 'font-Urdu'
 	},
 	29: {
 		resource_id: 29,
 		resource_name: 'Hussein Taji Kal Dari',
-		language_id: 43
+		language_id: 43,
+		font: 'font-Urdu'
 	},
 
 	// russian
@@ -479,7 +481,7 @@ export const selectableWordTranslations = {
 	16: { id: 16, language: 'Chinese (Simplified)' },
 	17: { id: 17, language: 'Chinese (Pinyin)' },
 	18: { id: 18, language: 'Divehi' },
-	// 19: { id: 19, language: 'Persian' },
+	19: { id: 19, language: 'Persian', font: 'font-Urdu' },
 	20: { id: 20, language: 'Sindhi', font: 'font-Sindhi' },
 	21: { id: 21, language: 'Albanian' }
 };
@@ -679,4 +681,14 @@ export const selectableVersePlayButtonOptions = {
 	1: { id: 1, name: 'Play Audio' },
 	// 2: { id: 2, name: 'Play From That Verse' },
 	3: { id: 3, name: 'Show Advanced Options' }
+};
+
+export const selectableAudioDelays = {
+	1: { id: 1, name: 'None', milliseconds: 0 },
+	2: { id: 2, name: '1 second', milliseconds: 1000 },
+	3: { id: 3, name: '3 seconds', milliseconds: 3000 },
+	4: { id: 4, name: '5 seconds', milliseconds: 5000 },
+	5: { id: 5, name: '10 seconds', milliseconds: 10000 },
+	6: { id: 6, name: '15 seconds', milliseconds: 15000 },
+	7: { id: 7, name: 'Audio Length', milliseconds: 999 }
 };

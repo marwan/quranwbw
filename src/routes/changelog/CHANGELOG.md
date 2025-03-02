@@ -1,3 +1,17 @@
+### Mar 1, 2025
+
+- **Re-added Persian Word-by-Word Language:** The **Persian word-by-word translation** is back after being temporarily removed in a previous update. Thank you for your patience!
+
+---
+
+### Feb 27, 2025
+
+- **Enhanced Audio Playback:** We've brought back the much-loved feature to **repeat custom verse ranges** — perfect for memorization and focused listening.
+- **Custom Repeat Delay:** Now you can set a **delay between repeats**, giving you time to reflect or recite along, just like in the previous version of the website.
+- **Faster Verse Selection:** The **From/To verse input** now features a **dropdown with search**, making it quicker and easier to find the verse you're looking for.
+
+---
+
 ### Feb 22, 2025
 
 - **New Font Types:** Added **Nastaleeq Hafs Digital** and **Indopak Hanafi** fonts for improved readability and customization.
