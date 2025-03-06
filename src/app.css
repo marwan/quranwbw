@@ -318,18 +318,7 @@ svg {
     19 #ffffff
 }
 
-/* Uthmani Hafs NEO Fonts - Normal Palettes */
-.theme-1 .arabic-font-1 { font-palette: --palette3; } /* Golden Glint */
-.theme-2 .arabic-font-1 { font-palette: --palette3; } /* Classic Light */
-.theme-3 .arabic-font-1 { font-palette: --palette5; } /* Silver Lining */
-.theme-4 .arabic-font-1 { font-palette: --palette5; } /* Vintage Sepia */
-.theme-5 .arabic-font-1 { font-palette: --palette4; } /* Mocha Night */
-.theme-6 .arabic-font-1 { font-palette: --palette4; } /* Midnight Blue */
-.theme-7 .arabic-font-1 { font-palette: --palette4; } /* Forest Green */
-.theme-8 .arabic-font-1 { font-palette: --palette4; } /* Oled Black */
-.theme-9 .arabic-font-1 { font-palette: --palette4; } /* Dark Luxury */
-
-/* Uthmani V4 Fonts - Normal Palettes */
+/* Uthmani V4 and Uthmani Hafs NEO Fonts - Normal Palettes */
 .theme-1 .theme-palette-normal { font-palette: --palette3; } /* Golden Glint */
 .theme-2 .theme-palette-normal { font-palette: --palette3; } /* Classic Light */
 .theme-3 .theme-palette-normal { font-palette: --palette5; } /* Silver Lining */

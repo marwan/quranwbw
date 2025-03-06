@@ -91,6 +91,7 @@
 		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'} 
 		${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
 		${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
+		custom-ayah-icon-color
 	`;
 
 	// Classes for end icons
@@ -115,10 +116,10 @@
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 			<!-- Everything except Mushaf fonts -->
 			{#if ![2, 3].includes($__fontType)}
-				{value.words.end}
+				<span class="theme-palette-normal">{value.words.end}</span>
 				<!-- Mushaf fonts -->
 			{:else}
-				<span style="font-family: p{value.meta.page}" class="{v4hafsClasses} custom-ayah-icon-color">{value.words.end}</span>
+				<span style="font-family: p{value.meta.page}" class={v4hafsClasses}>{value.words.end}</span>
 			{/if}
 		</span>
 	</div>
