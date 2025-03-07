@@ -3539,6 +3539,62 @@ svg {
     19 #ffffff
 }
 
+/* Uthmani Hafs NEO Fonts - Normal Palettes */
+
+.theme-1 .colored-fonts {
+  font-palette: --palette4;
+}
+
+/* Golden Glint */
+
+.theme-2 .colored-fonts {
+  font-palette: --palette0;
+}
+
+/* Classic Light */
+
+.theme-3 .colored-fonts {
+  font-palette: --palette3;
+}
+
+/* Silver Lining */
+
+.theme-4 .colored-fonts {
+  font-palette: --palette2;
+}
+
+/* Vintage Sepia */
+
+.theme-5 .colored-fonts {
+  font-palette: --palette5;
+}
+
+/* Mocha Night */
+
+.theme-6 .colored-fonts {
+  font-palette: --palette1;
+}
+
+/* Midnight Blue */
+
+.theme-7 .colored-fonts {
+  font-palette: --palette1;
+}
+
+/* Forest Green */
+
+.theme-8 .colored-fonts {
+  font-palette: --palette1;
+}
+
+/* Oled Black */
+
+.theme-9 .colored-fonts {
+  font-palette: --palette5;
+}
+
+/* Dark Luxury */
+
 /* Uthmani V4 and Uthmani Hafs NEO Fonts - Normal Palettes */
 
 .theme-1 .theme-palette-normal {
