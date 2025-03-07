@@ -6,7 +6,7 @@ export const websiteTitle = `Quran ${websiteTagline} - ${websiteURL}`;
 
 export const wbwLanguages = 'English, Urdu, Hindi, Indonesian, Bangla, Turkish, Tamil, French, German, Chinese, Malayalam, Divehi, Sindhi, Persian and Albanian';
 
-export const apiVersion = 135;
+export const apiVersion = 136;
 
 export const useLocalAPI = false;
 
@@ -18,7 +18,7 @@ export const staticEndpoint = 'https://static.quranwbw.com/data/v4';
 
 export const wordsAudioURL = 'https://audios.quranwbw.com/words';
 
-export const mushafFontVersion = 6;
+export const mushafFontVersion = 7;
 
 export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4/COLRv1`;
 
