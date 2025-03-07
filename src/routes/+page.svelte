@@ -129,23 +129,3 @@
 	<!-- chapter and most read tabs -->
 	<HomepageTabs />
 </div>
-
-<!-- banner for website updates: currently v4 launch -->
-<!-- <Banner id="newSiteBanner" position="absolute" divClass="z-10 flex justify-between p-4">
-	<p class="flex items-center text-sm font-normal space-x-1 truncate">
-		<span class="inline-flex p-2 rounded-full border {window.theme('border')}">
-			<span><Megaphone size={3} /></span>
-			<span class="sr-only">Announcement</span>
-		</span>
-
-		<span class="text-xs md:text-sm">
-			{#if websitechangelog[0].title}
-				{websitechangelog[0].title}.
-			{:else}
-				Update {websitechangelog[0].version}.
-			{/if}
-
-			<button class={linkClasses} on:click={() => __changelogModalVisible.set(true)}> See What's New {@html '&#x2192;'}</button>
-		</span>
-	</p>
-</Banner> -->

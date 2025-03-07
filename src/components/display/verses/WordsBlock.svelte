@@ -115,7 +115,7 @@
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 			<!-- Everything except Mushaf fonts -->
 			{#if ![2, 3].includes($__fontType)}
-				{value.words.end}
+				<span class="colored-fonts">{value.words.end}</span>
 				<!-- Mushaf fonts -->
 			{:else}
 				<span style="font-family: p{value.meta.page}" class="{v4hafsClasses} custom-ayah-icon-color">{value.words.end}</span>

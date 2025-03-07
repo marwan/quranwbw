@@ -9,7 +9,7 @@
 
 <div class="grid gap-3 w-full">
 	<!-- render the list in custom order -->
-	{#each [1, 2, 3, 4, 6, 5] as key}
+	{#each [1, 7, 2, 3, 4, 6, 5] as key}
 		{#if !selectableFontTypes[key].disallowedIn.includes($__currentPage)}
 			<Radio name="fontType" bind:group={$__fontType} value={selectableFontTypes[key].id} on:change={(event) => updateSettings({ type: 'fontType', value: +event.target.value })} custom>
 				<div class="{individualRadioClasses} {$__fontType === selectableFontTypes[key].id && selectedRadioOrCheckboxClasses}">

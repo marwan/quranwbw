@@ -10,14 +10,35 @@
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="description" content="Quran Word By Word Translation, Transliteration And Morphology in English, Urdu, Hindi, Indonesian, Bangla, Turkish, Tamil, French, German, Chinese, Malayalam, Divehi, Sindhi, Persian and Albanian - QuranWBW.com" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="preload" href="%sveltekit.assets%/fonts/uthmanic_hafs_v22.woff2" as="font" type="font/woff2" crossorigin />
-		<link rel="preload" href="%sveltekit.assets%/fonts/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2" as="font" type="font/woff2" crossorigin />
-		<link rel="preload" href="%sveltekit.assets%/fonts/KFGQPCNastaleeq-Regular.woff2" as="font" type="font/woff2" crossorigin />
+
+		<!-- Preload the Quran fonts depending on the fontType -->
+		<script>
+			const userSettings1 = JSON.parse(localStorage.getItem('userSettings'));
+			const fontType = userSettings1?.displaySettings?.fontType ?? '1';
+			const fontMap = {
+				1: '%sveltekit.assets%/fonts/Uthmanic_NeoCOLOR-Regular.woff2',
+				2: '%sveltekit.assets%/fonts/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2',
+				3: '%sveltekit.assets%/fonts/Nastaleeq_COLOR-Regular.woff2',
+				7: '%sveltekit.assets%/fonts/Uthmanic_NeoBCOLOR-VF.woff2'
+			};
+
+			const fontUrl = fontMap[fontType];
+			if (fontUrl) {
+				const link = document.createElement('link');
+				link.rel = 'preload';
+				link.href = fontUrl;
+				link.as = 'font';
+				link.type = 'font/woff2';
+				link.crossOrigin = 'anonymous';
+				document.head.appendChild(link);
+			}
+		</script>
+
 		<link rel="preload" href="%sveltekit.assets%/fonts/QCF_Bismillah_COLOR-Regular.woff2" as="font" type="font/woff2" crossorigin />
 		<link crossorigin="anonymous" rel="manifest" href="%sveltekit.assets%/manifest.json" />
 		<link crossorigin="anonymous" rel="icon" type="image/png" href="%sveltekit.assets%/images/favicon.png" />
 		<link crossorigin="anonymous" href="%sveltekit.assets%/images/apple-touch-icon.png" rel="apple-touch-icon" />
-		<link crossorigin="anonymous" rel="stylesheet" href="%sveltekit.assets%/css/global.css?version=43" />
+		<link crossorigin="anonymous" rel="stylesheet" href="%sveltekit.assets%/css/global.css?version=48" />
 
 		<!-- 
 		If the user's browser do not support Optional chaining (?.), redirect to old v3 website
