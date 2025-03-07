@@ -14,7 +14,8 @@ export const selectableFontTypes = {
 	3: { id: 3, font: 'Uthmanic Hafs Tajweed Mushaf', apiId: 2, disallowedIn: [] },
 	4: { id: 4, font: 'Indopak Madinah', apiId: 3, disallowedIn: ['mushaf'] },
 	5: { id: 5, font: 'Nastaleeq Hafs Digital', apiId: 5, disallowedIn: ['mushaf'] },
-	6: { id: 6, font: 'Indopak Hanafi', apiId: 6, disallowedIn: ['mushaf'] }
+	6: { id: 6, font: 'Indopak Hanafi', apiId: 6, disallowedIn: ['mushaf'] },
+	7: { id: 7, font: 'Uthmanic Hafs Digital (Bold)', apiId: 1, disallowedIn: ['mushaf'] }
 };
 
 export const themeColors = ['light', 'dark'];
