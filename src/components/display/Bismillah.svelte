@@ -15,10 +15,10 @@
 	};
 
 	// Utility function to determine Bismillah type
-	const getBismillahType = (ch) => {
-		if (ch === 2) return bismillahTypes.uthmaniType1;
-		if ([95, 97].includes(ch)) return bismillahTypes.uthmaniType3;
-		if (![1, 9, 2, 95, 97].includes(ch)) return bismillahTypes.uthmaniType2;
+	const getBismillahType = (chapter) => {
+		if (chapter === 2) return bismillahTypes.uthmaniType1;
+		if ([95, 97].includes(chapter)) return bismillahTypes.uthmaniType3;
+		if (![1, 9, 2, 95, 97].includes(chapter)) return bismillahTypes.uthmaniType2;
 		return null;
 	};
 
