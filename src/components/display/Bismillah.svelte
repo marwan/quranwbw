@@ -10,6 +10,7 @@
 	const bismillahTypes = {
 		uthmaniType1: 'ﲚﲛﲞﲤ',
 		uthmaniType2: 'ﲪﲫﲮﲴ',
+		uthmaniType3: 'ﭗﲫﲮﲴ',
 		indopakType: '﷽'
 	};
 
@@ -43,7 +44,9 @@
 				<span class={$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}>
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
-					{:else if ![1, 9, 2].includes(chapter) || (chapter === 1 && startVerse > 1)}
+					{:else if [95, 97].includes(chapter)}
+						{bismillahTypes.uthmaniType3}
+					{:else if ![1, 9, 2, 95, 97].includes(chapter) || (chapter === 1 && startVerse > 1)}
 						{bismillahTypes.uthmaniType2}
 					{/if}
 				</span>
@@ -60,7 +63,9 @@
 	<div class={mushafBismillahClasses}>
 		{#if chapters[lines.indexOf(line)] === 2}
 			{bismillahTypes.uthmaniType1}
-		{:else if ![1, 9, 2].includes(chapters[lines.indexOf(line)])}
+		{:else if [95, 97].includes(chapters[lines.indexOf(line)])}
+			{bismillahTypes.uthmaniType3}
+		{:else if ![1, 9, 2, 95, 97].includes(chapters[lines.indexOf(line)])}
 			{bismillahTypes.uthmaniType2}
 		{/if}
 	</div>
