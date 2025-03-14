@@ -314,7 +314,9 @@ export function updateSettings(props) {
 	}
 
 	// Track event change
-	if (trackEvent) window.umami.track('Setting Change', { type: props.type, value: props.value });
+	if (trackEvent) {
+		// window.umami.track('Setting Change', { type: props.type, value: props.value });
+	}
 
 	// update the settings back into localStorage and global store
 	__userSettings.set(JSON.stringify(userSettings));
