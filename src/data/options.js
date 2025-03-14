@@ -76,7 +76,7 @@ export const selectableThemes = {
 		paletteTajweed: 1,
 		paletteHeader: 5,
 		color1: '#20161f',
-		color2: '#c59f60'
+		color2: '#dca54c'
 	},
 	6: {
 		id: 6,

@@ -3209,7 +3209,7 @@ html.theme-4 ::-webkit-scrollbar-thumb {
 /* Vintage Sepia */
 
 html.theme-5 ::-webkit-scrollbar-thumb {
-  background: #c59f60;
+  background: #dca54c;
 }
 
 /* Mocha Night */
@@ -3286,11 +3286,11 @@ html.theme-9 ::-webkit-scrollbar-thumb {
 
 .theme-5 [type='checkbox'], .theme-5 [type='checkbox']:checked {
   background-color: transparent;
-  border-color: #c59f60
+  border-color: #dca54c
 }
 
 .theme-5 [type='checkbox']:checked {
-  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23c59f60'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>");
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dca54c'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>");
 }
 
 /* Mocha Night */
@@ -3572,6 +3572,21 @@ svg {
     19 #ffffff
 }
 
+@font-palette-values --MochaNightBismillahColor {
+  font-family: 'bismillah';
+
+  base-palette: 0;
+
+  override-colors:
+    0 #dca54c,
+    1 #dca54c,
+    2 #dca54c,
+    4 #dca54c,
+    5 #dca54c,
+    7 #dca54c,
+    15 #dca54c;
+}
+
 /* Uthmani Hafs NEO Fonts - Normal Palettes */
 
 .theme-1 .colored-fonts {
@@ -3812,6 +3827,20 @@ svg {
   font-palette: --DarkLuxuryFontColor !important;
 }
 
+/* Custom Bismillah color for mocha and dark luxury theme */
+
+.theme-5 .colored-bismillah {
+  font-palette: --MochaNightBismillahColor;
+}
+
+/* Mocha Night */
+
+.theme-9 .colored-bismillah {
+  font-palette: --MochaNightBismillahColor;
+}
+
+/* Dark Luxury */
+
 /* for lexicon modal because the data is fetched externally and it has it's own classes */
 
 #lexiconModal .entryFree {
@@ -3985,6 +4014,8 @@ svg {
   font-weight: 600;
 }
 
+/* Markdown Colors */
+
 .theme-1 .markdown hr {
   border-color: rgb(177 144 31 / 0.2);
 }
@@ -4066,21 +4097,21 @@ svg {
 /* Vintage Sepia */
 
 .theme-5 .markdown hr {
-  border-color: rgb(197 159 96 / 0.2);
+  border-color: rgb(220 165 76 / 0.2);
 }
 
 /* Mocha Night */
 
 .theme-5 .markdown a {
   --tw-text-opacity: 1;
-  color: rgb(197 159 96 / var(--tw-text-opacity));
+  color: rgb(220 165 76 / var(--tw-text-opacity));
 }
 
 /* Mocha Night */
 
 .theme-5 .markdown h3 {
   --tw-text-opacity: 1;
-  color: rgb(197 159 96 / var(--tw-text-opacity));
+  color: rgb(220 165 76 / var(--tw-text-opacity));
 }
 
 /* Mocha Night */

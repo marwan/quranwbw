@@ -32,6 +32,7 @@
 		bismillah flex flex-col text-center leading-normal flex-wrap space-y-4 block md:mt-6 text-[5vw] md:text-[32px] lg:text-[36px] 
 		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
 		${commonClasses}
+		colored-bismillah
 	`;
 </script>
 
@@ -41,7 +42,7 @@
 		<div class={chapterBismillahClasses}>
 			<!-- uthmani fonts -->
 			{#if [1, 2, 3, 5, 7, 8].includes($__fontType)}
-				<span class={$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}>
+				<span class="{$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'} colored-bismillah">
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
 					{:else if [95, 97].includes(chapter)}

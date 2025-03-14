@@ -104,7 +104,7 @@ html.theme-1 ::-webkit-scrollbar-thumb { background: #b1901f; } /* Golden Glint 
 html.theme-2 ::-webkit-scrollbar-thumb { background: #000000; } /* Classic Light */
 html.theme-3 ::-webkit-scrollbar-thumb { background: #000000; } /* Silver Lining */
 html.theme-4 ::-webkit-scrollbar-thumb { background: #553c0f; } /* Vintage Sepia */
-html.theme-5 ::-webkit-scrollbar-thumb { background: #c59f60; } /* Mocha Night */
+html.theme-5 ::-webkit-scrollbar-thumb { background: #dca54c; } /* Mocha Night */
 html.theme-6 ::-webkit-scrollbar-thumb { background: #c2c2c2; } /* Midnight Blue */
 html.theme-7 ::-webkit-scrollbar-thumb { background: #dddddd; } /* Forest Green */
 html.theme-8 ::-webkit-scrollbar-thumb { background: #dddddd; } /* Oled Black */
@@ -119,8 +119,8 @@ html.theme-9 ::-webkit-scrollbar-thumb { background: #dca54c; } /* Dark Luxury *
 .theme-3 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23000000'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Silver Lining */
 .theme-4 [type='checkbox'], .theme-4 [type='checkbox']:checked { background-color: transparent; border-color: #553c0f }
 .theme-4 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23553c0f'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Vintage Sepia */
-.theme-5 [type='checkbox'], .theme-5 [type='checkbox']:checked { background-color: transparent; border-color: #c59f60 }
-.theme-5 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23c59f60'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Mocha Night */
+.theme-5 [type='checkbox'], .theme-5 [type='checkbox']:checked { background-color: transparent; border-color: #dca54c }
+.theme-5 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dca54c'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Mocha Night */
 .theme-6 [type='checkbox'], .theme-6 [type='checkbox']:checked { background-color: transparent; border-color: #c2c2c2 }
 .theme-6 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23c2c2c2'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Midnight Blue */
 .theme-7 [type='checkbox'], .theme-7 [type='checkbox']:checked { background-color: transparent; border-color: #dddddd }
@@ -343,6 +343,19 @@ svg {
     19 #ffffff
 }
 
+@font-palette-values --MochaNightBismillahColor {
+  font-family: 'bismillah';
+  base-palette: 0;
+  override-colors:
+    0 #dca54c,
+    1 #dca54c,
+    2 #dca54c,
+    4 #dca54c,
+    5 #dca54c,
+    7 #dca54c,
+    15 #dca54c;
+}
+
 /* Uthmani Hafs NEO Fonts - Normal Palettes */
 .theme-1 .colored-fonts { font-palette: --palette4; } /* Golden Glint */
 .theme-2 .colored-fonts { font-palette: --palette0; } /* Classic Light */
@@ -393,6 +406,9 @@ svg {
 .mocha-night-font-color { font-palette: --MochaNightFontColor !important; }
 .dark-luxury-font-color { font-palette: --DarkLuxuryFontColor !important; }
 
+/* Custom Bismillah color for mocha and dark luxury theme */
+.theme-5 .colored-bismillah { font-palette: --MochaNightBismillahColor; } /* Mocha Night */
+.theme-9 .colored-bismillah { font-palette: --MochaNightBismillahColor; } /* Dark Luxury */
 
 /* for lexicon modal because the data is fetched externally and it has it's own classes */
 #lexiconModal .entryFree {
@@ -509,6 +525,7 @@ svg {
   @apply font-semibold;
 }
 
+/* Markdown Colors */
 .theme-1 .markdown hr { @apply border-[#b1901f]/20; } /* Golden Glint */
 .theme-1 .markdown a { @apply text-[#b1901f]; } /* Golden Glint */
 .theme-1 .markdown h3 { @apply text-[#b1901f]; } /* Golden Glint */
@@ -521,9 +538,9 @@ svg {
 .theme-4 .markdown hr { @apply border-[#553c0f]/20; } /* Vintage Sepia */
 .theme-4 .markdown a { @apply text-[#553c0f]; } /* Vintage Sepia */
 .theme-4 .markdown h3 { @apply text-[#553c0f]; } /* Vintage Sepia */
-.theme-5 .markdown hr { @apply border-[#c59f60]/20; } /* Mocha Night */
-.theme-5 .markdown a { @apply text-[#c59f60]; } /* Mocha Night */
-.theme-5 .markdown h3 { @apply text-[#c59f60]; } /* Mocha Night */
+.theme-5 .markdown hr { @apply border-[#dca54c]/20; } /* Mocha Night */
+.theme-5 .markdown a { @apply text-[#dca54c]; } /* Mocha Night */
+.theme-5 .markdown h3 { @apply text-[#dca54c]; } /* Mocha Night */
 .theme-6 .markdown hr { @apply border-[#c2c2c2]/20; } /* Midnight Blue */
 .theme-6 .markdown a { @apply text-[#c2c2c2]; } /* Midnight Blue */
 .theme-6 .markdown h3 { @apply text-[#c2c2c2]; } /* Midnight Blue */
