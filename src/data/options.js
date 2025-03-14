@@ -11,14 +11,14 @@ export const selectableDisplays = {
 export const fontTypes = ['Uthmanic', 'Indopak', 'Nastaleeq'];
 
 export const selectableFontTypes = {
-	1: { id: 1, font: 'Uthmanic Hafs Digital', apiId: 1, type: 'Uthmanic', displayOrder: 1, disallowedIn: ['mushaf'] },
-	2: { id: 2, font: 'Uthmanic Hafs Mushaf', apiId: 2, type: 'Uthmanic', displayOrder: 3, disallowedIn: [] },
-	3: { id: 3, font: 'Uthmanic Hafs Tajweed Mushaf', apiId: 2, type: 'Uthmanic', displayOrder: 4, disallowedIn: [] },
-	4: { id: 4, font: 'Indopak Madinah', apiId: 3, type: 'Indopak', displayOrder: 5, disallowedIn: ['mushaf'] },
-	5: { id: 5, font: 'Nastaleeq Hafs Digital', apiId: 5, type: 'Nastaleeq', displayOrder: 7, disallowedIn: ['mushaf'] },
-	6: { id: 6, font: 'Indopak Hanafi', apiId: 6, type: 'Indopak', displayOrder: 6, disallowedIn: ['mushaf'] },
-	7: { id: 7, font: 'Uthmanic Hafs Digital (Bold)', apiId: 1, type: 'Uthmanic', displayOrder: 2, disallowedIn: ['mushaf'] },
-	8: { id: 8, font: 'Nastaleeq Hafs Digital (Bold)', apiId: 5, type: 'Nastaleeq', displayOrder: 8, disallowedIn: ['mushaf'] }
+	1: { id: 1, type: 'Uthmanic', font: 'Digital Font', apiId: 1, displayOrder: 1, disallowedIn: ['mushaf'] },
+	2: { id: 2, type: 'Uthmanic', font: 'Mushaf 1441H', apiId: 2, displayOrder: 3, disallowedIn: [] },
+	3: { id: 3, type: 'Uthmanic', font: 'Mushaf Tajweed 1441H', apiId: 2, displayOrder: 4, disallowedIn: [] },
+	4: { id: 4, type: 'Indopak', font: 'Madinah', apiId: 3, displayOrder: 5, disallowedIn: ['mushaf'] },
+	5: { id: 5, type: 'Nastaleeq', font: 'Digital Font', apiId: 5, displayOrder: 7, disallowedIn: ['mushaf'] },
+	6: { id: 6, type: 'Indopak', font: 'Hanafi', apiId: 6, displayOrder: 6, disallowedIn: ['mushaf'] },
+	7: { id: 7, type: 'Uthmanic', font: 'Digital Bold Font', apiId: 1, displayOrder: 2, disallowedIn: ['mushaf'] },
+	8: { id: 8, type: 'Nastaleeq', font: 'Digital Bold Font', apiId: 5, displayOrder: 8, disallowedIn: ['mushaf'] }
 };
 
 export const themeColors = ['light', 'dark'];
