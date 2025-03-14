@@ -8,17 +8,17 @@ export const selectableDisplays = {
 	7: { displayID: 7, displayName: 'Translation/Transliteration', displayComponent: 'TranslationTransliteration', layout: 'wbw', continuous: false, customClasses: null, disallowedIn: ['morphology', 'search'] }
 };
 
-export const fontTypes = ['Uthmanic', 'Indopak', 'Nastaleeq'];
+export const fontTypes = ['Uthmanic', 'Indopak / Nastaleeq'];
 
 export const selectableFontTypes = {
 	1: { id: 1, type: 'Uthmanic', font: 'Digital Font', apiId: 1, displayOrder: 1, disallowedIn: ['mushaf'] },
 	2: { id: 2, type: 'Uthmanic', font: 'Mushaf 1441H', apiId: 2, displayOrder: 3, disallowedIn: [] },
 	3: { id: 3, type: 'Uthmanic', font: 'Mushaf Tajweed 1441H', apiId: 2, displayOrder: 4, disallowedIn: [] },
-	4: { id: 4, type: 'Indopak', font: 'Madinah', apiId: 3, displayOrder: 5, disallowedIn: ['mushaf'] },
-	5: { id: 5, type: 'Nastaleeq', font: 'Digital Font', apiId: 5, displayOrder: 7, disallowedIn: ['mushaf'] },
-	6: { id: 6, type: 'Indopak', font: 'Hanafi', apiId: 6, displayOrder: 6, disallowedIn: ['mushaf'] },
+	4: { id: 4, type: 'Indopak / Nastaleeq', font: 'Qalam Digital Font (Madinah Edition)', apiId: 3, displayOrder: 5, disallowedIn: ['mushaf'] },
+	5: { id: 5, type: 'Indopak / Nastaleeq', font: 'Uthman Taha Digital Font', apiId: 5, displayOrder: 7, disallowedIn: ['mushaf'] },
+	6: { id: 6, type: 'Indopak / Nastaleeq', font: 'Qalam Digital Font (Hanafi Edition)', apiId: 6, displayOrder: 6, disallowedIn: ['mushaf'] },
 	7: { id: 7, type: 'Uthmanic', font: 'Digital Bold Font', apiId: 1, displayOrder: 2, disallowedIn: ['mushaf'] },
-	8: { id: 8, type: 'Nastaleeq', font: 'Digital Bold Font', apiId: 5, displayOrder: 8, disallowedIn: ['mushaf'] }
+	8: { id: 8, type: 'Indopak / Nastaleeq', font: 'Uthman Taha Digital Bold Font', apiId: 5, displayOrder: 8, disallowedIn: ['mushaf'] }
 };
 
 export const themeColors = ['light', 'dark'];
