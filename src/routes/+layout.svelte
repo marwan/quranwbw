@@ -13,7 +13,7 @@
 	import QuranNavigationModal from '$ui/Modals/QuranNavigationModal.svelte';
 	import SiteNavigationModal from '$ui/Modals/SiteNavigationModal.svelte';
 	import SettingsSelectorModal from '$ui/Modals/SettingsSelectorModal.svelte';
-	import ChangelogModal from '$ui/Modals/ChangelogModal.svelte';
+	// import ChangelogModal from '$ui/Modals/ChangelogModal.svelte';
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
@@ -101,8 +101,8 @@
 		updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
 	}
 
-	// If wbw language was set to Russian, Ingush or Persian, switch back to English
-	$: if ([9, 10, 19].includes($__wordTranslation)) {
+	// If wbw language was set to Russian or Ingush, switch back to English
+	$: if ([9, 10].includes($__wordTranslation)) {
 		updateSettings({ type: 'wordTranslation', value: 1 });
 	}
 
@@ -144,7 +144,7 @@
 	<SiteNavigationModal />
 	<SettingsSelectorModal />
 	<!-- <LexiconModal /> -->
-	<ChangelogModal />
+	<!-- <ChangelogModal /> -->
 	<VerseTranslationModal />
 	<MorphologyModal />
 	<CopyShareVerseModal />

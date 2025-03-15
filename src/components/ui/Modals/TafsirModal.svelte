@@ -46,7 +46,7 @@
 	$: tafsirTextClasses = `
 		flex flex-col space-y-4
 		${['Arabic', 'Urdu'].includes(selectableTafsirs[selectedTafirId].language) && 'direction-rtl text-lg'}
-		${['Urdu'].includes(selectableTafsirs[selectedTafirId].language) && 'font-Urdu'}
+		${selectableTafsirs[selectedTafirId].font}
 	`;
 
 	// Scroll to top if verse changes

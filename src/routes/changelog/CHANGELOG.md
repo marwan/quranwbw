@@ -1,11 +1,62 @@
-### Update 4.3 (Jan 26, 2025)
+### Mar 15, 2025
+
+- **New Font:** Added **Nastaleeq Hafs Bold**, a bold version of the standard **Nastaleeq Hafs** font for enhanced readability.
+
+---
+
+### Mar 7, 2025
+
+- **New Font:** Added **Uthmanic Digital Bold**, the bold version of the **Uthmanic Digital** font, providing a clearer and stronger text display.
+
+---
+
+### Mar 1, 2025
+
+- **Re-added Persian Word-by-Word Language:** The **Persian word-by-word translation** is back after being temporarily removed in a previous update. Thank you for your patience!
+
+---
+
+### Feb 27, 2025
+
+- **Enhanced Audio Playback:** We've brought back the much-loved feature to **repeat custom verse ranges** — perfect for memorization and focused listening.
+- **Custom Repeat Delay:** Now you can set a **delay between repeats**, giving you time to reflect or recite along, just like in the previous version of the website.
+- **Faster Verse Selection:** The **From/To verse input** now features a **dropdown with search**, making it quicker and easier to find the verse you're looking for.
+
+---
+
+### Feb 22, 2025
+
+- **New Font Types:** Added **Nastaleeq Hafs Digital** and **Indopak Hanafi** fonts for improved readability and customization.
+
+---
+
+### Feb 17, 2025
+
+- **New Reciter:** Sheikh **Bandar Baleelah** joins our collection. Enjoy his melodious recitation!
+
+---
+
+### Feb 16, 2025
+
+- **New Verse & Word-by-Word Languages:** Added support for **Albanian** and **Sindhi** translations, expanding accessibility for more users.
+
+---
+
+### Feb 15, 2025
+
+- **Enhancement:** Added an option to change the reciter directly within the audio modal, making it easier to switch between reciters.
+- **New Reciters:** We are pleased to introduce **Abdullah Matroud, Ali Jaber, and Nabil Ar Rifay**. Enjoy their beautiful recitations!
+
+---
+
+### Jan 26, 2025
 
 - **Word Morphology Feature:** Added the option to view word morphology when clicking on a word, just like the previous website. This feature is off by default and can be enabled from the settings under the "Miscellaneous" options.
 - **Improved Search Page Logic:** Enhanced the search functionality to show results more accurately, ensuring a smoother and more effective search experience.
 
 ---
 
-### Update 4.2 (Jan 19, 2025)
+### Jan 19, 2025
 
 - **Homepage Redesign:**
   - Introduced a new search bar for easier navigation.
@@ -18,7 +69,7 @@
 
 ---
 
-### Update 4.1 (Dec 29, 2024)
+### Dec 29, 2024
 
 In this update, we’ve enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, ensured verse translations display in your selected order, and added a button to listen to a word directly on the morphology page. Enjoy these fantastic enhancements!
 
@@ -31,7 +82,7 @@ In this update, we’ve enhanced audio playback with translation support and set
 
 ---
 
-### Update 4.0.1: Shine with Golden Glint (Dec 7, 2024)
+### Dec 7, 2024 - Shine with Golden Glint
 
 Golden Glint has arrived, bringing a dazzling upgrade to our signature gold look. We've infused various elements with shimmering gold accents that'll make your reading experience feel extra special. Not on the new theme yet? No worries! Just head over to settings and switch to bask in the glow.
 
@@ -39,7 +90,7 @@ But wait, there's more! We've polished up other themes and even added a couple o
 
 ---
 
-### Update 4.0: Introducing QuranWBW v4.0 (Dec 2, 2024)
+### Dec 2, 2024 - Introducing QuranWBW v4.0
 
 Alhamdulillah, we are thrilled to announce the release of QuranWBW v4, featuring a completely redesigned website with significant performance enhancements and a multitude of new and improved features.
 
