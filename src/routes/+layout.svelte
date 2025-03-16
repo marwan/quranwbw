@@ -144,7 +144,7 @@
 	<TajweedRulesModal />
 	<NotesModal />
 	<!-- <TokenModal /> -->
-	<DownloadModal />
+	<!-- <DownloadModal /> -->
 	<TafsirModal />
 	<SiteNavigationModal />
 	<SettingsSelectorModal />
