@@ -10,6 +10,7 @@
 	const bismillahTypes = {
 		uthmaniType1: 'ﲚﲛﲞﲤ',
 		uthmaniType2: 'ﲪﲫﲮﲴ',
+		uthmaniType3: 'ﭗﲫﲮﲴ',
 		indopakType: '﷽'
 	};
 
@@ -21,7 +22,7 @@
 	const chapterBismillahClasses = `
 		${window.theme('text')}
 		flex flex-col text-center flex-wrap block pt-6 pb-4 
-		${[1, 2, 3, 5].includes($__fontType) ? `bismillah ${chapter === 2 ? 'text-3xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
+		${[1, 2, 3, 5, 7, 8].includes($__fontType) ? `bismillah ${chapter === 2 ? 'text-3xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
 		${commonClasses}
 		`;
 
@@ -31,6 +32,7 @@
 		bismillah flex flex-col text-center leading-normal flex-wrap space-y-4 block md:mt-6 text-[5vw] md:text-[32px] lg:text-[36px] 
 		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
 		${commonClasses}
+		colored-bismillah
 	`;
 </script>
 
@@ -39,11 +41,13 @@
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
 		<div class={chapterBismillahClasses}>
 			<!-- uthmani fonts -->
-			{#if [1, 2, 3, 5].includes($__fontType)}
-				<span class={$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}>
+			{#if [1, 2, 3, 5, 7, 8].includes($__fontType)}
+				<span class="{$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'} colored-bismillah">
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
-					{:else if ![1, 9, 2].includes(chapter) || (chapter === 1 && startVerse > 1)}
+					{:else if [95, 97].includes(chapter)}
+						{bismillahTypes.uthmaniType3}
+					{:else if ![1, 9, 2, 95, 97].includes(chapter) || (chapter === 1 && startVerse > 1)}
 						{bismillahTypes.uthmaniType2}
 					{/if}
 				</span>
@@ -60,7 +64,9 @@
 	<div class={mushafBismillahClasses}>
 		{#if chapters[lines.indexOf(line)] === 2}
 			{bismillahTypes.uthmaniType1}
-		{:else if ![1, 9, 2].includes(chapters[lines.indexOf(line)])}
+		{:else if [95, 97].includes(chapters[lines.indexOf(line)])}
+			{bismillahTypes.uthmaniType3}
+		{:else if ![1, 9, 2, 95, 97].includes(chapters[lines.indexOf(line)])}
 			{bismillahTypes.uthmaniType2}
 		{/if}
 	</div>

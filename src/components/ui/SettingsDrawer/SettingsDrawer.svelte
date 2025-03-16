@@ -281,7 +281,7 @@
 					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Quran Font</div>
-							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].font}</button>
+							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
 
