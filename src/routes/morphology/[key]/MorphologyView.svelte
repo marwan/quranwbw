@@ -8,7 +8,7 @@
 	import { apiEndpoint, apiVersion, apiByPassCache, staticEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
 	import { __currentPage, __fontType, __wordTranslation, __verseTranslations, __wordTransliteration, __morphologyKey, __lexiconModalVisible, __wordRoot } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
-	import { fetchVersesData } from '$utils/fetchData';
+	import { fetchChapterData } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
@@ -27,14 +27,10 @@
 	}
 
 	// Fetch verse data based on chapter and verse
-	$: fetchData = fetchVersesData({
-		verses: `${chapter}:${verse}`,
-		fontType: $__fontType,
-		wordTranslation: $__wordTranslation,
-		wordTransliteration: $__wordTransliteration,
-		verseTranslations: $__verseTranslations,
-		skipSave: $__currentPage === 'morphology' ? false : true
-	});
+	$: fetchData = (async () => {
+		const data = await fetchChapterData({ chapter, skipSave: true, reRenderWhenTheseUpdates: [$__fontType, $__wordTranslation, $__wordTransliteration] });
+		return data[`${chapter}:${verse}`];
+	})();
 
 	// Fetch words data for morphology
 	$: {
@@ -101,11 +97,9 @@
 	<div id="verse">
 		{#await fetchData}
 			<Spinner />
-		{:then fetchData}
+		{:then value}
 			<div class="flex flex-wrap justify-center direction-rtl">
-				{#each Object.entries(fetchData) as [key, value]}
-					<WordsBlock {key} {value} />
-				{/each}
+				<WordsBlock key={`${chapter}:${verse}`} {value} />
 			</div>
 		{:catch error}
 			<p>{errorLoadingDataMessage}</p>
@@ -133,7 +127,10 @@
 						})}>Play Word</button
 				>
 
-				<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
+				<!-- Show the "goto verse" button if the user in on morphology page -->
+				{#if $__currentPage === 'morphology'}
+					<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
+				{/if}
 			</div>
 		{:catch error}
 			<p>{errorLoadingDataMessage}</p>
@@ -145,8 +142,8 @@
 			<Spinner />
 		{:then fetchWordsData}
 			{#if !Object.values(fetchWordsData[0].morphology.verbs).every((o) => o === null)}
-				<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
-					{#if Object.keys(fetchWordsData[0].morphology.root.words_with_same_root).length > 0}
+				{#if Object.keys(fetchWordsData[0].morphology.root.words_with_same_root).length > 0}
+					<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
 						<div class="flex flex-col">
 							<div id="different-verbs">
 								<div class="mx-auto text-center">
@@ -165,19 +162,23 @@
 								</div>
 							</div>
 						</div>
-					{:else}
-						<div class="text-center my-8 text-sm">Root data for this word is not available.</div>
-					{/if}
+					</div>
+				{/if}
+			{/if}
+
+			{@const sameRootData = fetchWordsData[0].morphology.root.words_with_same_root}
+			{#if Object.keys(sameRootData).length > 0}
+				<div id="word-root-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
+					<Table wordData={sameRootData} tableType={1} />
 				</div>
 			{/if}
 
-			<div id="word-root-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-				<Table wordData={fetchWordsData[0].morphology.root.words_with_same_root} tableType={1} />
-			</div>
-
-			<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-				<Table wordData={fetchWordsData[0].morphology.exact_words_in_quran} tableType={2} />
-			</div>
+			{@const exactWordsData = fetchWordsData[0].morphology.exact_words_in_quran}
+			{#if Object.keys(exactWordsData).length > 0}
+				<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
+					<Table wordData={exactWordsData} tableType={2} />
+				</div>
+			{/if}
 		{:catch error}
 			<p>{errorLoadingDataMessage}</p>
 		{/await}

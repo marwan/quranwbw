@@ -1,71 +1,216 @@
 <script>
-	import { buttonClasses, disabledClasses } from '$data/commonClasses';
-	import { toggleModal } from '$utils/toggleModal';
-	import { __fontType, __verseTranslations, __wordTranslation, __downloadedDataSettings } from '$utils/stores';
-	import { downloadData } from '$utils/downloadData';
-	import { selectableFontTypes, selectableWordTranslations } from '$data/options';
+	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
+	import Info from '$svgs/Info.svelte';
+	import { buttonClasses } from '$data/commonClasses';
+	import { __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __downloadModalVisible, __downloadedDataInfo } from '$utils/stores';
+	import { getModalTransition } from '$utils/getModalTransition';
+	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
+	import { updateSettings } from '$utils/updateSettings';
+	import { timeAgo } from '$utils/timeAgo';
+	import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
+	import { apiVersion } from '$data/websiteSettings';
+	import { db } from '$lib/db';
 
-	const chaptersToDownload = 5;
-	let downloadInProgress = false;
+	// State variables
+	let progressMessage = '';
+	let downloading = false;
+	let settingsChanged = false;
+	let abortController = null; // Used for stopping downloads
+	let downloadStopped = false;
+	let swRegistered = null; // Store to track service worker status
 
+	$: wordTranslationKey = Object.keys(selectableWordTranslations).find((key) => selectableWordTranslations[key].id === $__wordTranslation);
+	$: wordTransliterationKey = Object.keys(selectableWordTransliterations).find((key) => selectableWordTransliterations[key].id === $__wordTransliteration);
+	$: if ($__downloadModalVisible) {
+		progressMessage = '';
+		checkServiceWorker();
+	}
+
+	// Check if user settings have changed compared to previously downloaded data.
 	$: {
-		if ($__downloadedDataSettings.downloadedChapters.length === chaptersToDownload) {
-			__downloadedDataSettings.set({
-				downloadedChapters: $__downloadedDataSettings.downloadedChapters,
-				allChaptersDownloaded: true
-			});
-
-			downloadInProgress = false;
+		const savedSettings = $__downloadedDataInfo;
+		if (savedSettings?.allChaptersDownloaded) {
+			settingsChanged = savedSettings.fontType !== $__fontType || savedSettings.wordTranslation !== $__wordTranslation || savedSettings.wordTransliteration !== $__wordTransliteration || JSON.stringify(savedSettings.verseTranslations) !== JSON.stringify($__verseTranslations);
+		} else {
+			settingsChanged = false;
 		}
 	}
 
-	function downloadHandler() {
-		__downloadedDataSettings.set({ downloadedChapters: [], allChaptersDownloaded: false });
-		downloadInProgress = true;
-		downloadData();
+	// Displays a message and ensures it disappears **only after the whole download completes**.
+	function showMessage(message) {
+		progressMessage = message;
 	}
 
-	$: wordTranslationKey = Object.keys(selectableWordTranslations).filter((item) => selectableWordTranslations[item].id === $__wordTranslation);
+	// Stops the ongoing download by aborting all network requests.
+	function stopDownload() {
+		if (abortController) {
+			abortController.abort(); // Abort ongoing requests
+			abortController = null;
+		}
+		downloading = false;
+		downloadStopped = true;
+		showMessage('Download stopped!');
+	}
+
+	// Downloads all chapters and updates settings.
+	async function downloadAllChapters() {
+		if (downloading) return;
+		downloading = true;
+		downloadStopped = false;
+		showMessage('Starting download...');
+		abortController = new AbortController();
+
+		await db.api_data.clear(); // Clear old cached data
+
+		const totalChapters = 114;
+		let completed = 0;
+
+		try {
+			for (let chapter = 1; chapter <= totalChapters; chapter++) {
+				// Stop the loop if download is cancelled
+				if (!downloading || !abortController) break;
+
+				await fetch(`/${chapter}`);
+				await fetchChapterData({ chapter, skipSave: true, signal: abortController.signal });
+				await fetchVerseTranslationData({ chapter, skipSave: true, signal: abortController.signal });
+
+				completed++;
+
+				if (!downloadStopped) {
+					progressMessage = `Downloading... ${Math.round((completed / totalChapters) * 100)}%`;
+				}
+			}
+
+			if (downloading) {
+				// Update settings after successful download
+				updateSettings({
+					type: 'downloadedDataInfo',
+					value: {
+						allChaptersDownloaded: true,
+						fontType: $__fontType,
+						wordTranslation: $__wordTranslation,
+						wordTransliteration: $__wordTransliteration,
+						verseTranslations: $__verseTranslations,
+						lastDownloadAt: new Date().toISOString(),
+						apiVersion
+					}
+				});
+				showMessage('Download complete!');
+			}
+		} catch (error) {
+			if (error.name === 'AbortError') {
+				showMessage('Download stopped!');
+			} else {
+				if (downloadStopped) {
+					downloadStopped = false;
+				} else {
+					console.error('Download failed:', error);
+					showMessage('Error downloading data.');
+				}
+			}
+		} finally {
+			downloading = false;
+			abortController = null;
+		}
+	}
+
+	// Deletes all stored data from IndexedDB and resets settings.
+	async function deleteApiDataTable() {
+		try {
+			await db.api_data.clear(); // Clear the database
+			showMessage('Data deleted!');
+			downloadStopped = false;
+
+			// Reset stored settings
+			updateSettings({
+				type: 'downloadedDataInfo',
+				value: {}
+			});
+		} catch (error) {
+			console.error('Error deleting api_data:', error);
+			showMessage('Error deleting data.');
+		}
+	}
+
+	// Checks if service worker is enabled or not
+	async function checkServiceWorker() {
+		if ('serviceWorker' in navigator) {
+			try {
+				const registrations = await navigator.serviceWorker.getRegistrations();
+				swRegistered = registrations.length > 0;
+			} catch (error) {
+				swRegistered = false;
+			}
+		} else {
+			swRegistered = false;
+		}
+	}
 </script>
 
-<!-- download modal -->
-<div id="downloadModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full text-sm p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full theme-grayscale">
-	<div class="relative w-full max-w-xl max-h-full">
-		<!-- Modal content -->
-		<div class="relative bg-white rounded-3xl shadow">
-			<button type="button" on:click={() => toggleModal('downloadModal', 'hide')} class="absolute top-3 right-2.5 bg-transparent hover:bg-lightGray hover:text-gray-900 rounded-3xl text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="downloadModal">
-				<svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 14 14">
-					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-				</svg>
-				<span class="sr-only">Close modal</span>
-			</button>
-			<div class="px-6 py-6 space-y-8 lg:px-8">
-				<h3 id="downloadModal-title" class="mb-8 text-xl font-medium text-gray-900">Download Data</h3>
-				<div id="download-info" class="flex flex-col space-y-4 text-sm">
-					<span>This option can be used to download all the chapters data which are cached or downloaded for offline view.</span>
-					<span>The data which are downloaded will be based on your settings as per below:</span>
+<Modal id="downloadModal" bind:open={$__downloadModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
+	<h3 id="modal-title" class="mb-4 text-xl font-medium">Offline Mode</h3>
 
-					<div class="flex flex-col space-y-2">
-						<span><b>Quran Font:</b> {selectableFontTypes[$__fontType].font}</span>
-						<span><b>Word Translation:</b> {selectableWordTranslations[wordTranslationKey].language}</span>
-						<span><b>Verse Translations:</b> {$__verseTranslations.length} selected</span>
-					</div>
+	<div class="flex flex-col space-y-4 text-sm">
+		<p>By default, the website caches pages as you browse. However, you can use this feature to download chapter data all at once based on your settings. Once downloaded, the chapter page will remain accessible offline unless deleted.</p>
 
-					<span>If you decide to change your font or translation settings, you will have to manually re-download the chapters data again.</span>
+		<div>
+			<div>Font Type: {selectableFontTypes[$__fontType].font}</div>
+			<div>Word Translation: {selectableWordTranslations[wordTranslationKey]?.language || 'N/A'}</div>
+			<div>Word Transliteration: {selectableWordTransliterations[wordTransliterationKey]?.language || 'N/A'}</div>
+			<div>Verse Translations/Transliterations: {$__verseTranslations.length ? `${$__verseTranslations.length} Selected` : 'None'}</div>
 
-					{#if downloadInProgress}
-						<div class="flex flex-col space-y-2">
-							{#if $__downloadedDataSettings.allChaptersDownloaded}
-								Download completed.
-							{:else}
-								Downloaded Chapters: {$__downloadedDataSettings.downloadedChapters.length}/{chaptersToDownload}...
-							{/if}
-						</div>
-					{/if}
-				</div>
+			<div>
+				Last Download:
+				{#if !$__downloadedDataInfo.lastDownloadAt}
+					Never
+				{:else}
+					{timeAgo($__downloadedDataInfo.lastDownloadAt) || 'Just Now'}
+				{/if}
+			</div>
 
-				<button class="w-full {buttonClasses} {downloadInProgress === true && disabledClasses}" on:click={() => downloadHandler()}> Download </button>
+			<div>
+				Service Worker Registered:
+				{#if swRegistered === null}
+					Checking...
+				{:else}
+					{swRegistered ? 'Yes' : 'No'}
+				{/if}
 			</div>
 		</div>
+
+		{#if $__downloadedDataInfo.apiVersion}
+			{#if $__downloadedDataInfo.apiVersion !== apiVersion}
+				<div class="p-3 rounded-md flex flex-row space-x-2 items-center {window.theme('bgSecondaryLight')}">
+					<Info />
+					<span>Your current downloaded data is outdated.</span>
+				</div>
+			{/if}
+		{/if}
+
+		{#if settingsChanged}
+			<div class="p-3 rounded-md flex flex-row space-x-2 items-center {window.theme('bgSecondaryLight')}">
+				<Info />
+				<span>Your settings were changed since the last download.</span>
+			</div>
+		{/if}
+
+		{#if progressMessage}
+			<div id="progress-message" class="font-medium">{progressMessage}</div>
+		{/if}
+
+		<!-- Buttons for Download, Stop, and Delete -->
+		<div class="flex flex-row space-x-2 w-full !mt-6">
+			{#if downloading}
+				<button class="{buttonClasses} w-full truncate" on:click={stopDownload}> Stop Download </button>
+			{:else}
+				<button class="{buttonClasses} w-full truncate" on:click={downloadAllChapters} disabled={downloading}>
+					{$__downloadedDataInfo.allChaptersDownloaded ? 'Download Again' : 'Download Data'}
+				</button>
+
+				{#if $__downloadedDataInfo.allChaptersDownloaded}
+					<button class="{buttonClasses} w-full truncate" on:click={deleteApiDataTable}> Delete Data </button>
+				{/if}
+			{/if}
+		</div>
 	</div>
-</div>
+</Modal>

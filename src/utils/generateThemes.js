@@ -10,6 +10,7 @@ function generateThemes() {
 	const tajweedFontPaletteStyles = [];
 	const headerPaletteStyles = [];
 	const checkboxStyles = [];
+	const markdownStyles = [];
 
 	// Titles
 	cssStyles.push(`/* Scrollbar Colors */`);
@@ -17,6 +18,7 @@ function generateThemes() {
 	normalFontPaletteStyles.push(`/* Uthmani V4 Fonts - Normal Palettes */`);
 	tajweedFontPaletteStyles.push(`/* Uthmani V4 Fonts - Tajweed Palettes */`);
 	headerPaletteStyles.push(`/* Mushaf Header Palettes */`);
+	markdownStyles.push(`/* Markdown Colors */`);
 
 	Object.keys(selectableThemes).forEach((key) => {
 		const { color1, color2, color3, name } = selectableThemes[key];
@@ -56,6 +58,9 @@ function generateThemes() {
 		normalFontPaletteStyles.push(`.theme-${themeIndex} .theme-palette-normal { font-palette: --palette${selectableThemes[themeIndex].paletteNormal}; } ${cssComment}`);
 		tajweedFontPaletteStyles.push(`.theme-${themeIndex} .theme-palette-tajweed { font-palette: --palette${selectableThemes[themeIndex].paletteTajweed}; } ${cssComment}`);
 		headerPaletteStyles.push(`.theme-${themeIndex} .header { font-palette: --palette${selectableThemes[themeIndex].paletteHeader}; } ${cssComment}`);
+		markdownStyles.push(`.theme-${themeIndex} .markdown hr { @apply border-[${color2}]/20; } ${cssComment}`);
+		markdownStyles.push(`.theme-${themeIndex} .markdown a { @apply text-[${color2}]; } ${cssComment}`);
+		markdownStyles.push(`.theme-${themeIndex} .markdown h3 { @apply text-[${color2}]; } ${cssComment}`);
 	});
 
 	window.websiteColors = websiteColors;
@@ -68,6 +73,7 @@ function generateThemes() {
 	console.log(normalFontPaletteStyles.join('\n'));
 	console.log(tajweedFontPaletteStyles.join('\n'));
 	console.log(headerPaletteStyles.join('\n'));
+	console.log(markdownStyles.join('\n'));
 }
 
 window.generateThemes = generateThemes;

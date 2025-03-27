@@ -13,14 +13,14 @@
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { mushafWordFontLink, mushafFontVersion } from '$data/websiteSettings';
+	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	$: displayIsContinuous = selectableDisplays[$__displayType].continuous;
 
 	// Dynamically load the fonts if mushaf fonts are selected
 	if ([2, 3].includes($__fontType)) {
-		loadFont(`p${value.meta.page}`, `${mushafWordFontLink}/QCF4${`00${value.meta.page}`.slice(-3)}_COLOR-Regular.woff?version=${mushafFontVersion}`).then(() => {
+		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			// Hide the v4 words by default and show when the font is loaded...
 			document.querySelectorAll(`.p${value.meta.page}`).forEach((element) => {
 				element.classList.remove('invisible');
@@ -39,11 +39,11 @@
 			goto(`/morphology/${props.key}`, { replaceState: false });
 		}
 
-		// If the user clicks on a word in a non-Morphology page
-		// else if ($__currentPage !== 'morphology' && props.type === 'word' && $__wordMorphologyOnClick) {
-		// 	__morphologyKey.set(props.key);
-		// 	__morphologyModalVisible.set(true);
-		// }
+		// If the user clicks on a word
+		else if ((!['morphology', 'mushaf'].includes($__currentPage) && props.type === 'word' && $__wordMorphologyOnClick) || $__morphologyModalVisible) {
+			__morphologyKey.set(props.key);
+			__morphologyModalVisible.set(true);
+		}
 
 		// All other options
 		else {
@@ -113,16 +113,16 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
-			<!-- 1: Uthmanic Hafs Digital, 3: Indopak Madinah -->
-			{#if [1, 4].includes($__fontType)}
-				{value.words.end}
-				<!-- 2: Uthmanic Hafs Mushaf -->
-			{:else if [2, 3].includes($__fontType)}
+			<!-- Everything except Mushaf fonts -->
+			{#if ![2, 3].includes($__fontType)}
+				<span class="colored-fonts">{value.words.end}</span>
+				<!-- Mushaf fonts -->
+			{:else}
 				<span style="font-family: p{value.meta.page}" class="{v4hafsClasses} custom-ayah-icon-color">{value.words.end}</span>
 			{/if}
 		</span>
 	</div>
-	{#if displayIsContinuous}
+	{#if displayIsContinuous && !$__morphologyModalVisible}
 		<VerseOptionsDropdown page={value.meta.page} />
 	{/if}
 

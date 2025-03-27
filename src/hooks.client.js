@@ -37,6 +37,8 @@ export const defaultSettings = {
 		audioRange: 'playThisVerse',
 		language: 'arabic',
 		timesToRepeat: 1,
+		repeatType: 'repeatVerse',
+		audioDelay: 1, // none
 		savedPlaySettings: {}
 	},
 	quiz: {
@@ -48,7 +50,8 @@ export const defaultSettings = {
 	userNotes: {},
 	favouriteChapters: [1, 5, 18],
 	initialSetupCompleted: false,
-	chapter: 1
+	chapter: 1,
+	downloadedDataInfo: {}
 };
 
 // Do not continue without setting the default user's settings first

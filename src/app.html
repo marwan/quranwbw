@@ -8,15 +8,38 @@
 		<meta name="theme-color" content="#ffffff" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 		<meta name="mobile-web-app-capable" content="yes" />
-		<meta name="description" content="Quran Word By Word Translation, Transliteration And Morphology in English, Urdu, Hindi, Indonesian, Bangla, Turkish, Tamil, French, German, Chinese, Malayalam and Divehi - QuranWBW.com" />
+		<meta name="description" content="Quran Word By Word Translation, Transliteration And Morphology in English, Urdu, Hindi, Indonesian, Bangla, Turkish, Tamil, French, German, Chinese, Malayalam, Divehi, Sindhi, Persian and Albanian - QuranWBW.com" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="preload" href="%sveltekit.assets%/fonts/hafs/uthmanic_hafs_v22.woff2" as="font" type="font/woff2" crossorigin />
-		<link rel="preload" href="%sveltekit.assets%/fonts/indopak/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2" as="font" type="font/woff2" crossorigin />
-		<link rel="preload" href="%sveltekit.assets%/fonts/bismillah/QCF_Bismillah_COLOR-Regular.woff2" as="font" type="font/woff2" crossorigin />
+
+		<!-- Preload the Quran fonts depending on the fontType -->
+		<script>
+			const userSettings1 = JSON.parse(localStorage.getItem('userSettings'));
+			const fontType = userSettings1?.displaySettings?.fontType ?? '1';
+			const fontMap = {
+				1: '%sveltekit.assets%/fonts/Uthmanic_NeoCOLOR-Regular.woff2',
+				2: '%sveltekit.assets%/fonts/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2',
+				3: '%sveltekit.assets%/fonts/Nastaleeq_COLOR-Regular.woff2',
+				7: '%sveltekit.assets%/fonts/Uthmanic_NeoBCOLOR-VF.woff2',
+				8: '%sveltekit.assets%/fonts/NastaleeqB_COLOR-Regular.woff2'
+			};
+
+			const fontUrl = fontMap[fontType];
+			if (fontUrl) {
+				const link = document.createElement('link');
+				link.rel = 'preload';
+				link.href = fontUrl;
+				link.as = 'font';
+				link.type = 'font/woff2';
+				link.crossOrigin = 'anonymous';
+				document.head.appendChild(link);
+			}
+		</script>
+
+		<link rel="preload" href="%sveltekit.assets%/fonts/QCF_Bismillah_COLOR-Regular.woff2" as="font" type="font/woff2" crossorigin />
 		<link crossorigin="anonymous" rel="manifest" href="%sveltekit.assets%/manifest.json" />
 		<link crossorigin="anonymous" rel="icon" type="image/png" href="%sveltekit.assets%/images/favicon.png" />
 		<link crossorigin="anonymous" href="%sveltekit.assets%/images/apple-touch-icon.png" rel="apple-touch-icon" />
-		<link crossorigin="anonymous" rel="stylesheet" href="%sveltekit.assets%/css/global.css?version=40" />
+		<link crossorigin="anonymous" rel="stylesheet" href="%sveltekit.assets%/css/global.css?version=51" />
 
 		<!-- 
 		If the user's browser do not support Optional chaining (?.), redirect to old v3 website
@@ -140,23 +163,23 @@
 						5: {
 							themeName: 'Mocha Night',
 							bgMain: 'bg-[#20161f]',
-							bgSecondary: 'bg-[#c59f60]',
-							bgSecondaryLight: 'bg-[#c59f60]/5',
-							bgSecondaryDark: 'bg-[#c59f60]/15',
-							text: 'text-[#c59f60]',
-							textSecondary: 'text-[#c59f60]',
+							bgSecondary: 'bg-[#dca54c]',
+							bgSecondaryLight: 'bg-[#dca54c]/5',
+							bgSecondaryDark: 'bg-[#dca54c]/15',
+							text: 'text-[#dca54c]',
+							textSecondary: 'text-[#dca54c]',
 							textBgColor: 'text-[#20161f]',
-							border: 'border-[#c59f60]/20',
-							borderDark: '!border-[#c59f60]',
-							icon: '#c59f60',
-							input: 'focus:border-[#c59f60] focus:ring-[#c59f60]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#c59f60] peer-checked:border-[#c59f60]',
-							toggle: 'bg-[#c59f60]/5 after:bg-[#20161f] after:border-[#20161f] peer-checked:bg-[#c59f60]',
-							slider: 'bg-[#c59f60]/10 [&::-webkit-slider-thumb]:!bg-[#c59f60]',
-							hover: 'hover:bg-[#c59f60]/5',
-							hoverBorder: 'border border-transparent hover:border-[#c59f60]',
-							via: 'via-[#c59f60]',
-							placeholder: 'placeholder:text-[#c59f60]/50'
+							border: 'border-[#dca54c]/20',
+							borderDark: '!border-[#dca54c]',
+							icon: '#dca54c',
+							input: 'focus:border-[#dca54c] focus:ring-[#dca54c]',
+							checked: 'peer-checked:border-2 peer-checked:border-[#dca54c] peer-checked:border-[#dca54c]',
+							toggle: 'bg-[#dca54c]/5 after:bg-[#20161f] after:border-[#20161f] peer-checked:bg-[#dca54c]',
+							slider: 'bg-[#dca54c]/10 [&::-webkit-slider-thumb]:!bg-[#dca54c]',
+							hover: 'hover:bg-[#dca54c]/5',
+							hoverBorder: 'border border-transparent hover:border-[#dca54c]',
+							via: 'via-[#dca54c]',
+							placeholder: 'placeholder:text-[#dca54c]/50'
 						},
 						6: {
 							themeName: 'Midnight Blue',
@@ -280,7 +303,7 @@
 		</script>
 
 		<!-- Umami -->
-		<script defer src="%sveltekit.assets%/events.js" data-website-id="5a799a5b-4e17-4211-a544-daf41bd559c3"></script>
+		<script defer src="%sveltekit.assets%/events.js" data-website-id="07f075d1-8ac0-4ee4-a1b8-9702acc06860"></script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

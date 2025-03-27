@@ -102,9 +102,7 @@
 	$: maxFontSizeAllowed = ['default', 'sm'].includes(getTailwindBreakpoint()) ? 9 : 12;
 
 	// Get keys
-	$: wordTranslationKey = Object.keys(selectableWordTranslations).find((item) => selectableWordTranslations[item].id === $__wordTranslation);
 	$: wordTransliterationKey = Object.keys(selectableWordTransliterations).find((item) => selectableWordTransliterations[item].id === $__wordTransliteration);
-	$: verseReciterKey = Object.keys(selectableReciters).find((item) => selectableReciters[item].id === $__reciter);
 
 	// Hide settings drawer and go back to main settings on certain conditions
 	$: if ($__currentPage || $__settingsDrawerHidden) goBackToMainSettings();
@@ -264,7 +262,7 @@
 							<div class="flex flex-row justify-between items-center">
 								<span class="block">Prevent Sleep</span>
 								<label class="inline-flex items-center cursor-pointer">
-									<input type="checkbox" value="" class="sr-only peer" checked={$__wakeLockEnabled} on:click={(event) => __wakeLockEnabled.set(event.target.checked)} />
+									<input type="checkbox" value="" class="sr-only peer" checked={$__wakeLockEnabled} on:click={(event) => __wakeLockEnabled.set(event.target.checked)} data-umami-event="Toggle Prevent Sleep" />
 									<div class={toggleBtnClasses}></div>
 								</label>
 							</div>
@@ -283,7 +281,7 @@
 					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Quran Font</div>
-							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].font}</button>
+							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
 
@@ -345,7 +343,7 @@
 					<div id="word-translation-setting" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Word Translation</div>
-							<button class={selectorClasses} on:click={() => gotoIndividualSetting('word-translation')}>{selectableWordTranslations[wordTranslationKey].language}</button>
+							<button class={selectorClasses} on:click={() => gotoIndividualSetting('word-translation')}>{selectableWordTranslations[$__wordTranslation].language}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Word translation which will be displaced under the Arabic word text.</p>
 					</div>
@@ -405,7 +403,7 @@
 					<div id="verse-reciter-setting" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">{term('verse')} Reciter</div>
-							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-reciter')}>{selectableReciters[verseReciterKey].reciter}</button>
+							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-reciter')}>{selectableReciters[$__reciter].reciter}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>The reciter's voice that will play when you choose to listen to an {term('verse')}.</p>
 					</div>
@@ -445,7 +443,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">English Terminologies</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__englishTerminology} on:click={(event) => updateSettings({ type: 'englishTerminology', value: event.target.checked })} />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__englishTerminology} on:click={(event) => updateSettings({ type: 'englishTerminology', value: event.target.checked })} data-umami-event="Toggle English Terminology" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -459,7 +457,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Hide Non-{term('supplications')} Words</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__hideNonDuaPart} on:click={(event) => updateSettings({ type: 'hideNonDuaPart', value: event.target.checked })} />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__hideNonDuaPart} on:click={(event) => updateSettings({ type: 'hideNonDuaPart', value: event.target.checked })} data-umami-event="Toggle Non-Dua Words" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -469,16 +467,16 @@
 					<!-- <div class="border-b {window.theme('border')}"></div> -->
 
 					<!-- show-morphology-on-word-click-toggle -->
-					<!-- <div id="show-morphology-on-word-click" class={settingsBlockClasses}>
+					<div id="show-morphology-on-word-click" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Word Morphology On Click</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__wordMorphologyOnClick} on:click={(event) => updateSettings({ type: 'wordMorphologyOnClick', value: event.target.checked })} />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wordMorphologyOnClick} on:click={(event) => updateSettings({ type: 'wordMorphologyOnClick', value: event.target.checked })} data-umami-event="Toggle Morphology On Click" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Enable this option to view morphology on word click, instead of playing audio.</p>
-					</div> -->
+						<p class={settingsDescriptionClasses}>Show morphology on word click, instead of playing audio.</p>
+					</div>
 				</div>
 			</div>
 

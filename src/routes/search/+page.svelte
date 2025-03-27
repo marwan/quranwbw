@@ -3,24 +3,28 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import Translation from '$svgs/Translation.svelte';
 	import Search2 from '$svgs/Search2.svelte';
-	import DisplayVerses from './DisplayVerses.svelte';
+	import Individual from '$display/verses/modes/Individual.svelte';
 	import VerseTranslationSelector from '$ui/SettingsDrawer/VerseTranslationSelector.svelte';
 	import { goto } from '$app/navigation';
-	import { __currentPage, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __settingsSelectorModal } from '$utils/stores';
-	import { fetchVersesData } from '$utils/fetchData';
-	import { apiEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
+	import { __currentPage, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __settingsSelectorModal, __keysToFetch } from '$utils/stores';
+	import { apiEndpoint } from '$data/websiteSettings';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { selectableVerseTranslations } from '$data/options';
 
 	const params = new URLSearchParams(window.location.search);
 	let searchQuery = params.get('query') === null || params.get('query') === '' ? '' : params.get('query'); // Search text
-	let previousSearchQuery = '';
-	let selectedTranslations = $__verseTranslations.toString();
 	let searchPage = params.get('page') === null || params.get('page') === '' ? 1 : +params.get('page'); // Selected page
+	let previousSearchQuery = '';
 	let resultsPerPage = 50;
 	let totalResults;
 	let pagePagination = null;
+	let pageChanged = false;
+	let fetchingNewData = false;
+	let resultsFound = false;
+	let badRequest = false;
+
+	__keysToFetch.set(null);
 
 	// Basic checks
 	$: if (searchPage < 1 || isNaN(searchPage)) searchPage = 1;
@@ -28,35 +32,27 @@
 	// Update the search results whenever query changes
 	$: if (searchQuery.length > 0) goto(`/search?query=${searchQuery}&page=${searchPage}`, { replaceState: false });
 
-	// Update the selected translations whenever user changes it
-	$: if ($__verseTranslations) selectedTranslations = $__verseTranslations.toString();
+	// Get and set the new verse keys when the search term or page is changed
+	$: if (searchQuery.length > 0 || (searchPage && pageChanged === true)) setVerseKeys();
 
-	$: fetchVerses = (async () => {
+	// Get verse keys from the API
+	async function getVerseKeys(searchQuery) {
 		try {
-			if (searchQuery.length > 0) {
-				let response = await fetch(`${apiEndpoint}/search/translations?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
-				let data = await response.json();
-				let versesKeyData = data;
-
-				const { pagination } = versesKeyData;
-				totalResults = pagination.total_records;
-				pagePagination = pagination;
-
-				return await fetchVersesData({
-					verses: generateKeys(versesKeyData),
-					fontType: $__fontType,
-					wordTranslation: $__wordTranslation,
-					wordTransliteration: $__wordTransliteration,
-					verseTranslation: selectedTranslations
-				});
-			}
+			let response = await fetch(`${apiEndpoint}/search/translations?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
+			if (response.status !== 200) return (badRequest = true);
+			let data = await response.json();
+			let versesKeyData = data;
+			const { pagination } = versesKeyData;
+			totalResults = pagination.total_records;
+			pagePagination = pagination;
+			return generateKeys(versesKeyData);
 		} catch (error) {
-			console.error(errorLoadingDataMessage, error);
-			return {};
+			console.error('Error fetching verse keys:', error);
+			badRequest = true;
 		}
-	})();
+	}
 
-	// Function to generate keys from the API response
+	// Generate keys from the API response (string format, after parsing)
 	function generateKeys(data) {
 		const verseKeys = [];
 
@@ -81,10 +77,21 @@
 		return verseKeys.toString();
 	}
 
-	function updateSearchQuery(query) {
+	// Update the search query if enter is pressed or search icon is clicked
+	async function updateSearchQuery(query) {
 		previousSearchQuery = searchQuery;
 		searchQuery = query;
 		if (previousSearchQuery !== searchPage) searchPage = 1;
+		setVerseKeys();
+	}
+
+	async function setVerseKeys() {
+		fetchingNewData = true;
+		badRequest = false;
+		const keys = await getVerseKeys(searchQuery);
+		resultsFound = keys === null || keys === '' ? false : true;
+		__keysToFetch.set(keys);
+		fetchingNewData = false;
 	}
 
 	// Make a random hit to the search endpoint to warm it
@@ -120,50 +127,65 @@
 	{/if}
 
 	{#if searchQuery.length > 0}
-		<div>
-			{#await fetchVerses}
-				<Spinner />
-			{:then data}
-				{#if data !== undefined}
-					<!-- search results info -->
-					<div class="text-center text-xs">
+		{#if badRequest}
+			<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Something went wrong.</div>
+		{:else if !badRequest && fetchingNewData}
+			<Spinner />
+		{:else}
+			<div id="search-block">
+				<div id="search-results-information" class="text-center text-xs">
+					{#if resultsFound}
 						<span>Showing {totalResults}</span>
 						<span>{totalResults === 1 ? 'result' : 'results'} related to</span>
+						{#key pagePagination}
+							{#if pagePagination.total_pages > 1}
+								"{searchQuery}"
+								<span>(page {pagePagination.current_page}).</span>
+							{:else}
+								"{searchQuery}".
+							{/if}
+						{/key}
+					{:else}
+						<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results. Please try using a different keyword.</div>
+					{/if}
+				</div>
+
+				<div id="individual-verses-block">
+					{#key $__keysToFetch}
+						{#if $__keysToFetch}
+							<Individual />
+						{/if}
+					{/key}
+				</div>
+
+				{#if pagePagination !== null}
+					<div class="flex flex-row space-x-4 mt-8 justify-center">
+						{#if pagePagination.current_page > 1}
+							<button
+								class="{buttonOutlineClasses} text-xs"
+								on:click={() => {
+									searchPage = pagePagination.current_page - 1;
+									pageChanged = true;
+								}}>{@html '&#x2190;'} {pagePagination.current_page - 1}</button
+							>
+						{/if}
+
 						{#if pagePagination.total_pages > 1}
-							"{searchQuery}"
-							<span>(page {pagePagination.current_page}).</span>
-						{:else}
-							"{searchQuery}".
+							<button>Page {pagePagination.current_page}</button>
+						{/if}
+
+						{#if pagePagination.next_page !== null}
+							<button
+								class="{buttonOutlineClasses} text-xs"
+								on:click={() => {
+									searchPage = pagePagination.next_page;
+									pageChanged = true;
+								}}>{pagePagination.next_page} {@html '&#x2192;'}</button
+							>
 						{/if}
 					</div>
-
-					{@const totalRecords = Object.keys(data).length}
-					<div id="individual-verses-block">
-						<DisplayVerses {data} startIndex={0} endIndex={totalRecords > 5 ? 5 : totalRecords} />
-					</div>
-
-					<!-- pagination -->
-					{#if pagePagination !== null}
-						<div class="flex flex-row space-x-4 mt-8 justify-center">
-							{#if pagePagination.current_page > 1}
-								<button class="{buttonOutlineClasses} text-xs" on:click={() => (searchPage = pagePagination.current_page - 1)}>{@html '&#x2190;'} {pagePagination.current_page - 1}</button>
-							{/if}
-
-							{#if pagePagination.total_pages > 1}
-								<button>Page {pagePagination.current_page}</button>
-							{/if}
-
-							{#if pagePagination.next_page !== null}
-								<button class="{buttonOutlineClasses} text-xs" on:click={() => (searchPage = pagePagination.next_page)}>{pagePagination.next_page} {@html '&#x2192;'}</button>
-							{/if}
-						</div>
-					{/if}
-				{:else}
-					<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results. Please try using a different keyword.</div>
 				{/if}
-			{:catch error}
-				<p>{errorLoadingDataMessage}</p>
-			{/await}
-		</div>
+			</div>
+		{/if}
 	{/if}
 </div>

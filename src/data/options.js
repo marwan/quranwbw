@@ -8,11 +8,17 @@ export const selectableDisplays = {
 	7: { displayID: 7, displayName: 'Translation/Transliteration', displayComponent: 'TranslationTransliteration', layout: 'wbw', continuous: false, customClasses: null, disallowedIn: ['morphology', 'search'] }
 };
 
+export const fontTypes = ['Uthmanic', 'Indopak / Nastaleeq'];
+
 export const selectableFontTypes = {
-	1: { id: 1, font: 'Uthmanic Hafs Digital', apiId: 1, disallowedIn: ['mushaf'] },
-	2: { id: 2, font: 'Uthmanic Hafs Mushaf', apiId: 2, disallowedIn: [] },
-	3: { id: 3, font: 'Uthmanic Hafs Tajweed Mushaf', apiId: 2, disallowedIn: [] },
-	4: { id: 4, font: 'Indopak Madinah', apiId: 3, disallowedIn: ['mushaf'] }
+	1: { id: 1, type: 'Uthmanic', font: 'Digital Font', apiId: 1, displayOrder: 1, disallowedIn: ['mushaf'] },
+	2: { id: 2, type: 'Uthmanic', font: 'Mushaf 1441H', apiId: 2, displayOrder: 3, disallowedIn: [] },
+	3: { id: 3, type: 'Uthmanic', font: 'Mushaf Tajweed 1441H', apiId: 2, displayOrder: 4, disallowedIn: [] },
+	4: { id: 4, type: 'Indopak / Nastaleeq', font: 'Qalam Digital Font (Madinah Edition)', apiId: 3, displayOrder: 5, disallowedIn: ['mushaf'] },
+	5: { id: 5, type: 'Indopak / Nastaleeq', font: 'Uthman Taha Digital Font', apiId: 5, displayOrder: 7, disallowedIn: ['mushaf'] },
+	6: { id: 6, type: 'Indopak / Nastaleeq', font: 'Qalam Digital Font (Hanafi Edition)', apiId: 6, displayOrder: 6, disallowedIn: ['mushaf'] },
+	7: { id: 7, type: 'Uthmanic', font: 'Digital Bold Font', apiId: 1, displayOrder: 2, disallowedIn: ['mushaf'] },
+	8: { id: 8, type: 'Indopak / Nastaleeq', font: 'Uthman Taha Digital Bold Font', apiId: 5, displayOrder: 8, disallowedIn: ['mushaf'] }
 };
 
 export const themeColors = ['light', 'dark'];
@@ -72,7 +78,7 @@ export const selectableThemes = {
 		paletteTajweed: 1,
 		paletteHeader: 5,
 		color1: '#20161f',
-		color2: '#c59f60'
+		color2: '#dca54c'
 	},
 	6: {
 		id: 6,
@@ -121,6 +127,7 @@ export const selectableThemes = {
 };
 
 export const verseTranslationsLanguages = [
+	{ language_id: 187, language: 'Albanian' },
 	{ language_id: 20, language: 'Bangla' },
 	{ language_id: 185, language: 'Chinese' },
 	{ language_id: 34, language: 'Divehi' },
@@ -132,15 +139,23 @@ export const verseTranslationsLanguages = [
 	{ language_id: 106, language: 'Malayalam' },
 	{ language_id: 43, language: 'Persian' },
 	{ language_id: 138, language: 'Russian' },
+	{ language_id: 142, language: 'Sindhi' },
 	{ language_id: 158, language: 'Tamil' },
 	{ language_id: 11115, language: 'Transliteration' },
 	{ language_id: 167, language: 'Turkish' },
 	{ language_id: 174, language: 'Urdu' }
 ];
 
-export const rightToLeftVerseTranslations = [86, 840, 156, 97, 234, 158, 151, 54, 819, 135, 29];
+export const rightToLeftVerseTranslations = [86, 840, 156, 97, 234, 158, 151, 54, 819, 135, 29, 238];
 
 export const selectableVerseTranslations = {
+	// albanian
+	88: {
+		resource_id: 88,
+		resource_name: 'Hasan Efendi Nahi',
+		language_id: 187
+	},
+
 	// bangla
 	161: {
 		resource_id: 161,
@@ -303,12 +318,14 @@ export const selectableVerseTranslations = {
 	135: {
 		resource_id: 135,
 		resource_name: 'IslamHouse.com',
-		language_id: 43
+		language_id: 43,
+		font: 'font-Urdu'
 	},
 	29: {
 		resource_id: 29,
 		resource_name: 'Hussein Taji Kal Dari',
-		language_id: 43
+		language_id: 43,
+		font: 'font-Urdu'
 	},
 
 	// russian
@@ -326,6 +343,14 @@ export const selectableVerseTranslations = {
 		resource_id: 45,
 		resource_name: 'Russian Translation ( Elmir Kuliev )',
 		language_id: 138
+	},
+
+	// sindhi
+	238: {
+		resource_id: 238,
+		resource_name: 'Taj Mehmood Amroti',
+		language_id: 142,
+		font: 'font-Sindhi'
 	},
 
 	// tamil
@@ -393,68 +418,76 @@ export const selectableVerseTranslations = {
 	156: {
 		resource_id: 156,
 		resource_name: "Fe Zilal al-Qur'an",
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	97: {
 		resource_id: 97,
 		resource_name: 'Tafheem Ul Quran - Abul Alaa Maududi',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	234: {
 		resource_id: 234,
 		resource_name: 'Fatah Muhammad Jalandhari',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	158: {
 		resource_id: 158,
 		resource_name: 'بیان القرآن (ڈاکٹر اسرار احمد)',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	151: {
 		resource_id: 151,
 		resource_name: 'Shaykh al-Hind Mahmud al-Hasan (with Tafsir E Usmani)',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	54: {
 		resource_id: 54,
 		resource_name: 'Maulana Muhammad Junagarhi',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	819: {
 		resource_id: 819,
 		resource_name: 'Maulana Wahiduddin Khan',
-		language_id: 174
+		language_id: 174,
+		font: 'font-Urdu'
 	},
 	831: {
 		resource_id: 831,
 		resource_name: 'Abul Alaa Maududi (Roman Urdu)',
-		language_id: 174,
-		is_roman: true
+		language_id: 174
 	}
 };
 
 export const selectableVerseTransliterations = [1, 3, 57];
 
 export const selectableWordTranslations = {
-	1: { id: 5, language: 'Bangla' },
-	2: { id: 14, language: 'Chinese (Traditional)' },
-	3: { id: 15, language: 'Chinese (Zhuyin)' },
-	4: { id: 16, language: 'Chinese (Simplified)' },
-	5: { id: 17, language: 'Chinese (Pinyin)' },
-	6: { id: 18, language: 'Divehi' },
-	7: { id: 1, language: 'English' },
-	8: { id: 11, language: 'French' },
-	9: { id: 8, language: 'German' },
-	10: { id: 3, language: 'Hindi' },
-	11: { id: 4, language: 'Indonesian' },
-	// 12: { id: 10, language: 'Ingush' },
-	13: { id: 12, language: 'Malayalam (Amani Thafseer)' },
-	14: { id: 13, language: 'Malayalam (Quran Lalithasaram)' },
-	// 15: { id: 19, language: 'Persian' },
-	// 16: { id: 9, language: 'Russian' },
-	17: { id: 7, language: 'Tamil' },
-	18: { id: 6, language: 'Turkish' },
-	19: { id: 2, language: 'Urdu' }
+	1: { id: 1, language: 'English' },
+	2: { id: 2, language: 'Urdu', font: 'font-Urdu' },
+	3: { id: 3, language: 'Hindi' },
+	4: { id: 4, language: 'Indonesian' },
+	5: { id: 5, language: 'Bangla' },
+	6: { id: 6, language: 'Turkish' },
+	7: { id: 7, language: 'Tamil' },
+	8: { id: 8, language: 'German' },
+	// 9: { id: 9, language: 'Russian' },
+	// 10: { id: 10, language: 'Ingush' },
+	11: { id: 11, language: 'French' },
+	12: { id: 12, language: 'Malayalam (Amani Thafseer)' },
+	13: { id: 13, language: 'Malayalam (Quran Lalithasaram)' },
+	14: { id: 14, language: 'Chinese (Traditional)' },
+	15: { id: 15, language: 'Chinese (Zhuyin)' },
+	16: { id: 16, language: 'Chinese (Simplified)' },
+	17: { id: 17, language: 'Chinese (Pinyin)' },
+	18: { id: 18, language: 'Divehi' },
+	19: { id: 19, language: 'Persian', font: 'font-Urdu' },
+	20: { id: 20, language: 'Sindhi', font: 'font-Sindhi' },
+	21: { id: 21, language: 'Albanian' }
 };
 
 export const selectableWordTransliterations = {
@@ -462,116 +495,146 @@ export const selectableWordTransliterations = {
 	2: { id: 2, language: 'Tajweed Transliteration' }
 };
 
-export const selectableReciters = [
-	{
+export const selectableReciters = {
+	1: {
 		id: 1,
 		timestampSlug: 'basit_mujawwad',
 		reciter: 'Abdul Basit (Mujawwad)',
 		url: 'https://everyayah.com/data/Abdul_Basit_Mujawwad_128kbps',
 		image: 'abdul-baset-abdel-samad-medium.webp'
 	},
-	{
+	2: {
 		id: 2,
 		timestampSlug: 'basit_murattal',
 		reciter: 'Abdul Basit (Murattal)',
 		url: 'https://everyayah.com/data/Abdul_Basit_Murattal_192kbps',
 		image: 'abdul-baset-abdel-samad-medium.webp'
 	},
-	{
+	3: {
 		id: 3,
 		reciter: 'Abdul-Rahman Al-Sudais',
 		url: 'https://everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps',
 		image: 'abdul-rahman-al-soudais-medium.webp'
 	},
-	{
+	4: {
 		id: 4,
 		reciter: 'Abu Bakr Ash-Shaatree',
 		url: 'https://everyayah.com/data/Abu%20Bakr%20Ash-Shaatree_128kbps',
 		image: 'abu-bakr-al-shatri-medium.webp'
 	},
-	{
+	5: {
 		id: 5,
 		reciter: 'Ayman Suwayd',
 		url: 'https://everyayah.com/data/Ayman_Sowaid_64kbps',
 		image: 'ayman-suwayd-medium.webp'
 	},
-	{
+	6: {
 		id: 6,
 		timestampSlug: 'rifai',
 		reciter: 'Hani Ar-Rifai',
 		url: 'https://everyayah.com/data/Hani_Rifai_192kbps',
 		image: 'hani-ar-rifai-medium.webp'
 	},
-	{
-		id: 17,
-		reciter: 'Ibrahim Al Akhdar',
-		url: 'https://everyayah.com/data/Ibrahim_Akhdar_32kbps',
-		image: 'ibrahim-al-akhdar-medium.webp'
-	},
-	{
+	7: {
 		id: 7,
 		reciter: 'Maher Al-Muaiqly',
 		url: 'https://everyayah.com/data/MaherAlMuaiqly128kbps',
 		image: 'maher-al-mueaqly-medium.webp'
 	},
-	{
+	8: {
 		id: 8,
 		timestampSlug: 'husary',
 		reciter: 'Mahmoud Khalil Al-Husary',
 		url: 'https://everyayah.com/data/Husary_128kbps',
 		image: 'mahmoud-khalil-al-hussary-profile.webp'
 	},
-	{
+	9: {
 		id: 9,
 		reciter: 'Mahmoud Khalil Al-Husary (with gaps)',
 		url: 'https://everyayah.com/data/Husary_Muallim_128kbps',
 		image: 'mahmoud-khalil-al-hussary-profile.webp'
 	},
-	{
+	10: {
 		id: 10,
 		timestampSlug: 'mishary',
 		reciter: 'Mishary Rashid Alafasy',
 		url: 'https://everyayah.com/data/Alafasy_128kbps',
 		image: 'mishary-rashid-alafasy-medium.webp'
 	},
-	{
+	11: {
 		id: 11,
 		reciter: 'Mohamed El-Minshawi (Mujawwad)',
 		url: 'https://everyayah.com/data/Minshawy_Mujawwad_192kbps',
 		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp'
 	},
-	{
+	12: {
 		id: 12,
 		reciter: 'Mohamed El-Minshawi (Teacher)',
 		url: 'https://everyayah.com/data/Minshawy_Teacher_128kbps',
 		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp'
 	},
-	{
+	13: {
 		id: 13,
 		reciter: 'Muhammad Ayyub',
 		url: 'https://everyayah.com/data/Muhammad_Ayyoub_128kbps',
 		image: 'mohamed-ayoub-medium.webp'
 	},
-	{
+	14: {
 		id: 14,
 		reciter: 'Nasser Al Qatami',
 		url: 'https://everyayah.com/data/Nasser_Alqatami_128kbps',
 		image: 'nasser-al-qatami-medium.webp'
 	},
-	{
+	15: {
 		id: 15,
 		timestampSlug: 'shuraym',
 		reciter: 'Saood Ash-Shuraym',
 		url: 'https://everyayah.com/data/Saood_ash-Shuraym_128kbps',
 		image: 'saud-al-shuraim-medium.webp'
 	},
-	{
+	16: {
 		id: 16,
 		reciter: 'Yasser Ad-Dossari',
 		url: 'https://everyayah.com/data/Yasser_Ad-Dussary_128kbps',
 		image: 'yasser-al-dosari-medium.webp'
+	},
+	17: {
+		id: 17,
+		reciter: 'Ibrahim Al Akhdar',
+		url: 'https://everyayah.com/data/Ibrahim_Akhdar_32kbps',
+		image: 'ibrahim-al-akhdar-medium.webp'
+	},
+	18: {
+		id: 18,
+		reciter: 'Khalifah Al Tunaiji',
+		url: 'https://everyayah.com/data/khalefa_al_tunaiji_64kbps',
+		image: 'khalifah-al-tunaiji-medium.webp'
+	},
+	19: {
+		id: 19,
+		reciter: 'Abdullah Matroud',
+		url: 'https://everyayah.com/data/Abdullah_Matroud_128kbps',
+		image: 'abdullah-matrood-medium.webp'
+	},
+	20: {
+		id: 20,
+		reciter: 'Ali Jaber',
+		url: 'https://everyayah.com/data/Ali_Jaber_64kbps',
+		image: 'ali-jaber-medium.webp'
+	},
+	21: {
+		id: 21,
+		reciter: 'Nabil Ar Rifay',
+		url: 'https://everyayah.com/data/Nabil_Rifa3i_48kbps',
+		image: 'nabil-al-rifay-medium.webp'
+	},
+	22: {
+		id: 22,
+		reciter: 'Bandar Baleelah',
+		url: 'https://marwan.github.io/ayah-by-ayah-sheikh-baleelah/audio',
+		image: 'bandar-baleela-medium.webp'
 	}
-];
+};
 
 export const selectableTranslationReciters = {
 	1: { id: 1, reciter: 'English - Ibrahim Walk (Sahih International)', url: 'https://everyayah.com/data/English/Sahih_Intnl_Ibrahim_Walk_192kbps/' },
@@ -622,4 +685,14 @@ export const selectableVersePlayButtonOptions = {
 	1: { id: 1, name: 'Play Audio' },
 	// 2: { id: 2, name: 'Play From That Verse' },
 	3: { id: 3, name: 'Show Advanced Options' }
+};
+
+export const selectableAudioDelays = {
+	1: { id: 1, name: 'None', milliseconds: 0 },
+	2: { id: 2, name: '1 second', milliseconds: 1000 },
+	3: { id: 3, name: '3 seconds', milliseconds: 3000 },
+	4: { id: 4, name: '5 seconds', milliseconds: 5000 },
+	5: { id: 5, name: '10 seconds', milliseconds: 10000 },
+	6: { id: 6, name: '15 seconds', milliseconds: 15000 },
+	7: { id: 7, name: 'Audio Length', milliseconds: 999 }
 };
