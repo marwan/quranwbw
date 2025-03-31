@@ -101,20 +101,16 @@
 
 	// Function to generate the correct link based on result_type
 	function getNavigationLink(item) {
-		switch (item.result_type) {
-			case 'surah':
-				return [`${term('chapter')} ${quranMetaData[item.key].transliteration} (${item.key})`, `https://quranwbw.com/${item.key}`];
-			case 'ayah':
-				return [`Verse ${item.key}`, `https://quranwbw.com/${item.key}`];
-			case 'range':
-				return [`${item.key}`, `https://quranwbw.com/${item.key}`];
-			case 'page':
-				return [`Page ${item.key}`, `https://quranwbw.com/page/${item.key}`];
-			case 'juz':
-				return [`Juz ${item.key}`, `https://quranwbw.com/juz/${item.key}`];
-			default:
-				return '#'; // Fallback link
-		}
+		const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+		const linkMap = {
+			surah: [`${term('chapter')} ${quranMetaData[item.key]?.transliteration} (${item.key})`, `${baseUrl}/${item.key}`],
+			ayah: [`Verse ${item.key}`, `${baseUrl}/${item.key}`],
+			range: [`${item.key}`, `${baseUrl}/${item.key}`],
+			page: [`Page ${item.key}`, `${baseUrl}/page/${item.key}`],
+			juz: [`Juz ${item.key}`, `${baseUrl}/juz/${item.key}`]
+		};
+
+		return linkMap[item.result_type] || ['#', '#']; // Fallback to '#' if no match
 	}
 
 	// Make a random hit to the search endpoint to warm it
