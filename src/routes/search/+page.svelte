@@ -10,6 +10,7 @@
 	import { apiEndpoint } from '$data/websiteSettings';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
+	import { quranMetaData } from '$data/quranMeta';
 
 	const linkClasses = `w-fit flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const linkTextClasses = 'text-xs md:text-sm text-left w-fit capitalize truncate';
@@ -102,13 +103,15 @@
 	function getNavigationLink(item) {
 		switch (item.result_type) {
 			case 'surah':
+				return [`${term('chapter')} ${quranMetaData[item.key].transliteration} (${item.key})`, `https://quranwbw.com/${item.key}`];
 			case 'ayah':
+				return [`Verse ${item.key}`, `https://quranwbw.com/${item.key}`];
 			case 'range':
-				return `https://quranwbw.com/${item.key}`;
+				return [`${item.key}`, `https://quranwbw.com/${item.key}`];
 			case 'page':
-				return `https://quranwbw.com/page/${item.key}`;
+				return [`Page ${item.key}`, `https://quranwbw.com/page/${item.key}`];
 			case 'juz':
-				return `https://quranwbw.com/juz/${item.key}`;
+				return [`Juz ${item.key}`, `https://quranwbw.com/juz/${item.key}`];
 			default:
 				return '#'; // Fallback link
 		}
@@ -167,14 +170,11 @@
 				</div>
 
 				{#if typeof navigationResults !== 'undefined' && navigationResults.length > 0}
-					<div id="navigation-results" class="flex flex-row space-x-4 justify-center mt-6">
+					<div id="navigation-results" class="flex flex-wrap space-x-4 justify-center mt-6">
 						{#each navigationResults as item}
-							<a href={getNavigationLink(item)} class={linkClasses}>
-								{#if item.result_type === 'range'}
-									<span class={linkTextClasses}>{item.key}</span>
-								{:else}
-									<span class={linkTextClasses}>{item.result_type} {item.key}</span>
-								{/if}
+							{@const [itemTitle, itemLink] = getNavigationLink(item)}
+							<a href={itemLink} target="_blank" class="{linkClasses} my-1">
+								<span class={linkTextClasses}>{itemTitle} {@html '&#8599;'}</span>
 							</a>
 						{/each}
 					</div>
