@@ -69,7 +69,7 @@ export async function fetchVerseTranslationData(props) {
 
 	// Build the API URL
 	const apiURL =
-		`https://api.qurancdn.com/api/qdc/verses/by_chapter/${props.chapter}?` +
+		`https://quran.com/api/proxy/content/api/qdc/verses/by_chapter/${props.chapter}?` +
 		new URLSearchParams({
 			per_page: 286,
 			translations: props.translations

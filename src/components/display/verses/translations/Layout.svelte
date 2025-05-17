@@ -30,7 +30,7 @@
 		footnoteNumber = +event.innerText;
 
 		// Fetch footnote
-		const response = await fetch(`https://api.qurancdn.com/api/qdc/foot_notes/${footnoteId}`);
+		const response = await fetch(`https://quran.com/api/proxy/content/api/qdc/foot_notes/${footnoteId}`);
 		const data = await response.json();
 		footnoteText = data.foot_note.text;
 		window.umami.track('Verse Footnote Button');
