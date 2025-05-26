@@ -69,10 +69,11 @@ export async function fetchVerseTranslationData(props) {
 
 	// Build the API URL
 	const apiURL =
-		`https://quran.com/api/proxy/content/api/qdc/verses/by_chapter/${props.chapter}?` +
+		`${apiEndpoint}/translations?` +
 		new URLSearchParams({
-			per_page: 286,
-			translations: props.translations
+			chapter: props.chapter,
+			id: props.translations,
+			type: 'translation'
 		});
 
 	// Fetch data from the API
@@ -86,9 +87,9 @@ export async function fetchVerseTranslationData(props) {
 	// await db.api_data.put({ key: cacheKey, data: data.verses });
 
 	// Update the store
-	if (!props.skipSave) __verseTranslationData.set(data.verses);
+	if (!props.skipSave) __verseTranslationData.set(data.data.verses);
 
-	return data.verses;
+	return data.data.verses;
 }
 
 // Fetch timestamps for word-by-word highlighting
