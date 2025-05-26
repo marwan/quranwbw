@@ -166,11 +166,11 @@
 					</Radio>
 				</div>
 				<div class="flex items-center">
-					<Radio bind:group={copyType} value={3} custom>
+					<!-- <Radio bind:group={copyType} value={3} custom>
 						<div class="{radioClasses} {copyType === 3 && selectedRadioOrCheckboxClasses}">
 							<div class="w-full">Advanced</div>
 						</div>
-					</Radio>
+					</Radio> -->
 				</div>
 			</div>
 
