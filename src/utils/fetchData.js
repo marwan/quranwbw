@@ -89,6 +89,9 @@ export async function fetchVerseTranslationData(props) {
 	// Update the store
 	if (!props.skipSave) __verseTranslationData.set(data.data.verses);
 
+	// track total translations selected/used by the user
+	window.umami.track('Total Translations', { type: 'count', value: get(__verseTranslations).length });
+
 	return data.data.verses;
 }
 

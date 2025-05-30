@@ -122,9 +122,6 @@ export function updateSettings(props) {
 			userSettings.translations.verse_v1 = verseTranslations;
 			__verseTranslations.set(verseTranslations);
 
-			// track total translations selected/used by the user
-			window.umami.track('Total translations', { type: 'count', value: verseTranslations.length });
-
 			break;
 
 		// for verse tafsir
