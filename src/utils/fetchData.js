@@ -90,11 +90,11 @@ export async function fetchVerseTranslationData(props) {
 	if (!props.skipSave) __verseTranslationData.set(data.data.verses);
 
 	// track total translations selected/used by the user
-	try {
-		window.umami.track('Total Translations', { type: 'count', value: get(__verseTranslations).length });
-	} catch (error) {
-		// ...
-	}
+	// try {
+	window.umami.track('Total Translations', { type: 'count', value: get(__verseTranslations).length });
+	// } catch (error) {
+	// ...
+	// }
 
 	return data.data.verses;
 }
