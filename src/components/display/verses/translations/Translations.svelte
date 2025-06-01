@@ -16,14 +16,12 @@
 	$: chapterToFetch = $__currentPage === 'mushaf' ? parseInt($__verseKey.split(':')[0], 10) : value.meta.chapter;
 
 	// Fetch verse translations for pages other than chapter (reactive)
-	$: if ($__currentPage !== 'chapter') {
-		verseTranslationData = fetchVerseTranslationData({ chapter: chapterToFetch, translations: $__verseTranslations.toString() });
-	}
+	$: if ($__currentPage !== 'chapter') verseTranslationData = fetchVerseTranslationData({});
 
-	// Fetch verse transliteration for pages other than chapter (non-reactive)
-	if ($__currentPage !== 'chapter') {
-		verseTransliterationData = fetchChapterData({ chapter: value.meta.chapter, reRenderWhenTheseUpdates: $__verseTranslations });
-	}
+	// // Fetch verse transliteration for pages other than chapter (non-reactive)
+	// if ($__currentPage !== 'chapter') {
+	// 	verseTransliterationData = fetchChapterData({ chapter: value.meta.chapter, reRenderWhenTheseUpdates: $__verseTranslations });
+	// }
 
 	// This function takes two arguments: translationsObject and translationsSelected.
 	// It first filters out IDs 1 or 3 (transliterations) from translationsSelected.
@@ -38,50 +36,13 @@
 {#if $__verseTranslations.length > 0}
 	<div class={verseTranslationClasses} data-fontSize={fontSizes.verseTranslationText}>
 		<!-- for chapter page, we fetch the translation for the whole chapter in one go -->
-		{#if $__currentPage === 'chapter'}
-			{#if $__verseTranslationData}
-				{#each $__verseTranslations as id}
-					{@const verseKey = `${value.meta.chapter}:${value.meta.verse}`}
-					<Layout verseTranslationID={id} verseTranslation={$__verseTranslationData[id][verseKey]} {value} />
-				{/each}
-			{:else}
-				<Skeleton size="xxl" class="mb-2.5" />
-			{/if}
-
-			<!-- for other pages, we fetch chapter translations for each verse -->
-		{:else if $__currentPage === 'TO_BE_REMOVED'}
-			<!-- Render verse transliterations -->
-			{#await verseTransliterationData}
-				<Skeleton size="xxl" class="mb-2.5" />
-			{:then verseTransliterationData}
-				{#if verseTransliterationData}
-					{#if $__verseTranslations.includes(1)}
-						<Layout verseTranslationID={1} verseTranslation={verseTransliterationData[`${value.meta.chapter}:${value.meta.verse}`].translations[0]} {value} />
-					{/if}
-
-					{#if $__verseTranslations.includes(3)}
-						<Layout verseTranslationID={3} verseTranslation={verseTransliterationData[`${value.meta.chapter}:${value.meta.verse}`].translations[1]} {value} />
-					{/if}
-				{/if}
-			{:catch error}
-				<p>{error}</p>
-			{/await}
-
-			<!-- Render verse translations -->
-			{#await verseTranslationData}
-				<Skeleton size="xxl" class="mb-2.5" />
-			{:then verseTranslationData}
-				{#if verseTranslationData}
-					{#if verseTranslationData[Object.keys(verseTranslationData)[value.meta.verse - 1]].hasOwnProperty('translations')}
-						{@const sortedTranslations = getSortedTranslations(verseTranslationData[Object.keys(verseTranslationData)[value.meta.verse - 1]].translations, $__verseTranslations)}
-						{#each sortedTranslations as verseTranslation}
-							<Layout verseTranslationID={verseTranslation.resource_id} {verseTranslation} {value} />
-						{/each}
-					{/if}
-				{/if}
-			{:catch error}
-				<p>{error}</p>
-			{/await}
+		{#if $__verseTranslationData}
+			{#each $__verseTranslations as id}
+				{@const verseKey = `${value.meta.chapter}:${value.meta.verse}`}
+				<Layout verseTranslationID={id} verseTranslation={$__verseTranslationData[id][verseKey]} {value} />
+			{/each}
+		{:else}
+			<Skeleton size="xxl" class="mb-2.5" />
 		{/if}
 	</div>
 {/if}

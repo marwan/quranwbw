@@ -82,8 +82,6 @@ export async function fetchVerseTranslationData(props) {
 		}
 	}
 
-	// console.log(finalData);
-
 	// Update the store
 	if (!props.skipSave) __verseTranslationData.set(finalData);
 

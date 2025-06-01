@@ -3,8 +3,6 @@
 	export let verseTranslation;
 	export let value;
 
-	console.log(verseTranslation);
-
 	import CrossSolid from '$svgs/CrossSolid.svelte';
 	import { __userSettings, __verseTranslations, __currentPage } from '$utils/stores';
 	import { selectableVerseTranslations, rightToLeftVerseTranslations } from '$data/options';
