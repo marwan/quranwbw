@@ -55,44 +55,39 @@ export async function fetchChapterData(props) {
 export async function fetchVerseTranslationData(props) {
 	if (!props.skipSave) __verseTranslationData.set(null);
 
-	if (!props.translations) props.translations = get(__verseTranslations).toString();
+	if (!props.translations) props.translations = get(__verseTranslations);
 
-	// // Generate a unique key for the data
-	// const cacheKey = `${props.chapter}--${props.translations}`;
+	// Step 2: Fetch all translations simultaneously
+	const fetchPromises = props.translations.map(async (id) => {
+		const url = `https://static.quranwbw.com/data/v4/translations/${id}.json?v=111`;
+		try {
+			const res = await fetch(url);
+			if (!res.ok) throw new Error(`Failed to fetch translation with ID ${id}`);
+			const data = await res.json();
+			return { id, data };
+		} catch (err) {
+			console.error(`Error fetching translation ${id}:`, err);
+			return { id, data: null }; // You may also choose to skip nulls
+		}
+	});
 
-	// // Check if data exists in the database
-	// const cachedRecord = await db.api_data.get(cacheKey);
-	// if (cachedRecord && cachedRecord.data) {
-	// 	if (!props.skipSave) __verseTranslationData.set(cachedRecord.data);
-	// 	return cachedRecord.data;
-	// }
+	// Step 3: Wait for all fetches to complete
+	const results = await Promise.all(fetchPromises);
 
-	// Build the API URL
-	const apiURL =
-		`${apiEndpoint}/translations?` +
-		new URLSearchParams({
-			chapter: props.chapter,
-			id: props.translations,
-			type: 'translation'
-		});
-
-	// Fetch data from the API
-	const response = await fetch(apiURL);
-	if (!response.ok) {
-		throw new Error('Failed to fetch data from the API');
+	// Step 4: Construct final JSON
+	const finalData = {};
+	for (const { id, data } of results) {
+		if (data) {
+			finalData[id] = data;
+		}
 	}
-	const data = await response.json();
 
-	// Save the fetched data to the database with the custom key
-	// await db.api_data.put({ key: cacheKey, data: data.verses });
+	// console.log(finalData);
 
 	// Update the store
-	if (!props.skipSave) __verseTranslationData.set(data.data.verses);
+	if (!props.skipSave) __verseTranslationData.set(finalData);
 
-	// track total translations selected/used by the user
-	window.umami.track('Total Translations', { type: 'count', value: get(__verseTranslations).length });
-
-	return data.data.verses;
+	return finalData;
 }
 
 // Fetch timestamps for word-by-word highlighting

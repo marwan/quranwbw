@@ -40,31 +40,16 @@
 		<!-- for chapter page, we fetch the translation for the whole chapter in one go -->
 		{#if $__currentPage === 'chapter'}
 			{#if $__verseTranslationData}
-				<!-- tajweed/syllables transliteration -->
-				{#if $__verseTranslations.includes(1)}
-					<Layout verseTranslationID={1} verseTranslation={chapterData[`${value.meta.chapter}:${value.meta.verse}`].translations[0]} {value} />
-				{/if}
-
-				<!-- tajweed/syllables transliteration -->
-				{#if $__verseTranslations.includes(3)}
-					<Layout verseTranslationID={3} verseTranslation={chapterData[`${value.meta.chapter}:${value.meta.verse}`].translations[1]} {value} />
-				{/if}
-				<!-- ================== -->
-
-				<!-- data from Quran.com's API -->
-				<!-- after transliteration, show other translations -->
-				{#if $__verseTranslationData[value.meta.verse - 1].hasOwnProperty('translations')}
-					{@const sortedTranslations = getSortedTranslations($__verseTranslationData[Object.keys($__verseTranslationData)[value.meta.verse - 1]].translations, $__verseTranslations)}
-					{#each sortedTranslations as verseTranslation}
-						<Layout verseTranslationID={verseTranslation.resource_id} {verseTranslation} {value} />
-					{/each}
-				{/if}
+				{#each $__verseTranslations as id}
+					{@const verseKey = `${value.meta.chapter}:${value.meta.verse}`}
+					<Layout verseTranslationID={id} verseTranslation={$__verseTranslationData[id][verseKey]} {value} />
+				{/each}
 			{:else}
 				<Skeleton size="xxl" class="mb-2.5" />
 			{/if}
 
 			<!-- for other pages, we fetch chapter translations for each verse -->
-		{:else}
+		{:else if $__currentPage === 'TO_BE_REMOVED'}
 			<!-- Render verse transliterations -->
 			{#await verseTransliterationData}
 				<Skeleton size="xxl" class="mb-2.5" />

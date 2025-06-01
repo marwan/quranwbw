@@ -3,6 +3,8 @@
 	export let verseTranslation;
 	export let value;
 
+	console.log(verseTranslation);
+
 	import CrossSolid from '$svgs/CrossSolid.svelte';
 	import { __userSettings, __verseTranslations, __currentPage } from '$utils/stores';
 	import { selectableVerseTranslations, rightToLeftVerseTranslations } from '$data/options';
@@ -106,8 +108,11 @@
 </script>
 
 <div class="flex flex-col print:break-inside-avoid">
-	<span class="{isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">
+	<!-- <span class="{isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">
 		{@html verseTextModifier(verseTranslation.text)}
+	</span> -->
+	<span>
+		{@html verseTextModifier(verseTranslation)}
 	</span>
 
 	<!-- translation footnotes -->
@@ -121,11 +126,14 @@
 			<!-- close footnote button -->
 			<button on:click={() => hideFootnote(value.meta.chapter, value.meta.verse, verseTranslationID)} title="Close footnote"><CrossSolid size={6} /></button>
 		</div>
-		<div class="text {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">...</div>
+		<!-- <div class="text {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">...</div> -->
 	</div>
 
 	<!-- show translaton author name only if more than 1 was selected -->
-	{#if $__verseTranslations.length > 1}
+	<!-- {#if $__verseTranslations.length > 1}
 		<span class="opacity-70 {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslation.resource_id].resource_name}</span>
+	{/if} -->
+	{#if $__verseTranslations.length > 1}
+		<span class="opacity-70">&mdash; {selectableVerseTranslations[verseTranslationID].resource_name}</span>
 	{/if}
 </div>
