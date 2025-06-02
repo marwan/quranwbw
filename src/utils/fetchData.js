@@ -51,12 +51,28 @@ export async function fetchChapterData(props) {
 
 // Fetch verse translation data
 export async function fetchVerseTranslationData(props) {
-	if (!props.skipSave) __verseTranslationData.set(null);
-
+	// Use translation IDs from props or fallback to store
 	if (!props.translations) props.translations = get(__verseTranslations);
 
-	// Fetch all translations simultaneously
-	const fetchPromises = props.translations.map(async (id) => {
+	// Get current data in store (don't clear the store before this!)
+	const existingData = get(__verseTranslationData) || {};
+
+	// Filter translation IDs to only those not already in store
+	const idsToFetch = props.translations.filter((id) => !existingData[id]);
+
+	// Start with whatever is already in the store
+	const finalData = { ...existingData };
+
+	// If nothing to fetch, just return existing data
+	if (idsToFetch.length === 0) {
+		return finalData;
+	}
+
+	// Only clear the store if new data will be fetched and saved
+	if (!props.skipSave) __verseTranslationData.set(null);
+
+	// Fetch missing translations
+	const fetchPromises = idsToFetch.map(async (id) => {
 		const url = `https://static.quranwbw.com/data/v4/translations/data/translation_${id}.json?v=112`;
 		try {
 			const res = await fetch(url);
@@ -65,22 +81,20 @@ export async function fetchVerseTranslationData(props) {
 			return { id, data };
 		} catch (err) {
 			console.error(`Error fetching translation ${id}:`, err);
-			return { id, data: null }; // You may also choose to skip nulls
+			return { id, data: null };
 		}
 	});
 
-	// Wait for all fetches to complete
 	const results = await Promise.all(fetchPromises);
 
-	// Construct final JSON
-	const finalData = {};
+	// Merge fetched data into final result
 	for (const { id, data } of results) {
 		if (data) {
 			finalData[id] = data;
 		}
 	}
 
-	// Update the store
+	// Save to store if required
 	if (!props.skipSave) __verseTranslationData.set(finalData);
 
 	return finalData;
