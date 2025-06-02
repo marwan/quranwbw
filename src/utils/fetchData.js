@@ -49,14 +49,13 @@ export async function fetchChapterData(props) {
 	return data.data.verses;
 }
 
-// Get verse translations from Quran.com's API as a separate request compared to the rest of the verse data (from our API)
-// Fetch verse translation data and cache it
+// Fetch verse translation data
 export async function fetchVerseTranslationData(props) {
 	if (!props.skipSave) __verseTranslationData.set(null);
 
 	if (!props.translations) props.translations = get(__verseTranslations);
 
-	// Step 2: Fetch all translations simultaneously
+	// Fetch all translations simultaneously
 	const fetchPromises = props.translations.map(async (id) => {
 		const url = `https://static.quranwbw.com/data/v4/translations/data/translation_${id}.json?v=112`;
 		try {
@@ -70,10 +69,10 @@ export async function fetchVerseTranslationData(props) {
 		}
 	});
 
-	// Step 3: Wait for all fetches to complete
+	// Wait for all fetches to complete
 	const results = await Promise.all(fetchPromises);
 
-	// Step 4: Construct final JSON
+	// Construct final JSON
 	const finalData = {};
 	for (const { id, data } of results) {
 		if (data) {
