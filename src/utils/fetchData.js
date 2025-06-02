@@ -29,7 +29,6 @@ export async function fetchChapterData(props) {
 			word_type: selectableFontTypes[fontType].apiId,
 			word_translation: wordTranslation,
 			word_transliteration: wordTransliteration,
-			verse_translation: '1,3',
 			version: apiVersion,
 			bypass_cache: apiByPassCache
 		});
