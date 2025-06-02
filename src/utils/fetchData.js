@@ -59,7 +59,7 @@ export async function fetchVerseTranslationData(props) {
 
 	// Step 2: Fetch all translations simultaneously
 	const fetchPromises = props.translations.map(async (id) => {
-		const url = `https://static.quranwbw.com/data/v4/translations/data/translation_${id}.json?v=111`;
+		const url = `https://static.quranwbw.com/data/v4/translations/data/translation_${id}.json?v=112`;
 		try {
 			const res = await fetch(url);
 			if (!res.ok) throw new Error(`Failed to fetch translation with ID ${id}`);
