@@ -10,7 +10,7 @@
 	$: verseTranslationClasses = `verseTranslationText flex flex-col space-y-4 leading-normal ${fontSizes.verseTranslationText}`;
 
 	// Fetch verse translations for pages other than chapter (reactive)
-	$: if ($__currentPage !== 'chapter') verseTranslationData = fetchVerseTranslationData({ reRenderWhenTheseUpdates: $__verseTranslations });
+	$: if ($__currentPage !== 'chapter') fetchVerseTranslationData({ reRenderWhenTheseUpdates: $__verseTranslations });
 
 	// This function takes two arguments: translationsObject and translationsSelected.
 	// It first filters out IDs 1 or 3 (transliterations) from translationsSelected.
