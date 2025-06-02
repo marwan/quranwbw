@@ -4,24 +4,13 @@
 	import Layout from '$display/verses/translations/Layout.svelte';
 	import Skeleton from '$ui/FlowbiteSvelte/skeleton/Skeleton.svelte';
 	import { __currentPage, __verseKey, __verseTranslations, __verseTranslationData, __chapterData, __userSettings, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData } from '$utils/stores';
-	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
-
-	let verseTranslationData, verseTransliterationData;
+	import { fetchVerseTranslationData } from '$utils/fetchData';
 
 	$: fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	$: verseTranslationClasses = `verseTranslationText flex flex-col space-y-4 leading-normal ${fontSizes.verseTranslationText}`;
 
-	// Setting the variables depending on the page
-	$: chapterData = $__currentPage === 'mushaf' ? JSON.parse(localStorage.getItem('pageData')) : $__chapterData;
-	$: chapterToFetch = $__currentPage === 'mushaf' ? parseInt($__verseKey.split(':')[0], 10) : value.meta.chapter;
-
 	// Fetch verse translations for pages other than chapter (reactive)
 	$: if ($__currentPage !== 'chapter') verseTranslationData = fetchVerseTranslationData({ reRenderWhenTheseUpdates: $__verseTranslations });
-
-	// // Fetch verse transliteration for pages other than chapter (non-reactive)
-	// if ($__currentPage !== 'chapter') {
-	// 	verseTransliterationData = fetchChapterData({ chapter: value.meta.chapter, reRenderWhenTheseUpdates: $__verseTranslations });
-	// }
 
 	// This function takes two arguments: translationsObject and translationsSelected.
 	// It first filters out IDs 1 or 3 (transliterations) from translationsSelected.

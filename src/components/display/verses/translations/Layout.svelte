@@ -93,23 +93,11 @@
 		return updatedVerseText;
 	}
 
-	// function detectVersesInFootnote(footnote) {
-	// 	const regex = /\d{0,9}(:\d{0,9})*/g;
-	// 	let matches = footnote.match(regex);
-	// 	matches = matches.filter(function (e) {
-	// 		return e;
-	// 	});
-	// 	if (matches.length > 0) console.log(matches);
-	// }
-
 	window.supClick = supClick;
 </script>
 
 <div class="flex flex-col print:break-inside-avoid">
-	<!-- <span class="{isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">
-		{@html verseTextModifier(verseTranslation.text)}
-	</span> -->
-	<span>
+	<span class="{isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font}">
 		{@html verseTextModifier(verseTranslation)}
 	</span>
 
@@ -124,14 +112,11 @@
 			<!-- close footnote button -->
 			<button on:click={() => hideFootnote(value.meta.chapter, value.meta.verse, verseTranslationID)} title="Close footnote"><CrossSolid size={6} /></button>
 		</div>
-		<!-- <div class="text {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">...</div> -->
+		<div class="text {isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font}">...</div>
 	</div>
 
 	<!-- show translaton author name only if more than 1 was selected -->
-	<!-- {#if $__verseTranslations.length > 1}
-		<span class="opacity-70 {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslation.resource_id].resource_name}</span>
-	{/if} -->
 	{#if $__verseTranslations.length > 1}
-		<span class="opacity-70">&mdash; {selectableVerseTranslations[verseTranslationID].resource_name}</span>
+		<span class="opacity-70 {isTranslationRTL(verseTranslationID) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslationID].resource_name}</span>
 	{/if}
 </div>
