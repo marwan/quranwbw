@@ -24,11 +24,12 @@
 
 {#if $__verseTranslations.length > 0}
 	<div class={verseTranslationClasses} data-fontSize={fontSizes.verseTranslationText}>
-		<!-- for chapter page, we fetch the translation for the whole chapter in one go -->
 		{#if $__verseTranslationData}
 			{#each $__verseTranslations as id}
 				{@const verseKey = `${value.meta.chapter}:${value.meta.verse}`}
-				<Layout verseTranslationID={id} verseTranslation={$__verseTranslationData[id][verseKey]} {value} />
+				{#if $__verseTranslationData[id] && $__verseTranslationData[id][verseKey]}
+					<Layout verseTranslationID={id} verseTranslation={$__verseTranslationData[id][verseKey]} {value} />
+				{/if}
 			{/each}
 		{:else}
 			<Skeleton size="xxl" class="mb-2.5" />

@@ -49,34 +49,31 @@ export async function fetchChapterData(props) {
 	return data.data.verses;
 }
 
-// Fetch verse translation data
 export async function fetchVerseTranslationData(props) {
 	// Use translation IDs from props or fallback to store
 	if (!props.translations) props.translations = get(__verseTranslations);
 
-	// Get current data in store (don't clear the store before this!)
+	// Get current store data
 	const existingData = get(__verseTranslationData) || {};
 
-	// Filter translation IDs to only those not already in store
-	const idsToFetch = props.translations.filter((id) => !existingData[id]);
+	// Figure out which IDs actually need fetching
+	const idsToFetch = props.translations.filter((id) => {
+		const data = existingData[id];
+		// Check it's a non-null object with at least one key (i.e. valid JSON)
+		return !data || typeof data !== 'object' || Object.keys(data).length === 0;
+	});
 
-	// Start with whatever is already in the store
-	const finalData = { ...existingData };
-
-	// If nothing to fetch, just return existing data
+	// Early return if everything is already present
 	if (idsToFetch.length === 0) {
-		return finalData;
+		return existingData;
 	}
 
-	// Only clear the store if new data will be fetched and saved
-	if (!props.skipSave) __verseTranslationData.set(null);
-
-	// Fetch missing translations
+	// Fetch only missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
-		const url = `https://static.quranwbw.com/data/v4/translations/data/translation_${id}.json?v=112`;
+		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=112`;
 		try {
 			const res = await fetch(url);
-			if (!res.ok) throw new Error(`Failed to fetch translation with ID ${id}`);
+			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
 			const data = await res.json();
 			return { id, data };
 		} catch (err) {
@@ -87,17 +84,20 @@ export async function fetchVerseTranslationData(props) {
 
 	const results = await Promise.all(fetchPromises);
 
-	// Merge fetched data into final result
+	// Merge fetched data into existing store data
+	const updatedData = { ...existingData };
 	for (const { id, data } of results) {
 		if (data) {
-			finalData[id] = data;
+			updatedData[id] = data;
 		}
 	}
 
-	// Save to store if required
-	if (!props.skipSave) __verseTranslationData.set(finalData);
+	// Update the store (merge, don't reset to null!)
+	if (!props.skipSave) {
+		__verseTranslationData.set(updatedData);
+	}
 
-	return finalData;
+	return updatedData;
 }
 
 // Fetch timestamps for word-by-word highlighting
