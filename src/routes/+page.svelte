@@ -142,7 +142,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		background-image: url(https://static.quranwbw.com/data/v4/images/others/bg-image.svg);
+		background-image: url(../images/bg-image.svg);
 		background-position: center center;
 		background-size: cover;
 		opacity: 0.5;
