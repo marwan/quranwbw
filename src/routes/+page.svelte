@@ -66,7 +66,7 @@
 	</div>
 
 	<!-- mid section -->
-	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl !mt-2 {window.theme('bgSecondaryLight')} background-image">
+	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl !mt-2 {window.theme('bgSecondaryLight')} homepage-background-image">
 		<a href="/" class="flex flex-row space-x-4 px-2 items-center justify-left" aria-label="Home">
 			<div><Quran /></div>
 
@@ -130,22 +130,3 @@
 	<!-- chapter and most read tabs -->
 	<HomepageTabs />
 </div>
-
-<style>
-	.background-image {
-		position: relative;
-		z-index: 0;
-		overflow: hidden;
-	}
-
-	.background-image::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background-image: url(../images/bg-image.svg);
-		background-position: center center;
-		background-size: cover;
-		opacity: 0.5;
-		z-index: -1;
-	}
-</style>
