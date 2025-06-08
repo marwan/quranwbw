@@ -17,6 +17,7 @@
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
+	import DownloadModal from '$ui/Modals/DownloadModal.svelte';
 
 	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
@@ -24,6 +25,7 @@
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();
@@ -128,6 +130,9 @@
 	window.addEventListener('offline', () => {
 		__websiteOnline.set(false);
 	});
+
+	// Service Worker
+	// checkAndRegisterServiceWorker();
 </script>
 
 <div class="max-w-screen-lg mx-auto {paddingTop} {paddingBottom} {paddingX}">

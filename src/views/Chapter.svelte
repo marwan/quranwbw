@@ -56,7 +56,7 @@
 
 	// Fetch verse translation data if necessary
 	$: if ($__verseTranslations) {
-		fetchVerseTranslationData($__chapterNumber);
+		fetchVerseTranslationData({ chapter: $__chapterNumber });
 	}
 
 	// Update the layout for the previous/next verse buttons

@@ -38,7 +38,7 @@ let __websiteOnline,
 	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataSettings,
+	__downloadedDataInfo,
 	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
@@ -54,6 +54,7 @@ let __websiteOnline,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
+	__downloadModalVisible,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
@@ -178,10 +179,7 @@ if (browser) {
 	__morphologyKey = writable(null);
 
 	// to store all the offline data settings
-	__downloadedDataSettings = writable({
-		allChaptersDownloaded: false,
-		downloadedChapters: []
-	});
+	__downloadedDataInfo = writable(userSettings.downloadedDataInfo);
 
 	// to store the auto scroll speed
 	__autoScrollSpeed = writable(userSettings.displaySettings.autoScrollSpeed);
@@ -205,6 +203,7 @@ if (browser) {
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
+	__downloadModalVisible = writable(false);
 
 	// wake lock settings
 	__wakeLockEnabled = writable(userSettings.displaySettings.wakeLockEnabled);
@@ -288,7 +287,7 @@ export {
 	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataSettings,
+	__downloadedDataInfo,
 	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
@@ -304,6 +303,7 @@ export {
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
+	__downloadModalVisible,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,

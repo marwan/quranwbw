@@ -12,12 +12,13 @@
 	import { goto } from '$app/navigation';
 	import { __chapterNumber, __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __topNavbarVisible, __bottomToolbarVisible, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
-	import { apiEndpoint, apiVersion, apiByPassCache, errorLoadingDataMessage } from '$data/websiteSettings';
+	import { staticEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { splitDelimiter } from '$data/websiteSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
+	import { fetchChapterData } from '$utils/fetchData';
 	import '$lib/swiped-events.min.js';
 
 	// Lines to be centered instead of justified
@@ -37,7 +38,6 @@
 	$: if ([2, 3].includes($__fontType)) {
 		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
 			fetch(getMushafWordFontLink(thisPage));
-			fetch(`${apiEndpoint}/page?page=${thisPage}&word_type=${selectableFontTypes[$__fontType].apiId}&word_translation=${$__wordTranslation}&version=${apiVersion}&bypass_cache=${apiByPassCache}`);
 		}
 	}
 
@@ -48,10 +48,8 @@
 		lines = [];
 
 		pageData = (async () => {
-			const apiURL = `${apiEndpoint}/page?page=${page}&word_type=${selectableFontTypes[$__fontType].apiId}&word_translation=${$__wordTranslation}&version=${apiVersion}&bypass_cache=${apiByPassCache}`;
-			const response = await fetch(apiURL);
-			const data = await response.json();
-			const apiData = data.data.verses;
+			const data = await fetchVersesByPage(page, selectableFontTypes[$__fontType].apiId, $__wordTranslation);
+			const apiData = data.verses;
 			localStorage.setItem('pageData', JSON.stringify(apiData));
 
 			startingLine = apiData[Object.keys(apiData)[0]].words.line.split(splitDelimiter)[0];
@@ -99,6 +97,75 @@
 
 		// Update the page number
 		__pageNumber.set(page);
+	}
+
+	/**
+	 * This function retrieves and processes Quranic verses for a given page number.
+	 * It first fetches a JSON file (`keysInPage.json`) containing verse keys mapped to pages,
+	 * then extracts the specific chapters and verses required for the given page.
+	 * After identifying the necessary chapters, it fetches their complete data from an API
+	 * and filters out only the requested verses. The function then ensures that the verses
+	 * are sorted in ascending order based on chapter and verse numbers before returning
+	 * the final structured object. This optimizes API calls and provides well-organized data
+	 * for further use.
+	 */
+	async function fetchVersesByPage(page) {
+		try {
+			// Fetch keys for the given page
+			const response = await fetch(`${staticEndpoint}/meta/keysInPage.json?version=2`);
+			const keysData = await response.json();
+			const keysInPage = keysData[page];
+
+			// Parse keys into chapters and verses
+			const chaptersWithVerses = {};
+			keysInPage.split(',').forEach((key) => {
+				const [chapter, verse] = key.split(':').map(Number);
+				if (!chaptersWithVerses[chapter]) {
+					chaptersWithVerses[chapter] = [];
+				}
+				if (!chaptersWithVerses[chapter].includes(verse)) {
+					chaptersWithVerses[chapter].push(verse);
+				}
+			});
+
+			// Fetch data for each chapter and filter required verses
+			let stitchedVerses = {};
+
+			const fetchPromises = Object.entries(chaptersWithVerses).map(async ([chapter, verses]) => {
+				try {
+					const data = await fetchChapterData({ chapter, skipSave: true });
+
+					// Filter only the required verses
+					verses.forEach((verse) => {
+						const verseKey = `${chapter}:${verse}`;
+						if (data[verseKey]) {
+							stitchedVerses[verseKey] = data[verseKey]; // Add only needed verses
+						}
+					});
+				} catch (error) {
+					console.error(`Error fetching Chapter ${chapter}:`, error);
+				}
+			});
+
+			await Promise.all(fetchPromises); // Wait for all fetch requests to complete
+
+			// Sort the verses in ascending order before returning
+			const sortedVerses = Object.keys(stitchedVerses)
+				.sort((a, b) => {
+					const [chapterA, verseA] = a.split(':').map(Number);
+					const [chapterB, verseB] = b.split(':').map(Number);
+					return chapterA - chapterB || verseA - verseB;
+				})
+				.reduce((obj, key) => {
+					obj[key] = stitchedVerses[key];
+					return obj;
+				}, {});
+
+			return { verses: sortedVerses };
+		} catch (error) {
+			console.error('Error fetching data:', error);
+			return { verses: {} };
+		}
 	}
 
 	// Only allow continuous normal mode, without saving the setting

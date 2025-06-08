@@ -28,7 +28,8 @@ import {
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible
+	__homepageExtrasPanelVisible,
+	__downloadedDataInfo
 } from '$utils/stores';
 // import { uploadSettingsToCloud } from '$utils/cloudSettings';
 
@@ -120,6 +121,7 @@ export function updateSettings(props) {
 			// update the verse translations
 			userSettings.translations.verse_v1 = verseTranslations;
 			__verseTranslations.set(verseTranslations);
+
 			break;
 
 		// for verse tafsir
@@ -284,6 +286,12 @@ export function updateSettings(props) {
 			userSettings.displaySettings.homepageExtrasPanelVisible = props.value;
 			break;
 
+		// for offline data settings
+		case 'downloadedDataInfo':
+			__downloadedDataInfo.set(props.value);
+			userSettings.downloadedDataInfo = props.value;
+			break;
+
 		// for increasing/decreasing font sizes
 		case 'arabicText': // Arabic words
 		case 'wordTranslationText': // word translations & transliterations
@@ -314,7 +322,9 @@ export function updateSettings(props) {
 	}
 
 	// Track event change
-	if (trackEvent) window.umami.track('Setting Change', { type: props.type, value: props.value });
+	if (trackEvent) {
+		// window.umami.track('Setting Change', { type: props.type, value: props.value });
+	}
 
 	// update the settings back into localStorage and global store
 	__userSettings.set(JSON.stringify(userSettings));

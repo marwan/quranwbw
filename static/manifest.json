@@ -4,8 +4,8 @@
 	"description": "Quran Word By Word & Morphology",
 	"start_url": "/",
 	"display": "fullscreen",
-	"background_color": "#f9f9f9",
-	"theme_color": "#f9f9f9",
+	"background_color": "#ffffff",
+	"theme_color": "#ffffff",
 	"icons": [
 		{
 			"src": "/images/icon-192.png",
@@ -27,11 +27,11 @@
 	"lang": "en",
 	"categories": ["books", "education"],
 	"screenshots": [
-		{ "src": "/images/screenshots/mobile/1.png", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
-		{ "src": "/images/screenshots/mobile/2.png", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
-		{ "src": "/images/screenshots/mobile/3.png", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
-		{ "src": "/images/screenshots/mobile/4.png", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
-		{ "src": "/images/screenshots/mobile/5.png", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
-		{ "src": "/images/screenshots/mobile/6.png", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" }
+		{ "src": "/images/screenshots/mobile/1.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
+		{ "src": "/images/screenshots/mobile/2.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
+		{ "src": "/images/screenshots/mobile/3.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
+		{ "src": "/images/screenshots/mobile/4.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
+		{ "src": "/images/screenshots/mobile/5.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
+		{ "src": "/images/screenshots/mobile/6.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" }
 	]
 }

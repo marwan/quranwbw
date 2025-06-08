@@ -8,7 +8,7 @@
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { createLink } from '$utils/createLink';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { apiEndpoint, staticEndpoint } from '$data/websiteSettings';
 	import { downloadTextFile } from '$utils/downloadTextFile';
 	import { getVerseText } from '$utils/getVerseText';
 
@@ -55,6 +55,8 @@
 		fetchingData = true;
 
 		const params = {
+			id: 1,
+			type: 'copy',
 			raw: true,
 			from: $__verseKey,
 			to: $__verseKey,
@@ -68,12 +70,12 @@
 		// Append translation param if translation was selected
 		if ([2, 3].includes(textType)) params.translations = $__verseTranslations.toString();
 
-		const api = `https://quran.com/api/proxy/content/api/qdc/verses/advanced_copy?` + new URLSearchParams(params);
+		const api = `${apiEndpoint}/translations?` + new URLSearchParams(params);
 		const response = await fetch(api);
 		const data = await response.json();
 		fetchingData = false;
 
-		return data.result;
+		return data.data.result;
 	}
 
 	// Function to manipulate the fetched string data

@@ -1,3 +1,15 @@
+### Mar 15, 2025
+
+- **New Font:** Added **Nastaleeq Hafs Bold**, a bold version of the standard **Nastaleeq Hafs** font for enhanced readability.
+
+---
+
+### Mar 7, 2025
+
+- **New Font:** Added **Uthmanic Digital Bold**, the bold version of the **Uthmanic Digital** font, providing a clearer and stronger text display.
+
+---
+
 ### Mar 1, 2025
 
 - **Re-added Persian Word-by-Word Language:** The **Persian word-by-word translation** is back after being temporarily removed in a previous update. Thank you for your patience!
