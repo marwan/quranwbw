@@ -107,6 +107,23 @@
   border-radius: 15px;
 }
 
+.homepage-background-image {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.homepage-background-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("../images/bg-image.png");
+  background-position: center center;
+  background-size: cover;
+  opacity: 0.5;
+  z-index: -1;
+}
+
 /* Scrollbar Colors */
 html.theme-1 ::-webkit-scrollbar-thumb { background: #b1901f; } /* Golden Glint */
 html.theme-2 ::-webkit-scrollbar-thumb { background: #000000; } /* Classic Light */

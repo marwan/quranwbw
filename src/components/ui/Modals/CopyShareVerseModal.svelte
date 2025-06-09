@@ -237,7 +237,7 @@
 
 							<!-- Font Links -->
 							<span class="flex flex-col space-y-3 text-xs opacity-70">
-								<span>You may download the {fontTypes[fontType].name} font from {@html createLink(`${staticEndpoint}/fonts/Archives/${fontTypes[fontType].name}.zip?version=1`, 'here')}.</span>
+								<span>You may download the fonts from {@html createLink('https://github.com/marwan/quranwbw/tree/main/static/fonts', 'here')}.</span>
 							</span>
 						</div>
 					{/if}
