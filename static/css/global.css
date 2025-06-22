@@ -1349,6 +1349,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   display: table;
 }
 
+.\!table {
+  display: table !important;
+}
+
 .grid {
   display: grid;
 }
