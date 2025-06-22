@@ -1,7 +1,7 @@
 import { db } from '$lib/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
-import { apiEndpoint, staticEndpoint, translationsDataEndpoint, apiVersion, apiByPassCache } from '$data/websiteSettings';
+import { apiEndpoint, staticEndpoint, apiVersion, apiByPassCache } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
 
 // Fetch specific verses (startVerse to endVerse) and cache chapter data
@@ -86,7 +86,7 @@ export async function fetchVerseTranslationData(props) {
 
 	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
-		const url = `${translationsDataEndpoint}/translations/translation_${id}.json?v=112`;
+		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=113`;
 		try {
 			const res = await fetch(url);
 			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);

@@ -8,7 +8,7 @@ export const wbwLanguages = 'English, Urdu, Hindi, Indonesian, Bangla, Turkish, 
 
 export const apiVersion = 140;
 
-export const useLocalAPI = false;
+export const useLocalAPI = true;
 
 export const apiByPassCache = false; // If true, api response will not be cached by Cloudflare
 
@@ -17,8 +17,6 @@ export const apiEndpoint = useLocalAPI ? 'http://localhost:7500/v1' : 'https://a
 export const staticEndpoint = 'https://static.quranwbw.com/data/v4';
 
 export const wordsAudioURL = 'https://audios.quranwbw.com/words';
-
-export const translationsDataEndpoint = 'https://translations-data.quranwbw.com';
 
 export const mushafFontVersion = 7;
 

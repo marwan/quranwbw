@@ -4,9 +4,8 @@
 	export let value;
 
 	import CrossSolid from '$svgs/CrossSolid.svelte';
-	import { __userSettings, __verseTranslations, __currentPage } from '$utils/stores';
+	import { __userSettings, __verseTranslations, __verseTranslationData, __currentPage } from '$utils/stores';
 	import { selectableVerseTranslations, rightToLeftVerseTranslations } from '$data/options';
-	import { translationsDataEndpoint } from '$data/websiteSettings';
 
 	// Retrieve URL parameters
 	const params = new URLSearchParams(window.location.search);
@@ -29,12 +28,7 @@
 		footnoteVerse = +event.getAttribute('data-verse');
 		footnoteTranslation = +event.getAttribute('data-translation');
 		footnoteNumber = +event.innerText;
-
-		// Fetch footnote
-		const apiURL = `${translationsDataEndpoint}/footnotes/${footnoteId}.json`;
-		const response = await fetch(apiURL);
-		const data = await response.json();
-		footnoteText = data.foot_note.text;
+		footnoteText = $__verseTranslationData[footnoteTranslation][`${footnoteChapter}:${footnoteVerse}`].footnotes[footnoteId - 1];
 		window.umami.track('Verse Footnote Button');
 	}
 
@@ -76,7 +70,7 @@
 
 	// Function to modify the verse text
 	function verseTextModifier(verseText) {
-		let updatedVerseText = verseText;
+		let updatedVerseText = verseText.text;
 
 		// If query parameter was set (from the search page), highlight the query in the verse translation
 		if (params.get('query') !== null) {
