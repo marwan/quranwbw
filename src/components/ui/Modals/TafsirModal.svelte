@@ -2,7 +2,7 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import SingleArabicVerse from '$display/verses/SingleArabicVerse.svelte';
-	import { errorLoadingDataMessage } from '$data/websiteSettings';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __tafsirModalVisible, __verseKey, __verseTafsir } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
@@ -37,7 +37,7 @@
 			const data = await response.json();
 			return data.ayahs;
 		} catch (error) {
-			console.error(errorLoadingDataMessage);
+			console.error(error);
 			return [];
 		}
 	}
@@ -100,7 +100,7 @@
 				</div>
 			</div>
 		{:catch error}
-			<p>{errorLoadingDataMessage}</p>
+			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 	</div>
 

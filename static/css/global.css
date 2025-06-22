@@ -2691,6 +2691,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   padding-top: 2rem;
 }
 
+.pt-\[30vh\] {
+  padding-top: 30vh;
+}
+
 .text-left {
   text-align: left;
 }

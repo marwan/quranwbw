@@ -9,10 +9,11 @@
 	import Minimize from '$svgs/Minimize.svelte';
 	// import BottomToolbarButtons from '$ui/BottomToolbar/BottomToolbarButtons.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { goto } from '$app/navigation';
 	import { __chapterNumber, __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __topNavbarVisible, __bottomToolbarVisible, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
-	import { staticEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
+	import { staticEndpoint } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
@@ -210,7 +211,7 @@
 			</div>
 		</div>
 	{:catch error}
-		<p>{errorLoadingDataMessage}</p>
+		<ErrorLoadingDataFromAPI />
 	{/await}
 </div>
 

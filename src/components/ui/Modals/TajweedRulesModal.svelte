@@ -1,10 +1,11 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { __websiteTheme, __tajweedRulesModalVisible, __currentPage, __chapterNumber } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { staticEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
+	import { staticEndpoint } from '$data/websiteSettings';
 	import { linkClasses } from '$data/commonClasses';
 	import { createLink } from '$utils/createLink';
 
@@ -69,7 +70,7 @@
 			</tbody>
 		</table>
 	{:catch error}
-		<p>{errorLoadingDataMessage}</p>
+		<ErrorLoadingDataFromAPI center="false" />
 	{/await}
 
 	<!-- links to PDF files -->

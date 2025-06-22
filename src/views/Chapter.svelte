@@ -4,11 +4,11 @@
 	import Bismillah from '$display/Bismillah.svelte';
 	import Chapter from '$display/verses/modes/Chapter.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { parseURL } from '$utils/parseURL';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableDisplays } from '$data/options';
-	import { errorLoadingDataMessage } from '$data/websiteSettings';
 	import { __userSettings, __currentPage, __chapterNumber, __displayType, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __pageURL, __firstVerseOnPage, __chapterDataLoaded, __verseTranslationData } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { goto } from '$app/navigation';
@@ -99,6 +99,6 @@
 			<Chapter {startVerse} {endVerse} />
 		</div>
 	{:catch error}
-		<p>{errorLoadingDataMessage}</p>
+		<ErrorLoadingDataFromAPI />
 	{/await}
 </div>

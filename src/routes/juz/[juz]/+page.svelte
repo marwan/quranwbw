@@ -29,7 +29,7 @@
 
 				return data[juzNumber];
 			} catch (error) {
-				console.error(errorLoadingDataMessage, error);
+				console.error(error);
 				return [];
 			}
 		})();

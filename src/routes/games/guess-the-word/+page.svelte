@@ -5,7 +5,8 @@
 	import Check from '$svgs/Check.svelte';
 	import Cross from '$svgs/Cross.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import { apiEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import { apiEndpoint } from '$data/websiteSettings';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
 	import { updateSettings } from '$utils/updateSettings';
@@ -25,7 +26,7 @@
 			const data = await response.json();
 			return data.data;
 		} catch (error) {
-			console.error(errorLoadingDataMessage, error);
+			console.error(error);
 			return [];
 		}
 	})();
@@ -131,7 +132,7 @@
 				</div>
 			</div>
 		{:catch error}
-			<p>{errorLoadingDataMessage}</p>
+			<ErrorLoadingDataFromAPI />
 		{/await}
 	</div>
 </div>

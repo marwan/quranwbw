@@ -1,8 +1,9 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import { staticEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
+	import { staticEndpoint } from '$data/websiteSettings';
 	import { __lexiconModalVisible, __wordRoot } from '$utils/stores';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 
 	let lexiconData;
 
@@ -36,6 +37,6 @@
 			</div>
 		</div>
 	{:catch error}
-		<p>{errorLoadingDataMessage}</p>
+		<ErrorLoadingDataFromAPI center="false" />
 	{/await}
 </Modal>
