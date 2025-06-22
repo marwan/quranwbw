@@ -58,25 +58,43 @@ export async function fetchVerseTranslationData(props) {
 	// Get current store data
 	const existingData = get(__verseTranslationData) || {};
 
-	// Figure out which IDs actually need fetching
-	const idsToFetch = props.translations.filter((id) => {
-		const data = existingData[id];
-		// Check it's a non-null object with at least one key (i.e. valid JSON)
-		return !data || typeof data !== 'object' || Object.keys(data).length === 0;
-	});
+	// Final object to hold the complete data
+	const updatedData = { ...existingData };
 
-	// Early return if everything is already present
-	if (idsToFetch.length === 0) {
-		return existingData;
+	// Filter translation IDs that need to be fetched (not in store or cache)
+	const idsToFetch = [];
+
+	for (const id of props.translations) {
+		// Try to load from cache first
+		const cacheKey = `translation_${id}`;
+		const cached = await useCache(cacheKey, 'translation');
+
+		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
+			updatedData[id] = cached;
+		} else {
+			idsToFetch.push(id);
+		}
 	}
 
-	// Fetch only missing translations
+	// Early return if everything was found in cache/store
+	if (idsToFetch.length === 0) {
+		// Update the store
+		if (!props.skipSave) __verseTranslationData.set(updatedData);
+
+		return updatedData;
+	}
+
+	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
 		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=112`;
 		try {
 			const res = await fetch(url);
 			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
 			const data = await res.json();
+
+			// Save to cache
+			await useCache(`translation_${id}`, 'translation', data);
+
 			return { id, data };
 		} catch (err) {
 			console.error(`Error fetching translation ${id}:`, err);
@@ -86,18 +104,15 @@ export async function fetchVerseTranslationData(props) {
 
 	const results = await Promise.all(fetchPromises);
 
-	// Merge fetched data into existing store data
-	const updatedData = { ...existingData };
+	// Merge fetched data into final object
 	for (const { id, data } of results) {
 		if (data) {
 			updatedData[id] = data;
 		}
 	}
 
-	// Update the store (merge, don't reset to null!)
-	if (!props.skipSave) {
-		__verseTranslationData.set(updatedData);
-	}
+	// Update the store
+	if (!props.skipSave) __verseTranslationData.set(updatedData);
 
 	return updatedData;
 }
