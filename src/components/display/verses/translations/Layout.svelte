@@ -6,7 +6,7 @@
 	import CrossSolid from '$svgs/CrossSolid.svelte';
 	import { __userSettings, __verseTranslations, __currentPage } from '$utils/stores';
 	import { selectableVerseTranslations, rightToLeftVerseTranslations } from '$data/options';
-	import { apiEndpoint } from '$data/websiteSettings';
+	import { translationsDataEndpoint } from '$data/websiteSettings';
 
 	// Retrieve URL parameters
 	const params = new URLSearchParams(window.location.search);
@@ -31,16 +31,10 @@
 		footnoteNumber = +event.innerText;
 
 		// Fetch footnote
-		const apiURL =
-			`${apiEndpoint}/translations?` +
-			new URLSearchParams({
-				id: footnoteId,
-				type: 'footnote'
-			});
-
+		const apiURL = `${translationsDataEndpoint}/footnotes/${footnoteId}.json`;
 		const response = await fetch(apiURL);
 		const data = await response.json();
-		footnoteText = data.data.foot_note.text;
+		footnoteText = data.foot_note.text;
 		window.umami.track('Verse Footnote Button');
 	}
 
