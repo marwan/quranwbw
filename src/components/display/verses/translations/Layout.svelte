@@ -28,7 +28,10 @@
 		footnoteVerse = +event.getAttribute('data-verse');
 		footnoteTranslation = +event.getAttribute('data-translation');
 		footnoteNumber = +event.innerText;
-		footnoteText = $__verseTranslationData[footnoteTranslation][`${footnoteChapter}:${footnoteVerse}`].footnotes[footnoteId - 1];
+
+		const footnotes = $__verseTranslationData?.[footnoteTranslation]?.[`${footnoteChapter}:${footnoteVerse}`]?.footnotes;
+		footnoteText = footnotes?.[footnoteId - 1] || 'Footnote not available.';
+
 		window.umami.track('Verse Footnote Button');
 	}
 

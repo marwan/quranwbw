@@ -66,7 +66,7 @@ export async function fetchVerseTranslationData(props) {
 
 	for (const id of props.translations) {
 		// Try to load from cache first
-		const cacheKey = `translation_${id}`;
+		const cacheKey = `translation_${id}_${apiVersion}`;
 		const cached = await useCache(cacheKey, 'translation');
 
 		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
@@ -86,7 +86,7 @@ export async function fetchVerseTranslationData(props) {
 
 	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
-		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=113`;
+		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=${apiVersion}`;
 		try {
 			const res = await fetch(url);
 			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
