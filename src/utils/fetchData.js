@@ -93,7 +93,7 @@ export async function fetchVerseTranslationData(props) {
 			const data = await res.json();
 
 			// Save to cache
-			await useCache(`translation_${id}`, 'translation', data);
+			await useCache(`translation_${id}_${apiVersion}`, 'translation', data);
 
 			return { id, data };
 		} catch (err) {
@@ -125,16 +125,26 @@ export async function fetchTimestampData(chapter) {
 	__timestampData.set(data);
 }
 
-// Unified cache utility function for IndexedDB with timestamp validation
+// Unified cache utility for IndexedDB with version and freshness control
 async function useCache(key, type, dataToSet = undefined) {
 	try {
-		// Select the correct table based on the type
+		// Select the appropriate table based on the type
 		const table = type === 'chapter' ? db.chapter_data : db.translation_data;
-
 		if (!table) throw new Error(`Invalid table for type: ${type}`);
 
+		// Access the version table to verify current API version
+		const versionTable = db.data_version;
+		const versionRecord = await versionTable.get('version');
+		const storedVersion = versionRecord?.value;
+
+		// If no version exists or it doesn't match the current version,
+		// clear both caches and update the stored version
+		if (storedVersion !== apiVersion) {
+			await Promise.all([db.chapter_data.clear(), db.translation_data.clear(), versionTable.put({ key: 'version', value: apiVersion })]);
+		}
+
 		if (dataToSet !== undefined) {
-			// Store data along with a timestamp (in milliseconds)
+			// Set data in the cache with current timestamp
 			await table.put({
 				key,
 				data: dataToSet,
@@ -142,23 +152,23 @@ async function useCache(key, type, dataToSet = undefined) {
 			});
 			return true;
 		} else {
-			// Attempt to get the cached record
+			// Attempt to retrieve cached data
 			const record = await table.get(key);
-
 			if (!record) return null;
 
-			const isFresh = Date.now() - record.timestamp < 7 * 24 * 60 * 60 * 1000; // 7 days
-
+			// Check if the cached data is fresh (within 7 days)
+			const isFresh = Date.now() - record.timestamp < 7 * 24 * 60 * 60 * 1000;
 			if (isFresh) {
 				return record.data;
 			} else {
-				// Data is stale: delete it and return null to trigger fresh fetch
+				// If stale, delete it and return null to trigger a fresh fetch
 				await table.delete(key);
 				return null;
 			}
 		}
 	} catch (error) {
-		console.error('IndexedDB cache error:', error);
+		// Log any unexpected errors and return appropriate fallback
+		console.error('IndexedDB cache error:', error?.message || error);
 		return dataToSet !== undefined ? false : null;
 	}
 }
