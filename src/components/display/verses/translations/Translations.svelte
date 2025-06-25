@@ -11,15 +11,6 @@
 
 	// Fetch verse translations for pages other than chapter (reactive)
 	$: if ($__currentPage !== 'chapter') fetchVerseTranslationData({ reRenderWhenTheseUpdates: $__verseTranslations });
-
-	// This function takes two arguments: translationsObject and translationsSelected.
-	// It first filters out IDs 1 or 3 (transliterations) from translationsSelected.
-	// Then, it maps the remaining IDs to their corresponding translation objects from translationsObject, returning a sorted array of these translation objects in the specified order.
-	// This ensures that the translations are displayed in the desired sequence
-	function getSortedTranslations(translationsObject, translationsSelected) {
-		const filteredSelections = translationsSelected.filter((id) => id !== 1 && id !== 3);
-		return filteredSelections.map((id) => translationsObject.find((translation) => translation.resource_id === id));
-	}
 </script>
 
 {#if $__verseTranslations.length > 0}
