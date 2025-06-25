@@ -4,8 +4,9 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Table from './Table.svelte';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { apiEndpoint, apiVersion, apiByPassCache, staticEndpoint, errorLoadingDataMessage } from '$data/websiteSettings';
+	import { apiEndpoint, apiVersion, apiByPassCache, staticEndpoint } from '$data/websiteSettings';
 	import { __currentPage, __fontType, __wordTranslation, __verseTranslations, __wordTransliteration, __morphologyKey, __lexiconModalVisible, __wordRoot } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
@@ -41,7 +42,7 @@
 				// fetchWordsData1 = data.data;
 				return data.data;
 			} catch (error) {
-				console.error(errorLoadingDataMessage, error);
+				console.error(error);
 				return [];
 			}
 		})();
@@ -53,7 +54,7 @@
 				const data = await response.json();
 				return data;
 			} catch (error) {
-				console.error(errorLoadingDataMessage, error);
+				console.error(error);
 				return {};
 			}
 		})();
@@ -102,7 +103,7 @@
 				<WordsBlock key={`${chapter}:${verse}`} {value} />
 			</div>
 		{:catch error}
-			<p>{errorLoadingDataMessage}</p>
+			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 	</div>
 
@@ -133,7 +134,7 @@
 				{/if}
 			</div>
 		{:catch error}
-			<p>{errorLoadingDataMessage}</p>
+			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 	</div>
 
@@ -180,7 +181,7 @@
 				</div>
 			{/if}
 		{:catch error}
-			<p>{errorLoadingDataMessage}</p>
+			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 	</div>
 </div>

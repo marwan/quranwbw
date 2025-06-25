@@ -4,9 +4,8 @@
 	export let value;
 
 	import CrossSolid from '$svgs/CrossSolid.svelte';
-	import { __userSettings, __verseTranslations, __currentPage } from '$utils/stores';
+	import { __userSettings, __verseTranslations, __verseTranslationData, __currentPage } from '$utils/stores';
 	import { selectableVerseTranslations, rightToLeftVerseTranslations } from '$data/options';
-	import { apiEndpoint } from '$data/websiteSettings';
 
 	// Retrieve URL parameters
 	const params = new URLSearchParams(window.location.search);
@@ -30,17 +29,9 @@
 		footnoteTranslation = +event.getAttribute('data-translation');
 		footnoteNumber = +event.innerText;
 
-		// Fetch footnote
-		const apiURL =
-			`${apiEndpoint}/translations?` +
-			new URLSearchParams({
-				id: footnoteId,
-				type: 'footnote'
-			});
+		const footnotes = $__verseTranslationData?.[footnoteTranslation]?.[`${footnoteChapter}:${footnoteVerse}`]?.footnotes;
+		footnoteText = footnotes?.[footnoteId - 1] || 'Footnote not available.';
 
-		const response = await fetch(apiURL);
-		const data = await response.json();
-		footnoteText = data.data.foot_note.text;
 		window.umami.track('Verse Footnote Button');
 	}
 
@@ -82,7 +73,7 @@
 
 	// Function to modify the verse text
 	function verseTextModifier(verseText) {
-		let updatedVerseText = verseText;
+		let updatedVerseText = verseText.text;
 
 		// If query parameter was set (from the search page), highlight the query in the verse translation
 		if (params.get('query') !== null) {
@@ -93,21 +84,12 @@
 		return updatedVerseText;
 	}
 
-	// function detectVersesInFootnote(footnote) {
-	// 	const regex = /\d{0,9}(:\d{0,9})*/g;
-	// 	let matches = footnote.match(regex);
-	// 	matches = matches.filter(function (e) {
-	// 		return e;
-	// 	});
-	// 	if (matches.length > 0) console.log(matches);
-	// }
-
 	window.supClick = supClick;
 </script>
 
 <div class="flex flex-col print:break-inside-avoid">
-	<span class="{isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">
-		{@html verseTextModifier(verseTranslation.text)}
+	<span class="{isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font}">
+		{@html verseTextModifier(verseTranslation)}
 	</span>
 
 	<!-- translation footnotes -->
@@ -121,11 +103,11 @@
 			<!-- close footnote button -->
 			<button on:click={() => hideFootnote(value.meta.chapter, value.meta.verse, verseTranslationID)} title="Close footnote"><CrossSolid size={6} /></button>
 		</div>
-		<div class="text {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'} {selectableVerseTranslations[verseTranslation.resource_id].font}">...</div>
+		<div class="text {isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font}">...</div>
 	</div>
 
 	<!-- show translaton author name only if more than 1 was selected -->
 	{#if $__verseTranslations.length > 1}
-		<span class="opacity-70 {isTranslationRTL(verseTranslation.resource_id) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslation.resource_id].resource_name}</span>
+		<span class="opacity-70 {isTranslationRTL(verseTranslationID) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslationID].resource_name}</span>
 	{/if}
 </div>

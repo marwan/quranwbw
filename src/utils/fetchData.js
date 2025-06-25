@@ -1,4 +1,4 @@
-// import { db } from '$lib/db';
+import { db } from '$lib/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
 import { apiEndpoint, staticEndpoint, apiVersion, apiByPassCache } from '$data/websiteSettings';
@@ -7,21 +7,23 @@ import { selectableFontTypes } from '$data/options';
 // Fetch specific verses (startVerse to endVerse) and cache chapter data
 export async function fetchChapterData(props) {
 	if (!props.skipSave) __chapterData.set(null);
+
 	const fontType = props.fontType || get(__fontType);
 	const wordTranslation = props.wordTranslation || get(__wordTranslation);
 	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
 
-	// // Generate a unique key for the data
-	// const cacheKey = `${props.chapter}--${selectableFontTypes[fontType].apiId}--${wordTranslation}--${wordTransliteration}`;
+	// Generate a unique key for the data
+	const cacheKey = `${props.chapter}_${selectableFontTypes[fontType].apiId}_${wordTranslation}_${wordTransliteration}_${apiVersion}`;
 
-	// // Check if data exists in the database
-	// const cachedRecord = await db.api_data.get(cacheKey);
-	// if (cachedRecord && cachedRecord.data) {
-	// 	if (!props.skipSave) __chapterData.set(cachedRecord.data);
-	// 	return cachedRecord.data;
-	// }
+	// Try to load from cache
+	const cachedData = await useCache(cacheKey, 'chapter');
 
-	// Build the API URL
+	if (cachedData) {
+		if (!props.skipSave) __chapterData.set(cachedData);
+		return cachedData;
+	}
+
+	// Build API URL
 	const apiURL =
 		`${apiEndpoint}/chapter?` +
 		new URLSearchParams({
@@ -29,67 +31,90 @@ export async function fetchChapterData(props) {
 			word_type: selectableFontTypes[fontType].apiId,
 			word_translation: wordTranslation,
 			word_transliteration: wordTransliteration,
-			verse_translation: '1,3',
 			version: apiVersion,
 			bypass_cache: apiByPassCache
 		});
 
-	// Fetch data from the API
+	// Fetch from API
 	const response = await fetch(apiURL);
 	if (!response.ok) {
 		throw new Error('Failed to fetch data from the API');
 	}
 	const data = await response.json();
 
-	// Save the fetched data to the database with the custom key
-	// await db.api_data.put({ key: cacheKey, data: data.data.verses });
+	// Save to cache
+	await useCache(cacheKey, 'chapter', data.data.verses);
 
-	// Update the store if required
+	// Update store
 	if (!props.skipSave) __chapterData.set(data.data.verses);
 
 	return data.data.verses;
 }
 
-// Get verse translations from Quran.com's API as a separate request compared to the rest of the verse data (from our API)
-// Fetch verse translation data and cache it
 export async function fetchVerseTranslationData(props) {
-	if (!props.skipSave) __verseTranslationData.set(null);
+	// Use translation IDs from props or fallback to store
+	if (!props.translations) props.translations = get(__verseTranslations);
 
-	if (!props.translations) props.translations = get(__verseTranslations).toString();
+	// Get current store data
+	const existingData = get(__verseTranslationData) || {};
 
-	// // Generate a unique key for the data
-	// const cacheKey = `${props.chapter}--${props.translations}`;
+	// Final object to hold the complete data
+	const updatedData = { ...existingData };
 
-	// // Check if data exists in the database
-	// const cachedRecord = await db.api_data.get(cacheKey);
-	// if (cachedRecord && cachedRecord.data) {
-	// 	if (!props.skipSave) __verseTranslationData.set(cachedRecord.data);
-	// 	return cachedRecord.data;
-	// }
+	// Filter translation IDs that need to be fetched (not in store or cache)
+	const idsToFetch = [];
 
-	// Build the API URL
-	const apiURL =
-		`${apiEndpoint}/translations?` +
-		new URLSearchParams({
-			chapter: props.chapter,
-			id: props.translations,
-			type: 'translation'
-		});
+	for (const id of props.translations) {
+		// Try to load from cache first
+		const cacheKey = `translation_${id}_${apiVersion}`;
+		const cached = await useCache(cacheKey, 'translation');
 
-	// Fetch data from the API
-	const response = await fetch(apiURL);
-	if (!response.ok) {
-		throw new Error('Failed to fetch data from the API');
+		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
+			updatedData[id] = cached;
+		} else {
+			idsToFetch.push(id);
+		}
 	}
-	const data = await response.json();
 
-	// Save the fetched data to the database with the custom key
-	// await db.api_data.put({ key: cacheKey, data: data.verses });
+	// Early return if everything was found in cache/store
+	if (idsToFetch.length === 0) {
+		// Update the store
+		if (!props.skipSave) __verseTranslationData.set(updatedData);
+
+		return updatedData;
+	}
+
+	// Fetch missing translations
+	const fetchPromises = idsToFetch.map(async (id) => {
+		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=${apiVersion}`;
+		try {
+			const res = await fetch(url);
+			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
+			const data = await res.json();
+
+			// Save to cache
+			await useCache(`translation_${id}_${apiVersion}`, 'translation', data);
+
+			return { id, data };
+		} catch (err) {
+			console.error(`Error fetching translation ${id}:`, err);
+			return { id, data: null };
+		}
+	});
+
+	const results = await Promise.all(fetchPromises);
+
+	// Merge fetched data into final object
+	for (const { id, data } of results) {
+		if (data) {
+			updatedData[id] = data;
+		}
+	}
 
 	// Update the store
-	if (!props.skipSave) __verseTranslationData.set(data.data.verses);
+	if (!props.skipSave) __verseTranslationData.set(updatedData);
 
-	return data.data.verses;
+	return updatedData;
 }
 
 // Fetch timestamps for word-by-word highlighting
@@ -98,4 +123,52 @@ export async function fetchTimestampData(chapter) {
 	const response = await fetch(apiURL);
 	const data = await response.json();
 	__timestampData.set(data);
+}
+
+// Unified cache utility for IndexedDB with version and freshness control
+async function useCache(key, type, dataToSet = undefined) {
+	try {
+		// Select the appropriate table based on the type
+		const table = type === 'chapter' ? db.chapter_data : db.translation_data;
+		if (!table) throw new Error(`Invalid table for type: ${type}`);
+
+		// Access the version table to verify current API version
+		const versionTable = db.data_version;
+		const versionRecord = await versionTable.get('version');
+		const storedVersion = versionRecord?.value;
+
+		// If no version exists or it doesn't match the current version,
+		// clear both caches and update the stored version
+		if (storedVersion !== apiVersion) {
+			await Promise.all([db.chapter_data.clear(), db.translation_data.clear(), versionTable.put({ key: 'version', value: apiVersion })]);
+		}
+
+		if (dataToSet !== undefined) {
+			// Set data in the cache with current timestamp
+			await table.put({
+				key,
+				data: dataToSet,
+				timestamp: Date.now()
+			});
+			return true;
+		} else {
+			// Attempt to retrieve cached data
+			const record = await table.get(key);
+			if (!record) return null;
+
+			// Check if the cached data is fresh (within 7 days)
+			const isFresh = Date.now() - record.timestamp < 7 * 24 * 60 * 60 * 1000;
+			if (isFresh) {
+				return record.data;
+			} else {
+				// If stale, delete it and return null to trigger a fresh fetch
+				await table.delete(key);
+				return null;
+			}
+		}
+	} catch (error) {
+		// Log any unexpected errors and return appropriate fallback
+		console.error('IndexedDB cache error:', error?.message || error);
+		return dataToSet !== undefined ? false : null;
+	}
 }

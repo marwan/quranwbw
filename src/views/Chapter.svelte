@@ -4,11 +4,11 @@
 	import Bismillah from '$display/Bismillah.svelte';
 	import Chapter from '$display/verses/modes/Chapter.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { parseURL } from '$utils/parseURL';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableDisplays } from '$data/options';
-	import { errorLoadingDataMessage } from '$data/websiteSettings';
 	import { __userSettings, __currentPage, __chapterNumber, __displayType, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __pageURL, __firstVerseOnPage, __chapterDataLoaded, __verseTranslationData } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { goto } from '$app/navigation';
@@ -54,10 +54,7 @@
 		}
 	}
 
-	// Fetch verse translation data if necessary
-	$: if ($__verseTranslations) {
-		fetchVerseTranslationData({ chapter: $__chapterNumber });
-	}
+	$: fetchVerseTranslationData({ reRenderWhenTheseUpdates: $__verseTranslations });
 
 	// Update the layout for the previous/next verse buttons
 	$: loadPrevNextVerseButtons = `flex ${selectableDisplays[JSON.parse($__userSettings).displaySettings.displayType].continuous ? 'flex-row-reverse' : 'flex-row'} space-x-4 justify-center pt-8 pb-6`;
@@ -102,6 +99,6 @@
 			<Chapter {startVerse} {endVerse} />
 		</div>
 	{:catch error}
-		<p>{errorLoadingDataMessage}</p>
+		<ErrorLoadingDataFromAPI />
 	{/await}
 </div>

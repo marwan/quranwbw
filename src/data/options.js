@@ -381,11 +381,11 @@ export const selectableVerseTranslations = {
 		resource_name: 'Transliteration (Syllables)',
 		language_id: 11115
 	},
-	// 57: {
-	// 	resource_id: 57,
-	// 	resource_name: 'Transliteration (Normal)',
-	// 	language_id: 11115
-	// },
+	57: {
+		resource_id: 57,
+		resource_name: 'Transliteration (Normal)',
+		language_id: 11115
+	},
 
 	// turkish
 	210: {
