@@ -13,7 +13,7 @@
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
-	let fetchWordSummary, fetchWordVerbs, fetchExactWordsInQuran, fetchWordsWithSameRoot;
+	let fetchWordSummary, fetchWordVerbs, fetchExactWordsInQuran;
 	let chapter, verse, word;
 	let wordRoot = '';
 
@@ -64,10 +64,10 @@
 			try {
 				const [keyMapRes, exactMapRes] = await Promise.all([
 					// key, arabic, english and transliteration data
-					fetch(`${staticEndpoint}/morphology-data/word-keys-map.json?v=1`),
+					fetch(`${staticEndpoint}/morphology-data/word-keys-map.json?version=1`),
 
 					// exact words in quran
-					fetch(`${staticEndpoint}/morphology-data/exact-words-in-quran.json`)
+					fetch(`${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=1`)
 				]);
 
 				const keyMap = await keyMapRes.json();
