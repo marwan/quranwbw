@@ -181,41 +181,64 @@
 			<Spinner />
 		{:then fetchWordsData}
 			{#if !Object.values(fetchWordsData[0].morphology.verbs).every((o) => o === null)}
-				{#if Object.keys(fetchWordsData[0].morphology.root.words_with_same_root).length > 0}
-					<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
-						<div class="flex flex-col">
-							<div id="different-verbs">
-								<div class="mx-auto text-center">
-									<div class="relative grid gap-4 grid-cols-2 row-gap-3 md:row-gap-4 md:grid-cols-6">
-										{#each Object.entries(fetchWordsData[0].morphology.verbs) as [key, value]}
-											{#if value !== null}
-												<div class="flex flex-col py-5 duration-300 transform {window.theme('bgMain')} border {window.theme('border')} rounded-3xl shadow-sm text-center hover:-translate-y-2">
-													<div class="flex items-center justify-center mb-2">
-														<p id="verb-1" class="text-xl md:text-2xl pb-4 leading-5 arabic-font-{$__fontType}">{value}</p>
-													</div>
-													<p class="text-xs capitalize opacity-70">{key.replace('_', ' ')}</p>
+				<!-- {#if Object.keys(fetchWordsData[0].morphology.root.words_with_same_root).length > 0} -->
+				<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
+					<div class="flex flex-col">
+						<div id="different-verbs">
+							<div class="mx-auto text-center">
+								<div class="relative grid gap-4 grid-cols-2 row-gap-3 md:row-gap-4 md:grid-cols-6">
+									{#each Object.entries(fetchWordsData[0].morphology.verbs) as [key, value]}
+										{#if value !== null}
+											<div class="flex flex-col py-5 duration-300 transform {window.theme('bgMain')} border {window.theme('border')} rounded-3xl shadow-sm text-center hover:-translate-y-2">
+												<div class="flex items-center justify-center mb-2">
+													<p id="verb-1" class="text-xl md:text-2xl pb-4 leading-5 arabic-font-{$__fontType}">{value}</p>
 												</div>
-											{/if}
-										{/each}
-									</div>
+												<p class="text-xs capitalize opacity-70">{key.replace('_', ' ')}</p>
+											</div>
+										{/if}
+									{/each}
 								</div>
 							</div>
 						</div>
 					</div>
-				{/if}
+				</div>
+				<!-- {/if} -->
 			{/if}
 
-			{@const sameRootData = fetchWordsData[0].morphology.root.words_with_same_root}
-			{#if Object.keys(sameRootData).length > 0}
-				<div id="word-root-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-					<Table wordData={sameRootData} tableType={1} />
-				</div>
-			{/if}
+			{#await (async () => {
+				try {
+					const wordKeysRes = await fetch(`${staticEndpoint}/morphology-data/word-keys-map.json?v=1`);
+					const wordKeysMap = await wordKeysRes.json();
+					const root = wordKeysMap?.data?.[$__morphologyKey]?.[3]; // [arabic, transliteration, translation, root]
+
+					if (!root) return [];
+
+					const sameRootRes = await fetch(`${staticEndpoint}/morphology-data/words-with-same-root/${root}.json`);
+					const sameRootData = await sameRootRes.json();
+
+					return sameRootData?.data || [];
+				} catch (e) {
+					console.error('Failed to load root words:', e);
+					return [];
+				}
+			})()}
+				<Spinner />
+			{:then sameRootData}
+				{#if sameRootData.length > 0}
+					<div id="word-root-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
+						<Table wordData={sameRootData} tableType={1} />
+					</div>
+				{:else}
+					<p class="text-center py-6 opacity-60">No other words found with same root.</p>
+				{/if}
+			{:catch error}
+				<ErrorLoadingDataFromAPI center="false" />
+			{/await}
 
 			{#await fetchExactWordsInQuran}
 				<Spinner />
 			{:then wordList}
-				{#if wordList.length}
+				{#if Array.isArray(wordList) && wordList.length}
 					<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
 						<Table wordData={wordList} tableType={2} />
 					</div>

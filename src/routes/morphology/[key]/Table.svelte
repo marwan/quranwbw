@@ -1,5 +1,6 @@
 <script>
-	export let wordData, tableType;
+	export let wordData = []; // Ensure a default empty array
+	export let tableType;
 
 	import { __fontType } from '$utils/stores';
 	import { buttonClasses, linkClasses } from '$data/commonClasses';
@@ -12,8 +13,12 @@
 
 	const params = new URLSearchParams(window.location.search);
 	const loadAll = params.get('load_all') === 'true';
-	const totalAvailableWords = Object.keys(wordData).length;
+
+	// Fallbacks
+	const sanitizedWordData = Array.isArray(wordData) ? wordData : [];
+	const totalAvailableWords = sanitizedWordData.length;
 	const maxResultsToLoad = 50;
+
 	let lastWordToLoad = calculateInitialLastWordToLoad(loadAll, totalAvailableWords, maxResultsToLoad);
 
 	function calculateInitialLastWordToLoad(loadAll, totalAvailableWords, maxResultsToLoad) {
@@ -25,43 +30,49 @@
 	}
 </script>
 
-<div class="flex flex-col">
-	<div class="relative space-y-6 sm:rounded-3xl">
-		<h1 class="text-md md:text-2xl text-center">{tableTitles[tableType].title} ({totalAvailableWords})</h1>
-		<div class="max-h-[32em] overflow-auto">
-			<table class="w-full text-sm text-left rtl:text-right rounded-md">
-				<thead class="text-xs uppercase top-0 {window.theme('bgSecondaryLight')}">
-					<tr>
-						<th scope="col" class="px-6 py-3"> # </th>
-						<th scope="col" class="px-6 py-3"> Word </th>
-						<th scope="col" class="px-6 py-3"> Translation </th>
-						<th scope="col" class="px-6 py-3"> Transliteration </th>
-						<th scope="col" class="px-6 py-3"> {term('verse')} </th>
-						<th scope="col" class="px-6 py-3"> Word </th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each Array.from(Array(lastWordToLoad + 1).keys()).slice(1) as word}
-						{@const wordChapter = wordData[word - 1].key.split(':')[0]}
-						{@const wordVerse = wordData[word - 1].key.split(':')[1]}
-						<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
-							<td class="px-6 py-4"> {word} </td>
-							<td class="px-6 py-4 arabic-font-{$__fontType} text-xl md:text-2xl"> {wordData[word - 1].arabic} </td>
-							<td class="px-6 py-4"> {wordData[word - 1].translation} </td>
-							<td class="px-6 py-4"> {wordData[word - 1].transliteration} </td>
-							<td class="px-6 py-4"> <a class={linkClasses} href="/{wordChapter}?startVerse={wordVerse}">{wordChapter}:{wordVerse}</a> </td>
-							<td class="px-6 py-4"> <a class={linkClasses} href="/morphology/{wordData[word - 1].key}">{wordData[word - 1].key}</a> </td>
+{#if totalAvailableWords > 0}
+	<div class="flex flex-col">
+		<div class="relative space-y-6 sm:rounded-3xl">
+			<h1 class="text-md md:text-2xl text-center">{tableTitles[tableType].title} ({totalAvailableWords})</h1>
+			<div class="max-h-[32em] overflow-auto">
+				<table class="w-full text-sm text-left rtl:text-right rounded-md">
+					<thead class="text-xs uppercase top-0 {window.theme('bgSecondaryLight')}">
+						<tr>
+							<th class="px-6 py-3">#</th>
+							<th class="px-6 py-3">Word</th>
+							<th class="px-6 py-3">Translation</th>
+							<th class="px-6 py-3">Transliteration</th>
+							<th class="px-6 py-3">{term('verse')}</th>
+							<th class="px-6 py-3">Key</th>
 						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-
-		<!-- button to load more words -->
-		{#if totalAvailableWords > maxResultsToLoad}
-			<div class="text-center text-xs {lastWordToLoad === totalAvailableWords && 'hidden'}">
-				<button on:click={() => updateLastWordToLoad()} class={buttonClasses} data-umami-event="Morphology Load More Button">Load more</button>
+					</thead>
+					<tbody>
+						{#each sanitizedWordData.slice(0, lastWordToLoad) as item, i}
+							{@const [chapter, verse] = item.key.split(':')}
+							<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
+								<td class="px-6 py-4">{i + 1}</td>
+								<td class="px-6 py-4 arabic-font-{$__fontType} text-xl md:text-2xl">{item.arabic}</td>
+								<td class="px-6 py-4">{item.translation}</td>
+								<td class="px-6 py-4">{item.transliteration}</td>
+								<td class="px-6 py-4">
+									<a class={linkClasses} href="/{chapter}?startVerse={verse}">{chapter}:{verse}</a>
+								</td>
+								<td class="px-6 py-4">
+									<a class={linkClasses} href="/morphology/{item.key}">{item.key}</a>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
 			</div>
-		{/if}
+
+			{#if totalAvailableWords > maxResultsToLoad}
+				<div class="text-center text-xs {lastWordToLoad === totalAvailableWords && 'hidden'}">
+					<button on:click={updateLastWordToLoad} class={buttonClasses} data-umami-event="Morphology Load More Button"> Load more </button>
+				</div>
+			{/if}
+		</div>
 	</div>
-</div>
+{:else}
+	<p class="text-center py-6 opacity-60">No words available to display.</p>
+{/if}
