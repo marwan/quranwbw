@@ -6,17 +6,16 @@
 	import Table from './Table.svelte';
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { apiEndpoint, apiVersion, apiByPassCache, staticEndpoint } from '$data/websiteSettings';
+	import { staticEndpoint } from '$data/websiteSettings';
 	import { __currentPage, __fontType, __wordTranslation, __verseTranslations, __wordTransliteration, __morphologyKey, __lexiconModalVisible, __wordRoot } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
-	let fetchWordsData, fetchWordSummary, fetchExactWordsInQuran, fetchWordsWithSameRoot;
+	let fetchWordSummary, fetchWordVerbs, fetchExactWordsInQuran, fetchWordsWithSameRoot;
 	let chapter, verse, word;
 	let wordRoot = '';
-	// let fetchWordsData1;
 
 	// Split the key to get chapter, verse, and word numbers
 	$: {
@@ -36,15 +35,15 @@
 
 	// Fetch words data for morphology
 	$: {
-		fetchWordsData = (async () => {
+		// Fetch word verbs data
+		fetchWordVerbs = (async () => {
 			try {
-				const response = await fetch(`${apiEndpoint}/morphology?words=${$__morphologyKey}&word_translation=${$__wordTranslation}&version=${apiVersion}&bypass_cache=${apiByPassCache}`);
+				const response = await fetch(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`);
 				const data = await response.json();
-				// fetchWordsData1 = data.data;
-				return data.data;
+				return data;
 			} catch (error) {
 				console.error(error);
-				return [];
+				return {};
 			}
 		})();
 
@@ -100,15 +99,6 @@
 			}
 		})();
 	}
-
-	// Set the word root and show the lexicon modal
-	// function showLexiconModal() {
-	// 	const root = fetchWordsData1?.[0]?.morphology?.root?.root;
-	// 	if (root) {
-	// 		__wordRoot.set(root);
-	// 		__lexiconModalVisible.set(true);
-	// 	}
-	// }
 </script>
 
 <div class="space-y-6 my-8">
@@ -180,17 +170,16 @@
 	</div>
 
 	<div id="word-details" class="flex flex-col">
-		{#await fetchWordsData}
+		{#await fetchWordVerbs}
 			<Spinner />
-		{:then fetchWordsData}
-			{#if !Object.values(fetchWordsData[0].morphology.verbs).every((o) => o === null)}
-				<!-- {#if Object.keys(fetchWordsData[0].morphology.root.words_with_same_root).length > 0} -->
+		{:then fetchWordVerbs}
+			{#if fetchWordVerbs?.data?.hasOwnProperty($__morphologyKey)}
 				<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
 					<div class="flex flex-col">
 						<div id="different-verbs">
 							<div class="mx-auto text-center">
 								<div class="relative grid gap-4 grid-cols-2 row-gap-3 md:row-gap-4 md:grid-cols-6">
-									{#each Object.entries(fetchWordsData[0].morphology.verbs) as [key, value]}
+									{#each Object.entries(fetchWordVerbs.data[$__morphologyKey]) as [key, value]}
 										{#if value !== null}
 											<div class="flex flex-col py-5 duration-300 transform {window.theme('bgMain')} border {window.theme('border')} rounded-3xl shadow-sm text-center hover:-translate-y-2">
 												<div class="flex items-center justify-center mb-2">
@@ -205,7 +194,6 @@
 						</div>
 					</div>
 				</div>
-				<!-- {/if} -->
 			{/if}
 
 			{#await (async () => {
