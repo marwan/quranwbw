@@ -63,26 +63,34 @@
 		fetchExactWordsInQuran = (async () => {
 			try {
 				const [keyMapRes, exactMapRes] = await Promise.all([
-					// uthmani words for each key
-					fetch(`${staticEndpoint}/morphology-data/word-keys-map.json`),
+					// key, arabic, english and transliteration data
+					fetch(`${staticEndpoint}/morphology-data/word-keys-map.json?v=1`),
 
-					// word keys with the same uthmani word
+					// exact words in quran
 					fetch(`${staticEndpoint}/morphology-data/exact-words-in-quran.json`)
 				]);
 
 				const keyMap = await keyMapRes.json();
 				const exactMap = await exactMapRes.json();
 
-				const keyToUthmani = keyMap?.data || {};
+				const keyToMeta = keyMap?.data || {};
 				const uthmaniToKeys = exactMap?.data || {};
 
-				// Use current morphology key
-				const uthmani = keyToUthmani[$__morphologyKey];
+				const keyMeta = keyToMeta[$__morphologyKey];
+				const uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
+
 				if (!uthmani) return [];
 
-				console.log(uthmaniToKeys[uthmani] || []);
-
-				return uthmaniToKeys[uthmani] || [];
+				// Construct enriched data per wordKey
+				return (uthmaniToKeys[uthmani] || []).map((key) => {
+					const meta = keyToMeta[key] || [];
+					return {
+						key,
+						arabic: meta[0] || '',
+						transliteration: meta[1] || '',
+						translation: meta[2] || ''
+					};
+				});
 			} catch (error) {
 				console.error('Failed to load exact words in Quran:', error);
 				return [];
@@ -204,12 +212,19 @@
 				</div>
 			{/if}
 
-			{@const exactWordsData = fetchWordsData[0].morphology.exact_words_in_quran}
-			{#if Object.keys(exactWordsData).length > 0}
-				<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-					<Table wordData={exactWordsData} tableType={2} />
-				</div>
-			{/if}
+			{#await fetchExactWordsInQuran}
+				<Spinner />
+			{:then wordList}
+				{#if wordList.length}
+					<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
+						<Table wordData={wordList} tableType={2} />
+					</div>
+				{:else}
+					<p class="text-center py-6 opacity-60">No matching words found in Quran.</p>
+				{/if}
+			{:catch error}
+				<ErrorLoadingDataFromAPI center="false" />
+			{/await}
 		{:catch error}
 			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
