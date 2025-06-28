@@ -13,7 +13,7 @@
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
-	let fetchWordsData, fetchWordSummary;
+	let fetchWordsData, fetchWordSummary, fetchExactWordsInQuran, fetchWordsWithSameRoot;
 	let chapter, verse, word;
 	// let fetchWordsData1;
 
@@ -56,6 +56,36 @@
 			} catch (error) {
 				console.error(error);
 				return {};
+			}
+		})();
+
+		// Fetch exact words in Quran
+		fetchExactWordsInQuran = (async () => {
+			try {
+				const [keyMapRes, exactMapRes] = await Promise.all([
+					// uthmani words for each key
+					fetch(`${staticEndpoint}/morphology-data/word-keys-map.json`),
+
+					// word keys with the same uthmani word
+					fetch(`${staticEndpoint}/morphology-data/exact-words-in-quran.json`)
+				]);
+
+				const keyMap = await keyMapRes.json();
+				const exactMap = await exactMapRes.json();
+
+				const keyToUthmani = keyMap?.data || {};
+				const uthmaniToKeys = exactMap?.data || {};
+
+				// Use current morphology key
+				const uthmani = keyToUthmani[$__morphologyKey];
+				if (!uthmani) return [];
+
+				console.log(uthmaniToKeys[uthmani] || []);
+
+				return uthmaniToKeys[uthmani] || [];
+			} catch (error) {
+				console.error('Failed to load exact words in Quran:', error);
+				return [];
 			}
 		})();
 	}

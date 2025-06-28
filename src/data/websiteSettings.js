@@ -8,7 +8,7 @@ export const wbwLanguages = 'English, Urdu, Hindi, Indonesian, Bangla, Turkish, 
 
 export const apiVersion = 140;
 
-export const useLocalAPI = false;
+export const useLocalAPI = true;
 
 export const apiByPassCache = false; // If true, api response will not be cached by Cloudflare
 
