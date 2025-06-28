@@ -15,6 +15,7 @@
 
 	let fetchWordsData, fetchWordSummary, fetchExactWordsInQuran, fetchWordsWithSameRoot;
 	let chapter, verse, word;
+	let wordRoot = '';
 	// let fetchWordsData1;
 
 	// Split the key to get chapter, verse, and word numbers
@@ -79,9 +80,11 @@
 				const keyMeta = keyToMeta[$__morphologyKey];
 				const uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
 
+				// Extract and save root for reuse
+				wordRoot = Array.isArray(keyMeta) ? keyMeta[3] : '';
+
 				if (!uthmani) return [];
 
-				// Construct enriched data per wordKey
 				return (uthmaniToKeys[uthmani] || []).map((key) => {
 					const meta = keyToMeta[key] || [];
 					return {
@@ -207,15 +210,9 @@
 
 			{#await (async () => {
 				try {
-					const wordKeysRes = await fetch(`${staticEndpoint}/morphology-data/word-keys-map.json?v=1`);
-					const wordKeysMap = await wordKeysRes.json();
-					const root = wordKeysMap?.data?.[$__morphologyKey]?.[3]; // [arabic, transliteration, translation, root]
-
-					if (!root) return [];
-
-					const sameRootRes = await fetch(`${staticEndpoint}/morphology-data/words-with-same-root/${root}.json`);
+					if (!wordRoot) return [];
+					const sameRootRes = await fetch(`${staticEndpoint}/morphology-data/words-with-same-root/${wordRoot}.json`);
 					const sameRootData = await sameRootRes.json();
-
 					return sameRootData?.data || [];
 				} catch (e) {
 					console.error('Failed to load root words:', e);
