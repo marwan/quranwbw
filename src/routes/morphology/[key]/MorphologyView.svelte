@@ -32,16 +32,34 @@
 		return data[`${chapter}:${verse}`];
 	})();
 
+	// In-memory cache for static fetches
+	const fetchCache = {};
+
+	async function getOrFetch(url) {
+		if (fetchCache[url]) {
+			return fetchCache[url]; // Return cached Promise
+		}
+
+		// Fetch and store Promise immediately to prevent duplicate fetches
+		fetchCache[url] = fetch(url)
+			.then((res) => res.json())
+			.catch((err) => {
+				console.error(`Error fetching ${url}:`, err);
+				delete fetchCache[url]; // Remove failed cache to allow retry
+				throw err;
+			});
+
+		return fetchCache[url];
+	}
+
 	// Fetch words data for morphology
 	$: {
 		// Fetch word verbs data
 		fetchWordVerbs = (async () => {
 			try {
-				const response = await fetch(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`);
-				const data = await response.json();
-				return data;
-			} catch (error) {
-				console.error(error);
+				const url = `${staticEndpoint}/morphology-data/word-verbs.json?version=1`;
+				return await getOrFetch(url);
+			} catch {
 				return {};
 			}
 		})();
@@ -49,11 +67,9 @@
 		// Fetch word summary data
 		fetchWordSummary = (async () => {
 			try {
-				const response = await fetch(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=1`);
-				const data = await response.json();
-				return data;
-			} catch (error) {
-				console.error(error);
+				const url = `${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=1`;
+				return await getOrFetch(url);
+			} catch {
 				return {};
 			}
 		})();
@@ -61,16 +77,10 @@
 		// Fetch exact words in Quran
 		fetchExactWordsInQuran = (async () => {
 			try {
-				const [keyMapRes, exactMapRes] = await Promise.all([
-					// key, arabic, english and transliteration data
-					fetch(`${staticEndpoint}/morphology-data/word-keys-map.json?version=1`),
+				const keyMapUrl = `${staticEndpoint}/morphology-data/word-keys-map.json?version=1`;
+				const exactMapUrl = `${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=1`;
 
-					// exact words in quran
-					fetch(`${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=1`)
-				]);
-
-				const keyMap = await keyMapRes.json();
-				const exactMap = await exactMapRes.json();
+				const [keyMap, exactMap] = await Promise.all([getOrFetch(keyMapUrl), getOrFetch(exactMapUrl)]);
 
 				const keyToMeta = keyMap?.data || {};
 				const uthmaniToKeys = exactMap?.data || {};
@@ -78,7 +88,6 @@
 				const keyMeta = keyToMeta[$__morphologyKey];
 				const uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
 
-				// Extract and save root for reuse
 				wordRoot = Array.isArray(keyMeta) ? keyMeta[3] : '';
 
 				if (!uthmani) return [];
