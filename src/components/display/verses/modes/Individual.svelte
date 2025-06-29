@@ -149,6 +149,21 @@
 		__pageURL.set(Math.random());
 	}
 
+	/**
+	 * Fetches chapter data for a given range of verse keys.
+	 *
+	 * This function:
+	 * 1. Extracts the relevant verse keys from `keysArray` using `startIndex` and `endIndex`.
+	 * 2. Identifies unique chapter numbers from those keys.
+	 * 3. Checks if data for each chapter is already cached in `__keysToFetchData`.
+	 *    - If cached, uses the cached data.
+	 *    - If not, fetches the chapter data using `fetchChapterData`.
+	 * 4. Resolves all chapter data fetches in parallel.
+	 * 5. Maps the full verse keys (e.g., "1:2") to their corresponding data in `dataMap`.
+	 *
+	 * This ensures that each chapter's data is fetched only once, even if multiple verses
+	 * from the same chapter are requested.
+	 */
 	async function fetchAllChapterData() {
 		isLoading = true;
 		try {
