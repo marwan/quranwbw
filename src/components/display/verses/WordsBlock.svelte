@@ -19,35 +19,42 @@
 	$: displayIsContinuous = selectableDisplays[$__displayType].continuous;
 
 	// Dynamically load the fonts if mushaf fonts are selected
+	//v4 words are hidden by default and shown only when the font is loaded...
 	if ([2, 3].includes($__fontType)) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
-			// Hide the v4 words by default and show when the font is loaded...
 			document.querySelectorAll(`.p${value.meta.page}`).forEach((element) => {
 				element.classList.remove('invisible');
 			});
 		});
 	}
 
-	// Handle word clicks based on page type
-	// 1. On morphology page, navigate to word's morphology
-	// 2. On other pages, play word's audio
-	// 3. On any page, show verse options dropdown for end verse icon
+	/**
+	 * Handles click interactions on words or verse-end icons depending on the current page and context.
+	 *
+	 * Behavior:
+	 * 1. **Morphology Page + Word Click**:
+	 *    - Sets the selected morphology key and navigates to the word's morphology details.
+	 *
+	 * 2. **Other Pages + Word Click (if word-level morphology is enabled or modal is visible)**:
+	 *    - Opens the morphology modal for the clicked word and sets the selected morphology key.
+	 *
+	 * 3. **General Case**:
+	 *    - Sets the verse key for tracking purposes.
+	 *    - If a word is clicked:
+	 *      - Triggers audio playback for that specific word.
+	 *    - If an end-verse icon is clicked:
+	 *      - Adds a bookmark (if continuous display is disabled).
+	 */
 	function wordClickHandler(props) {
-		// For morphology page
 		if ($__currentPage === 'morphology' && props.type === 'word') {
 			__morphologyKey.set(props.key);
 			goto(`/morphology/${props.key}`, { replaceState: false });
-		}
-
-		// If the user clicks on a word
-		else if ((!['morphology', 'mushaf'].includes($__currentPage) && props.type === 'word' && $__wordMorphologyOnClick) || $__morphologyModalVisible) {
+		} else if ((!['morphology', 'mushaf'].includes($__currentPage) && props.type === 'word' && $__wordMorphologyOnClick) || $__morphologyModalVisible) {
 			__morphologyKey.set(props.key);
 			__morphologyModalVisible.set(true);
-		}
-
-		// All other options
-		else {
+		} else {
 			__verseKey.set(props.key);
+
 			if (props.type === 'word') {
 				wordAudioController({
 					key: props.key,
@@ -55,14 +62,29 @@
 					verse: +props.key.split(':')[1]
 				});
 			} else if (props.type === 'end') {
-				if (!displayIsContinuous)
+				if (!displayIsContinuous) {
 					updateSettings({
 						type: 'userBookmarks',
 						key: props.key,
 						set: true
 					});
+				}
 			}
 		}
+	}
+
+	/**
+	 * Determines the appropriate Quranic font class to use based on the current page and modal state.
+	 * - If the current page is "morphology", or if the morphology modal is visible on any page,
+	 *   the function returns the default font: 'arabic-font-1'.
+	 * - Otherwise, it returns the font class based on the selected font type (e.g., 'arabic-font-2').
+	 */
+	function getFontType() {
+		if ($__currentPage === 'morphology' || ($__currentPage !== 'morphology' && $__morphologyModalVisible)) {
+			return 'arabic-font-1';
+		}
+
+		return `arabic-font-${$__fontType}`;
 	}
 
 	// Common classes for words and end icons
@@ -77,7 +99,7 @@
 	// Classes for word spans
 	$: wordSpanClasses = `
 		arabicText leading-normal 
-		arabic-font-${$__fontType} 
+		${getFontType()} 
 		${$__currentPage !== 'mushaf' && fontSizes.arabicText} 
 		${displayIsContinuous && 'inline-block'}
 	`;

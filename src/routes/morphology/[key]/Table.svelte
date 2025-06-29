@@ -51,7 +51,7 @@
 							{@const [chapter, verse] = item.key.split(':')}
 							<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
 								<td class="px-6 py-4">{i + 1}</td>
-								<td class="px-6 py-4 arabic-font-{$__fontType} text-xl md:text-2xl">{item.arabic}</td>
+								<td class="px-6 py-4 arabic-font-1 text-xl md:text-2xl">{item.arabic}</td>
 								<td class="px-6 py-4">{item.translation}</td>
 								<td class="px-6 py-4">{item.transliteration}</td>
 								<td class="px-6 py-4">

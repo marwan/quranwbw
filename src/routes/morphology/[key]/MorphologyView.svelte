@@ -17,19 +17,18 @@
 	let chapter, verse, word;
 	let wordRoot = '';
 
-	// Split the key to get chapter, verse, and word numbers
+	// Extract chapter, verse, and word from the key, defaulting word to 1 if missing or invalid
 	$: {
-		const keySplit = data.key.split(':');
-		chapter = +keySplit[0];
-		verse = +keySplit[1];
-		word = keySplit.length === 2 ? 1 : +keySplit[2];
-		if (isNaN(word)) word = 1;
+		const [chapterStr, verseStr, wordStr] = data.key.split(':');
+		chapter = +chapterStr;
+		verse = +verseStr;
+		word = +wordStr || 1;
 		__morphologyKey.set(`${chapter}:${verse}:${word}`);
 	}
 
 	// Fetch verse data based on chapter and verse
 	$: fetchData = (async () => {
-		const data = await fetchChapterData({ chapter, skipSave: true, reRenderWhenTheseUpdates: [$__fontType, $__wordTranslation, $__wordTransliteration] });
+		const data = await fetchChapterData({ chapter, fontType: 1, wordTranslation: 1, wordTransliteration: 1, skipSave: true });
 		return data[`${chapter}:${verse}`];
 	})();
 
@@ -184,7 +183,7 @@
 										{#if value !== null}
 											<div class="flex flex-col py-5 duration-300 transform {window.theme('bgMain')} border {window.theme('border')} rounded-3xl shadow-sm text-center hover:-translate-y-2">
 												<div class="flex items-center justify-center mb-2">
-													<p id="verb-1" class="text-xl md:text-2xl pb-4 leading-5 arabic-font-{$__fontType}">{value}</p>
+													<p id="verb-1" class="text-xl md:text-2xl pb-4 leading-5 arabic-font-1">{value}</p>
 												</div>
 												<p class="text-xs capitalize opacity-70">{key.replace('_', ' ')}</p>
 											</div>
