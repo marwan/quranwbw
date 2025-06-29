@@ -78,7 +78,7 @@
 		fetchExactWordsInQuran = (async () => {
 			try {
 				const keyMapUrl = `${staticEndpoint}/morphology-data/word-keys-map.json?version=1`;
-				const exactMapUrl = `${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=1`;
+				const exactMapUrl = `${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=2`;
 
 				const [keyMap, exactMap] = await Promise.all([getOrFetch(keyMapUrl), getOrFetch(exactMapUrl)]);
 
@@ -86,9 +86,16 @@
 				const uthmaniToKeys = exactMap?.data || {};
 
 				const keyMeta = keyToMeta[$__morphologyKey];
-				const uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
 
+				// Extract word_uthmani and root
+				let uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
 				wordRoot = Array.isArray(keyMeta) ? keyMeta[3] : '';
+
+				// Remove trailing pause mark (e.g., ۛ, ۚ, etc.) from uthmani
+				const pauseMarkRegex = /[\u06D6-\u06DC\u06D7\u06D8\u06D9\u06DA\u06DB\u06E9]$/u;
+				if (uthmani) {
+					uthmani = uthmani.replace(pauseMarkRegex, '');
+				}
 
 				if (!uthmani) return [];
 
