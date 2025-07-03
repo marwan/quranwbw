@@ -13,7 +13,7 @@
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
-	let fetchWordSummary, fetchWordVerbs, fetchExactWordsInQuran;
+	let fetchWordSummary, fetchWordVerbs, fetchExactWordsInQuran, fetchWordsWithSameRoot;
 	let chapter, verse, word;
 	let wordRoot = '';
 
@@ -68,6 +68,16 @@
 		fetchWordSummary = (async () => {
 			try {
 				const url = `${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=1`;
+				return await getOrFetch(url);
+			} catch {
+				return {};
+			}
+		})();
+
+		// Fetch words with same root
+		fetchWordsWithSameRoot = (async () => {
+			try {
+				const url = `${staticEndpoint}/morphology-data/words-with-same-root.json?version=1`;
 				return await getOrFetch(url);
 			} catch {
 				return {};
@@ -216,29 +226,21 @@
 		{/await}
 
 		<!-- Word with same root -->
-		{#await (async () => {
-			try {
-				if (!wordRoot) return [];
-				const sameRootRes = await fetch(`${staticEndpoint}/morphology-data/words-with-same-root/${wordRoot}.json`);
-				const sameRootData = await sameRootRes.json();
-				return sameRootData?.data || [];
-			} catch (e) {
-				console.error('Failed to load root words:', e);
-				return [];
-			}
-		})()}
-			<Spinner />
-		{:then sameRootData}
-			{#if sameRootData.length > 0}
-				<div id="word-root-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-					<Table wordData={sameRootData} tableType={1} />
-				</div>
-			{:else}
-				<p class="text-center py-6 opacity-60">No other words found with same root.</p>
-			{/if}
-		{:catch error}
-			<ErrorLoadingDataFromAPI center="false" />
-		{/await}
+		{#key wordRoot}
+			{#await fetchWordsWithSameRoot}
+				<Spinner />
+			{:then result}
+				{#if wordRoot in result.data}
+					<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
+						<Table wordData={result.data[wordRoot]} tableType={1} />
+					</div>
+				{:else}
+					<p class="text-center py-6 opacity-60">No matching words found in Quran.</p>
+				{/if}
+			{:catch error}
+				<ErrorLoadingDataFromAPI center="false" />
+			{/await}
+		{/key}
 
 		<!-- Exact words in Quran -->
 		{#await fetchExactWordsInQuran}
