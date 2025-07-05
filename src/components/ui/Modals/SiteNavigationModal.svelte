@@ -10,7 +10,7 @@
 	import About from '$svgs/About.svelte';
 	import Changelog from '$svgs/Changelog.svelte';
 	import LegacySite from '$svgs/LegacySite.svelte';
-	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __tokenModalVisible, __currentPage, __downloadModalVisible } from '$utils/stores';
+	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __loginModalVisible, __currentPage, __downloadModalVisible } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 
@@ -104,7 +104,7 @@
 				<button
 					on:click={() => {
 						__siteNavigationModalVisible.set(false);
-						__tokenModalVisible.set(true);
+						__loginModalVisible.set(true);
 					}}
 					class={linkClasses}
 				>

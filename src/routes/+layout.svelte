@@ -17,7 +17,7 @@
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
-	import DownloadModal from '$ui/Modals/DownloadModal.svelte';
+	// import DownloadModal from '$ui/Modals/DownloadModal.svelte';
 	import LoginModal from '$ui/Modals/LoginModal.svelte';
 
 	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userSettings, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
@@ -26,7 +26,7 @@
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
+	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 	import { downloadSettingsFromCloud } from '$utils/supabase.js';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
@@ -38,6 +38,7 @@
 		if (session) {
 			const settings = await downloadSettingsFromCloud();
 			if (settings) {
+				console.log('fetched in layout.svelte');
 				localStorage.setItem('userSettings', JSON.stringify(settings));
 				__userSettings.set(JSON.stringify(settings));
 			}
@@ -160,7 +161,6 @@
 	<AudioModal />
 	<TajweedRulesModal />
 	<NotesModal />
-	<!-- <TokenModal /> -->
 	<!-- <DownloadModal /> -->
 	<TafsirModal />
 	<SiteNavigationModal />

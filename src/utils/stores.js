@@ -44,7 +44,7 @@ let __websiteOnline,
 	__audioModalVisible,
 	__notesModalVisible,
 	__tajweedRulesModalVisible,
-	__tokenModalVisible,
+	__loginModalVisible,
 	__tafsirModalVisible,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
@@ -191,7 +191,7 @@ if (browser) {
 	__audioModalVisible = writable(false);
 	__notesModalVisible = writable(false);
 	__tajweedRulesModalVisible = writable(false);
-	__tokenModalVisible = writable(false);
+	__loginModalVisible = writable(false);
 	__tafsirModalVisible = writable(false);
 	__quranNavigationModalVisible = writable(false);
 	__siteNavigationModalVisible = writable(false);
@@ -293,7 +293,7 @@ export {
 	__audioModalVisible,
 	__notesModalVisible,
 	__tajweedRulesModalVisible,
-	__tokenModalVisible,
+	__loginModalVisible,
 	__tafsirModalVisible,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,

@@ -2,6 +2,20 @@ import { createClient } from '@supabase/supabase-js';
 
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
+// Initiate Google OAuth login with Supabase
+export async function loginWithGoogle() {
+	const { error } = await supabase.auth.signInWithOAuth({
+		provider: 'google'
+	});
+	if (error) console.error('Login error:', error.message);
+}
+
+// Logout user and refresh the page
+export async function logout() {
+	await supabase.auth.signOut();
+	location.reload();
+}
+
 export async function uploadSettingsToCloud(settings) {
 	const {
 		data: { user },
