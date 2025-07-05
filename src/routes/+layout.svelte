@@ -18,6 +18,7 @@
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import DownloadModal from '$ui/Modals/DownloadModal.svelte';
+	import LoginModal from '$ui/Modals/LoginModal.svelte';
 
 	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
@@ -153,6 +154,7 @@
 	<VerseTranslationModal />
 	<MorphologyModal />
 	<CopyShareVerseModal />
+	<LoginModal />
 	<BottomToolbar />
 	<slot />
 </div>

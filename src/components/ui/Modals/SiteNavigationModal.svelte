@@ -100,6 +100,17 @@
 					<span class={linkTextClasses}>About</span>
 				</a>
 
+				<!-- login modal -->
+				<button
+					on:click={() => {
+						__siteNavigationModalVisible.set(false);
+						__tokenModalVisible.set(true);
+					}}
+					class={linkClasses}
+				>
+					<span class={linkTextClasses}>Login</span>
+				</button>
+
 				<!-- download modal -->
 				<!-- <button
 					on:click={() => {

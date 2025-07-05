@@ -34,6 +34,7 @@
 	"type": "module",
 	"dependencies": {
 		"@macfja/svelte-persistent-store": "^2.4.1",
+		"@supabase/supabase-js": "^2.50.3",
 		"@tailwindcss/typography": "^0.5.16",
 		"dexie": "^4.0.11",
 		"marked": "^15.0.6",
