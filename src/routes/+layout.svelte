@@ -20,13 +20,29 @@
 	import DownloadModal from '$ui/Modals/DownloadModal.svelte';
 	import LoginModal from '$ui/Modals/LoginModal.svelte';
 
-	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
+	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userSettings, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
+	import { downloadSettingsFromCloud } from '$utils/supabase.js';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { get } from 'svelte/store';
+
+	onMount(async () => {
+		const session = get(page).data.session;
+
+		if (session) {
+			const settings = await downloadSettingsFromCloud();
+			if (settings) {
+				localStorage.setItem('userSettings', JSON.stringify(settings));
+				__userSettings.set(JSON.stringify(settings));
+			}
+		}
+	});
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();

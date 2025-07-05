@@ -31,7 +31,7 @@ import {
 	__homepageExtrasPanelVisible,
 	__downloadedDataInfo
 } from '$utils/stores';
-import { uploadSettingsToCloud } from '$utils/cloudSettings';
+import { uploadSettingsToCloud } from '$utils/supabase';
 
 // function to update website settings
 export function updateSettings(props) {

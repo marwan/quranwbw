@@ -1,7 +1,7 @@
 export const ssr = false;
 export const prerender = 'auto';
 
-import { supabase } from '$lib/supabaseClient.js';
+import { supabase } from '$utils/supabase.js';
 
 export async function load() {
 	const {

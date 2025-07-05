@@ -1,4 +1,6 @@
-import { supabase } from '$lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+
+export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 export async function uploadSettingsToCloud(settings) {
 	const {
@@ -43,6 +45,7 @@ export async function downloadSettingsFromCloud() {
 	}
 
 	if (data?.settings) {
+		console.log('Settings fetched from Supabase');
 		return data.settings;
 	}
 

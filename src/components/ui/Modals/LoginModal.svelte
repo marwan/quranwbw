@@ -1,42 +1,29 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
-	import { __userSettings, __tokenModalVisible } from '$utils/stores';
-	import { supabase } from '$lib/supabaseClient.js';
+	import { __tokenModalVisible } from '$utils/stores';
+	import { supabase } from '$utils/supabase.js';
 	import { page } from '$app/stores';
-	import { downloadSettingsFromCloud } from '$utils/cloudSettings.js';
-	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 
-	let session;
+	// Get the initial session returned from layout.js load function
+	let session = get(page).data.session;
 
-	onMount(async () => {
-		session = get(page).data.session;
-
-		if (session && !localStorage.getItem('userSettingsSynced')) {
-			const settings = await downloadSettingsFromCloud();
-
-			if (settings) {
-				localStorage.setItem('userSettings', JSON.stringify(settings));
-				__userSettings.set(JSON.stringify(settings));
-
-				localStorage.setItem('userSettingsSynced', '1');
-				location.reload();
-			}
-		}
+	// Subscribe to the $page store to update session if it changes (e.g., after OAuth login redirect)
+	const unsubscribe = page.subscribe(($page) => {
+		session = $page.data.session;
 	});
 
+	// Initiate Google OAuth login with Supabase
 	async function loginWithGoogle() {
 		const { error } = await supabase.auth.signInWithOAuth({
 			provider: 'google'
 		});
-		if (error) {
-			console.error('Login error:', error.message);
-		}
+		if (error) console.error('Login error:', error.message);
 	}
 
+	// Logout user and refresh the page
 	async function logout() {
 		await supabase.auth.signOut();
-		localStorage.removeItem('userSettingsSynced');
 		location.reload();
 	}
 </script>
