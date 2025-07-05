@@ -48,7 +48,7 @@
 	function wordClickHandler(props) {
 		if ($__currentPage === 'morphology' && props.type === 'word') {
 			__morphologyKey.set(props.key);
-			goto(`/morphology/${props.key}`, { replaceState: false });
+			goto(`/morphology?word=${props.key}`, { replaceState: false });
 		} else if ((!['morphology', 'mushaf'].includes($__currentPage) && props.type === 'word' && $__wordMorphologyOnClick) || $__morphologyModalVisible) {
 			__morphologyKey.set(props.key);
 			__morphologyModalVisible.set(true);

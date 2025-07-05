@@ -231,7 +231,7 @@
 									{#if key === 'word'}
 										<div class={linkClasses}>
 											<span>{@html '&#10230'}</span>
-											<a href="/morphology/{value}" class={linkTextClasses}>Word {value} Morphology</a>
+											<a href="/morphology?word={value}" class={linkTextClasses}>Word {value} Morphology</a>
 										</div>
 									{/if}
 
@@ -341,7 +341,7 @@
 							<ul id="navbar-words-list" class="grow basis-1/2 px-2 overflow-y-scroll">
 								{#each { length: verseKeyData[morphologyKey].words } as _, word}
 									<li>
-										<a href="/morphology/{morphologyKey}:{word + 1}">
+										<a href="/morphology?word={morphologyKey}:{word + 1}">
 											<div class={listItemClasses}>Word {morphologyKey}:{word + 1}</div>
 										</a>
 									</li>

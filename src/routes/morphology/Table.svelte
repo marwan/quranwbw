@@ -58,7 +58,7 @@
 									<a class={linkClasses} href="/{chapter}?startVerse={verse}">{chapter}:{verse}</a>
 								</td>
 								<td class="px-6 py-4">
-									<a class={linkClasses} href="/morphology/{item.key}">{item.key}</a>
+									<a class={linkClasses} href="/morphology?word={item.key}">{item.key}</a>
 								</td>
 							</tr>
 						{/each}

@@ -71,7 +71,7 @@
 				</a>
 
 				<!-- Morphology -->
-				<a href="/morphology/1:1:1" class={linkClasses}>
+				<a href="/morphology?word=1:1:1" class={linkClasses}>
 					<Morphology size={4} />
 					<span class={linkTextClasses}>Morphology</span>
 				</a>

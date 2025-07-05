@@ -2,12 +2,8 @@ import { goto } from '$app/navigation';
 import { error } from '@sveltejs/kit';
 import { isValidVerseKey, isValidWordKey } from '$utils/validateKey';
 
-export async function load({ url }) {
-	const key = url.searchParams.get('word');
-
-	if (!key) {
-		goto('/morphology?word=1:1:1', { replaceState: false });
-	}
+export async function load({ params }) {
+	const key = params.word;
 
 	if (!isValidVerseKey(key) && !(await isValidWordKey(key))) {
 		throw error(404, {
@@ -15,5 +11,5 @@ export async function load({ url }) {
 		});
 	}
 
-	return { key };
+	goto(`/morphology?word=${key}`, { replaceState: false });
 }
