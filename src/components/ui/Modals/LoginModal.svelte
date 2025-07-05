@@ -1,20 +1,42 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
-	import { __userToken, __userSettings, __tokenModalVisible } from '$utils/stores';
+	import { __userSettings, __tokenModalVisible } from '$utils/stores';
 	import { supabase } from '$lib/supabaseClient.js';
 	import { page } from '$app/stores';
+	import { downloadSettingsFromCloud } from '$utils/cloudSettings.js';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
-	// Access the session reactively
-	$: session = $page.data.session;
+	let session;
+
+	onMount(async () => {
+		session = get(page).data.session;
+
+		if (session && !localStorage.getItem('userSettingsSynced')) {
+			const settings = await downloadSettingsFromCloud();
+
+			if (settings) {
+				localStorage.setItem('userSettings', JSON.stringify(settings));
+				__userSettings.set(JSON.stringify(settings));
+
+				localStorage.setItem('userSettingsSynced', '1');
+				location.reload();
+			}
+		}
+	});
 
 	async function loginWithGoogle() {
-		await supabase.auth.signInWithOAuth({
+		const { error } = await supabase.auth.signInWithOAuth({
 			provider: 'google'
 		});
+		if (error) {
+			console.error('Login error:', error.message);
+		}
 	}
 
 	async function logout() {
 		await supabase.auth.signOut();
+		localStorage.removeItem('userSettingsSynced');
 		location.reload();
 	}
 </script>

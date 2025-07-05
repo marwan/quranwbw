@@ -1,53 +1,50 @@
-import { get } from 'svelte/store';
-import { __websiteOnline, __userToken, __userSettings } from '$utils/stores';
-import { apiEndpoint } from '$data/websiteSettings';
-import { updateSettings } from '$utils/updateSettings';
+import { supabase } from '$lib/supabaseClient';
 
-// download user's settings from cloud
-export async function downloadSettingsFromCloud() {
-	// basic checks
-	if (!get(__websiteOnline)) return;
-	if (get(__userToken) === null) return;
+export async function uploadSettingsToCloud(settings) {
+	const {
+		data: { user },
+		error: userError
+	} = await supabase.auth.getUser();
 
-	const response = await fetch(`${apiEndpoint}/user/settings`, {
-		method: 'GET',
-		headers: {
-			'user-token': get(__userToken)
-		}
-	});
-
-	const responseJSON = await response.json();
-
-	if (responseJSON.code === 200) {
-		updateSettings({ type: 'userBookmarks', key: responseJSON.data[0].user_settings.userBookmarks, overide: true });
-		updateSettings({ type: 'userNotes', key: responseJSON.data[0].user_settings.userNotes, overide: true });
-		console.log('settings have been downloaded from cloud.');
-	} else {
-		console.error('error downloading settings from cloud.');
+	if (userError || !user) {
+		console.error('User not logged in or error fetching user:', userError?.message);
+		return;
 	}
 
-	return responseJSON;
-}
-
-// upload user's settings to cloud
-export async function uploadSettingsToCloud() {
-	// basic checks
-	if (!get(__websiteOnline)) return;
-	if (get(__userToken) === null) return;
-
-	const response = await fetch(`${apiEndpoint}/user/settings`, {
-		method: 'POST',
-		headers: {
-			'user-token': get(__userToken),
-			'Content-Type': 'application/json'
-		},
-		body: get(__userSettings)
+	const { error } = await supabase.from('user_settings').upsert({
+		id: user.id,
+		settings,
+		updated_at: new Date().toISOString()
 	});
 
-	const responseJSON = await response.json();
+	if (error) {
+		console.error('Failed to upload settings to Supabase:', error.message);
+	} else {
+		console.log('Settings uploaded to Supabase');
+	}
+}
 
-	if (responseJSON.code === 200) console.log('settings have been uploaded to cloud.');
-	else console.error('error uploading settings to cloud.');
+export async function downloadSettingsFromCloud() {
+	const {
+		data: { user },
+		error: userError
+	} = await supabase.auth.getUser();
 
-	return responseJSON;
+	if (userError || !user) {
+		console.warn('User not logged in or failed to fetch user');
+		return null;
+	}
+
+	const { data, error } = await supabase.from('user_settings').select('settings').eq('id', user.id).single();
+
+	if (error) {
+		console.warn('Could not fetch user settings:', error.message);
+		return null;
+	}
+
+	if (data?.settings) {
+		return data.settings;
+	}
+
+	return null;
 }

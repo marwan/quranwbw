@@ -141,7 +141,7 @@
 									on:click={() => {
 										const userResponse = confirm(`Are you sure you want to delete this bookmark (${bookmark})?`);
 										if (userResponse) {
-											updateSettings({ type: 'userBookmarks', key: bookmark });
+											updateSettings({ type: 'userBookmarks', key: bookmark, set: true });
 											window.umami.track('Delete Bookmark Icon');
 										}
 									}}
