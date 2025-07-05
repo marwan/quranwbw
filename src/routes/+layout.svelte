@@ -27,23 +27,14 @@
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
-	import { downloadSettingsFromCloud } from '$utils/supabase.js';
+	import { supabase, initSupabaseAuthListener, downloadSettingsFromCloud } from '$utils/supabase.js';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
 
-	onMount(async () => {
-		const session = get(page).data.session;
+	initSupabaseAuthListener();
 
-		if (session) {
-			const settings = await downloadSettingsFromCloud();
-			if (settings) {
-				console.log('fetched in layout.svelte');
-				localStorage.setItem('userSettings', JSON.stringify(settings));
-				__userSettings.set(JSON.stringify(settings));
-			}
-		}
-	});
+	window.downloadSettingsFromCloud = downloadSettingsFromCloud;
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();

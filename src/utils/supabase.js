@@ -1,6 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
+import { updateSettings } from '$utils/updateSettings';
 
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+
+export async function initSupabaseAuthListener() {
+	if (window.__supabaseAuthListenerInitialized) return;
+	window.__supabaseAuthListenerInitialized = true;
+
+	// Run once on fresh page load (if already logged in)
+	const {
+		data: { session }
+	} = await supabase.auth.getSession();
+	if (session) {
+		await downloadSettingsFromCloud();
+	}
+
+	// Also run on any new login via Google OAuth
+	supabase.auth.onAuthStateChange(async (event, session) => {
+		if (event === 'SIGNED_IN' && session) {
+			await downloadSettingsFromCloud();
+		}
+	});
+}
 
 // Initiate Google OAuth login with Supabase
 export async function loginWithGoogle() {
@@ -60,7 +81,17 @@ export async function downloadSettingsFromCloud() {
 
 	if (data?.settings) {
 		console.log('Settings fetched from Supabase');
-		return data.settings;
+
+		const userSettings = data.settings;
+
+		console.log(userSettings);
+
+		const userBookmarks = userSettings.userBookmarks;
+		const userNotes = userSettings.userNotes;
+
+		// Restore data
+		updateSettings({ type: 'userBookmarks', key: userBookmarks, override: true });
+		updateSettings({ type: 'userNotes', key: userNotes, override: true });
 	}
 
 	return null;
