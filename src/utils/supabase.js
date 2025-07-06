@@ -42,6 +42,11 @@ export async function logout() {
 }
 
 export async function uploadSettingsToCloud(settings) {
+	if (!settings || typeof settings !== 'object') {
+		console.warn('uploadSettingsToCloud: Invalid settings object', settings);
+		return;
+	}
+
 	const {
 		data: { user },
 		error: userError
@@ -51,6 +56,13 @@ export async function uploadSettingsToCloud(settings) {
 		console.error('User not logged in or error fetching user:', userError?.message);
 		return;
 	}
+
+	console.log('uploadSettingsToCloud: Uploading settings for user ID:', user.id);
+	console.log('Payload:', {
+		id: user.id,
+		settings,
+		updated_at: new Date().toISOString()
+	});
 
 	const { error } = await supabase.from('user_settings').upsert({
 		id: user.id,
@@ -63,6 +75,8 @@ export async function uploadSettingsToCloud(settings) {
 	} else {
 		console.log('Settings uploaded to Supabase');
 	}
+
+	console.log('uploading settings');
 }
 
 export async function downloadSettingsFromCloud() {
