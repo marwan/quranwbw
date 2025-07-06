@@ -4,15 +4,12 @@ import { __userBookmarks, __userNotes, __settingsConflictOptions } from '$utils/
 
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
-// ────────────────────────────────────────────
-// INIT AUTH LISTENER
-// ────────────────────────────────────────────
-
+// Initialize the auth listener once per session and sync settings if logged in
 export async function initSupabaseAuthListener() {
 	if (window.__supabaseAuthListenerInitialized) return;
 	window.__supabaseAuthListenerInitialized = true;
 
-	// On page load (if already logged in)
+	// Handle settings on first page load if already signed in
 	const {
 		data: { session }
 	} = await supabase.auth.getSession();
@@ -21,7 +18,7 @@ export async function initSupabaseAuthListener() {
 		await handleSettingsSync();
 	}
 
-	// On new login
+	// Handle settings on future sign-ins
 	supabase.auth.onAuthStateChange(async (event, session) => {
 		if (event === 'SIGNED_IN' && session) {
 			await handleSettingsSync();
@@ -29,10 +26,7 @@ export async function initSupabaseAuthListener() {
 	});
 }
 
-// ────────────────────────────────────────────
-// SIGN IN / LOGOUT
-// ────────────────────────────────────────────
-
+// Sign in the user with Google OAuth and redirect back to the current site
 export async function signInWithGoogle() {
 	const { error } = await supabase.auth.signInWithOAuth({
 		provider: 'google',
@@ -44,15 +38,13 @@ export async function signInWithGoogle() {
 	if (error) console.error('[signInWithGoogle] Login error:', error.message);
 }
 
+// Sign out the user and reload the page to clear state
 export async function logout() {
 	await supabase.auth.signOut();
 	location.reload();
 }
 
-// ────────────────────────────────────────────
-// HANDLE SETTINGS SYNC ON LOGIN / PAGE LOAD
-// ────────────────────────────────────────────
-
+// Compare Supabase and local settings and either upload or show conflict
 export async function handleSettingsSync() {
 	const {
 		data: { user },
@@ -66,7 +58,7 @@ export async function handleSettingsSync() {
 
 	const { data, error } = await supabase.from('user_settings').select('settings').eq('id', user.id).single();
 
-	// No settings in Supabase
+	// No settings exist in Supabase
 	if (error?.code === 'PGRST116' || !data?.settings) {
 		const local = localStorage.getItem('userSettings');
 		if (local) {
@@ -84,6 +76,7 @@ export async function handleSettingsSync() {
 		return;
 	}
 
+	// Compare local and Supabase settings
 	const remoteSettings = data.settings;
 	const localSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
 
@@ -111,10 +104,7 @@ export async function handleSettingsSync() {
 	}
 }
 
-// ────────────────────────────────────────────
-// CONFLICT RESOLUTION
-// ────────────────────────────────────────────
-
+// Apply Supabase settings to localStorage and Svelte stores (user chooses Supabase)
 export function useSupabaseSettings() {
 	__settingsConflictOptions.update((conflictObj) => {
 		if (!conflictObj?.remote) return conflictObj;
@@ -131,6 +121,7 @@ export function useSupabaseSettings() {
 	});
 }
 
+// Upload local settings to Supabase (user chooses local version)
 export async function useLocalSettings() {
 	__settingsConflictOptions.update(async (conflictObj) => {
 		if (!conflictObj?.local) return conflictObj;
@@ -140,10 +131,7 @@ export async function useLocalSettings() {
 	});
 }
 
-// ────────────────────────────────────────────
-// UPLOAD TO SUPABASE
-// ────────────────────────────────────────────
-
+// Upload the given settings object to Supabase for the current user
 export async function uploadSettingsToCloud(settings) {
 	if (!settings || typeof settings !== 'object') {
 		console.warn('[uploadSettingsToCloud] Invalid settings object:', settings);
