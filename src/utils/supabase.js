@@ -43,7 +43,7 @@ export async function logout() {
 
 export async function uploadSettingsToCloud(settings) {
 	if (!settings || typeof settings !== 'object') {
-		console.warn('uploadSettingsToCloud: Invalid settings object', settings);
+		console.warn('[uploadSettingsToCloud] Invalid settings object:', settings);
 		return;
 	}
 
@@ -53,30 +53,25 @@ export async function uploadSettingsToCloud(settings) {
 	} = await supabase.auth.getUser();
 
 	if (userError || !user) {
-		console.error('User not logged in or error fetching user:', userError?.message);
+		console.error('[uploadSettingsToCloud] User not logged in or error fetching user:', userError?.message);
 		return;
 	}
 
-	console.log('uploadSettingsToCloud: Uploading settings for user ID:', user.id);
-	console.log('Payload:', {
+	const payload = {
 		id: user.id,
 		settings,
 		updated_at: new Date().toISOString()
-	});
+	};
 
-	const { error } = await supabase.from('user_settings').upsert({
-		id: user.id,
-		settings,
-		updated_at: new Date().toISOString()
-	});
+	console.log('[uploadSettingsToCloud] Uploading settings:', payload);
+
+	const { error } = await supabase.from('user_settings').upsert(payload);
 
 	if (error) {
-		console.error('Failed to upload settings to Supabase:', error.message);
+		console.error('[uploadSettingsToCloud] Failed to upload settings:', error.message);
 	} else {
-		console.log('Settings uploaded to Supabase');
+		console.log('[uploadSettingsToCloud] Settings uploaded successfully');
 	}
-
-	console.log('uploading settings');
 }
 
 export async function downloadSettingsFromCloud() {
@@ -86,42 +81,48 @@ export async function downloadSettingsFromCloud() {
 	} = await supabase.auth.getUser();
 
 	if (userError || !user) {
-		console.warn('User not logged in or failed to fetch user');
+		console.warn('[downloadSettingsFromCloud] User not logged in or failed to fetch user');
 		return null;
 	}
 
 	const { data, error } = await supabase.from('user_settings').select('settings').eq('id', user.id).single();
 
 	if (error) {
-		console.warn('Could not fetch user settings:', error.message);
-		return null;
-	}
+		if (error.code === 'PGRST116') {
+			console.warn('[downloadSettingsFromCloud] No settings row found in Supabase for user');
+		} else {
+			console.warn('[downloadSettingsFromCloud] Error fetching settings:', error.message);
+		}
+	} else if (data?.settings && typeof data.settings === 'object') {
+		const settings = data.settings;
 
-	if (data?.settings) {
-		console.log('Settings fetched from Supabase');
+		console.log('[downloadSettingsFromCloud] Settings fetched from Supabase');
 
-		const userSettings = data.settings;
+		const userBookmarks = settings.userBookmarks ?? [];
+		const userNotes = settings.userNotes ?? [];
 
-		// Extract user-specific data
-		const userBookmarks = userSettings.userBookmarks;
-		const userNotes = userSettings.userNotes;
+		updateSettings({ type: 'userBookmarks', key: userBookmarks, override: true });
+		updateSettings({ type: 'userNotes', key: userNotes, override: true });
 
-		// Restore bookmarks and notes using updateSettings with override
-		updateSettings({
-			type: 'userBookmarks',
-			key: userBookmarks,
-			override: true
-		});
-
-		updateSettings({
-			type: 'userNotes',
-			key: userNotes,
-			override: true
-		});
-
-		// Immediately update the related stores for reactive UI update
 		__userBookmarks.set(userBookmarks);
 		__userNotes.set(userNotes);
+
+		return settings;
+	}
+
+	// If no settings found in Supabase, try using localStorage
+	const local = localStorage.getItem('userSettings');
+	if (local) {
+		try {
+			const localSettings = JSON.parse(local);
+			if (localSettings && typeof localSettings === 'object') {
+				console.log('[downloadSettingsFromCloud] No valid settings in Supabase. Uploading from localStorage...');
+				await uploadSettingsToCloud(localSettings);
+				return localSettings;
+			}
+		} catch (e) {
+			console.warn('[downloadSettingsFromCloud] Invalid JSON in localStorage userSettings');
+		}
 	}
 
 	return null;
