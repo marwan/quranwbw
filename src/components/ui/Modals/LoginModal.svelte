@@ -8,7 +8,7 @@
 	// Get the initial session returned from layout.js load function
 	let session = get(page).data.session;
 
-	// Subscribe to the $page store to update session if it changes (e.g., after OAuth login redirect)
+	// Subscribe to the $page store to update session if it changes (e.g., after OAuth login redirect).
 	const unsubscribe = page.subscribe(($page) => {
 		session = $page.data.session;
 	});
