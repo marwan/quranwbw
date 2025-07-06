@@ -27,14 +27,10 @@
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
-	import { supabase, initSupabaseAuthListener, downloadSettingsFromCloud } from '$utils/supabase.js';
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import { get } from 'svelte/store';
+	import { initSupabaseAuthListener } from '$utils/supabase.js';
 
+	// Initialize Supabase Auth
 	initSupabaseAuthListener();
-
-	window.downloadSettingsFromCloud = downloadSettingsFromCloud;
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();

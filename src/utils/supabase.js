@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { updateSettings } from '$utils/updateSettings';
+import { __userBookmarks, __userNotes } from '$utils/stores';
 
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
@@ -26,7 +27,10 @@ export async function initSupabaseAuthListener() {
 // Initiate Google OAuth login with Supabase
 export async function loginWithGoogle() {
 	const { error } = await supabase.auth.signInWithOAuth({
-		provider: 'google'
+		provider: 'google',
+		options: {
+			redirectTo: window.location.origin
+		}
 	});
 	if (error) console.error('Login error:', error.message);
 }
@@ -84,14 +88,26 @@ export async function downloadSettingsFromCloud() {
 
 		const userSettings = data.settings;
 
-		console.log(userSettings);
-
+		// Extract user-specific data
 		const userBookmarks = userSettings.userBookmarks;
 		const userNotes = userSettings.userNotes;
 
-		// Restore data
-		updateSettings({ type: 'userBookmarks', key: userBookmarks, override: true });
-		updateSettings({ type: 'userNotes', key: userNotes, override: true });
+		// Restore bookmarks and notes using updateSettings with override
+		updateSettings({
+			type: 'userBookmarks',
+			key: userBookmarks,
+			override: true
+		});
+
+		updateSettings({
+			type: 'userNotes',
+			key: userNotes,
+			override: true
+		});
+
+		// Immediately update the related stores for reactive UI update
+		__userBookmarks.set(userBookmarks);
+		__userNotes.set(userNotes);
 	}
 
 	return null;
