@@ -1,7 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import { __loginModalVisible } from '$utils/stores';
-	import { loginWithGoogle, logout } from '$utils/supabase.js';
+	import { signInWithGoogle, logout } from '$utils/supabase.js';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
 
@@ -23,7 +23,7 @@
 				<button on:click={logout} class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm"> Logout </button>
 			</div>
 		{:else}
-			<button on:click={loginWithGoogle} class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"> Login with Google </button>
+			<button on:click={signInWithGoogle} class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"> Signin with Google </button>
 		{/if}
 	</div>
 </Modal>

@@ -1,45 +1,148 @@
 import { createClient } from '@supabase/supabase-js';
 import { updateSettings } from '$utils/updateSettings';
-import { __userBookmarks, __userNotes } from '$utils/stores';
+import { __userBookmarks, __userNotes, __settingsConflictOptions } from '$utils/stores';
 
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+
+// ────────────────────────────────────────────
+// INIT AUTH LISTENER
+// ────────────────────────────────────────────
 
 export async function initSupabaseAuthListener() {
 	if (window.__supabaseAuthListenerInitialized) return;
 	window.__supabaseAuthListenerInitialized = true;
 
-	// Run once on fresh page load (if already logged in)
+	// On page load (if already logged in)
 	const {
 		data: { session }
 	} = await supabase.auth.getSession();
+
 	if (session) {
-		await downloadSettingsFromCloud();
+		await handleSettingsSync();
 	}
 
-	// Also run on any new login via Google OAuth
+	// On new login
 	supabase.auth.onAuthStateChange(async (event, session) => {
 		if (event === 'SIGNED_IN' && session) {
-			await downloadSettingsFromCloud();
+			await handleSettingsSync();
 		}
 	});
 }
 
-// Initiate Google OAuth login with Supabase
-export async function loginWithGoogle() {
+// ────────────────────────────────────────────
+// SIGN IN / LOGOUT
+// ────────────────────────────────────────────
+
+export async function signInWithGoogle() {
 	const { error } = await supabase.auth.signInWithOAuth({
 		provider: 'google',
 		options: {
 			redirectTo: window.location.origin
 		}
 	});
-	if (error) console.error('Login error:', error.message);
+
+	if (error) console.error('[signInWithGoogle] Login error:', error.message);
 }
 
-// Logout user and refresh the page
 export async function logout() {
 	await supabase.auth.signOut();
 	location.reload();
 }
+
+// ────────────────────────────────────────────
+// HANDLE SETTINGS SYNC ON LOGIN / PAGE LOAD
+// ────────────────────────────────────────────
+
+export async function handleSettingsSync() {
+	const {
+		data: { user },
+		error: userError
+	} = await supabase.auth.getUser();
+
+	if (userError || !user) {
+		console.warn('[handleSettingsSync] Not logged in');
+		return;
+	}
+
+	const { data, error } = await supabase.from('user_settings').select('settings').eq('id', user.id).single();
+
+	// No settings in Supabase
+	if (error?.code === 'PGRST116' || !data?.settings) {
+		const local = localStorage.getItem('userSettings');
+		if (local) {
+			try {
+				const localSettings = JSON.parse(local);
+				if (typeof localSettings === 'object') {
+					console.log('[handleSettingsSync] No remote settings. Uploading local.');
+					await uploadSettingsToCloud(localSettings);
+					return;
+				}
+			} catch {
+				console.warn('[handleSettingsSync] Invalid local userSettings');
+			}
+		}
+		return;
+	}
+
+	const remoteSettings = data.settings;
+	const localSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+
+	const remote = {
+		userBookmarks: remoteSettings.userBookmarks ?? [],
+		userNotes: remoteSettings.userNotes ?? []
+	};
+
+	const local = {
+		userBookmarks: localSettings.userBookmarks ?? [],
+		userNotes: localSettings.userNotes ?? []
+	};
+
+	const areEqual = JSON.stringify(remote) === JSON.stringify(local);
+
+	if (!areEqual) {
+		console.warn('[handleSettingsSync] Settings conflict detected');
+		__settingsConflictOptions.set({
+			conflict: true,
+			local: localSettings,
+			remote: remoteSettings
+		});
+	} else {
+		console.log('[handleSettingsSync] Settings are already in sync');
+	}
+}
+
+// ────────────────────────────────────────────
+// CONFLICT RESOLUTION
+// ────────────────────────────────────────────
+
+export function useSupabaseSettings() {
+	__settingsConflictOptions.update((conflictObj) => {
+		if (!conflictObj?.remote) return conflictObj;
+
+		localStorage.setItem('userSettings', JSON.stringify(conflictObj.remote));
+
+		updateSettings({ type: 'userBookmarks', key: conflictObj.remote.userBookmarks, override: true });
+		updateSettings({ type: 'userNotes', key: conflictObj.remote.userNotes, override: true });
+
+		__userBookmarks.set(conflictObj.remote.userBookmarks);
+		__userNotes.set(conflictObj.remote.userNotes);
+
+		return { conflict: false };
+	});
+}
+
+export async function useLocalSettings() {
+	__settingsConflictOptions.update(async (conflictObj) => {
+		if (!conflictObj?.local) return conflictObj;
+
+		await uploadSettingsToCloud(conflictObj.local);
+		return { conflict: false };
+	});
+}
+
+// ────────────────────────────────────────────
+// UPLOAD TO SUPABASE
+// ────────────────────────────────────────────
 
 export async function uploadSettingsToCloud(settings) {
 	if (!settings || typeof settings !== 'object') {
@@ -53,7 +156,7 @@ export async function uploadSettingsToCloud(settings) {
 	} = await supabase.auth.getUser();
 
 	if (userError || !user) {
-		console.error('[uploadSettingsToCloud] User not logged in or error fetching user:', userError?.message);
+		console.error('[uploadSettingsToCloud] User not logged in:', userError?.message);
 		return;
 	}
 
@@ -63,67 +166,13 @@ export async function uploadSettingsToCloud(settings) {
 		updated_at: new Date().toISOString()
 	};
 
-	console.log('[uploadSettingsToCloud] Uploading settings:', payload);
+	console.log('[uploadSettingsToCloud] Uploading:', payload);
 
 	const { error } = await supabase.from('user_settings').upsert(payload);
 
 	if (error) {
-		console.error('[uploadSettingsToCloud] Failed to upload settings:', error.message);
+		console.error('[uploadSettingsToCloud] Upload failed:', error.message);
 	} else {
-		console.log('[uploadSettingsToCloud] Settings uploaded successfully');
+		console.log('[uploadSettingsToCloud] Upload successful');
 	}
-}
-
-export async function downloadSettingsFromCloud() {
-	const {
-		data: { user },
-		error: userError
-	} = await supabase.auth.getUser();
-
-	if (userError || !user) {
-		console.warn('[downloadSettingsFromCloud] User not logged in or failed to fetch user');
-		return null;
-	}
-
-	const { data, error } = await supabase.from('user_settings').select('settings').eq('id', user.id).single();
-
-	if (error) {
-		if (error.code === 'PGRST116') {
-			console.warn('[downloadSettingsFromCloud] No settings row found in Supabase for user');
-		} else {
-			console.warn('[downloadSettingsFromCloud] Error fetching settings:', error.message);
-		}
-	} else if (data?.settings && typeof data.settings === 'object') {
-		const settings = data.settings;
-
-		console.log('[downloadSettingsFromCloud] Settings fetched from Supabase');
-
-		const userBookmarks = settings.userBookmarks ?? [];
-		const userNotes = settings.userNotes ?? [];
-
-		updateSettings({ type: 'userBookmarks', key: userBookmarks, override: true });
-		updateSettings({ type: 'userNotes', key: userNotes, override: true });
-
-		__userBookmarks.set(userBookmarks);
-		__userNotes.set(userNotes);
-
-		return settings;
-	}
-
-	// If no settings found in Supabase, try using localStorage
-	const local = localStorage.getItem('userSettings');
-	if (local) {
-		try {
-			const localSettings = JSON.parse(local);
-			if (localSettings && typeof localSettings === 'object') {
-				console.log('[downloadSettingsFromCloud] No valid settings in Supabase. Uploading from localStorage...');
-				await uploadSettingsToCloud(localSettings);
-				return localSettings;
-			}
-		} catch (e) {
-			console.warn('[downloadSettingsFromCloud] Invalid JSON in localStorage userSettings');
-		}
-	}
-
-	return null;
 }

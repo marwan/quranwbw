@@ -67,7 +67,8 @@ let __websiteOnline,
 	__keysToFetch,
 	__keysToFetchData,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible;
+	__homepageExtrasPanelVisible,
+	__settingsConflictOptions;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -247,6 +248,9 @@ if (browser) {
 
 	// visibiliy of the extras panel on homepage (bookmarks, notes, etc...)
 	__homepageExtrasPanelVisible = writable(userSettings.displaySettings.homepageExtrasPanelVisible);
+
+	// for supabase's settings conflict detection and modal
+	__settingsConflictOptions = writable({});
 }
 
 export {
@@ -316,5 +320,6 @@ export {
 	__keysToFetch,
 	__keysToFetchData,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible
+	__homepageExtrasPanelVisible,
+	__settingsConflictOptions
 };
