@@ -43,7 +43,7 @@
 							<th class="px-6 py-3">Translation</th>
 							<th class="px-6 py-3">Transliteration</th>
 							<th class="px-6 py-3">{term('verse')}</th>
-							<th class="px-6 py-3">Key</th>
+							<th class="px-6 py-3">Word</th>
 						</tr>
 					</thead>
 					<tbody>
