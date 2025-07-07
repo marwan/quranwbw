@@ -7,8 +7,8 @@
 	import { term } from '$utils/terminologies';
 
 	const tableTitles = {
-		1: { title: 'Words in Quran having same root' },
-		2: { title: 'Exact words in Quran' }
+		1: { title: 'with the same root' },
+		2: { title: 'appearing exactly' }
 	};
 
 	const params = new URLSearchParams(window.location.search);
@@ -33,7 +33,7 @@
 {#if totalAvailableWords > 0}
 	<div class="flex flex-col">
 		<div class="relative space-y-6 sm:rounded-3xl">
-			<h1 class="text-md md:text-2xl text-center">{tableTitles[tableType].title} ({totalAvailableWords})</h1>
+			<h1 class="text-md md:text-2xl text-center">{totalAvailableWords} {totalAvailableWords > 1 ? 'words' : 'word'} {tableTitles[tableType].title}</h1>
 			<div class="max-h-[32em] overflow-auto">
 				<table class="w-full text-sm text-left rtl:text-right rounded-md">
 					<thead class="text-xs uppercase top-0 {window.theme('bgSecondaryLight')}">
