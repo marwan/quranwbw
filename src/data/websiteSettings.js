@@ -6,7 +6,7 @@ export const websiteTitle = `Quran ${websiteTagline} - ${websiteURL}`;
 
 export const wbwLanguages = 'English, Urdu, Hindi, Indonesian, Bangla, Turkish, Tamil, French, German, Chinese, Malayalam, Divehi, Sindhi, Persian and Albanian';
 
-export const apiVersion = 140;
+export const apiVersion = 141;
 
 export const useLocalAPI = false;
 
