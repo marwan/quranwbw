@@ -278,7 +278,7 @@
 
 				<div class="flex flex-col flex-wrap text-base">
 					<!-- quran-font-setting -->
-					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity} {$__currentPage === 'morphology' && disabledClasses}">
+					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Quran Font</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
@@ -335,7 +335,7 @@
 			</div>
 
 			<!-- translation-settings-block -->
-			<div id="translation-settings-block" class="py-5 border-t-2 {window.theme('border')} {settingsDrawerOpacity} {$__currentPage === 'morphology' && disabledClasses}">
+			<div id="translation-settings-block" class="py-5 border-t-2 {window.theme('border')} {settingsDrawerOpacity}">
 				<h3 class="block mb-2 font-medium text-xl">Translation, Transliteration & {term('tafsir')}</h3>
 
 				<div class="flex flex-col flex-wrap text-base">
