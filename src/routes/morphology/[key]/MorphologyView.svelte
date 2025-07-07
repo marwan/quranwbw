@@ -50,7 +50,7 @@
 		// Fetch word summary data
 		fetchWordSummary = (async () => {
 			try {
-				const response = await fetch(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=1`);
+				const response = await fetch(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`);
 				const data = await response.json();
 				return data;
 			} catch (error) {
@@ -112,7 +112,7 @@
 			<span>...</span>
 		{:then fetchWordSummary}
 			<div class="flex flex-col space-y-4">
-				<span>{@html fetchWordSummary[$__morphologyKey]}</span>
+				<span>{@html fetchWordSummary.data[$__morphologyKey]}</span>
 				<!-- <button class="text-lg font-bold underline" on:click={() => showLexiconModal()}>View Lanes Lexicon Data &rarr;</button> -->
 			</div>
 
