@@ -1,7 +1,7 @@
 import { db } from '$lib/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
-import { apiEndpoint, staticEndpoint, apiVersion, apiByPassCache } from '$data/websiteSettings';
+import { apiEndpoint, staticEndpoint, apiVersion } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
 
 // Fetch specific verses (startVerse to endVerse) and cache chapter data
@@ -31,8 +31,7 @@ export async function fetchChapterData(props) {
 			word_type: selectableFontTypes[fontType].apiId,
 			word_translation: wordTranslation,
 			word_transliteration: wordTransliteration,
-			version: apiVersion,
-			bypass_cache: apiByPassCache
+			version: apiVersion
 		});
 
 	// Fetch from API
