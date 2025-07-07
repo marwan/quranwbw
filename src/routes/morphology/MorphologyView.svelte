@@ -234,8 +234,6 @@
 					<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
 						<Table wordData={result.data[wordRoot]} tableType={1} />
 					</div>
-				{:else}
-					<p class="text-center py-6 opacity-60">No matching words found in Quran.</p>
 				{/if}
 			{:catch error}
 				<ErrorLoadingDataFromAPI center="false" />
@@ -250,8 +248,6 @@
 				<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
 					<Table wordData={wordList} tableType={2} />
 				</div>
-			{:else}
-				<p class="text-center py-6 opacity-60">No matching words found in Quran.</p>
 			{/if}
 		{:catch error}
 			<ErrorLoadingDataFromAPI center="false" />

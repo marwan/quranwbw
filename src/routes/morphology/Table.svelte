@@ -73,6 +73,4 @@
 			{/if}
 		</div>
 	</div>
-{:else}
-	<p class="text-center py-6 opacity-60">No words available to display.</p>
 {/if}
