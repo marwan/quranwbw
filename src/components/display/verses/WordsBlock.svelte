@@ -73,20 +73,6 @@
 		}
 	}
 
-	/**
-	 * Determines the appropriate Quranic font class to use based on the current page and modal state.
-	 * - If the current page is "morphology", or if the morphology modal is visible on any page,
-	 *   the function returns the default font: 'arabic-font-1'.
-	 * - Otherwise, it returns the font class based on the selected font type (e.g., 'arabic-font-2').
-	 */
-	function getFontType() {
-		if ($__currentPage === 'morphology' || ($__currentPage !== 'morphology' && $__morphologyModalVisible)) {
-			return 'arabic-font-1';
-		}
-
-		return `arabic-font-${$__fontType}`;
-	}
-
 	// Common classes for words and end icons
 	$: wordAndEndIconCommonClasses = `
 		hover:cursor-pointer
@@ -99,7 +85,7 @@
 	// Classes for word spans
 	$: wordSpanClasses = `
 		arabicText leading-normal 
-		${getFontType()} 
+		arabic-font-${$__fontType}
 		${$__currentPage !== 'mushaf' && fontSizes.arabicText} 
 		${displayIsContinuous && 'inline-block'}
 	`;

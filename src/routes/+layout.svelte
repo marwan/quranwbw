@@ -19,7 +19,7 @@
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import DownloadModal from '$ui/Modals/DownloadModal.svelte';
 
-	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
+	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
@@ -130,6 +130,13 @@
 	window.addEventListener('offline', () => {
 		__websiteOnline.set(false);
 	});
+
+	// Restore the user's preferred font when navigating away from the Mushaf page,
+	// since the Mushaf page enforces a specific font (v4).
+	// This ensures the original fontType is re-applied on all other pages.
+	$: if ($__currentPage && $__currentPage !== 'mushaf') {
+		$__fontType = JSON.parse($__userSettings).displaySettings.fontType;
+	}
 
 	// Service Worker
 	// checkAndRegisterServiceWorker();
