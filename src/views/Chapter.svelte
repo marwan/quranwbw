@@ -18,9 +18,6 @@
 	// Export data and verse range variables
 	export let data, startVerse, endVerse;
 
-	// Maximum number of verses to load if total verses in chapter exceed this threshold
-	const maxVersesThreshold = 5;
-
 	let chapterData;
 
 	// Fetch verses whenever there's a change in chapter or URL parameters
@@ -31,16 +28,8 @@
 		// Update current chapter number
 		__chapterNumber.set(+data.chapter);
 
-		const chapterTotalVerses = quranMetaData[$__chapterNumber].verses;
-
 		// Parse URL to get the range of verses to load
 		[startVerse, endVerse] = parseURL();
-
-		// If no specific range is selected, load verses from 1 to threshold or total chapter verses
-		if (startVerse === 1 && endVerse === chapterTotalVerses) {
-			startVerse = 1;
-			endVerse = chapterTotalVerses > maxVersesThreshold ? maxVersesThreshold : chapterTotalVerses;
-		}
 
 		// Fetch chapter data from API
 		chapterData = fetchChapterData({ chapter: $__chapterNumber });

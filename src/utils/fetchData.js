@@ -1,10 +1,10 @@
 import { db } from '$lib/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
-import { apiEndpoint, staticEndpoint, apiVersion, apiByPassCache } from '$data/websiteSettings';
+import { apiEndpoint, staticEndpoint, apiVersion } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
 
-// Fetch specific verses (startVerse to endVerse) and cache chapter data
+// Fetch specific verses (startVerse to endVerse) and cache the data
 export async function fetchChapterData(props) {
 	if (!props.skipSave) __chapterData.set(null);
 
@@ -17,7 +17,6 @@ export async function fetchChapterData(props) {
 
 	// Try to load from cache
 	const cachedData = await useCache(cacheKey, 'chapter');
-
 	if (cachedData) {
 		if (!props.skipSave) __chapterData.set(cachedData);
 		return cachedData;
@@ -31,8 +30,7 @@ export async function fetchChapterData(props) {
 			word_type: selectableFontTypes[fontType].apiId,
 			word_translation: wordTranslation,
 			word_transliteration: wordTransliteration,
-			version: apiVersion,
-			bypass_cache: apiByPassCache
+			version: apiVersion
 		});
 
 	// Fetch from API
@@ -51,6 +49,7 @@ export async function fetchChapterData(props) {
 	return data.data.verses;
 }
 
+// Fetch specific translations and cache the data
 export async function fetchVerseTranslationData(props) {
 	// Use translation IDs from props or fallback to store
 	if (!props.translations) props.translations = get(__verseTranslations);
@@ -117,6 +116,34 @@ export async function fetchVerseTranslationData(props) {
 	return updatedData;
 }
 
+// Generic fetch and cache utility
+export async function fetchAndCacheJson(url, type = 'other') {
+	// Generate a unique key for the data
+	const parsedUrl = new URL(url);
+	const pathParts = parsedUrl.pathname.split('/').filter(Boolean); // removes empty strings
+	const lastPart = pathParts[pathParts.length - 1] || '';
+	const secondLastPart = pathParts[pathParts.length - 2] || 'root'; // fallback if not present
+	const cacheKey = `${secondLastPart}/${lastPart}${parsedUrl.search}`;
+
+	// Try to load from cache
+	const cachedData = await useCache(cacheKey, type);
+	if (cachedData) {
+		return cachedData;
+	}
+
+	// Fetch from API
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error('Failed to fetch data from the API');
+	}
+	const data = await response.json();
+
+	// Save to cache
+	await useCache(cacheKey, type, data);
+
+	return data;
+}
+
 // Fetch timestamps for word-by-word highlighting
 export async function fetchTimestampData(chapter) {
 	const apiURL = `${staticEndpoint}/timestamps/${chapter}.json?version=1`;
@@ -129,8 +156,29 @@ export async function fetchTimestampData(chapter) {
 async function useCache(key, type, dataToSet = undefined) {
 	try {
 		// Select the appropriate table based on the type
-		const table = type === 'chapter' ? db.chapter_data : db.translation_data;
-		if (!table) throw new Error(`Invalid table for type: ${type}`);
+		let table;
+
+		switch (type) {
+			case 'chapter':
+				table = db.chapter_data;
+				break;
+			case 'translation':
+				table = db.translation_data;
+				break;
+			case 'morphology':
+				table = db.morphology_data;
+				break;
+			case 'tafsir':
+				table = db.tafsir_data;
+				break;
+			case 'other':
+				table = db.other_data;
+				break;
+			default:
+				throw new Error(`Invalid table for type: ${type}`);
+		}
+
+		if (!table) throw new Error(`Table not found for type: ${type}`);
 
 		// Access the version table to verify current API version
 		const versionTable = db.data_version;

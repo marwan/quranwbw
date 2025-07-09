@@ -1,10 +1,9 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import Translation from '$svgs/Translation.svelte';
 	import Search2 from '$svgs/Search2.svelte';
 	import Individual from '$display/verses/modes/Individual.svelte';
-	import VerseTranslationSelector from '$ui/SettingsDrawer/VerseTranslationSelector.svelte';
+	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { goto } from '$app/navigation';
 	import { __currentPage, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __settingsSelectorModal, __keysToFetch } from '$utils/stores';
 	import { apiEndpoint } from '$data/websiteSettings';
@@ -42,7 +41,7 @@
 	// Get verse keys from the API
 	async function getVerseKeys(searchQuery) {
 		try {
-			let response = await fetch(`${apiEndpoint}/search/translations?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
+			let response = await fetch(`${apiEndpoint}/search?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
 			if (response.status !== 200) return (badRequest = true);
 			let data = await response.json();
 			let versesKeyData = data;
@@ -113,9 +112,6 @@
 		return linkMap[item.result_type] || ['#', '#']; // Fallback to '#' if no match
 	}
 
-	// Make a random hit to the search endpoint to warm it
-	fetch(`${apiEndpoint}/search/translations?query=mary&random_id=${Math.floor(10000 + Math.random() * 90000)}&bypass_cache=true`);
-
 	__currentPage.set('search');
 </script>
 
@@ -143,7 +139,7 @@
 
 	{#if searchQuery.length > 0}
 		{#if badRequest}
-			<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Something went wrong.</div>
+			<ErrorLoadingDataFromAPI center="false" />
 		{:else if !badRequest && fetchingNewData}
 			<Spinner />
 		{:else}

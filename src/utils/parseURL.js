@@ -15,64 +15,66 @@ import { quranMetaData } from '$data/quranMeta';
 export function parseURL() {
 	const chapterTotalVerses = quranMetaData[get(__chapterNumber)].verses;
 	const url = window.location.pathname;
-	const hash = window.location.hash.slice(1); // Get the hash part of the URL
+	const hash = window.location.hash.slice(1);
 	const queryParams = new URLSearchParams(window.location.search);
 	const startVerseParam = parseInt(queryParams.get('startVerse'), 10);
 
 	let startVerse, endVerse;
+	let wasExplicitRange = false;
 
-	// Remove any leading slash and split the URL by '/', '-', ':', or '.'
-	const urlParts = url.replace(/^\/+/, '').split(/[-/:.]/);
+	// Split by '/' only
+	const pathParts = url.replace(/^\/+/, '').split('/');
+	const chapter = parseInt(pathParts[0], 10) || 1;
 
-	// for URLs with only chapter number or chapter and verses
-	if (urlParts.length >= 1) {
-		const chapter = parseInt(urlParts[0], 10) || 1;
+	if (chapter < 1 || chapter > 114) {
+		startVerse = 1;
+		endVerse = chapterTotalVerses;
+	} else if (pathParts.length === 1) {
+		startVerse = 1;
+		endVerse = quranMetaData[chapter].verses;
+	} else if (pathParts.length >= 2) {
+		const secondPart = pathParts[1];
 
-		// limit chapter to valid range
-		if (chapter < 1 || chapter > 114) {
-			startVerse = 1;
-			endVerse = chapterTotalVerses;
-		} else if (urlParts.length === 1) {
-			startVerse = 1;
-			endVerse = quranMetaData[chapter].verses;
+		let range = secondPart.split(/[-:.#]/);
+		startVerse = parseInt(range[0], 10) || 1;
+		endVerse = parseInt(range[1], 10);
+
+		if (!isNaN(endVerse)) {
+			wasExplicitRange = true;
 		} else {
-			const verseRange = urlParts[1].split('-');
-			startVerse = parseInt(verseRange[0], 10) || 1;
-			endVerse = parseInt(verseRange[1], 10) || startVerse;
-
-			// Ensure start verse is between 1 and the max number of verses
-			startVerse = Math.max(1, Math.min(startVerse, quranMetaData[chapter].verses));
-
-			// Ensure end verse is between start verse and max verses
-			endVerse = Math.max(startVerse, Math.min(endVerse, quranMetaData[chapter].verses));
+			endVerse = startVerse;
 		}
+
+		startVerse = Math.max(1, Math.min(startVerse, quranMetaData[chapter].verses));
+		endVerse = Math.max(startVerse, Math.min(endVerse, quranMetaData[chapter].verses));
 	}
 
-	// Override startVerse if ?startVerse parameter is present
+	// Override with ?startVerse param
 	if (!isNaN(startVerseParam)) {
-		const chapter = parseInt(urlParts[0], 10) || 1;
 		startVerse = Math.max(1, Math.min(startVerseParam, quranMetaData[chapter].verses));
-		endVerse = startVerse; // If only startVerse is provided, set endVerse to the same
+		endVerse = startVerse;
+		wasExplicitRange = false;
 	}
 
-	// Check for hash-based verse
+	// Override with hash
 	if (hash) {
 		const hashVerse = parseInt(hash, 10);
 		if (!isNaN(hashVerse)) {
-			startVerse = hashVerse;
-			endVerse = hashVerse;
-
-			// Limit hash-based verse to valid range
-			const chapter = parseInt(urlParts[0], 10) || 1;
-			startVerse = Math.max(1, Math.min(startVerse, quranMetaData[chapter].verses));
-			endVerse = Math.max(startVerse, Math.min(endVerse, quranMetaData[chapter].verses));
+			startVerse = Math.max(1, Math.min(hashVerse, quranMetaData[chapter].verses));
+			endVerse = startVerse;
+			wasExplicitRange = false;
 		}
 	}
 
-	// Fallback for URLs without valid verses or chapters
+	// Final fallback
 	if (!startVerse || !endVerse) {
 		startVerse = 1;
 		endVerse = chapterTotalVerses;
+	}
+
+	// Enforce max range of 5 verses (unless explicitly defined in URL)
+	if (!wasExplicitRange && endVerse - startVerse > 4) {
+		endVerse = Math.min(startVerse + 4, quranMetaData[chapter].verses);
 	}
 
 	return [startVerse, endVerse];

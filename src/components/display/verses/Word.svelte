@@ -15,8 +15,8 @@
 	import { selectableThemes, selectableWordTranslations } from '$data/options';
 	import { supplicationsFromQuran } from '$data/quranMeta';
 	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __wordTranslation, __wordTranslationEnabled, __wordTransliterationEnabled, __morphologyKey, __wordTooltip, __verseKey, __websiteTheme, __hideNonDuaPart, __morphologyModalVisible } from '$utils/stores';
+	import { splitDelimiter } from '$data/websiteSettings';
 	// import { tajweedRulings, tajweedColorIds } from '$data/tajweedRulings';
-	import { apiEndpoint, splitDelimiter } from '$data/websiteSettings';
 
 	const chapter = key.split(':')[0];
 	const verse = key.split(':')[1];
@@ -25,7 +25,7 @@
 	const arabicSplit = value.words.arabic.split(splitDelimiter);
 	const transliterationSplit = value.words.transliteration.split(splitDelimiter);
 	const translationSplit = value.words.translation.split(splitDelimiter);
-	const v4PopoverEnabled = false;
+	// const v4PopoverEnabled = false;
 
 	// fix for Ba'da Ma Ja'aka for page 254
 	// since it's just a cosmetic change, there's no need of changing it at database level

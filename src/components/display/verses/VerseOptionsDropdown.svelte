@@ -12,13 +12,13 @@
 	import VerseTranslation from '$svgs/VerseTranslation.svelte';
 	import ChapterMode from '$svgs/ChapterMode.svelte';
 	import Book from '$svgs/Book.svelte';
-	import Juz from '$svgs/Juz.svelte';
+	// import Juz from '$svgs/Juz.svelte';
 	import Morphology from '$svgs/Morphology.svelte';
 	import Copy from '$svgs/Copy.svelte';
-	import AdvancedCopy from '$svgs/AdvancedCopy.svelte';
-	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
-	import Back from '$svgs/Back.svelte';
-	import Link from '$svgs/Link.svelte';
+	// import AdvancedCopy from '$svgs/AdvancedCopy.svelte';
+	// import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
+	// import Back from '$svgs/Back.svelte';
+	// import Link from '$svgs/Link.svelte';
 	import { showAudioModal } from '$utils/audioController';
 	import { selectableDisplays } from '$data/options';
 	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType, __morphologyKey } from '$utils/stores';
@@ -27,6 +27,7 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
+	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	// Transition parameters for drawer
 	const transitionParamsRight = {
@@ -49,10 +50,7 @@
 	$: {
 		if (dropdownOpen) {
 			verseKeyData = (async () => {
-				// getting indexes file
-				const response = await fetch(`${staticEndpoint}/meta/verseKeyData.json?version=2`);
-				const data = await response.json();
-				return data;
+				return await fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other');
 			})();
 		}
 	}

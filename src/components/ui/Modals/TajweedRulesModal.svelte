@@ -8,6 +8,7 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { linkClasses } from '$data/commonClasses';
 	import { createLink } from '$utils/createLink';
+	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	const modalTitle = `${term('tajweed')} Rules`;
 	let tajweedRulesData;
@@ -17,9 +18,7 @@
 	$: {
 		if ($__tajweedRulesModalVisible) {
 			tajweedRulesData = (async () => {
-				const response = await fetch(`${staticEndpoint}/tajweed/tajweed-rules.json?version=3`);
-				const data = await response.json();
-				return data.data;
+				return await fetchAndCacheJson(`${staticEndpoint}/tajweed/tajweed-rules.json?version=3`, 'other');
 			})();
 		}
 	}
@@ -49,7 +48,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each Object.entries(tajweedRulesData) as [key, value]}
+				{#each Object.entries(tajweedRulesData.data) as [key, value]}
 					<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
 						<td class="py-4 w-fit tajweed-rules text-2xl text-center align-top theme-palette-tajweed"> {value.code} </td>
 						<td class="pl-2 pr-6 py-4">
