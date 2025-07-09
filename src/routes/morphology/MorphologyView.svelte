@@ -9,7 +9,7 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { __currentPage, __fontType, __wordTranslation, __verseTranslations, __wordTransliteration, __morphologyKey, __lexiconModalVisible, __wordRoot } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
-	import { fetchChapterData } from '$utils/fetchData';
+	import { fetchChapterData, fetchMorphologyData } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
@@ -32,33 +32,12 @@
 		return data[`${chapter}:${verse}`];
 	})();
 
-	// In-memory cache for static fetches
-	const fetchCache = {};
-
-	async function getOrFetch(url) {
-		if (fetchCache[url]) {
-			return fetchCache[url]; // Return cached Promise
-		}
-
-		// Fetch and store Promise immediately to prevent duplicate fetches
-		fetchCache[url] = fetch(url)
-			.then((res) => res.json())
-			.catch((err) => {
-				console.error(`Error fetching ${url}:`, err);
-				delete fetchCache[url]; // Remove failed cache to allow retry
-				throw err;
-			});
-
-		return fetchCache[url];
-	}
-
 	// Fetch words data for morphology
 	$: {
 		// Fetch word verbs data
 		fetchWordVerbs = (async () => {
 			try {
-				const url = `${staticEndpoint}/morphology-data/word-verbs.json?version=1`;
-				return await getOrFetch(url);
+				return await fetchMorphologyData(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`);
 			} catch {
 				return {};
 			}
@@ -67,8 +46,7 @@
 		// Fetch word summary data
 		fetchWordSummary = (async () => {
 			try {
-				const url = `${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`;
-				return await getOrFetch(url);
+				return await fetchMorphologyData(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`);
 			} catch {
 				return {};
 			}
@@ -77,8 +55,7 @@
 		// Fetch words with same root
 		fetchWordsWithSameRoot = (async () => {
 			try {
-				const url = `${staticEndpoint}/morphology-data/words-with-same-root.json?version=1`;
-				return await getOrFetch(url);
+				return await fetchMorphologyData(`${staticEndpoint}/morphology-data/words-with-same-root.json?version=1`);
 			} catch {
 				return {};
 			}
@@ -87,10 +64,13 @@
 		// Fetch exact words in Quran
 		fetchExactWordsInQuran = (async () => {
 			try {
-				const keyMapUrl = `${staticEndpoint}/morphology-data/word-keys-map.json?version=1`;
-				const exactMapUrl = `${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=2`;
+				const [keyMap, exactMap] = await Promise.all([
+					// To get the root of a word
+					fetchMorphologyData(`${staticEndpoint}/morphology-data/word-keys-map.json?version=1`),
 
-				const [keyMap, exactMap] = await Promise.all([getOrFetch(keyMapUrl), getOrFetch(exactMapUrl)]);
+					// To show the exact words in Quran
+					fetchMorphologyData(`${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=2`)
+				]);
 
 				const keyToMeta = keyMap?.data || {};
 				const uthmaniToKeys = exactMap?.data || {};

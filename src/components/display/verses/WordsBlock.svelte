@@ -85,7 +85,7 @@
 	// Classes for word spans
 	$: wordSpanClasses = `
 		arabicText leading-normal 
-		arabic-font-${$__fontType}
+		arabic-font-${$__fontType} 
 		${$__currentPage !== 'mushaf' && fontSizes.arabicText} 
 		${displayIsContinuous && 'inline-block'}
 	`;

@@ -116,6 +116,32 @@ export async function fetchVerseTranslationData(props) {
 	return updatedData;
 }
 
+// Fetch different types of Morphology data
+export async function fetchMorphologyData(url) {
+	// Generate a unique key for the data
+	const parsedUrl = new URL(url);
+	const cacheKey = parsedUrl.pathname.split('/').pop() + parsedUrl.search;
+
+	// Try to load from cache
+	const cachedData = await useCache(cacheKey, 'morphology');
+
+	if (cachedData) {
+		return cachedData;
+	}
+
+	// Fetch from API
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error('Failed to fetch data from the API');
+	}
+	const data = await response.json();
+
+	// Save to cache
+	await useCache(cacheKey, 'morphology', data);
+
+	return data;
+}
+
 // Fetch timestamps for word-by-word highlighting
 export async function fetchTimestampData(chapter) {
 	const apiURL = `${staticEndpoint}/timestamps/${chapter}.json?version=1`;
@@ -128,8 +154,23 @@ export async function fetchTimestampData(chapter) {
 async function useCache(key, type, dataToSet = undefined) {
 	try {
 		// Select the appropriate table based on the type
-		const table = type === 'chapter' ? db.chapter_data : db.translation_data;
-		if (!table) throw new Error(`Invalid table for type: ${type}`);
+		let table;
+
+		switch (type) {
+			case 'chapter':
+				table = db.chapter_data;
+				break;
+			case 'translation':
+				table = db.translation_data;
+				break;
+			case 'morphology':
+				table = db.morphology_data;
+				break;
+			default:
+				throw new Error(`Invalid table for type: ${type}`);
+		}
+
+		if (!table) throw new Error(`Table not found for type: ${type}`);
 
 		// Access the version table to verify current API version
 		const versionTable = db.data_version;
