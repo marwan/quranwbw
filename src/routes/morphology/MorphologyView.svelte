@@ -9,7 +9,7 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { __currentPage, __fontType, __wordTranslation, __verseTranslations, __wordTransliteration, __morphologyKey, __lexiconModalVisible, __wordRoot } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
-	import { fetchChapterData, fetchMorphologyData } from '$utils/fetchData';
+	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
@@ -37,7 +37,7 @@
 		// Fetch word verbs data
 		fetchWordVerbs = (async () => {
 			try {
-				return await fetchMorphologyData(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`);
+				return await fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`, 'morphology');
 			} catch {
 				return {};
 			}
@@ -46,7 +46,7 @@
 		// Fetch word summary data
 		fetchWordSummary = (async () => {
 			try {
-				return await fetchMorphologyData(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`);
+				return await fetchAndCacheJson(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`, 'morphology');
 			} catch {
 				return {};
 			}
@@ -55,7 +55,7 @@
 		// Fetch words with same root
 		fetchWordsWithSameRoot = (async () => {
 			try {
-				return await fetchMorphologyData(`${staticEndpoint}/morphology-data/words-with-same-root.json?version=1`);
+				return await fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root.json?version=1`, 'morphology');
 			} catch {
 				return {};
 			}
@@ -66,10 +66,10 @@
 			try {
 				const [keyMap, exactMap] = await Promise.all([
 					// To get the root of a word
-					fetchMorphologyData(`${staticEndpoint}/morphology-data/word-keys-map.json?version=1`),
+					fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-keys-map.json?version=1`, 'morphology'),
 
 					// To show the exact words in Quran
-					fetchMorphologyData(`${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=2`)
+					fetchAndCacheJson(`${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=2`, 'morphology')
 				]);
 
 				const keyToMeta = keyMap?.data || {};

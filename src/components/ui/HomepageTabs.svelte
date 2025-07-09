@@ -8,7 +8,6 @@
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import Notes from '$svgs/Notes.svelte';
-	import ContinueReading from '$svgs/ContinueReading.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
@@ -16,6 +15,7 @@
 	import { term } from '$utils/terminologies';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { disabledClasses } from '$data/commonClasses';
+	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	const svgData = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
 	const continueReadingButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
@@ -36,11 +36,9 @@
 	$: if (extrasActiveTab === 1 && totalBookmarks > 0) {
 		fullQuranData = (async () => {
 			try {
-				const response = await fetch(`${staticEndpoint}/full-quran/uthmani.json`);
-				const data = await response.json();
-				return data.data;
+				return await fetchAndCacheJson(`${staticEndpoint}/full-quran/uthmani.json?version=1`, 'other');
 			} catch (error) {
-				// ...
+				console.warn(error);
 			}
 		})();
 	}
@@ -128,7 +126,7 @@
 									{#if extrasActiveTab === 1 && totalBookmarks > 0}
 										<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70">
 											{#await fullQuranData then data}
-												<div class="truncate max-w-[28vw] md:max-w-[115px]">{data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
+												<div class="truncate max-w-[28vw] md:max-w-[115px]">{data.data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
 											{:catch error}
 												<p></p>
 											{/await}

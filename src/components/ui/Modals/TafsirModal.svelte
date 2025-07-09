@@ -8,6 +8,7 @@
 	import { buttonClasses } from '$data/commonClasses';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { term } from '$utils/terminologies';
+	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	let tafsirData;
 
@@ -33,9 +34,7 @@
 	async function loadTafsirData() {
 		try {
 			const selectedTafsir = selectableTafsirs[selectedTafirId];
-			const response = await fetch(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`);
-			const data = await response.json();
-			return data.ayahs;
+			return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
 		} catch (error) {
 			console.error(error);
 			return [];
@@ -91,7 +90,7 @@
 			<div class="text-sm flex flex-col space-y-6">
 				<div class="flex flex-col space-y-4">
 					<div class={tafsirTextClasses}>
-						{#each Object.entries(tafsirData) as [id, tafsir]}
+						{#each Object.entries(tafsirData.ayahs) as [id, tafsir]}
 							{#if tafsir.surah === chapter && tafsir.ayah === verse}
 								{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
 							{/if}

@@ -13,6 +13,7 @@
 	import { page } from '$app/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
+	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	// CSS classes
 	const linkClasses = 'flex flex-row space-x-2 items-center';
@@ -56,8 +57,7 @@
 	// Load verse key data externally to reduce bundle size
 	$: if ($__quranNavigationModalVisible || ['mushaf', 'morphology'].includes($__currentPage)) {
 		(async () => {
-			const response = await fetch(`${staticEndpoint}/meta/verseKeyData.json`);
-			verseKeyData = await response.json();
+			verseKeyData = await fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other');
 		})();
 	}
 

@@ -17,7 +17,6 @@ export async function fetchChapterData(props) {
 
 	// Try to load from cache
 	const cachedData = await useCache(cacheKey, 'chapter');
-
 	if (cachedData) {
 		if (!props.skipSave) __chapterData.set(cachedData);
 		return cachedData;
@@ -117,15 +116,17 @@ export async function fetchVerseTranslationData(props) {
 	return updatedData;
 }
 
-// Fetch morphology data and cache them
-export async function fetchMorphologyData(url) {
+// Generic fetch and cache utility
+export async function fetchAndCacheJson(url, type = 'other') {
 	// Generate a unique key for the data
 	const parsedUrl = new URL(url);
-	const cacheKey = parsedUrl.pathname.split('/').pop() + parsedUrl.search;
+	const pathParts = parsedUrl.pathname.split('/').filter(Boolean); // removes empty strings
+	const lastPart = pathParts[pathParts.length - 1] || '';
+	const secondLastPart = pathParts[pathParts.length - 2] || 'root'; // fallback if not present
+	const cacheKey = `${secondLastPart}/${lastPart}${parsedUrl.search}`;
 
 	// Try to load from cache
-	const cachedData = await useCache(cacheKey, 'morphology');
-
+	const cachedData = await useCache(cacheKey, type);
 	if (cachedData) {
 		return cachedData;
 	}
@@ -138,7 +139,7 @@ export async function fetchMorphologyData(url) {
 	const data = await response.json();
 
 	// Save to cache
-	await useCache(cacheKey, 'morphology', data);
+	await useCache(cacheKey, type, data);
 
 	return data;
 }
@@ -166,6 +167,12 @@ async function useCache(key, type, dataToSet = undefined) {
 				break;
 			case 'morphology':
 				table = db.morphology_data;
+				break;
+			case 'tafsir':
+				table = db.tafsir_data;
+				break;
+			case 'other':
+				table = db.other_data;
 				break;
 			default:
 				throw new Error(`Invalid table for type: ${type}`);

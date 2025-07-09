@@ -6,6 +6,7 @@
 	import { __currentPage, __displayType, __userBookmarks, __keysToFetch, __keysToFetchData, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { term } from '$utils/terminologies';
+	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	// only allow display type 1 & 2, and don't save the layout in settings
 	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
@@ -20,8 +21,7 @@
 
 		fetchJuzKeys = (async () => {
 			try {
-				const response = await fetch(`${staticEndpoint}/meta/keysInJuz.json`);
-				const data = await response.json();
+				const data = await fetchAndCacheJson(`${staticEndpoint}/meta/keysInJuz.json?version=1`, 'other');
 
 				// storing the keys
 				__keysToFetch.set(null);

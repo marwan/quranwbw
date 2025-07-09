@@ -19,7 +19,7 @@
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { splitDelimiter } from '$data/websiteSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
-	import { fetchChapterData } from '$utils/fetchData';
+	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
 	import '$lib/swiped-events.min.js';
 
 	// Lines to be centered instead of justified
@@ -113,8 +113,7 @@
 	async function fetchVersesByPage(page) {
 		try {
 			// Fetch keys for the given page
-			const response = await fetch(`${staticEndpoint}/meta/keysInPage.json?version=2`);
-			const keysData = await response.json();
+			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/keysInPage.json?version=2`, 'other');
 			const keysInPage = keysData[page];
 
 			// Parse keys into chapters and verses
