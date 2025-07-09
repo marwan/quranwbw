@@ -24,10 +24,8 @@
 	$: verse = Number($__verseKey.split(':')[1]);
 
 	// Load Tafsir data when the modal is visible
-	$: {
-		if ($__tafsirModalVisible) {
-			tafsirData = loadTafsirData();
-		}
+	$: if ($__tafsirModalVisible) {
+		tafsirData = loadTafsirData();
 	}
 
 	// Function to load Tafsir data
@@ -49,17 +47,15 @@
 	`;
 
 	// Scroll to top if verse changes
-	$: {
-		if ($__tafsirModalVisible && verse) {
-			try {
-				const tafsirModal = document.getElementById('tafsirModal');
-				if (tafsirModal) {
-					tafsirModal.getElementsByTagName('div')[1].scrollTop = 0;
-				}
-			} catch (error) {
-				// Ignore errors
-				console.error(error);
+	$: if ($__tafsirModalVisible && verse) {
+		try {
+			const tafsirModal = document.getElementById('tafsirModal');
+			if (tafsirModal) {
+				tafsirModal.getElementsByTagName('div')[1].scrollTop = 0;
 			}
+		} catch (error) {
+			// Ignore errors
+			console.error(error);
 		}
 	}
 </script>
