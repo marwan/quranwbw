@@ -4,7 +4,7 @@ import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, _
 import { apiEndpoint, staticEndpoint, apiVersion } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
 
-// Fetch specific verses (startVerse to endVerse) and cache chapter data
+// Fetch specific verses (startVerse to endVerse) and cache the data
 export async function fetchChapterData(props) {
 	if (!props.skipSave) __chapterData.set(null);
 
@@ -50,6 +50,7 @@ export async function fetchChapterData(props) {
 	return data.data.verses;
 }
 
+// Fetch specific translations and cache the data
 export async function fetchVerseTranslationData(props) {
 	// Use translation IDs from props or fallback to store
 	if (!props.translations) props.translations = get(__verseTranslations);
@@ -116,7 +117,7 @@ export async function fetchVerseTranslationData(props) {
 	return updatedData;
 }
 
-// Fetch different types of Morphology data
+// Fetch morphology data and cache them
 export async function fetchMorphologyData(url) {
 	// Generate a unique key for the data
 	const parsedUrl = new URL(url);
