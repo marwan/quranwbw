@@ -8,6 +8,7 @@
 	import { buttonClasses } from '$data/commonClasses';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { term } from '$utils/terminologies';
+	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	let tafsirData;
 
@@ -23,19 +24,15 @@
 	$: verse = Number($__verseKey.split(':')[1]);
 
 	// Load Tafsir data when the modal is visible
-	$: {
-		if ($__tafsirModalVisible) {
-			tafsirData = loadTafsirData();
-		}
+	$: if ($__tafsirModalVisible) {
+		tafsirData = loadTafsirData();
 	}
 
 	// Function to load Tafsir data
 	async function loadTafsirData() {
 		try {
 			const selectedTafsir = selectableTafsirs[selectedTafirId];
-			const response = await fetch(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`);
-			const data = await response.json();
-			return data.ayahs;
+			return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
 		} catch (error) {
 			console.error(error);
 			return [];
@@ -50,17 +47,15 @@
 	`;
 
 	// Scroll to top if verse changes
-	$: {
-		if ($__tafsirModalVisible && verse) {
-			try {
-				const tafsirModal = document.getElementById('tafsirModal');
-				if (tafsirModal) {
-					tafsirModal.getElementsByTagName('div')[1].scrollTop = 0;
-				}
-			} catch (error) {
-				// Ignore errors
-				console.error(error);
+	$: if ($__tafsirModalVisible && verse) {
+		try {
+			const tafsirModal = document.getElementById('tafsirModal');
+			if (tafsirModal) {
+				tafsirModal.getElementsByTagName('div')[1].scrollTop = 0;
 			}
+		} catch (error) {
+			// Ignore errors
+			console.error(error);
 		}
 	}
 </script>
@@ -91,7 +86,7 @@
 			<div class="text-sm flex flex-col space-y-6">
 				<div class="flex flex-col space-y-4">
 					<div class={tafsirTextClasses}>
-						{#each Object.entries(tafsirData) as [id, tafsir]}
+						{#each Object.entries(tafsirData.ayahs) as [id, tafsir]}
 							{#if tafsir.surah === chapter && tafsir.ayah === verse}
 								{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
 							{/if}

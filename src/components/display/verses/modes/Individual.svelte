@@ -149,36 +149,58 @@
 		__pageURL.set(Math.random());
 	}
 
+	/**
+	 * Fetches chapter data for a given range of verse keys.
+	 *
+	 * This function:
+	 * 1. Extracts the relevant verse keys from `keysArray` using `startIndex` and `endIndex`.
+	 * 2. Identifies unique chapter numbers from those keys.
+	 * 3. Checks if data for each chapter is already cached in `__keysToFetchData`.
+	 *    - If cached, uses the cached data.
+	 *    - If not, fetches the chapter data using `fetchChapterData`.
+	 * 4. Resolves all chapter data fetches in parallel.
+	 * 5. Maps the full verse keys (e.g., "1:2") to their corresponding data in `dataMap`.
+	 *
+	 * This ensures that each chapter's data is fetched only once, even if multiple verses
+	 * from the same chapter are requested.
+	 */
 	async function fetchAllChapterData() {
-		isLoading = true; // Start loading
+		isLoading = true;
 		try {
-			const promises = Array.from(Array(endIndex + 1).keys())
-				.slice(startIndex)
-				.map(async (index) => {
-					const chapterKey = keysArray[index].split(':')[0];
+			// Step 1: Slice relevant keys and extract unique chapter keys
+			const relevantKeys = keysArray.slice(startIndex, endIndex + 1);
+			const uniqueChapters = new Set(relevantKeys.map((key) => key.split(':')[0]));
 
-					if (__keysToFetchData.hasOwnProperty(chapterKey)) {
-						// Return cached data if available
-						return __keysToFetchData[chapterKey];
-					} else {
-						// Fetch from API
-						const data = await fetchChapterData({ chapter: chapterKey });
-						return data;
-					}
-				});
+			// Step 2: Build fetch promises for only uncached chapters
+			const chapterFetchPromises = {};
+			for (const chapter of uniqueChapters) {
+				if (__keysToFetchData.hasOwnProperty(chapter)) {
+					chapterFetchPromises[chapter] = __keysToFetchData[chapter];
+				} else {
+					chapterFetchPromises[chapter] = fetchChapterData({ chapter });
+				}
+			}
 
-			const results = await Promise.all(promises);
+			// Step 3: Resolve all chapter fetches in parallel
+			const chapterDataEntries = await Promise.all(
+				Object.entries(chapterFetchPromises).map(async ([chapter, promise]) => {
+					const data = await promise;
+					return [chapter, data];
+				})
+			);
 
-			// Update dataMap
-			results.forEach((data, i) => {
-				const index = startIndex + i;
-				const key = keysArray[index];
-				dataMap[key] = data[key];
+			// Step 4: Build a map of chapter -> data
+			const fetchedDataMap = Object.fromEntries(chapterDataEntries);
+
+			// Step 5: Map the original keys to the fetched data
+			relevantKeys.forEach((fullKey) => {
+				const [chapter, verse] = fullKey.split(':');
+				dataMap[fullKey] = fetchedDataMap[chapter][fullKey];
 			});
 		} catch (error) {
 			console.error('Error fetching chapter data:', error);
 		} finally {
-			isLoading = false; // End loading
+			isLoading = false;
 		}
 	}
 

@@ -21,14 +21,9 @@
 
 	// Fetch random words
 	$: fetchData = (async () => {
-		try {
-			const response = await fetch(`${apiEndpoint}/random-words?randomID=${randomID}`);
-			const data = await response.json();
-			return data.data;
-		} catch (error) {
-			console.error(error);
-			return [];
-		}
+		const response = await fetch(`${apiEndpoint}/random-words?randomID=${randomID}`);
+		const data = await response.json();
+		return data.data;
 	})();
 
 	// Check if the selected answer is correct

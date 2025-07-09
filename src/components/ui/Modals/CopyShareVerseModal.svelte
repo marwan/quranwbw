@@ -55,8 +55,6 @@
 		fetchingData = true;
 
 		const params = {
-			id: 1,
-			type: 'copy',
 			raw: true,
 			from: $__verseKey,
 			to: $__verseKey,
@@ -70,7 +68,7 @@
 		// Append translation param if translation was selected
 		if ([2, 3].includes(textType)) params.translations = $__verseTranslations.toString();
 
-		const api = `${apiEndpoint}/translations?` + new URLSearchParams(params);
+		const api = `${apiEndpoint}/advanced-copy?` + new URLSearchParams(params);
 		const response = await fetch(api);
 		const data = await response.json();
 		fetchingData = false;
