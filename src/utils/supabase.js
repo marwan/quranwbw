@@ -138,6 +138,7 @@ export async function uploadSettingsToCloud(settings) {
 		return;
 	}
 
+	// Get current logged-in user session
 	const {
 		data: { user },
 		error: userError
@@ -162,5 +163,40 @@ export async function uploadSettingsToCloud(settings) {
 		console.error('[uploadSettingsToCloud] Upload failed:', error.message);
 	} else {
 		console.log('[uploadSettingsToCloud] Upload successful');
+	}
+}
+
+// Download settings from Supabase for the currently logged-in user
+export async function downloadSettingsFromCloud() {
+	// Get current logged-in user session
+	const {
+		data: { user },
+		error: userError
+	} = await supabase.auth.getUser();
+
+	if (userError || !user) {
+		console.warn('[downloadSettingsFromCloud] User not logged in or session error:', userError?.message);
+		return null;
+	}
+
+	// Fetch user settings from the database
+	const { data, error } = await supabase.from('user_settings').select('settings').eq('id', user.id).single();
+
+	if (error) {
+		if (error.code === 'PGRST116') {
+			console.warn('[downloadSettingsFromCloud] No settings found for user in Supabase');
+		} else {
+			console.warn('[downloadSettingsFromCloud] Error fetching settings:', error.message);
+		}
+		return null;
+	}
+
+	// Return the settings object if found
+	if (data?.settings && typeof data.settings === 'object') {
+		console.log('[downloadSettingsFromCloud] Settings fetched successfully:', data.settings);
+		return data.settings;
+	} else {
+		console.warn('[downloadSettingsFromCloud] Settings are empty or malformed');
+		return null;
 	}
 }

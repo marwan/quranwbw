@@ -20,17 +20,17 @@
 	// import DownloadModal from '$ui/Modals/DownloadModal.svelte';
 	import LoginModal from '$ui/Modals/LoginModal.svelte';
 	import SettingsConflictModal from '$ui/Modals/SettingsConflictModal.svelte';
-	import { __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
+	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
-	import { initSupabaseAuthListener } from '$utils/supabase.js';
+	// import { initSupabaseAuthListener } from '$utils/supabase.js';
 
 	// Initialize Supabase Auth
-	initSupabaseAuthListener();
+	// initSupabaseAuthListener();
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();

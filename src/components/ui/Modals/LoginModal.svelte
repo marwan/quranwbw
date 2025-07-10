@@ -1,7 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import { __loginModalVisible } from '$utils/stores';
-	import { signInWithGoogle, logout } from '$utils/supabase.js';
+	import { signInWithGoogle, logout, downloadSettingsFromCloud } from '$utils/supabase.js';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
 
@@ -20,6 +20,8 @@
 			<div class="flex flex-col items-center space-y-2">
 				<img src={session.user.user_metadata.avatar_url} alt="User Avatar" class="w-12 h-12 rounded-full object-cover shadow" referrerpolicy="no-referrer" />
 				<p class="text-base font-medium">Welcome, {session.user.user_metadata.name}</p>
+
+				<button on:click={downloadSettingsFromCloud} class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm"> downloadSettingsFromCloud </button>
 				<button on:click={logout} class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm"> Logout </button>
 			</div>
 		{:else}
