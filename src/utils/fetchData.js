@@ -36,7 +36,12 @@ export async function fetchChapterData(props) {
 	// Fetch from API
 	const response = await fetch(apiURL);
 	if (!response.ok) {
-		throw new Error('Failed to fetch data from the API');
+		throw new Error(
+			JSON.stringify({
+				status: response.status,
+				statusText: response.statusText
+			})
+		);
 	}
 	const data = await response.json();
 

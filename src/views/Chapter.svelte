@@ -88,6 +88,6 @@
 			<Chapter {startVerse} {endVerse} />
 		</div>
 	{:catch error}
-		<ErrorLoadingDataFromAPI />
+		<ErrorLoadingDataFromAPI {error} />
 	{/await}
 </div>
