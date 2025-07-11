@@ -8,7 +8,8 @@
 		"preview": "vite preview",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify"
+		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify",
+		"lintVars": "eslint . --ext .js,.ts,.svelte"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
@@ -17,9 +18,11 @@
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.0",
 		"autoprefixer": "^10.4.19",
-		"eslint": "^8.56.0",
+		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
+		"eslint-plugin-svelte3": "^4.0.0",
+		"eslint-plugin-unused-imports": "^4.1.4",
 		"flowbite": "^2.3.0",
 		"flowbite-svelte": "^0.46.1",
 		"postcss": "^8.4.38",

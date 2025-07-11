@@ -5,7 +5,7 @@
 	// import Megaphone from '$svgs/Megaphone.svelte';
 	// import Banner from '$ui/FlowbiteSvelte/banner/Banner.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __changelogModalVisible, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
 	// import { linkClasses } from '$data/commonClasses';
 	// import { websitechangelog } from '$data/changelog';
 	import { quranMetaData } from '$data/quranMeta';

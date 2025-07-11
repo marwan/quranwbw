@@ -13,7 +13,7 @@
 	<!-- show page/juz number  -->
 	<PageDivider {key} />
 
-	<div id={key} class="verse flex flex-col py-8 space-y-8 verse-{value.meta.chapter}-{value.meta.verse}" data-words={value.meta.words} data-page={value.meta.page} data-juz={value.meta.juz} use:inview on:inview_enter={(event) => updateSettings({ type: 'lastRead', value: value.meta })}>
+	<div id={key} class="verse flex flex-col py-8 space-y-8 verse-{value.meta.chapter}-{value.meta.verse}" data-words={value.meta.words} data-page={value.meta.page} data-juz={value.meta.juz} use:inview on:inview_enter={() => updateSettings({ type: 'lastRead', value: value.meta })}>
 		<VerseOptionButtons {key} {value} />
 
 		<div class="grid grid-cols-2 gap-x-8">

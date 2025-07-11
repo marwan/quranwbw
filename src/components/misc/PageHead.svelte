@@ -2,7 +2,6 @@
 	export let title;
 
 	import { websiteTagline, websiteTitle, websiteURL, wbwLanguages } from '$data/websiteSettings';
-	import { __currentPage } from '$utils/stores';
 	import { page } from '$app/stores';
 </script>
 

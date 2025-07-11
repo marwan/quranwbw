@@ -128,7 +128,7 @@
 						<!-- Suggestions -->
 						<div id="suggestions-links" class="py-2 space-y-2">
 							<span class="text-xs font-semibold pt-2">Suggestions</span>
-							{#each Object.entries(mostRead) as [id, item]}
+							{#each Object.entries(mostRead) as [_, item]}
 								<div class={linkClasses}>
 									<span>{@html '&#10230'}</span>
 									<a href={item.url} class={linkTextClasses}>{quranMetaData[item.chapter].transliteration} ({item.verses})</a>

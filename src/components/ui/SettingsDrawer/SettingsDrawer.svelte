@@ -17,8 +17,6 @@
 
 	import {
 		__currentPage,
-		__chapterData,
-		__chapterNumber,
 		__fontType,
 		__displayType,
 		__websiteTheme,
@@ -29,8 +27,6 @@
 		__verseTranslations,
 		__verseTafsir,
 		__reciter,
-		__translationReciter,
-		__playbackSpeed,
 		__userSettings,
 		__wordTooltip,
 		__settingsDrawerHidden,
@@ -41,7 +37,7 @@
 		__wordMorphologyOnClick
 	} from '$utils/stores';
 
-	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, fontSizePresets, selectableVersePlayButtonOptions } from '$data/options';
+	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, fontSizePresets, selectableVersePlayButtonOptions } from '$data/options';
 
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
@@ -505,9 +501,7 @@
 			<!-- website build version & timestamp -->
 			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 text-center {settingsDrawerOpacity}">
 				<!-- svelte-ignore missing-declaration -->
-				<p class="{settingsDescriptionClasses} !mb-0">
-					<a class={linkClasses} target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
-				</p>
+				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
 			</div>
 		</div>
 	{/if}

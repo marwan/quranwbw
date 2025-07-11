@@ -78,7 +78,7 @@
 				<div id="options" class="pt-8">
 					<p class="mb-5 text-sm">Guess the correct translation:</p>
 					<div class="grid gap-4 md:gap-6 w-full md:grid-cols-2">
-						{#each Object.entries(fetchData) as [key, value]}
+						{#each Object.entries(fetchData) as [key, _]}
 							<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
 								<div class="{individualRadioClasses} {selection === +key ? `${window.theme('border')}` : null}">
 									<div class="flex flex-row mr-auto ml-2">{fetchData[key].word_english}</div>
@@ -126,7 +126,7 @@
 					<span>Wrong: {$__quizWrongAnswers}</span>
 				</div>
 			</div>
-		{:catch error}
+		{:catch _}
 			<ErrorLoadingDataFromAPI />
 		{/await}
 	</div>

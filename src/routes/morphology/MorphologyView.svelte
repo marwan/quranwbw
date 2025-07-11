@@ -7,7 +7,7 @@
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { staticEndpoint } from '$data/websiteSettings';
-	import { __currentPage, __fontType, __wordTranslation, __verseTranslations, __wordTransliteration, __morphologyKey, __lexiconModalVisible, __wordRoot } from '$utils/stores';
+	import { __currentPage, __fontType, __morphologyKey } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
@@ -138,7 +138,7 @@
 			<div class="flex flex-wrap justify-center direction-rtl">
 				<WordsBlock key={`${chapter}:${verse}`} {value} />
 			</div>
-		{:catch error}
+		{:catch _}
 			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 	</div>
@@ -169,7 +169,7 @@
 					<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
 				{/if}
 			</div>
-		{:catch error}
+		{:catch _}
 			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 	</div>
@@ -201,7 +201,7 @@
 					</div>
 				</div>
 			{/if}
-		{:catch error}
+		{:catch _}
 			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 
@@ -215,7 +215,7 @@
 						<Table wordData={result.data[wordRoot]} tableType={1} />
 					</div>
 				{/if}
-			{:catch error}
+			{:catch _}
 				<ErrorLoadingDataFromAPI center="false" />
 			{/await}
 		{/key}
@@ -229,7 +229,7 @@
 					<Table wordData={wordList} tableType={2} />
 				</div>
 			{/if}
-		{:catch error}
+		{:catch _}
 			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 	</div>

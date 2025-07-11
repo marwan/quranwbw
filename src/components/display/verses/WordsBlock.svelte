@@ -9,7 +9,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { goto } from '$app/navigation';
 	import { selectableDisplays } from '$data/options';
-	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick } from '$utils/stores';
+	import { __currentPage, __fontType, __displayType, __userSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick } from '$utils/stores';
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';

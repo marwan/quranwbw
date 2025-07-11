@@ -2,7 +2,7 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __currentPage, __chapterNumber, __audioSettings, __verseKey, __notesData, __userNotes, __notesModalVisible } from '$utils/stores';
+	import { __verseKey, __userNotes, __notesModalVisible } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
 	import { timeAgo } from '$utils/timeAgo';
 	import { updateSettings } from '$utils/updateSettings';

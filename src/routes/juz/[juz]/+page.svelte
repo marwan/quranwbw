@@ -3,7 +3,7 @@
 
 	import PageHead from '$misc/PageHead.svelte';
 	import Individual from '$display/verses/modes/Individual.svelte';
-	import { __currentPage, __displayType, __userBookmarks, __keysToFetch, __keysToFetchData, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
+	import { __currentPage, __displayType, __keysToFetch, __keysToFetchData, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { term } from '$utils/terminologies';
 	import { fetchAndCacheJson } from '$utils/fetchData';
@@ -41,11 +41,11 @@
 <PageHead title={`${term('juz')} ${juzNumber}`} />
 
 {#await fetchJuzKeys}
-	<!-- <Spinner /> -->
-{:then fetchJuzKeys}
+	<!-- do nothing -->
+{:then}
 	<div id="individual-verses-block">
 		<Individual />
 	</div>
-{:catch error}
+{:catch _}
 	<p>...</p>
 {/await}

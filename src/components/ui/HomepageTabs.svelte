@@ -11,7 +11,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
-	import { __lastRead, __favouriteChapters, __userBookmarks, __userNotes, __timeSpecificChapters, __siteNavigationModalVisible, __quranNavigationModalVisible, __homepageExtrasPanelVisible } from '$utils/stores';
+	import { __lastRead, __userBookmarks, __userNotes, __homepageExtrasPanelVisible } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { disabledClasses } from '$data/commonClasses';
@@ -127,7 +127,7 @@
 										<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70">
 											{#await fullQuranData then data}
 												<div class="truncate max-w-[28vw] md:max-w-[115px]">{data.data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
-											{:catch error}
+											{:catch _}
 												<p></p>
 											{/await}
 										</div>
@@ -180,7 +180,7 @@
 		<div class="space-y-12 {extrasActiveTab === 3 ? 'block' : 'hidden'}" id="suggestions-tab-panel" role="tabpanel" aria-labelledby="suggestions-tab">
 			<div id="suggestions-chapters" class="flex flex-col space-y-4">
 				<div class="{cardGridClasses} grid-cols-1">
-					{#each Object.entries(mostRead) as [id, item]}
+					{#each Object.entries(mostRead) as [_, item]}
 						<a href={item.url} class="!justify-start {cardInnerClasses} flex-col">
 							<span class="text-sm">{quranMetaData[item.chapter].transliteration} ({item.verses})</span>
 							<div class="block text-xs opacity-70">{item.title}</div>
@@ -231,7 +231,7 @@
 				{/if}
 
 				<div class="{cardGridClasses} grid-cols-1">
-					{#each chapterListOrder as { id }, i}
+					{#each chapterListOrder as { id }, _}
 						{#if id > 0}
 							<a href="/{id}">
 								<div class="{cardInnerClasses} flex-row text-center items-center">

@@ -23,6 +23,6 @@
 		{data.words.arabic.split(splitDelimiter).join(' ')}
 		<span class="colored-fonts">{data.words.end}</span>
 	</div>
-{:catch error}
+{:catch _}
 	<p>error.</p>
 {/await}

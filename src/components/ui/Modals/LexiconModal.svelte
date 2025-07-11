@@ -36,7 +36,7 @@
 				{@html lexiconData}
 			</div>
 		</div>
-	{:catch error}
+	{:catch _}
 		<ErrorLoadingDataFromAPI center="false" />
 	{/await}
 </Modal>

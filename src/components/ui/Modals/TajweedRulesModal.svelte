@@ -2,7 +2,7 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
-	import { __websiteTheme, __tajweedRulesModalVisible, __currentPage, __chapterNumber } from '$utils/stores';
+	import { __tajweedRulesModalVisible, __currentPage, __chapterNumber } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { staticEndpoint } from '$data/websiteSettings';
@@ -48,7 +48,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each Object.entries(tajweedRulesData.data) as [key, value]}
+				{#each Object.entries(tajweedRulesData.data) as [_, value]}
 					<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
 						<td class="py-4 w-fit tajweed-rules text-2xl text-center align-top theme-palette-tajweed"> {value.code} </td>
 						<td class="pl-2 pr-6 py-4">
@@ -68,7 +68,7 @@
 				{/each}
 			</tbody>
 		</table>
-	{:catch error}
+	{:catch _}
 		<ErrorLoadingDataFromAPI center="false" />
 	{/await}
 

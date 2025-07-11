@@ -85,7 +85,7 @@
 			<div class="text-sm flex flex-col space-y-6">
 				<div class="flex flex-col space-y-4">
 					<div class={tafsirTextClasses}>
-						{#each Object.entries(tafsirData.ayahs) as [id, tafsir]}
+						{#each Object.entries(tafsirData.ayahs) as [_, tafsir]}
 							{#if tafsir.surah === chapter && tafsir.ayah === verse}
 								{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
 							{/if}
@@ -93,7 +93,7 @@
 					</div>
 				</div>
 			</div>
-		{:catch error}
+		{:catch _}
 			<ErrorLoadingDataFromAPI center="false" />
 		{/await}
 	</div>

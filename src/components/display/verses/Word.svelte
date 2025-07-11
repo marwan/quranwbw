@@ -14,7 +14,7 @@
 
 	import { selectableThemes, selectableWordTranslations } from '$data/options';
 	import { supplicationsFromQuran } from '$data/quranMeta';
-	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __wordTranslation, __wordTranslationEnabled, __wordTransliterationEnabled, __morphologyKey, __wordTooltip, __verseKey, __websiteTheme, __hideNonDuaPart, __morphologyModalVisible } from '$utils/stores';
+	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __wordTranslation, __wordTranslationEnabled, __wordTransliterationEnabled, __morphologyKey, __wordTooltip, __websiteTheme, __hideNonDuaPart, __morphologyModalVisible } from '$utils/stores';
 	import { splitDelimiter } from '$data/websiteSettings';
 	// import { tajweedRulings, tajweedColorIds } from '$data/tajweedRulings';
 

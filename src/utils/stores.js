@@ -47,7 +47,6 @@ let __websiteOnline,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
 	__lexiconModalVisible,
-	__changelogModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
@@ -189,7 +188,6 @@ if (browser) {
 		visible: false
 	});
 	__lexiconModalVisible = writable(false);
-	__changelogModalVisible = writable(false);
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
@@ -286,7 +284,6 @@ export {
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
 	__lexiconModalVisible,
-	__changelogModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,

@@ -6,7 +6,7 @@
 	import Normal from '$display/layouts/Normal.svelte';
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
 	import Bismillah from '$misc/Bismillah.svelte';
-	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData, __currentPage, __pageURL, __userSettings } from '$utils/stores';
+	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData, __currentPage, __pageURL } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { isValidVerseKey } from '$utils/validateKey';
@@ -194,7 +194,7 @@
 
 			// Step 5: Map the original keys to the fetched data
 			relevantKeys.forEach((fullKey) => {
-				const [chapter, verse] = fullKey.split(':');
+				const chapter = fullKey.split(':')[0];
 				dataMap[fullKey] = fetchedDataMap[chapter][fullKey];
 			});
 		} catch (error) {
@@ -244,7 +244,7 @@
 
 		{#if showContinueReadingButton}
 			{#if endIndex < keysArrayLength && document.getElementById('loadVersesButton') === null}
-				<div id="loadVersesButton" class="flex justify-center pt-6 pb-18" use:inview={loadButtonOptions} on:inview_enter={(event) => document.querySelector('#loadVersesButton > button').click()}>
+				<div id="loadVersesButton" class="flex justify-center pt-6 pb-18" use:inview={loadButtonOptions} on:inview_enter={() => document.querySelector('#loadVersesButton > button').click()}>
 					<button on:click={loadNextVerses} class="text-sm {buttonClasses}"> Continue Reading </button>
 				</div>
 			{/if}

@@ -3,7 +3,7 @@
 	import Home from '$svgs/Home.svelte';
 	import ChevronDown from '$svgs/ChevronDown.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __chapterNumber, __currentPage, __lastRead, __pageURL, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
+	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 
 	let lastReadPage;
