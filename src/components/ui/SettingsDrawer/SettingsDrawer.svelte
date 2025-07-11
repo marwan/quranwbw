@@ -45,7 +45,7 @@
 
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
-	import { disabledClasses, buttonClasses } from '$data/commonClasses';
+	import { disabledClasses, buttonClasses, linkClasses } from '$data/commonClasses';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
@@ -505,7 +505,9 @@
 			<!-- website build version & timestamp -->
 			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 text-center {settingsDrawerOpacity}">
 				<!-- svelte-ignore missing-declaration -->
-				<p class="{settingsDescriptionClasses} !mb-0">Build {__APP_VERSION__}</p>
+				<p class="{settingsDescriptionClasses} !mb-0">
+					<a class={linkClasses} target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
+				</p>
 			</div>
 		</div>
 	{/if}
