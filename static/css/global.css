@@ -1205,6 +1205,10 @@ input[type="range"].range-lg::-moz-range-thumb {
   margin-bottom: 2rem;
 }
 
+.\!mb-0 {
+  margin-bottom: 0px !important;
+}
+
 .\!mt-2 {
   margin-top: 0.5rem !important;
 }
@@ -3004,6 +3008,10 @@ input[type="range"].range-lg::-moz-range-thumb {
 
 .duration-300 {
   transition-duration: 300ms;
+}
+
+.\[-\:\.\#\] {
+  -: .#;
 }
 
 @font-face {

@@ -13,6 +13,7 @@
 	import Drawer from '$ui/FlowbiteSvelte/drawer/Drawer.svelte';
 	import Range from '$ui/FlowbiteSvelte/forms/Range.svelte';
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
+	import ResetSettings from '$svgs/ResetSettings.svelte';
 
 	import {
 		__currentPage,
@@ -44,7 +45,7 @@
 
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
-	import { disabledClasses, buttonClasses } from '$data/commonClasses';
+	import { disabledClasses, buttonClasses, linkClasses } from '$data/commonClasses';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
@@ -464,7 +465,7 @@
 						<p class={settingsDescriptionClasses}>Show/hide the non-{term('supplications')} words in the {term('supplications')} page.</p>
 					</div>
 
-					<!-- <div class="border-b {window.theme('border')}"></div> -->
+					<div class="border-b {window.theme('border')}"></div>
 
 					<!-- show-morphology-on-word-click-toggle -->
 					<div id="show-morphology-on-word-click" class={settingsBlockClasses}>
@@ -477,26 +478,36 @@
 						</div>
 						<p class={settingsDescriptionClasses}>Show morphology on word click, instead of playing audio.</p>
 					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- reset-setting-button -->
+					<div id="reset-setting-button" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Reset Settings</span>
+							<button
+								on:click={() => {
+									const userResponse = confirm('Are you sure you want to reset settings? This action cannot be reversed.');
+									if (userResponse) {
+										resetSettings();
+									}
+								}}
+								class="text-sm {buttonClasses}"
+							>
+								<ResetSettings />
+							</button>
+						</div>
+						<p class={settingsDescriptionClasses}>Reset all website settings to default without affecting your bookmarks or notes.</p>
+					</div>
 				</div>
 			</div>
 
-			<!-- reset settings button -->
-			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 {settingsDrawerOpacity}">
-				<!-- Reset Settings button -->
-				<button
-					on:click={() => {
-						// Show the confirm dialog
-						const userResponse = confirm('Are you sure you want to reset settings? This action cannot be reversed.');
-						if (userResponse) {
-							resetSettings();
-						}
-					}}
-					class="text-sm {buttonClasses}"
-				>
-					Reset Settings
-				</button>
-
-				<p class={settingsDescriptionClasses}>Your bookmarks and notes will remain unaffected.</p>
+			<!-- website build version & timestamp -->
+			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 text-center {settingsDrawerOpacity}">
+				<!-- svelte-ignore missing-declaration -->
+				<p class="{settingsDescriptionClasses} !mb-0">
+					<a class={linkClasses} target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
+				</p>
 			</div>
 		</div>
 	{/if}
