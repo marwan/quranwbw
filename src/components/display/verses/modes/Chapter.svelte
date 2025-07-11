@@ -10,7 +10,7 @@
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
 	import { inview } from 'svelte-inview';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __currentPage, __userSettings, __displayType, __chapterNumber, __chapterData, __chapterDataLoaded } from '$utils/stores';
+	import { __currentPage, __userSettings, __displayType, __chapterNumber, __chapterData } from '$utils/stores';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 
 	// Load button click options

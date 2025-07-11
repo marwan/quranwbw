@@ -6,7 +6,6 @@ let __websiteOnline,
 	__chapterNumber,
 	__pageNumber,
 	__chapterData,
-	__chapterDataLoaded,
 	__verseTranslationData,
 	__notesData,
 	__verseKey,
@@ -89,9 +88,6 @@ if (browser) {
 
 	// to store the verse translation data fetch from Quran.com's API
 	__verseTranslationData = writable(null);
-
-	// to store the boolean value of the complete chapter data load
-	__chapterDataLoaded = writable(null);
 
 	// to store the user notes data fetched from the API
 	__notesData = writable(null);
@@ -255,7 +251,6 @@ export {
 	__chapterNumber,
 	__pageNumber,
 	__chapterData,
-	__chapterDataLoaded,
 	__verseTranslationData,
 	__notesData,
 	__verseKey,

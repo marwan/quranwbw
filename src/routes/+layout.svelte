@@ -49,11 +49,6 @@
 	// 	downloadSettingsFromCloud();
 	// }
 
-	// Reset chapter data loaded when certain settings update
-	$: if ($__currentPage || $__fontType || $__wordTranslation || $__verseTranslations) {
-		localStorage.setItem('chapterDataLoaded', false);
-	}
-
 	// Stop all audio when the page or chapter changes
 	$: if ($__currentPage || $__chapterNumber) {
 		resetAudioSettings({ location: 'end' });
