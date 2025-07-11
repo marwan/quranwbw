@@ -24,36 +24,17 @@
 	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType, __morphologyKey } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
-	import { staticEndpoint } from '$data/websiteSettings';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
-	import { fetchAndCacheJson } from '$utils/fetchData';
-
-	// Transition parameters for drawer
-	const transitionParamsRight = {
-		x: 320,
-		duration: 200,
-		easing: sineIn
-	};
 
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
 	let dropdownOpen = false;
 	let subMenuVisible = false;
-	let verseKeyData;
 
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
 	// Update userBookmarks whenever the __userSettings changes
 	$: userBookmarks = JSON.parse($__userSettings).userBookmarks;
-
-	// Load verse key data externally to reduce bundle size
-	$: {
-		if (dropdownOpen) {
-			verseKeyData = (async () => {
-				return await fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other');
-			})();
-		}
-	}
 </script>
 
 <Dropdown bind:open={dropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr">
@@ -151,16 +132,6 @@
 					<span>Mushaf Mode</span>
 				</DropdownItem>
 			{/if}
-
-			<!-- only show results of key-pages if we have loaded the data -->
-			<!-- {#if $__currentPage !== 'juz'}
-				{#await verseKeyData then data}
-					<DropdownItem class={dropdownItemClasses} href="/juz/{data[$__verseKey].juz}?startKey={$__verseKey}">
-						<Juz />
-						<span>Juz Mode</span>
-					</DropdownItem>
-				{/await}
-			{/if} -->
 
 			<!-- verse morphology button -->
 			<DropdownItem
