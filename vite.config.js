@@ -34,5 +34,9 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	define: {
 		__APP_VERSION__: JSON.stringify(getVersion())
+	},
+	build: {
+		minify: 'terser',
+		sourcemap: false
 	}
 });
