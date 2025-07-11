@@ -1,7 +1,7 @@
 <script>
 	// Import necessary components and utilities
 	import PageHead from '$misc/PageHead.svelte';
-	import Bismillah from '$display/Bismillah.svelte';
+	import Bismillah from '$misc/Bismillah.svelte';
 	import Chapter from '$display/verses/modes/Chapter.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';

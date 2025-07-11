@@ -1,8 +1,8 @@
 <script>
 	export let data;
 
-	import Bismillah from '$display/Bismillah.svelte';
-	import ChapterHeader from '$display/ChapterHeader.svelte';
+	import Bismillah from '$misc/Bismillah.svelte';
+	import ChapterHeader from '$misc/ChapterHeader.svelte';
 	import PageHead from '$misc/PageHead.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Spinner from '$svgs/Spinner.svelte';

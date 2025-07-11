@@ -5,7 +5,7 @@
 	import WordByWord from '$display/layouts/WordByWord.svelte';
 	import Normal from '$display/layouts/Normal.svelte';
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
-	import Bismillah from '$display/Bismillah.svelte';
+	import Bismillah from '$misc/Bismillah.svelte';
 	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData, __currentPage, __pageURL, __userSettings } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
