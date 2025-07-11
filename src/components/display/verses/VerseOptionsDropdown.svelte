@@ -69,7 +69,7 @@
 			}}
 			data-umami-event="Verse Notes Modal Button"
 		>
-			<svelte:component this={$__userNotes.hasOwnProperty($__verseKey) ? NotesFilled : Notes} />
+			<svelte:component this={Object.prototype.hasOwnProperty.call($__userNotes, $__verseKey) ? NotesFilled : Notes} />
 			<span>Notes</span>
 		</DropdownItem>
 	{/if}

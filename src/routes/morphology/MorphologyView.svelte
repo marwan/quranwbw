@@ -179,7 +179,7 @@
 		{#await fetchWordVerbs}
 			<Spinner />
 		{:then fetchWordVerbs}
-			{#if fetchWordVerbs?.data?.hasOwnProperty($__morphologyKey)}
+			{#if Object.prototype.hasOwnProperty.call(fetchWordVerbs?.data, $__morphologyKey)}
 				<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
 					<div class="flex flex-col">
 						<div id="different-verbs">

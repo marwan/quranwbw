@@ -113,7 +113,7 @@
 				{#if searchedKey.length === 0 && $__currentPage === 'home'}
 					<div id="search-suggestions" class="flex flex-col text-base md:text-lg max-h-64 min-h-64 overflow-y-auto">
 						<!-- Last Read -->
-						{#if $__lastRead.hasOwnProperty('chapter')}
+						{#if Object.prototype.hasOwnProperty.call($__lastRead, 'chapter')}
 							{@const lastReadChapter = $__lastRead.chapter}
 							{@const lastReadVerse = $__lastRead.verse}
 							<div id="last-read-links" class="py-2 space-y-2">

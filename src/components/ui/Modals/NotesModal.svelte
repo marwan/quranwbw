@@ -21,7 +21,7 @@
 		noteModifiedAt = null;
 
 		// Update note details if a note exists for the current key
-		if ($__userNotes.hasOwnProperty($__verseKey)) {
+		if (Object.prototype.hasOwnProperty.call($__userNotes, $__verseKey)) {
 			verseNote = $__userNotes[$__verseKey].note;
 			noteModifiedAt = timeAgo($__userNotes[$__verseKey].modified_at);
 

@@ -52,7 +52,7 @@
 	let isLoading = false; // Tracks the loading state of dataMap
 
 	// Only allow display types listed in displayComponents, else default to type 1, and don't save the layout in settings if not allowed
-	$: if (!displayComponents.hasOwnProperty($__displayType)) {
+	$: if (!Object.prototype.hasOwnProperty.call(displayComponents, $__displayType)) {
 		$__displayType = 1;
 	}
 
@@ -174,7 +174,7 @@
 			// Step 2: Build fetch promises for only uncached chapters
 			const chapterFetchPromises = {};
 			for (const chapter of uniqueChapters) {
-				if (__keysToFetchData.hasOwnProperty(chapter)) {
+				if (Object.prototype.hasOwnProperty.call(__keysToFetchData, chapter)) {
 					chapterFetchPromises[chapter] = __keysToFetchData[chapter];
 				} else {
 					chapterFetchPromises[chapter] = fetchChapterData({ chapter });

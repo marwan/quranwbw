@@ -77,7 +77,7 @@
 			{:else}
 				<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" class={v4hafsClasses}>
 					<!-- word fix, see fixedMushafWords -->
-					{#if fixedMushafWords.hasOwnProperty(wordKey)}
+					{#if Object.prototype.hasOwnProperty.call(fixedMushafWords, wordKey)}
 						{fixedMushafWords[wordKey]}
 					{:else}
 						{arabicSplit[word]}

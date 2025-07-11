@@ -43,7 +43,7 @@
 		})();
 	}
 
-	$: lastReadExists = $__lastRead.hasOwnProperty('chapter');
+	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 
