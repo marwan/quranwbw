@@ -157,11 +157,6 @@ export function updateSettings(props) {
 			userSettings.audioSettings = props.value;
 			break;
 
-		// for Initial Setup
-		case 'initialSetupCompleted':
-			userSettings.initialSetupCompleted = props.value;
-			break;
-
 		case 'userBookmarks':
 			const key = props.key;
 			let userBookmarks = userSettings['userBookmarks'];

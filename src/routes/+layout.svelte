@@ -146,7 +146,6 @@
 	<Navbar />
 	<SettingsDrawer />
 	<QuranNavigationModal />
-	<!-- <InitialSetupModal /> -->
 	<AudioModal />
 	<TajweedRulesModal />
 	<NotesModal />
