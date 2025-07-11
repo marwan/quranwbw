@@ -12,7 +12,6 @@ let __websiteOnline,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
-	__userToken,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -43,7 +42,6 @@ let __websiteOnline,
 	__audioModalVisible,
 	__notesModalVisible,
 	__tajweedRulesModalVisible,
-	__tokenModalVisible,
 	__tafsirModalVisible,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
@@ -103,9 +101,6 @@ if (browser) {
 
 	// to store the user bookmarks
 	__userBookmarks = writable(userSettings.userBookmarks);
-
-	// to store the token
-	__userToken = writable(localStorage.getItem('userToken'));
 
 	// to store the font type - Uthmani, IndoPak, etc...
 	__fontType = writable(userSettings.displaySettings.fontType);
@@ -187,7 +182,6 @@ if (browser) {
 	__audioModalVisible = writable(false);
 	__notesModalVisible = writable(false);
 	__tajweedRulesModalVisible = writable(false);
-	__tokenModalVisible = writable(false);
 	__tafsirModalVisible = writable(false);
 	__quranNavigationModalVisible = writable(false);
 	__siteNavigationModalVisible = writable(false);
@@ -257,7 +251,6 @@ export {
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
-	__userToken,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -288,7 +281,6 @@ export {
 	__audioModalVisible,
 	__notesModalVisible,
 	__tajweedRulesModalVisible,
-	__tokenModalVisible,
 	__tafsirModalVisible,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,

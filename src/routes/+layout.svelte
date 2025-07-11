@@ -19,7 +19,7 @@
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import DownloadModal from '$ui/Modals/DownloadModal.svelte';
 
-	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
+	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
@@ -43,11 +43,6 @@
 
 	// Update body scroll based on settings drawer visibility
 	$: document.body.classList.toggle('overflow-y-hidden', !$__settingsDrawerHidden);
-
-	// Update settings from cloud when chapter or page changes
-	// $: if ($__currentPage && $__chapterNumber) {
-	// 	downloadSettingsFromCloud();
-	// }
 
 	// Stop all audio when the page or chapter changes
 	$: if ($__currentPage || $__chapterNumber) {
@@ -144,7 +139,6 @@
 	<AudioModal />
 	<TajweedRulesModal />
 	<NotesModal />
-	<!-- <TokenModal /> -->
 	<!-- <DownloadModal /> -->
 	<TafsirModal />
 	<SiteNavigationModal />
