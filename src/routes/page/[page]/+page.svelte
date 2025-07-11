@@ -209,8 +209,8 @@
 				</div>
 			</div>
 		</div>
-	{:catch _}
-		<ErrorLoadingDataFromAPI />
+	{:catch error}
+		<ErrorLoadingDataFromAPI {error} />
 	{/await}
 </div>
 

@@ -126,8 +126,8 @@
 					<span>Wrong: {$__quizWrongAnswers}</span>
 				</div>
 			</div>
-		{:catch _}
-			<ErrorLoadingDataFromAPI />
+		{:catch error}
+			<ErrorLoadingDataFromAPI {error} />
 		{/await}
 	</div>
 </div>

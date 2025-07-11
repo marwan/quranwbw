@@ -68,8 +68,8 @@
 				{/each}
 			</tbody>
 		</table>
-	{:catch _}
-		<ErrorLoadingDataFromAPI center="false" />
+	{:catch error}
+		<ErrorLoadingDataFromAPI center="false" {error} />
 	{/await}
 
 	<!-- links to PDF files -->

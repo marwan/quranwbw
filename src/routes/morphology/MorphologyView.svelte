@@ -138,8 +138,8 @@
 			<div class="flex flex-wrap justify-center direction-rtl">
 				<WordsBlock key={`${chapter}:${verse}`} value={data} />
 			</div>
-		{:catch _}
-			<ErrorLoadingDataFromAPI center="false" />
+		{:catch error}
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 	</div>
 
@@ -167,8 +167,8 @@
 					<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
 				{/if}
 			</div>
-		{:catch _}
-			<ErrorLoadingDataFromAPI center="false" />
+		{:catch error}
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 	</div>
 
@@ -199,8 +199,8 @@
 					</div>
 				</div>
 			{/if}
-		{:catch _}
-			<ErrorLoadingDataFromAPI center="false" />
+		{:catch error}
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 
 		<!-- Word with same root -->
@@ -213,8 +213,8 @@
 						<Table wordData={data.data[wordRoot]} tableType={1} />
 					</div>
 				{/if}
-			{:catch _}
-				<ErrorLoadingDataFromAPI center="false" />
+			{:catch error}
+				<ErrorLoadingDataFromAPI center="false" {error} />
 			{/await}
 		{/key}
 
@@ -227,8 +227,8 @@
 					<Table wordData={data} tableType={2} />
 				</div>
 			{/if}
-		{:catch _}
-			<ErrorLoadingDataFromAPI center="false" />
+		{:catch error}
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 	</div>
 </div>

@@ -14,6 +14,10 @@
 			errorCode = null;
 		}
 	}
+
+	if (error !== null) {
+		console.warn(error);
+	}
 </script>
 
 <div class="flex justify-center text-center !text-sm" class:pt-[30vh]={center === true}>
