@@ -10,7 +10,6 @@
 	import { createLink } from '$utils/createLink';
 	import { apiEndpoint, staticEndpoint } from '$data/websiteSettings';
 	import { downloadTextFile } from '$utils/downloadTextFile';
-	import { getVerseText } from '$utils/getVerseText';
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
@@ -123,6 +122,25 @@
 				title: generatedVerseData,
 				text: generatedVerseData
 			});
+		}
+	}
+
+	// Function to get the Arabic verse text
+	function getVerseText(key) {
+		try {
+			const [chapter, verse] = key.split(':').map(Number);
+			const words = document.querySelectorAll(`.verse-${chapter}-${verse} .arabicText`);
+			let wordsArray = [];
+
+			// Join all the words
+			words.forEach((word) => {
+				wordsArray.push(word.innerText);
+			});
+
+			return wordsArray.join(' ');
+		} catch (error) {
+			console.warn(error);
+			return key;
 		}
 	}
 
