@@ -9,7 +9,7 @@
 	import { timeAgo } from '$utils/timeAgo';
 	import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
 	import { apiVersion } from '$data/websiteSettings';
-	import { db } from '$lib/db';
+	import { db } from '$utils/db';
 
 	// State variables
 	let progressMessage = '';

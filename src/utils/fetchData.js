@@ -1,4 +1,4 @@
-import { db } from '$lib/db';
+import { db } from '$utils/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
 import { apiEndpoint, staticEndpoint, apiVersion } from '$data/websiteSettings';

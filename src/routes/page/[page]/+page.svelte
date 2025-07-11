@@ -20,7 +20,7 @@
 	import { splitDelimiter } from '$data/websiteSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
-	import '$lib/swiped-events.min.js';
+	import '$utils/swiped-events.min.js';
 
 	// Lines to be centered instead of justified
 	const centeredPageLines = ['528:9', '545:6', '594:5', '602:5', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
