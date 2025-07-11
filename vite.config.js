@@ -36,7 +36,6 @@ export default defineConfig({
 		__APP_VERSION__: JSON.stringify(getVersion())
 	},
 	build: {
-		minify: 'terser',
 		sourcemap: false
 	}
 });
