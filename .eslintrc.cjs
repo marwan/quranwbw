@@ -13,9 +13,11 @@ module.exports = {
 		es2017: true,
 		node: true
 	},
+	globals: {
+		__APP_VERSION__: 'readonly'
+	},
 	rules: {
 		'no-unused-vars': 'off',
-
 		'svelte/no-at-html-tags': 'off',
 
 		// Enable better unused import/var detection
