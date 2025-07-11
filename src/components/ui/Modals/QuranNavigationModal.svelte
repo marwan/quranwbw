@@ -8,7 +8,7 @@
 	import { buttonClasses } from '$data/commonClasses';
 	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey } from '$utils/stores';
 	import { inview } from 'svelte-inview';
-	import { validateKey } from '$utils/validateKey';
+	import { validateSearchInput } from '$utils/validateKey';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { page } from '$app/stores';
 	import { term } from '$utils/terminologies';
@@ -45,7 +45,7 @@
 
 	// Validate the searched key and fetch search results
 	$: (async () => {
-		searchResults = await validateKey(searchedKey);
+		searchResults = await validateSearchInput(searchedKey);
 	})();
 
 	// Update the max number of verses to load

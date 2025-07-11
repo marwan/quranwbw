@@ -1,153 +1,196 @@
 /* eslint-disable no-case-declarations */
-import { get } from 'svelte/store';
-import { __currentPage, __chapterNumber } from '$utils/stores';
 import { quranMetaData, supplicationsFromQuran } from '$data/quranMeta';
 import { staticEndpoint } from '$data/websiteSettings';
 import { fetchAndCacheJson } from '$utils/fetchData';
 
-// Validates the search terms provided in the Quran navigation modal and returns structured results
-export async function validateKey(key) {
+// Main validation function that processes search input and returns structured results
+export async function validateSearchInput(input) {
 	let results = {};
 
-	if (isNumeric(key)) {
-		handleNumericKey(key, results); // Processes numeric search terms
-	} else if (isSpecialCharKey(key)) {
-		await handleSpecialCharKey(key, results); // Processes search terms containing special characters
-	} else {
-		await handleStringKey(key, results); // Processes string search terms
+	// Check for chapter (1-114)
+	const chapterNum = detectChapter(input);
+	if (chapterNum) {
+		// Convert single chapter to chapters object format
+		const { transliteration, translation } = quranMetaData[chapterNum];
+		results.chapters = { [chapterNum]: { transliteration, translation } };
 	}
 
-	// Check for supplications from Quran
-	if (isSupplicationKey(key)) results.supplications = isSupplicationKey(key);
+	// Check for page (1-604)
+	const pageNum = detectPage(input);
+	if (pageNum) results.page = pageNum;
 
-	if (results.chapters && Object.keys(results.chapters).length === 0) {
-		delete results.chapters; // Removes empty chapters key if no chapters found
+	// Check for juz (1-30)
+	const juzNum = detectJuz(input);
+	if (juzNum) results.juz = juzNum;
+
+	// Check for verse key (e.g., 1:1, 1-1, 1.1)
+	const verseKey = isValidVerseKey(input);
+	if (verseKey) results.key = verseKey;
+
+	// Check for word key (e.g., 1:1:1, 1-1-1, 1.1.1)
+	const wordKey = await isValidWordKey(input);
+	if (wordKey) results.word = wordKey;
+
+	// Check for supplications
+	const supplicationKey = detectSupplication(input);
+	if (supplicationKey) results.supplications = supplicationKey;
+
+	// Check for chapter name search (only if input is string with more than 2 characters)
+	if (!isNumeric(input) && input.length > 2) {
+		const chapters = findChapters(input);
+		if (Object.keys(chapters).length > 0) {
+			results.chapters = chapters;
+		}
 	}
 
-	return Object.keys(results).length ? results : false; // Returns results or false if empty
+	// Return results or false if empty
+	const finalResults = Object.keys(results).length ? results : false;
+	console.log(finalResults);
+	return finalResults;
 }
 
-// Processes numeric search terms and maps them to corresponding results
-function handleNumericKey(key, results) {
-	if (key >= 1 && key <= 114) results.chapter = key; // Maps key to chapter if valid
-	if (get(__currentPage) === 'chapter' && key >= 1 && key <= quranMetaData[get(__chapterNumber)].verses) {
-		results.verse = key; // Maps key to verse if current page is chapter and key is valid
+// Detects if input is a valid chapter number (1-114)
+function detectChapter(input) {
+	if (!isNumeric(input)) return false;
+	const num = parseInt(input, 10);
+	return isValidChapter(num) ? num : false;
+}
+
+// Detects if input is a valid page number (1-604)
+function detectPage(input) {
+	if (!isNumeric(input)) return false;
+	const num = parseInt(input, 10);
+	return isValidPage(num) ? num : false;
+}
+
+// Detects if input is a valid juz number (1-30)
+function detectJuz(input) {
+	if (!isNumeric(input)) return false;
+	const num = parseInt(input, 10);
+	return isValidJuz(num) ? num : false;
+}
+
+// Detects if input is a valid supplication key
+function detectSupplication(input) {
+	const normalizedInput = normalizeDelimiters(input);
+	return Object.prototype.hasOwnProperty.call(supplicationsFromQuran, normalizedInput) ? normalizedInput : false;
+}
+
+// Normalizes delimiters (-, ., space) to colon format
+function normalizeDelimiters(input) {
+	return input.replace(/[-. ]/g, ':');
+}
+
+// Validates verse key format and constraints (with detection logic built-in)
+export function isValidVerseKey(input) {
+	// Handle special characters and normalize to colon format
+	const normalizedInput = normalizeDelimiters(input);
+
+	let key = normalizedInput;
+
+	// Check for verse key format (two parts separated by colon)
+	if (!normalizedInput.includes(':') || normalizedInput.split(':').length !== 2) {
+		// Also check for space-separated format (e.g., "1 1")
+		const parts = input.trim().split(' ');
+		if (parts.length === 2 && isNumeric(parts[0]) && isNumeric(parts[1])) {
+			key = `${parseInt(parts[0], 10)}:${parseInt(parts[1], 10)}`;
+		} else {
+			return false;
+		}
 	}
-	if (key >= 1 && key <= 604) results.page = key; // Maps key to page if valid
-	if (key >= 1 && key <= 30) results.juz = key; // Maps key to juz if valid
-}
 
-// Checks if the search term contains special characters (e.g., colon, dash, dot)
-function isSpecialCharKey(key) {
-	return [':', '-', '.'].some((char) => key.includes(char));
-}
-
-// Processes search terms containing special characters and maps them to corresponding results
-async function handleSpecialCharKey(key, results) {
-	const modifiedKey = key.replace(/[-.]/g, ':'); // Normalizes key to use colon as delimiter
-	if (isValidVerseKey(modifiedKey)) results.key = modifiedKey; // Validates and maps to verse key
-	if (await isValidWordKey(modifiedKey)) results.word = modifiedKey; // Validates and maps to word key
-}
-
-// Processes string search terms by splitting and validating them, mapping to results accordingly
-async function handleStringKey(key, results) {
-	const keySplit = key.split(' ');
-
-	if (keySplit.length === 2 && isValidVerseKey(formatVerseKey(keySplit))) {
-		results.key = formatVerseKey(keySplit); // Formats and validates as verse key
-	} else if (keySplit.length === 3 && (await isValidWordKey(formatWordKey(keySplit)))) {
-		results.word = formatWordKey(keySplit); // Formats and validates as word key
-	} else if (key.length > 2) {
-		results.chapters = findChapters(key); // Finds chapters matching the search term
+	// Validate the key format
+	if (hasWhitespace(key) || !isNonEmptyString(key) || key.split(':').length !== 2) {
+		return false;
 	}
+
+	const [chapter, verse] = key.split(':').map(Number);
+	const isValid = isValidChapter(chapter) && isValidVerse(chapter, verse);
+
+	return isValid ? key : false;
 }
 
-// Formats key split into a valid verse key (chapter:verse)
-function formatVerseKey(keySplit) {
-	return `${+keySplit[0]}:${+keySplit[1]}`;
+// Validates word key format and constraints (with detection logic built-in)
+export async function isValidWordKey(input) {
+	// Handle special characters and normalize to colon format
+	const normalizedInput = normalizeDelimiters(input);
+
+	let key = normalizedInput;
+
+	// Check for word key format (three parts separated by colon)
+	if (!normalizedInput.includes(':') || normalizedInput.split(':').length !== 3) {
+		// Also check for space-separated format (e.g., "1 1 1")
+		const parts = input.trim().split(' ');
+		if (parts.length === 3 && isNumeric(parts[0]) && isNumeric(parts[1]) && isNumeric(parts[2])) {
+			key = `${parseInt(parts[0], 10)}:${parseInt(parts[1], 10)}:${parseInt(parts[2], 10)}`;
+		} else {
+			return false;
+		}
+	}
+
+	// Validate the key format
+	if (hasWhitespace(key) || !isNonEmptyString(key) || key.split(':').length !== 3) {
+		return false;
+	}
+
+	const [chapter, verse, word] = key.split(':').map(Number);
+	if (!isValidChapter(chapter) || !isValidVerse(chapter, verse)) {
+		return false;
+	}
+
+	const verseKey = `${chapter}:${verse}`;
+	const data = await fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other');
+
+	const isValid = word >= 1 && word <= data[verseKey].words;
+
+	return isValid ? key : false;
 }
 
-// Formats key split into a valid word key (chapter:verse:word)
-function formatWordKey(keySplit) {
-	return `${+keySplit[0]}:${+keySplit[1]}:${+keySplit[2]}`;
+// Validates chapter number (1-114)
+function isValidChapter(chapter) {
+	return chapter >= 1 && chapter <= 114;
 }
 
-// Searches for chapters based on the search term, matching against various metadata fields
-function findChapters(key) {
+// Validates page number (1-604)
+function isValidPage(page) {
+	return page >= 1 && page <= 604;
+}
+
+// Validates juz number (1-30)
+function isValidJuz(juz) {
+	return juz >= 1 && juz <= 30;
+}
+
+// Validates verse number within chapter
+function isValidVerse(chapter, verse) {
+	return verse >= 1 && verse <= quranMetaData[chapter].verses;
+}
+
+// Searches for chapters based on name, translation, transliteration, etc.
+function findChapters(searchTerm) {
 	let chapters = {};
 
 	for (let chapter = 1; chapter <= 114; chapter++) {
 		const { arabic, transliteration, translation, alternateNames = [] } = quranMetaData[chapter];
-		if ([arabic, transliteration, translation, ...alternateNames].some((term) => term.toLowerCase().includes(key.toLowerCase()))) {
-			chapters[chapter] = { transliteration, translation }; // Adds matching chapters to results
+		const searchFields = [arabic, transliteration, translation, ...alternateNames];
+
+		if (searchFields.some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()))) {
+			chapters[chapter] = { transliteration, translation };
 		}
 	}
 
 	return chapters;
 }
 
-// Validates a verse key in the format (chapter:verse) to ensure it follows the expected structure
-export function isValidVerseKey(key) {
-	if (hasWhitespace(key) || !isNonEmptyString(key) || !containsOnlyTwoParts(key)) return false;
-
-	const [chapter, verse] = key.split(':').map(Number);
-	return isValidChapter(chapter) && isValidVerse(chapter, verse); // Validates chapter and verse numbers
-}
-
-// Validates a word key in the format (chapter:verse:word) to ensure it follows the expected structure
-export async function isValidWordKey(key) {
-	if (hasWhitespace(key) || !isNonEmptyString(key) || !containsOnlyThreeParts(key)) return false;
-
-	const [chapter, verse, word] = key.split(':').map(Number);
-	if (!isValidChapter(chapter) || !isValidVerse(chapter, verse)) return false;
-
-	const verseKey = `${chapter}:${verse}`;
-	const data = await fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other');
-
-	return word >= 1 && word <= data[verseKey].words; // Validates word number within verse
-}
-
-// Checks if the key contains whitespace
-function hasWhitespace(key) {
-	return key.includes(' ');
-}
-
-// Checks if the key is a non-empty string
-function isNonEmptyString(key) {
-	return key !== null && key !== undefined && key !== '';
-}
-
-// Ensures the key contains exactly two parts (chapter:verse)
-function containsOnlyTwoParts(key) {
-	return key.split(':').length === 2;
-}
-
-// Ensures the key contains exactly three parts (chapter:verse:word)
-function containsOnlyThreeParts(key) {
-	return key.split(':').length === 3;
-}
-
-// Validates if the chapter number is within the valid range
-function isValidChapter(chapter) {
-	return chapter >= 1 && chapter <= 114;
-}
-
-// Validates if the verse number is within the valid range for the given chapter
-function isValidVerse(chapter, verse) {
-	return verse >= 1 && verse <= quranMetaData[chapter].verses;
-}
-
-// Checks if a value is numeric
+// Helper functions
 function isNumeric(value) {
 	return /^-?\d+$/.test(value);
 }
 
-// Function to detect if a provided key is included in supplicationsFromQuran
-function isSupplicationKey(key) {
-	// Normalize key to use colons as delimiters
-	const normalizedKey = key.replace(/[-. ]/g, ':');
+function hasWhitespace(key) {
+	return key.includes(' ');
+}
 
-	if (Object.prototype.hasOwnProperty.call(supplicationsFromQuran, normalizedKey)) {
-		return normalizedKey;
-	}
+function isNonEmptyString(key) {
+	return key !== null && key !== undefined && key !== '';
 }
