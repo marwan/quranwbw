@@ -30,11 +30,11 @@
 	let divisionsSortIsAscending = true;
 	let chapterListOrder = [...quranMetaData];
 	let juzListOrder = [...juzMeta];
-	let fullQuranData;
+	let fullQuranTextData;
 
 	// Fetch full Quran data (uthmani) for bookmarked verses
 	$: if (extrasActiveTab === 1 && totalBookmarks > 0) {
-		fullQuranData = (async () => {
+		fullQuranTextData = (async () => {
 			try {
 				return await fetchAndCacheJson(`${staticEndpoint}/full-quran/uthmani.json?version=1`, 'other');
 			} catch (error) {
@@ -125,7 +125,7 @@
 
 									{#if extrasActiveTab === 1 && totalBookmarks > 0}
 										<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70">
-											{#await fullQuranData then data}
+											{#await fullQuranTextData then data}
 												<div class="truncate max-w-[28vw] md:max-w-[115px]">{data.data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
 											{:catch _}
 												<p></p>

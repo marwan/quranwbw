@@ -81,11 +81,11 @@
 
 		{#await tafsirData}
 			<Spinner />
-		{:then tafsirData}
+		{:then data}
 			<div class="text-sm flex flex-col space-y-6">
 				<div class="flex flex-col space-y-4">
 					<div class={tafsirTextClasses}>
-						{#each Object.entries(tafsirData.ayahs) as [_, tafsir]}
+						{#each Object.entries(data.ayahs) as [_, tafsir]}
 							{#if tafsir.surah === chapter && tafsir.ayah === verse}
 								{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
 							{/if}

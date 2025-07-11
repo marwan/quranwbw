@@ -12,14 +12,14 @@
 	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
 
 	const juzNumber = data.juz;
-	let fetchJuzKeys;
+	let juzKeysData;
 
 	__pageURL.set(1);
 
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
 		__keysToFetchData.set({});
 
-		fetchJuzKeys = (async () => {
+		juzKeysData = (async () => {
 			try {
 				const data = await fetchAndCacheJson(`${staticEndpoint}/meta/keysInJuz.json?version=1`, 'other');
 
@@ -40,12 +40,10 @@
 
 <PageHead title={`${term('juz')} ${juzNumber}`} />
 
-{#await fetchJuzKeys}
-	<!-- do nothing -->
-{:then}
+{#await juzKeysData then _}
 	<div id="individual-verses-block">
 		<Individual />
 	</div>
 {:catch _}
-	<p>...</p>
+	<p>Failed to load content.</p>
 {/await}
