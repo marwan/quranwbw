@@ -51,7 +51,7 @@
 			navigationResults = versesKeyData.result.navigation;
 			return generateKeys(versesKeyData);
 		} catch (error) {
-			console.error('Error fetching verse keys:', error);
+			console.warn('Error fetching verse keys:', error);
 			badRequest = true;
 		}
 	}

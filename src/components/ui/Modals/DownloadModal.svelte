@@ -104,7 +104,7 @@
 				if (downloadStopped) {
 					downloadStopped = false;
 				} else {
-					console.error('Download failed:', error);
+					console.warn('Download failed:', error);
 					showMessage('Error downloading data.');
 				}
 			}
@@ -127,7 +127,7 @@
 				value: {}
 			});
 		} catch (error) {
-			console.error('Error deleting api_data:', error);
+			console.warn('Error deleting api_data:', error);
 			showMessage('Error deleting data.');
 		}
 	}
@@ -140,6 +140,7 @@
 				swRegistered = registrations.length > 0;
 			} catch (error) {
 				swRegistered = false;
+				console.warn(error);
 			}
 		} else {
 			swRegistered = false;

@@ -78,8 +78,8 @@
 				try {
 					wakeLock = await navigator.wakeLock.request('screen');
 					console.log('Wake lock enabled');
-				} catch (err) {
-					console.error(err);
+				} catch (error) {
+					console.warn(error);
 				}
 			}
 		} else {

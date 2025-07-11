@@ -26,7 +26,7 @@
 		lastReadPage = lastReadElement?.getAttribute('data-page');
 		lastReadJuz = lastReadElement?.getAttribute('data-juz');
 	} catch (error) {
-		console.log(error);
+		console.warn(error);
 	}
 
 	// Get the revelation type of the current chapter
@@ -51,7 +51,7 @@
 			mushafJuz = `${term('juz')} ${$__mushafPageDivisions.juz}`;
 			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => quranMetaData[value].transliteration);
 		} catch (error) {
-			// console.log(error);
+			console.warn(error);
 		}
 	}
 </script>

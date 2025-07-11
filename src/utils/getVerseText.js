@@ -12,6 +12,7 @@ export function getVerseText(key) {
 
 		return wordsArray.join(' ');
 	} catch (error) {
+		console.warn(error);
 		return key;
 	}
 }

@@ -100,8 +100,8 @@ export async function fetchVerseTranslationData(props) {
 			await useCache(`translation_${id}_${apiVersion}`, 'translation', data);
 
 			return { id, data };
-		} catch (err) {
-			console.error(`Error fetching translation ${id}:`, err);
+		} catch (error) {
+			console.warn(`Error fetching translation ${id}:`, error);
 			return { id, data: null };
 		}
 	});
@@ -221,7 +221,7 @@ async function useCache(key, type, dataToSet = undefined) {
 		}
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
-		console.error('IndexedDB cache error:', error?.message || error);
+		console.warn('IndexedDB cache error:', error?.message || error);
 		return dataToSet !== undefined ? false : null;
 	}
 }

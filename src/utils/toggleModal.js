@@ -12,7 +12,7 @@ export function toggleModal(modal, action) {
 		try {
 			document.querySelector('body > div[modal-backdrop]').remove(); // remove the backdrop
 		} catch (error) {
-			// ...
+			console.warn(error);
 		}
 	}
 }

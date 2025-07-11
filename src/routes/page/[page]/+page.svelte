@@ -143,7 +143,7 @@
 						}
 					});
 				} catch (error) {
-					console.error(`Error fetching Chapter ${chapter}:`, error);
+					console.warn(`Error fetching Chapter ${chapter}:`, error);
 				}
 			});
 
@@ -163,7 +163,7 @@
 
 			return { verses: sortedVerses };
 		} catch (error) {
-			console.error('Error fetching data:', error);
+			console.warn('Error fetching data:', error);
 			return { verses: {} };
 		}
 	}

@@ -34,7 +34,7 @@
 			const selectedTafsir = selectableTafsirs[selectedTafirId];
 			return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
 		} catch (error) {
-			console.error(error);
+			console.warn(error);
 			return [];
 		}
 	}
@@ -54,8 +54,7 @@
 				tafsirModal.getElementsByTagName('div')[1].scrollTop = 0;
 			}
 		} catch (error) {
-			// Ignore errors
-			console.error(error);
+			console.warn(error);
 		}
 	}
 </script>

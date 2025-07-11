@@ -99,7 +99,7 @@
 					};
 				});
 			} catch (error) {
-				console.error('Failed to load exact words in Quran:', error);
+				console.warn('Failed to load exact words in Quran:', error);
 				return [];
 			}
 		})();

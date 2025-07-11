@@ -269,7 +269,7 @@
 
 					return themes[id][type] || '';
 				} catch (error) {
-					console.error('An error occurred while fetching the theme:', error);
+					console.warn('An error occurred while fetching the theme:', error);
 					return '';
 				}
 			}

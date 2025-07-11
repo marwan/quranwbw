@@ -74,7 +74,7 @@
 				if (startIndex > 0) showLoadPreviousVerseButton = true;
 			}
 		} catch (error) {
-			// ...
+			console.warn(error);
 		}
 	}
 
@@ -107,7 +107,7 @@
 
 			versesLoadType = 'next';
 		} catch (error) {
-			console.log(error);
+			console.warn(error);
 		}
 	}
 
@@ -198,7 +198,7 @@
 				dataMap[fullKey] = fetchedDataMap[chapter][fullKey];
 			});
 		} catch (error) {
-			console.error('Error fetching chapter data:', error);
+			console.warn('Error fetching chapter data:', error);
 		} finally {
 			isLoading = false;
 		}
