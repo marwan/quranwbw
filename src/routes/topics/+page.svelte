@@ -32,6 +32,7 @@
 
 	// Run this whenever searchQuery changes
 	$: searchQuery, updateDebouncedSearch();
+	$: searchQueryLength = searchQuery.length;
 
 	// Filter topics on debouncedSearch or selectedLetter
 	$: filteredTopics = allTopics
@@ -64,7 +65,11 @@
 	<!-- Search Count -->
 	<div id="search-results-information" class="text-center text-xs">
 		{#if filteredTopicsCount > 0}
-			<span>Showing {filteredTopicsCount} results starting with the alphabet "{selectedLetter}".</span>
+			{#if searchQueryLength > 0}
+				<span>Showing {filteredTopicsCount} results related to "{searchQuery}".</span>
+			{:else}
+				<span>Showing {filteredTopicsCount} results starting with the alphabet "{selectedLetter}".</span>
+			{/if}
 		{/if}
 	</div>
 
@@ -95,7 +100,7 @@
 	{#if filteredTopics.length === 0 && !isSearching}
 		<p>No topics found.</p>
 	{:else if !isSearching}
-		<div class="space-y-6">
+		<div id="search-result-items" class="space-y-6 {searchQuery.length > 0 && 'mt-6'}">
 			{#each filteredTopics as [topic, verses]}
 				<div class="pb-4 border-b {window.theme('border')}">
 					<h2 class="text-xl font-semibold {window.theme('textSecondary')}">{topic}</h2>
