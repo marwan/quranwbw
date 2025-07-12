@@ -8,9 +8,6 @@ const displayType = +params.get('displayType');
 const websiteTheme = +params.get('websiteTheme');
 const wordTranslation = +params.get('wordTranslation');
 
-const initialSetup = params.get('initialSetupCompleted');
-const initialSetupCompleted = initialSetup === 'true';
-
 // word_type
 if (fontType !== null && selectableFontTypes[fontType] !== undefined) {
 	updateSettings({ type: 'fontType', value: fontType });
@@ -29,9 +26,4 @@ if (websiteTheme !== null && selectableThemes[websiteTheme] !== undefined) {
 // word_translation
 if (wordTranslation !== null && selectableWordTranslations[wordTranslation] !== undefined) {
 	updateSettings({ type: 'wordTranslation', value: wordTranslation });
-}
-
-// initial_setup_completed
-if (initialSetup !== null && typeof initialSetupCompleted == 'boolean') {
-	updateSettings({ type: 'initialSetupCompleted', value: initialSetupCompleted });
 }

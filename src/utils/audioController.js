@@ -56,7 +56,7 @@ export async function playVerseAudio(props) {
 	try {
 		scrollSmoothly(document.getElementById(`${audioSettings.playingKey}`).offsetTop - 75, 500);
 	} catch (error) {
-		// Ignore errors
+		console.warn(error);
 	}
 
 	audio.onended = async function () {
@@ -191,7 +191,7 @@ export function resetAudioSettings(props) {
 			element.classList.remove('bg-black/5');
 		});
 	} catch (error) {
-		console.log(error);
+		console.warn(error);
 	}
 }
 
@@ -242,8 +242,7 @@ function wordHighlighter() {
 		// Update the audio settings
 		__audioSettings.set(audioSettings);
 	} catch (error) {
-		// Error handling
-		console.error('wordHighlighter error:', error);
+		console.warn('wordHighlighter error:', error);
 	}
 }
 

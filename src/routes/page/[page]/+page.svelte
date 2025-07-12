@@ -1,8 +1,8 @@
 <script>
 	export let data;
 
-	import Bismillah from '$display/Bismillah.svelte';
-	import ChapterHeader from '$display/ChapterHeader.svelte';
+	import Bismillah from '$misc/Bismillah.svelte';
+	import ChapterHeader from '$misc/ChapterHeader.svelte';
 	import PageHead from '$misc/PageHead.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
@@ -11,7 +11,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { goto } from '$app/navigation';
-	import { __chapterNumber, __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __topNavbarVisible, __bottomToolbarVisible, __mushafMinimalModeEnabled } from '$utils/stores';
+	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
@@ -20,7 +20,7 @@
 	import { splitDelimiter } from '$data/websiteSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
-	import '$lib/swiped-events.min.js';
+	import '$utils/swiped-events.min.js';
 
 	// Lines to be centered instead of justified
 	const centeredPageLines = ['528:9', '545:6', '594:5', '602:5', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
@@ -143,7 +143,7 @@
 						}
 					});
 				} catch (error) {
-					console.error(`Error fetching Chapter ${chapter}:`, error);
+					console.warn(`Error fetching Chapter ${chapter}:`, error);
 				}
 			});
 
@@ -163,7 +163,7 @@
 
 			return { verses: sortedVerses };
 		} catch (error) {
-			console.error('Error fetching data:', error);
+			console.warn('Error fetching data:', error);
 			return { verses: {} };
 		}
 	}
@@ -210,7 +210,7 @@
 			</div>
 		</div>
 	{:catch error}
-		<ErrorLoadingDataFromAPI />
+		<ErrorLoadingDataFromAPI {error} />
 	{/await}
 </div>
 

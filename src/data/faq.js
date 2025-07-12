@@ -50,12 +50,6 @@ export const websiteFAQs = [
 		answer: 'Thank you for thinking to contribute, please visit our [GitHub repository](https://github.com/marwan/quranwbw-v4) and get started from there.'
 	},
 	{
-		id: 11,
-		question: 'What is Token Login and how does it work?',
-		answer:
-			'Token Login allows you to save your settings (bookmarks & notes for now) in the cloud without the need of creating an account or providing any personal details. This is done by assigning a unique token to your browser, and the same is used to sync your settings. If you do not opt for this, your settings will only be saved locally. <br /><br />Once you generate a token, you can use it in a different browser to sync your settings from the cloud. Just make sure to save your token because there is no way to get it back if you lose access to it. <br /><br />Note that your settings are not automatically synced. You have to do it manually everytime. While this may be tedious, it prevents unnecessary data loss and conflicts.'
-	},
-	{
 		id: 99999,
 		question: 'I have more questions which are not listed here, where can I ask them?',
 		answer: "We suggest you to raise it on our [GitHub repository](https://github.com/marwan/quranwbw-v4). In case you're not sure how to use it, drop us an email on [quranwbw@gmail.com](mailto:quranwbw@gmail.com)."

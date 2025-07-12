@@ -2,7 +2,6 @@
 	export let wordData = []; // Ensure a default empty array
 	export let tableType;
 
-	import { __fontType } from '$utils/stores';
 	import { buttonClasses, linkClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 

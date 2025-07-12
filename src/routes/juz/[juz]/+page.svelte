@@ -3,7 +3,7 @@
 
 	import PageHead from '$misc/PageHead.svelte';
 	import Individual from '$display/verses/modes/Individual.svelte';
-	import { __currentPage, __displayType, __userBookmarks, __keysToFetch, __keysToFetchData, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
+	import { __currentPage, __displayType, __keysToFetch, __keysToFetchData, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { term } from '$utils/terminologies';
 	import { fetchAndCacheJson } from '$utils/fetchData';
@@ -12,14 +12,14 @@
 	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
 
 	const juzNumber = data.juz;
-	let fetchJuzKeys;
+	let juzKeysData;
 
 	__pageURL.set(1);
 
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
 		__keysToFetchData.set({});
 
-		fetchJuzKeys = (async () => {
+		juzKeysData = (async () => {
 			try {
 				const data = await fetchAndCacheJson(`${staticEndpoint}/meta/keysInJuz.json?version=1`, 'other');
 
@@ -29,7 +29,7 @@
 
 				return data[juzNumber];
 			} catch (error) {
-				console.error(error);
+				console.warn(error);
 				return [];
 			}
 		})();
@@ -40,12 +40,10 @@
 
 <PageHead title={`${term('juz')} ${juzNumber}`} />
 
-{#await fetchJuzKeys}
-	<!-- <Spinner /> -->
-{:then fetchJuzKeys}
+{#await juzKeysData then _}
 	<div id="individual-verses-block">
 		<Individual />
 	</div>
-{:catch error}
-	<p>...</p>
+{:catch _}
+	<p>Failed to load content.</p>
 {/await}

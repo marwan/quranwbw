@@ -7,7 +7,7 @@
 	// https://stackoverflow.com/a/59862556
 	function linkMarkdown(string) {
 		return string.replace(/\[.*?\]\(.*?\)/g, (text) => {
-			let [fullmatch, name, link] = /\[(.*?)\]\((.*?)\)/g.exec(text);
+			let [_, name, link] = /\[(.*?)\]\((.*?)\)/g.exec(text);
 			return `<a href="${link}" target="_blank" class="${linkClasses}">${name}</a>`;
 		});
 	}

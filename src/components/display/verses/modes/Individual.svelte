@@ -5,8 +5,8 @@
 	import WordByWord from '$display/layouts/WordByWord.svelte';
 	import Normal from '$display/layouts/Normal.svelte';
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
-	import Bismillah from '$display/Bismillah.svelte';
-	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData, __currentPage, __pageURL, __userSettings } from '$utils/stores';
+	import Bismillah from '$misc/Bismillah.svelte';
+	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData, __currentPage, __pageURL } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { isValidVerseKey } from '$utils/validateKey';
@@ -52,7 +52,7 @@
 	let isLoading = false; // Tracks the loading state of dataMap
 
 	// Only allow display types listed in displayComponents, else default to type 1, and don't save the layout in settings if not allowed
-	$: if (!displayComponents.hasOwnProperty($__displayType)) {
+	$: if (!Object.prototype.hasOwnProperty.call(displayComponents, $__displayType)) {
 		$__displayType = 1;
 	}
 
@@ -74,7 +74,7 @@
 				if (startIndex > 0) showLoadPreviousVerseButton = true;
 			}
 		} catch (error) {
-			// ...
+			console.warn(error);
 		}
 	}
 
@@ -107,7 +107,7 @@
 
 			versesLoadType = 'next';
 		} catch (error) {
-			console.log(error);
+			console.warn(error);
 		}
 	}
 
@@ -174,7 +174,7 @@
 			// Step 2: Build fetch promises for only uncached chapters
 			const chapterFetchPromises = {};
 			for (const chapter of uniqueChapters) {
-				if (__keysToFetchData.hasOwnProperty(chapter)) {
+				if (Object.prototype.hasOwnProperty.call(__keysToFetchData, chapter)) {
 					chapterFetchPromises[chapter] = __keysToFetchData[chapter];
 				} else {
 					chapterFetchPromises[chapter] = fetchChapterData({ chapter });
@@ -194,11 +194,11 @@
 
 			// Step 5: Map the original keys to the fetched data
 			relevantKeys.forEach((fullKey) => {
-				const [chapter, verse] = fullKey.split(':');
+				const chapter = fullKey.split(':')[0];
 				dataMap[fullKey] = fetchedDataMap[chapter][fullKey];
 			});
 		} catch (error) {
-			console.error('Error fetching chapter data:', error);
+			console.warn('Error fetching chapter data:', error);
 		} finally {
 			isLoading = false;
 		}
@@ -244,7 +244,7 @@
 
 		{#if showContinueReadingButton}
 			{#if endIndex < keysArrayLength && document.getElementById('loadVersesButton') === null}
-				<div id="loadVersesButton" class="flex justify-center pt-6 pb-18" use:inview={loadButtonOptions} on:inview_enter={(event) => document.querySelector('#loadVersesButton > button').click()}>
+				<div id="loadVersesButton" class="flex justify-center pt-6 pb-18" use:inview={loadButtonOptions} on:inview_enter={() => document.querySelector('#loadVersesButton > button').click()}>
 					<button on:click={loadNextVerses} class="text-sm {buttonClasses}"> Continue Reading </button>
 				</div>
 			{/if}

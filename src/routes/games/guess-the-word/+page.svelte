@@ -13,14 +13,14 @@
 	import { playWordAudio } from '$utils/audioController';
 
 	let randomID = 1;
-	let fetchData;
+	let randomWordsData;
 	let selection = null;
 	let answerChecked = false;
 	let isAnswerCorrect = null;
 	let randomWord = Math.floor(Math.random() * 3);
 
 	// Fetch random words
-	$: fetchData = (async () => {
+	$: randomWordsData = (async () => {
 		const response = await fetch(`${apiEndpoint}/random-words?randomID=${randomID}`);
 		const data = await response.json();
 		return data.data;
@@ -64,24 +64,24 @@
 
 <div class="space-y-12 my-6 md:my-8">
 	<div id="word">
-		{#await fetchData}
+		{#await randomWordsData}
 			<Spinner />
-		{:then fetchData}
+		{:then data}
 			<div class="flex flex-col space-y-8 justify-center">
 				<!-- word -->
-				<button class="flex flex-col space-y-4 mx-auto items-center" on:click={() => playWordAudio({ key: fetchData[randomWord].word_key })}>
-					<span class="text-5xl md:text-7xl arabic-font-1">{fetchData[randomWord].word_uthmani}</span>
-					<span class="text-xs">{fetchData[randomWord].word_transliteration}</span>
+				<button class="flex flex-col space-y-4 mx-auto items-center" on:click={() => playWordAudio({ key: data[randomWord].word_key })}>
+					<span class="text-5xl md:text-7xl arabic-font-1">{data[randomWord].word_uthmani}</span>
+					<span class="text-xs">{data[randomWord].word_transliteration}</span>
 				</button>
 
 				<!-- options -->
 				<div id="options" class="pt-8">
 					<p class="mb-5 text-sm">Guess the correct translation:</p>
 					<div class="grid gap-4 md:gap-6 w-full md:grid-cols-2">
-						{#each Object.entries(fetchData) as [key, value]}
+						{#each Object.entries(data) as [key, _]}
 							<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
 								<div class="{individualRadioClasses} {selection === +key ? `${window.theme('border')}` : null}">
-									<div class="flex flex-row mr-auto ml-2">{fetchData[key].word_english}</div>
+									<div class="flex flex-row mr-auto ml-2">{data[key].word_english}</div>
 
 									<!-- check / cross icon -->
 									{#if answerChecked === true && selection === +key}
@@ -99,7 +99,7 @@
 				{#if answerChecked === true && isAnswerCorrect !== null}
 					<div id="answer-results" class="flex justify-center text-center font-medium text-md">
 						<span>
-							{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${fetchData[randomWord].word_english}" 😟`}
+							{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${data[randomWord].word_english}" 😟`}
 						</span>
 					</div>
 				{/if}
@@ -127,7 +127,7 @@
 				</div>
 			</div>
 		{:catch error}
-			<ErrorLoadingDataFromAPI />
+			<ErrorLoadingDataFromAPI {error} />
 		{/await}
 	</div>
 </div>

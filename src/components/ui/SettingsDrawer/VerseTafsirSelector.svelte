@@ -8,11 +8,11 @@
 </script>
 
 <div class="grid gap-3 w-full">
-	{#each Object.entries(verseTafsirLanguages) as [id, language]}
+	{#each Object.entries(verseTafsirLanguages) as [_, language]}
 		<div class="flex flex-col space-y-2 pb-6">
 			<div id="translation-name" class="text-md font-medium">{language.language}</div>
 			<div id="translation-list" class="space-y-3">
-				{#each Object.entries(selectableTafsirs) as [id, tafsir]}
+				{#each Object.entries(selectableTafsirs) as [_, tafsir]}
 					{#if tafsir.language === language.language}
 						<div class="flex items-center w-full">
 							<Radio name="verseTafsir" bind:group={$__verseTafsir} value={tafsir.id} on:change={(event) => updateSettings({ type: 'verseTafsir', value: +event.target.value })} custom>

@@ -3,7 +3,7 @@
 	import Home from '$svgs/Home.svelte';
 	import ChevronDown from '$svgs/ChevronDown.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __chapterNumber, __currentPage, __lastRead, __pageURL, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
+	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 
 	let lastReadPage;
@@ -26,14 +26,14 @@
 		lastReadPage = lastReadElement?.getAttribute('data-page');
 		lastReadJuz = lastReadElement?.getAttribute('data-juz');
 	} catch (error) {
-		console.log(error);
+		console.warn(error);
 	}
 
 	// Get the revelation type of the current chapter
 	$: chapterRevelation = quranMetaData[$__chapterNumber].revelation;
 
 	// Calculate the scroll progress percentage for the current chapter
-	$: chapterProgress = $__lastRead.hasOwnProperty('chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
+	$: chapterProgress = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
 
 	// Get the chapter name for the navbar
 	$: {
@@ -51,7 +51,7 @@
 			mushafJuz = `${term('juz')} ${$__mushafPageDivisions.juz}`;
 			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => quranMetaData[value].transliteration);
 		} catch (error) {
-			// console.log(error);
+			console.warn(error);
 		}
 	}
 </script>

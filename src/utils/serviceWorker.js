@@ -50,7 +50,7 @@ export async function checkAndRegisterServiceWorker() {
 			await unregisterServiceWorkerAndClearCache(registrations);
 		}
 	} catch (error) {
-		console.error('Failed to fetch service worker settings:', error);
+		console.warn('Failed to fetch service worker settings:', error);
 		console.log('Keeping existing service worker state unchanged.');
 	}
 }
@@ -67,6 +67,6 @@ async function unregisterServiceWorkerAndClearCache(registrations) {
 
 		console.log('All service workers unregistered and caches cleared.');
 	} catch (error) {
-		console.error('Error while clearing caches:', error);
+		console.warn('Error while clearing caches:', error);
 	}
 }

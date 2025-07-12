@@ -49,7 +49,6 @@ export const defaultSettings = {
 	userBookmarks: [],
 	userNotes: {},
 	favouriteChapters: [1, 5, 18],
-	initialSetupCompleted: false,
 	chapter: 1,
 	downloadedDataInfo: {}
 };

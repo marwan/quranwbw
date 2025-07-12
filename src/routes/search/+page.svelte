@@ -5,7 +5,7 @@
 	import Individual from '$display/verses/modes/Individual.svelte';
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { goto } from '$app/navigation';
-	import { __currentPage, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __settingsSelectorModal, __keysToFetch } from '$utils/stores';
+	import { __currentPage, __keysToFetch } from '$utils/stores';
 	import { apiEndpoint } from '$data/websiteSettings';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
@@ -51,7 +51,7 @@
 			navigationResults = versesKeyData.result.navigation;
 			return generateKeys(versesKeyData);
 		} catch (error) {
-			console.error('Error fetching verse keys:', error);
+			console.warn('Error fetching verse keys:', error);
 			badRequest = true;
 		}
 	}

@@ -8,7 +8,7 @@
 	import Input from '$ui/FlowbiteSvelte/forms/Input.svelte';
 	import Search from '$svgs/Search.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
+	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { selectableReciters, selectableTranslationReciters, selectableAudioDelays } from '$data/options';
@@ -41,7 +41,9 @@
 		prepareVersesToPlay($__audioSettings.playingKey);
 
 		// Initialize endVerse as startVerse if undefined
-		$__audioSettings.endVerse ??= startVerse;
+		if ($__audioSettings.endVerse == null) {
+			$__audioSettings.endVerse = startVerse;
+		}
 
 		// Validate verse and repeat times
 		invalidStartVerse = startVerse < 1 || startVerse > versesInChapter;
