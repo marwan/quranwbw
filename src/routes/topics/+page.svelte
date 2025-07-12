@@ -6,6 +6,7 @@
 	import { debounce } from '$utils/debounce';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { disabledClasses } from '$data/commonClasses';
 
 	let topics = {};
 	let allTopics = [];
@@ -52,10 +53,10 @@
 
 <PageHead title="Topics" />
 
-<div class="container mx-auto px-4 py-4">
+<div class="mx-auto px-4 py-4">
 	<!-- Search Input -->
 	<div class="relative flex max-w-xl mx-auto mb-4">
-		<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search topics..." required />
+		<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-3xl w-full text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search topics..." required />
 	</div>
 
 	<!-- Alphabet Filter (disabled when searching) -->
@@ -70,7 +71,7 @@
 					{letter}
 				</a>
 				{#if i < alphabet.length - 1}
-					<span class="text-gray-400 select-none">•</span>
+					<span class={disabledClasses}>•</span>
 				{/if}
 			{/each}
 		</div>
@@ -78,20 +79,20 @@
 
 	<!-- Loading Message -->
 	{#if isSearching}
-		<p class="text-gray-500 italic mb-4">Loading...</p>
+		<p class="italic mb-4">Loading...</p>
 	{/if}
 
 	<!-- Topic List -->
 	{#if filteredTopics.length === 0 && !isSearching}
-		<p class="text-gray-500">No topics found.</p>
+		<p>No topics found.</p>
 	{:else if !isSearching}
 		<div class="space-y-6">
 			{#each filteredTopics as [topic, verses]}
 				<div class="pb-4 border-b {window.theme('border')}">
 					<h2 class="text-xl font-semibold {window.theme('textSecondary')}">{topic}</h2>
-					<p class="text-gray-700">
+					<p>
 						{#each verses as verse, i}
-							<a href={`https://quranwbw.com/${verse.replace(':', '/')}`} class="text-blue-600 hover:underline" target="_blank" rel="noopener">
+							<a href={`https://quranwbw.com/${verse.replace(':', '/')}`} class="hover:underline" target="_blank" rel="noopener">
 								{verse}
 							</a>{i < verses.length - 1 ? ', ' : ''}
 						{/each}
