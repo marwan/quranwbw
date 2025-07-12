@@ -81,8 +81,8 @@
 	let settingsDrawerBackground = `${window.theme('bgMain')}`;
 	let individualSettingsComponent;
 	let mainSettingsScrollPos = 0;
-	let allSettingsVisible = true;
-	let individualSettingsVisible = false;
+	let showAllSettings = true;
+	let showIndividualSetting = false;
 	let totalVerseTransliterationsSelected = 0;
 	let arabicWordSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.arabicText);
 	let wordTranlationTransliterationSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
@@ -116,8 +116,8 @@
 
 	// Go back to main settings and restore scroll position
 	function goBackToMainSettings() {
-		allSettingsVisible = true;
-		individualSettingsVisible = false;
+		showAllSettings = true;
+		showIndividualSetting = false;
 
 		// Scroll to last known position
 		setTimeout(() => {
@@ -132,8 +132,8 @@
 	// Navigate to an individual setting component
 	function gotoIndividualSetting(type) {
 		mainSettingsScrollPos = document.getElementById('settings-drawer').scrollTop;
-		allSettingsVisible = false;
-		individualSettingsVisible = true;
+		showAllSettings = false;
+		showIndividualSetting = true;
 		individualSettingsComponent = individualSettingsComponents[type];
 
 		// Scroll to the individual setting view
@@ -178,7 +178,7 @@
 <!-- settings drawer -->
 <Drawer placement="right" transitionType="fly" transitionParams={transitionParamsRight} bind:hidden={$__settingsDrawerHidden} class="w-full md:w-1/2 lg:w-[430px] md:rounded-tl-3xl md:rounded-bl-3xl pt-0 {settingsDrawerBackground}" id="settings-drawer">
 	<!-- all-settings -->
-	{#if allSettingsVisible}
+	{#if showAllSettings}
 		<div id="all-settings">
 			<div class="flex z-30 top-0 sticky {window.theme('bgMain')} border-b-2 {window.theme('border')} mb-4 {settingsDrawerOpacity}">
 				<h5 id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold">Settings</h5>
@@ -504,7 +504,7 @@
 	{/if}
 
 	<!-- individual-setting -->
-	{#if individualSettingsVisible}
+	{#if showIndividualSetting}
 		<div id="individual-setting" transition:fly={{ duration: 150, x: 0, easing: sineIn }}>
 			<div class="flex z-30 top-0 sticky {window.theme('bgMain')} border-b-2 {window.theme('border')} mb-4">
 				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>← Back</button>
