@@ -3,7 +3,7 @@
 
 	import VerseOptionButtons from '$display/verses/VerseOptionButtons.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
-	import Translations from '$display/verses/VerseTranslations.svelte';
+	import VerseTranslations from '$display/verses/VerseTranslations.svelte';
 	import PageDivider from '$display/verses/PageDivider.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { inview } from 'svelte-inview';
@@ -22,7 +22,7 @@
 		</div>
 
 		<!-- verse translations and transliterations -->
-		<Translations {value} />
+		<VerseTranslations {value} />
 	</div>
 
 	<div class="border-b {window.theme('border')}"></div>
