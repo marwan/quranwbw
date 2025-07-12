@@ -55,7 +55,7 @@
 	 * 3. **General Case**:
 	 *    - Sets the verse key for tracking purposes.
 	 *    - If a word is clicked:
-	 *      - Triggers audio playbook for that specific word.
+	 *      - Triggers audio playback for that specific word.
 	 *    - If an end-verse icon is clicked:
 	 *      - Adds a bookmark (if continuous display is disabled).
 	 */
