@@ -3,23 +3,39 @@
 	import { __currentPage } from '$utils/stores';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { debounce } from '$utils/debounce';
 
 	let topics = {};
+	let allTopics = [];
 	let filteredTopics = [];
 	let selectedLetter = 'A';
 	let searchQuery = '';
-	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+	let debouncedSearch = '';
+	let isSearching = false;
 
+	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 	__currentPage.set('topics');
 
-	// Sync URL param
+	// Update selectedLetter from URL
 	$: selectedLetter = $page.url.searchParams.get('letter')?.toUpperCase() || 'A';
 
-	// Filter topics
-	$: filteredTopics = Object.entries(topics)
+	// Debounce handler
+	function updateDebouncedSearch() {
+		isSearching = true;
+		debounce(() => {
+			debouncedSearch = searchQuery.trim().toLowerCase();
+			isSearching = false;
+		}, 500);
+	}
+
+	// Run this whenever searchQuery changes
+	$: searchQuery, updateDebouncedSearch();
+
+	// Filter topics on debouncedSearch or selectedLetter
+	$: filteredTopics = allTopics
 		.filter(([topic]) => {
-			if (searchQuery.trim()) {
-				return topic.toLowerCase().includes(searchQuery.trim().toLowerCase());
+			if (debouncedSearch) {
+				return topic.toLowerCase().includes(debouncedSearch);
 			}
 			return topic.toUpperCase().startsWith(selectedLetter);
 		})
@@ -28,14 +44,13 @@
 	onMount(async () => {
 		const res = await fetch('https://static.quranwbw.com/data/v4/others/quran-topics.json');
 		topics = await res.json();
+		allTopics = Object.entries(topics);
 	});
 </script>
 
 <PageHead title="Topics" />
 
 <div class="container mx-auto px-4 py-6">
-	<!-- <h1 class="text-3xl font-bold mb-4">Quran Topics</h1> -->
-
 	<!-- Search Input -->
 	<div class="mb-4">
 		<input type="text" placeholder="Search topics..." bind:value={searchQuery} class="w-full px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-blue-300" />
@@ -56,10 +71,15 @@
 		</div>
 	{/if}
 
+	<!-- Loading Message -->
+	{#if isSearching}
+		<p class="text-gray-500 italic mb-4">Searching...</p>
+	{/if}
+
 	<!-- Topic List -->
-	{#if filteredTopics.length === 0}
+	{#if filteredTopics.length === 0 && !isSearching}
 		<p class="text-gray-500">No topics found.</p>
-	{:else}
+	{:else if !isSearching}
 		<div class="space-y-6">
 			{#each filteredTopics as [topic, verses]}
 				<div class="border-b pb-4">
