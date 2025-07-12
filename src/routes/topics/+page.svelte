@@ -16,7 +16,6 @@
 	let isSearching = false;
 
 	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
-	__currentPage.set('topics');
 
 	// Update selectedLetter from URL
 	$: selectedLetter = $page.url.searchParams.get('letter')?.toUpperCase() || 'A';
@@ -47,34 +46,39 @@
 		topics = await fetchAndCacheJson(`${staticEndpoint}/others/quran-topics.json?version=1`, 'other');
 		allTopics = Object.entries(topics);
 	});
+
+	__currentPage.set('topics');
 </script>
 
 <PageHead title="Topics" />
 
-<div class="container mx-auto px-4 py-6">
+<div class="container mx-auto px-4 py-4">
 	<!-- Search Input -->
-	<div class="mb-4">
-		<input type="text" placeholder="Search topics..." bind:value={searchQuery} class="w-full px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-blue-300" />
+	<div class="relative flex max-w-xl mx-auto mb-4">
+		<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search topics..." required />
 	</div>
 
 	<!-- Alphabet Filter (disabled when searching) -->
 	{#if !searchQuery.trim()}
-		<div class="flex flex-wrap gap-2 mb-6">
-			{#each alphabet as letter}
+		<div class="flex flex-wrap gap-1 mb-6 items-center justify-center text-lg">
+			{#each alphabet as letter, i}
 				<a
 					href={`?letter=${letter}`}
-					class="px-3 py-1 border rounded cursor-pointer hover:bg-gray-100 transition
-						{letter === selectedLetter ? 'bg-blue-500 text-white font-semibold' : ''}"
+					class="px-1 py-1 cursor-pointer transition
+					{letter === selectedLetter ? `font-bold underline ${window.theme('textSecondary')}` : ''}"
 				>
 					{letter}
 				</a>
+				{#if i < alphabet.length - 1}
+					<span class="text-gray-400 select-none">•</span>
+				{/if}
 			{/each}
 		</div>
 	{/if}
 
 	<!-- Loading Message -->
 	{#if isSearching}
-		<p class="text-gray-500 italic mb-4">Searching...</p>
+		<p class="text-gray-500 italic mb-4">Loading...</p>
 	{/if}
 
 	<!-- Topic List -->
@@ -83,8 +87,8 @@
 	{:else if !isSearching}
 		<div class="space-y-6">
 			{#each filteredTopics as [topic, verses]}
-				<div class="border-b pb-4">
-					<h2 class="text-xl font-semibold">{topic}</h2>
+				<div class="pb-4 border-b {window.theme('border')}">
+					<h2 class="text-xl font-semibold {window.theme('textSecondary')}">{topic}</h2>
 					<p class="text-gray-700">
 						{#each verses as verse, i}
 							<a href={`https://quranwbw.com/${verse.replace(':', '/')}`} class="text-blue-600 hover:underline" target="_blank" rel="noopener">
