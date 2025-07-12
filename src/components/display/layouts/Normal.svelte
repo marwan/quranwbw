@@ -3,7 +3,7 @@
 
 	import VerseOptionButtons from '$display/verses/VerseOptionButtons.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
-	import Translations from '$display/verses/translations/Translations.svelte';
+	import Translations from '$display/verses/VerseTranslations.svelte';
 	import PageDivider from '$display/verses/PageDivider.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { inview } from 'svelte-inview';

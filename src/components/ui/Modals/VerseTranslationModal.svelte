@@ -1,6 +1,6 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
-	import Translations from '$display/verses/translations/Translations.svelte';
+	import Translations from '$display/verses/VerseTranslations.svelte';
 	import SingleArabicVerse from '$display/verses/SingleArabicVerse.svelte';
 	import { __currentPage, __verseTranslationModalVisible, __chapterData, __verseKey } from '$utils/stores';
 	import { quranMetaData } from '$data/quranMeta';
