@@ -48,20 +48,29 @@
 		allTopics = Object.entries(topics);
 	});
 
+	$: filteredTopicsCount = filteredTopics.length;
+
 	__currentPage.set('topics');
 </script>
 
 <PageHead title="Topics" />
 
-<div class="mx-auto px-4 py-4">
+<div class="mx-auto py-4">
 	<!-- Search Input -->
 	<div class="relative flex max-w-xl mx-auto mb-4">
 		<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-3xl w-full text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search topics..." required />
 	</div>
 
+	<!-- Search Count -->
+	<div id="search-results-information" class="text-center text-xs">
+		{#if filteredTopicsCount > 0}
+			<span>Showing {filteredTopicsCount} results starting with the alphabet "{selectedLetter}".</span>
+		{/if}
+	</div>
+
 	<!-- Alphabet Filter (disabled when searching) -->
 	{#if !searchQuery.trim()}
-		<div class="flex flex-wrap gap-1 mb-6 items-center justify-center text-lg">
+		<div class="flex flex-wrap gap-1 mb-6 items-center justify-center text-lg mt-6">
 			{#each alphabet as letter, i}
 				<a
 					href={`?letter=${letter}`}
