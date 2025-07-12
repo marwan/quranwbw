@@ -4,6 +4,8 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { debounce } from '$utils/debounce';
+	import { staticEndpoint } from '$data/websiteSettings';
+	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	let topics = {};
 	let allTopics = [];
@@ -42,8 +44,7 @@
 		.sort((a, b) => a[0].localeCompare(b[0]));
 
 	onMount(async () => {
-		const res = await fetch('https://static.quranwbw.com/data/v4/others/quran-topics.json');
-		topics = await res.json();
+		topics = await fetchAndCacheJson(`${staticEndpoint}/others/quran-topics.json?version=1`, 'other');
 		allTopics = Object.entries(topics);
 	});
 </script>
