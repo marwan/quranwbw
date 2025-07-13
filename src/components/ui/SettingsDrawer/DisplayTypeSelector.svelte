@@ -8,7 +8,7 @@
 </script>
 
 <div class="grid gap-3 w-full">
-	{#each Object.entries(selectableDisplays) as [id, displayOption]}
+	{#each Object.entries(selectableDisplays) as [_, displayOption]}
 		{#if !displayOption.disallowedIn.includes($__currentPage)}
 			<Radio name="displayType" bind:group={$__displayType} value={displayOption.displayID} on:change={(event) => displayTypeChangeHandler(+event.target.value)} custom>
 				<div class="{individualRadioClasses} {$__displayType === displayOption.displayID && selectedRadioOrCheckboxClasses}">

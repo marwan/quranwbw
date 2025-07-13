@@ -8,9 +8,8 @@
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { createLink } from '$utils/createLink';
-	import { apiEndpoint, staticEndpoint } from '$data/websiteSettings';
+	import { apiEndpoint } from '$data/websiteSettings';
 	import { downloadTextFile } from '$utils/downloadTextFile';
-	import { getVerseText } from '$utils/getVerseText';
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
@@ -117,12 +116,31 @@
 	}
 
 	// Open share menu
-	function shareVerse() {
-		if (navigator.share) {
-			navigator.share({
-				title: generatedVerseData,
-				text: generatedVerseData
+	// function shareVerse() {
+	// 	if (navigator.share) {
+	// 		navigator.share({
+	// 			title: generatedVerseData,
+	// 			text: generatedVerseData
+	// 		});
+	// 	}
+	// }
+
+	// Function to get the Arabic verse text
+	function getVerseText(key) {
+		try {
+			const [chapter, verse] = key.split(':').map(Number);
+			const words = document.querySelectorAll(`.verse-${chapter}-${verse} .arabicText`);
+			let wordsArray = [];
+
+			// Join all the words
+			words.forEach((word) => {
+				wordsArray.push(word.innerText);
 			});
+
+			return wordsArray.join(' ');
+		} catch (error) {
+			console.warn(error);
+			return key;
 		}
 	}
 
@@ -224,7 +242,7 @@
 						<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
 							<span class="text-sm">Font</span>
 							<div class="flex flex-row space-x-2">
-								{#each Object.entries(fontTypes) as [id, font]}
+								{#each Object.entries(fontTypes) as [_, font]}
 									<Radio bind:group={fontType} value={font.id} custom>
 										<div class="{radioClasses} {fontType === font.id && selectedRadioOrCheckboxClasses}">
 											<div class="w-full">{font.name}</div>

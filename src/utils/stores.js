@@ -6,14 +6,12 @@ let __websiteOnline,
 	__chapterNumber,
 	__pageNumber,
 	__chapterData,
-	__chapterDataLoaded,
 	__verseTranslationData,
 	__notesData,
 	__verseKey,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
-	__userToken,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -44,13 +42,11 @@ let __websiteOnline,
 	__audioModalVisible,
 	__notesModalVisible,
 	__tajweedRulesModalVisible,
-	__tokenModalVisible,
 	__tafsirModalVisible,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
 	__lexiconModalVisible,
-	__changelogModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
@@ -90,9 +86,6 @@ if (browser) {
 	// to store the verse translation data fetch from Quran.com's API
 	__verseTranslationData = writable(null);
 
-	// to store the boolean value of the complete chapter data load
-	__chapterDataLoaded = writable(null);
-
 	// to store the user notes data fetched from the API
 	__notesData = writable(null);
 
@@ -107,9 +100,6 @@ if (browser) {
 
 	// to store the user bookmarks
 	__userBookmarks = writable(userSettings.userBookmarks);
-
-	// to store the token
-	__userToken = writable(localStorage.getItem('userToken'));
 
 	// to store the font type - Uthmani, IndoPak, etc...
 	__fontType = writable(userSettings.displaySettings.fontType);
@@ -191,7 +181,6 @@ if (browser) {
 	__audioModalVisible = writable(false);
 	__notesModalVisible = writable(false);
 	__tajweedRulesModalVisible = writable(false);
-	__tokenModalVisible = writable(false);
 	__tafsirModalVisible = writable(false);
 	__quranNavigationModalVisible = writable(false);
 	__siteNavigationModalVisible = writable(false);
@@ -199,7 +188,6 @@ if (browser) {
 		visible: false
 	});
 	__lexiconModalVisible = writable(false);
-	__changelogModalVisible = writable(false);
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
@@ -255,14 +243,12 @@ export {
 	__chapterNumber,
 	__pageNumber,
 	__chapterData,
-	__chapterDataLoaded,
 	__verseTranslationData,
 	__notesData,
 	__verseKey,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
-	__userToken,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -293,13 +279,11 @@ export {
 	__audioModalVisible,
 	__notesModalVisible,
 	__tajweedRulesModalVisible,
-	__tokenModalVisible,
 	__tafsirModalVisible,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
 	__lexiconModalVisible,
-	__changelogModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,

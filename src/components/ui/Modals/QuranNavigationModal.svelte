@@ -113,7 +113,7 @@
 				{#if searchedKey.length === 0 && $__currentPage === 'home'}
 					<div id="search-suggestions" class="flex flex-col text-base md:text-lg max-h-64 min-h-64 overflow-y-auto">
 						<!-- Last Read -->
-						{#if $__lastRead.hasOwnProperty('chapter')}
+						{#if Object.prototype.hasOwnProperty.call($__lastRead, 'chapter')}
 							{@const lastReadChapter = $__lastRead.chapter}
 							{@const lastReadVerse = $__lastRead.verse}
 							<div id="last-read-links" class="py-2 space-y-2">
@@ -128,7 +128,7 @@
 						<!-- Suggestions -->
 						<div id="suggestions-links" class="py-2 space-y-2">
 							<span class="text-xs font-semibold pt-2">Suggestions</span>
-							{#each Object.entries(mostRead) as [id, item]}
+							{#each Object.entries(mostRead) as [_, item]}
 								<div class={linkClasses}>
 									<span>{@html '&#10230'}</span>
 									<a href={item.url} class={linkTextClasses}>{quranMetaData[item.chapter].transliteration} ({item.verses})</a>

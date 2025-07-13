@@ -17,15 +17,14 @@
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
-	import DownloadModal from '$ui/Modals/DownloadModal.svelte';
 
-	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __userToken, __fontType, __wordTranslation, __verseTranslations, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
+	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
+	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	// Function to check old bookmarks for v3 update
 	checkOldBookmarks();
@@ -43,16 +42,6 @@
 
 	// Update body scroll based on settings drawer visibility
 	$: document.body.classList.toggle('overflow-y-hidden', !$__settingsDrawerHidden);
-
-	// Update settings from cloud when chapter or page changes
-	// $: if ($__currentPage && $__chapterNumber) {
-	// 	downloadSettingsFromCloud();
-	// }
-
-	// Reset chapter data loaded when certain settings update
-	$: if ($__currentPage || $__fontType || $__wordTranslation || $__verseTranslations) {
-		localStorage.setItem('chapterDataLoaded', false);
-	}
 
 	// Stop all audio when the page or chapter changes
 	$: if ($__currentPage || $__chapterNumber) {
@@ -78,8 +67,8 @@
 				try {
 					wakeLock = await navigator.wakeLock.request('screen');
 					console.log('Wake lock enabled');
-				} catch (err) {
-					console.error(err);
+				} catch (error) {
+					console.warn(error);
 				}
 			}
 		} else {
@@ -146,11 +135,9 @@
 	<Navbar />
 	<SettingsDrawer />
 	<QuranNavigationModal />
-	<!-- <InitialSetupModal /> -->
 	<AudioModal />
 	<TajweedRulesModal />
 	<NotesModal />
-	<!-- <TokenModal /> -->
 	<!-- <DownloadModal /> -->
 	<TafsirModal />
 	<SiteNavigationModal />

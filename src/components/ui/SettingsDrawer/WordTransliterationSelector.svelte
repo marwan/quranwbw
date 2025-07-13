@@ -8,7 +8,7 @@
 </script>
 
 <div class="grid gap-3 w-full">
-	{#each Object.entries(selectableWordTransliterations) as [id, translation]}
+	{#each Object.entries(selectableWordTransliterations) as [_, translation]}
 		<Radio name="wordTranslation" bind:group={$__wordTransliteration} value={translation.id} on:change={(event) => updateSettings({ type: 'wordTransliteration', value: +event.target.value })} custom>
 			<div class="{individualRadioClasses} {$__wordTransliteration === translation.id && selectedRadioOrCheckboxClasses}">
 				<div class="w-full">{translation.language}</div>

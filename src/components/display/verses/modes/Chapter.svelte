@@ -10,7 +10,7 @@
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
 	import { inview } from 'svelte-inview';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __currentPage, __userSettings, __displayType, __chapterNumber, __chapterData, __chapterDataLoaded } from '$utils/stores';
+	import { __currentPage, __userSettings, __chapterNumber, __chapterData } from '$utils/stores';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 
 	// Load button click options
@@ -90,7 +90,7 @@
 		<!-- only show the button when the last verse on page is less than total verses in chapter -->
 		<!-- invisible for now... -->
 		{#if endVerse < chapterTotalVerses && document.getElementById('loadVersesButton') === null}
-			<div id="loadVersesButton" class="flex justify-center pt-6 pb-18 invisible" use:inview={loadButtonOptions} on:inview_enter={(event) => document.querySelector('#loadVersesButton > button').click()}>
+			<div id="loadVersesButton" class="flex justify-center pt-6 pb-18 invisible" use:inview={loadButtonOptions} on:inview_enter={() => document.querySelector('#loadVersesButton > button').click()}>
 				<button on:click={loadNextVerses} class="text-sm {buttonOutlineClasses}"> Continue Reading </button>
 			</div>
 		{/if}

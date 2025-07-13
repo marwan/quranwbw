@@ -37,6 +37,6 @@
 			</div>
 		</div>
 	{:catch error}
-		<ErrorLoadingDataFromAPI center="false" />
+		<ErrorLoadingDataFromAPI center="false" {error} />
 	{/await}
 </Modal>
