@@ -41,8 +41,7 @@
 		}
 
 		try {
-			console.log('Fetching from API for:', searchQuery);
-			let response = await fetch(`https://api.kalimat.dev/search?query=${searchQuery}&numResults=50`, {
+			const response = await fetch(`https://api.kalimat.dev/search?query=${searchQuery}&numResults=50`, {
 				headers: {
 					'x-api-key': API_KEY
 				}
@@ -53,7 +52,7 @@
 				return null;
 			}
 
-			let data = await response.json();
+			const data = await response.json();
 			searchCache[searchQuery] = data;
 			updateURL(searchQuery);
 			return data;
