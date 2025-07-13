@@ -31,7 +31,6 @@ import {
 	__homepageExtrasPanelVisible,
 	__downloadedDataInfo
 } from '$utils/stores';
-// import { uploadSettingsToCloud } from '$utils/cloudSettings';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -157,11 +156,6 @@ export function updateSettings(props) {
 			userSettings.audioSettings = props.value;
 			break;
 
-		// for Initial Setup
-		case 'initialSetupCompleted':
-			userSettings.initialSetupCompleted = props.value;
-			break;
-
 		case 'userBookmarks':
 			const key = props.key;
 			let userBookmarks = userSettings['userBookmarks'];
@@ -187,9 +181,6 @@ export function updateSettings(props) {
 			}
 
 			__userBookmarks.set(userBookmarks);
-
-			// upload settings to cloud on every update
-			// if (props.set === true) uploadSettings = true;
 			break;
 
 		case 'userNotes':
@@ -220,9 +211,6 @@ export function updateSettings(props) {
 			}
 
 			__userNotes.set(userNotes);
-
-			// upload settings to cloud on every update
-			// if (props.set === true) uploadSettings = true;
 			break;
 
 		// for last read
@@ -251,6 +239,7 @@ export function updateSettings(props) {
 		case 'hideNonDuaPart':
 			__hideNonDuaPart.set(props.value);
 			userSettings.displaySettings.hideNonDuaPart = props.value;
+			location.reload();
 			break;
 
 		// for quiz correct answers
@@ -329,7 +318,4 @@ export function updateSettings(props) {
 	// update the settings back into localStorage and global store
 	__userSettings.set(JSON.stringify(userSettings));
 	localStorage.setItem('userSettings', JSON.stringify(userSettings));
-
-	// upload settings to cloud if uploadSettings was set to true, which we only do for bookmarks and notes at the moment
-	// if (uploadSettings === true) uploadSettingsToCloud();
 }

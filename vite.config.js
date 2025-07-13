@@ -34,5 +34,8 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	define: {
 		__APP_VERSION__: JSON.stringify(getVersion())
+	},
+	build: {
+		sourcemap: false
 	}
 });

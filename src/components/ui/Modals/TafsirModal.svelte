@@ -34,7 +34,7 @@
 			const selectedTafsir = selectableTafsirs[selectedTafirId];
 			return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
 		} catch (error) {
-			console.error(error);
+			console.warn(error);
 			return [];
 		}
 	}
@@ -54,8 +54,7 @@
 				tafsirModal.getElementsByTagName('div')[1].scrollTop = 0;
 			}
 		} catch (error) {
-			// Ignore errors
-			console.error(error);
+			console.warn(error);
 		}
 	}
 </script>
@@ -82,11 +81,11 @@
 
 		{#await tafsirData}
 			<Spinner />
-		{:then tafsirData}
+		{:then data}
 			<div class="text-sm flex flex-col space-y-6">
 				<div class="flex flex-col space-y-4">
 					<div class={tafsirTextClasses}>
-						{#each Object.entries(tafsirData.ayahs) as [id, tafsir]}
+						{#each Object.entries(data.ayahs) as [_, tafsir]}
 							{#if tafsir.surah === chapter && tafsir.ayah === verse}
 								{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
 							{/if}
@@ -95,7 +94,7 @@
 				</div>
 			</div>
 		{:catch error}
-			<ErrorLoadingDataFromAPI center="false" />
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 	</div>
 

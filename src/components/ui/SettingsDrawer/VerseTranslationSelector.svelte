@@ -8,7 +8,7 @@
 </script>
 
 <div class="grid gap-3 w-full">
-	{#each Object.entries(verseTranslationsLanguages) as [id, language]}
+	{#each Object.entries(verseTranslationsLanguages) as [_, language]}
 		{#if language.language_id !== 11115}
 			<div class="flex flex-col space-y-2 pb-6">
 				<div id="translation-name" class="text-md font-medium">{language.language}</div>

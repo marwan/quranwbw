@@ -1,5 +1,4 @@
 <script>
-	import { twMerge } from 'tailwind-merge';
 	import { getContext } from 'svelte';
 	import { labelClass, inputClass } from './Radio.svelte';
 	import Label from './Label.svelte';

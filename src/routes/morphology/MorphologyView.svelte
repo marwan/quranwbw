@@ -7,13 +7,13 @@
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { staticEndpoint } from '$data/websiteSettings';
-	import { __currentPage, __fontType, __wordTranslation, __verseTranslations, __wordTransliteration, __morphologyKey, __lexiconModalVisible, __wordRoot } from '$utils/stores';
+	import { __currentPage, __fontType, __morphologyKey } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
-	let fetchWordSummary, fetchWordVerbs, fetchExactWordsInQuran, fetchWordsWithSameRoot;
+	let wordSummaryData, wordVerbsData, exactWordsInQuranData, wordsWithSameRootData;
 	let chapter, verse, word;
 	let wordRoot = '';
 
@@ -27,7 +27,7 @@
 	}
 
 	// Fetch verse data based on chapter and verse
-	$: fetchData = (async () => {
+	$: chapterData = (async () => {
 		const data = await fetchChapterData({ chapter, fontType: $__fontType, wordTranslation: 1, wordTransliteration: 1, skipSave: true });
 		return data[`${chapter}:${verse}`];
 	})();
@@ -35,7 +35,7 @@
 	// Fetch words data for morphology
 	$: {
 		// Fetch word verbs data
-		fetchWordVerbs = (async () => {
+		wordVerbsData = (async () => {
 			try {
 				return await fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`, 'morphology');
 			} catch {
@@ -44,7 +44,7 @@
 		})();
 
 		// Fetch word summary data
-		fetchWordSummary = (async () => {
+		wordSummaryData = (async () => {
 			try {
 				return await fetchAndCacheJson(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`, 'morphology');
 			} catch {
@@ -53,7 +53,7 @@
 		})();
 
 		// Fetch words with same root
-		fetchWordsWithSameRoot = (async () => {
+		wordsWithSameRootData = (async () => {
 			try {
 				return await fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root.json?version=1`, 'morphology');
 			} catch {
@@ -62,7 +62,7 @@
 		})();
 
 		// Fetch exact words in Quran
-		fetchExactWordsInQuran = (async () => {
+		exactWordsInQuranData = (async () => {
 			try {
 				const [keyMap, exactMap] = await Promise.all([
 					// To get the root of a word
@@ -99,7 +99,7 @@
 					};
 				});
 			} catch (error) {
-				console.error('Failed to load exact words in Quran:', error);
+				console.warn('Failed to load exact words in Quran:', error);
 				return [];
 			}
 		})();
@@ -132,23 +132,21 @@
 	{/if}
 
 	<div id="verse">
-		{#await fetchData}
+		{#await chapterData}
 			<Spinner />
-		{:then value}
+		{:then data}
 			<div class="flex flex-wrap justify-center direction-rtl">
-				<WordsBlock key={`${chapter}:${verse}`} {value} />
+				<WordsBlock key={`${chapter}:${verse}`} value={data} />
 			</div>
 		{:catch error}
-			<ErrorLoadingDataFromAPI center="false" />
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 	</div>
 
 	<div id="word-summary" class="text-center mx-auto md:w-3/4 text-sm md:text-lg pb-6 border-b-2 {window.theme('border')}">
-		{#await fetchWordSummary}
-			<span>...</span>
-		{:then fetchWordSummary}
+		{#await wordSummaryData then data}
 			<div class="flex flex-col space-y-4">
-				<span>{@html fetchWordSummary.data[$__morphologyKey]}</span>
+				<span>{@html data.data[$__morphologyKey]}</span>
 				<!-- <button class="text-lg font-bold underline" on:click={() => showLexiconModal()}>View Lanes Lexicon Data &rarr;</button> -->
 			</div>
 
@@ -170,22 +168,22 @@
 				{/if}
 			</div>
 		{:catch error}
-			<ErrorLoadingDataFromAPI center="false" />
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 	</div>
 
 	<div id="word-details" class="flex flex-col">
 		<!-- Verbs data -->
-		{#await fetchWordVerbs}
+		{#await wordVerbsData}
 			<Spinner />
-		{:then fetchWordVerbs}
-			{#if fetchWordVerbs?.data?.hasOwnProperty($__morphologyKey)}
+		{:then data}
+			{#if Object.prototype.hasOwnProperty.call(data?.data, $__morphologyKey)}
 				<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
 					<div class="flex flex-col">
 						<div id="different-verbs">
 							<div class="mx-auto text-center">
 								<div class="relative grid gap-4 grid-cols-2 row-gap-3 md:row-gap-4 md:grid-cols-6">
-									{#each Object.entries(fetchWordVerbs.data[$__morphologyKey]) as [key, value]}
+									{#each Object.entries(data.data[$__morphologyKey]) as [key, value]}
 										{#if value !== null}
 											<div class="flex flex-col py-5 duration-300 transform {window.theme('bgMain')} border {window.theme('border')} rounded-3xl shadow-sm text-center hover:-translate-y-2">
 												<div class="flex items-center justify-center mb-2">
@@ -202,35 +200,35 @@
 				</div>
 			{/if}
 		{:catch error}
-			<ErrorLoadingDataFromAPI center="false" />
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 
 		<!-- Word with same root -->
 		{#key wordRoot}
-			{#await fetchWordsWithSameRoot}
+			{#await wordsWithSameRootData}
 				<Spinner />
-			{:then result}
-				{#if wordRoot in result.data}
+			{:then data}
+				{#if wordRoot in data.data}
 					<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-						<Table wordData={result.data[wordRoot]} tableType={1} />
+						<Table wordData={data.data[wordRoot]} tableType={1} />
 					</div>
 				{/if}
 			{:catch error}
-				<ErrorLoadingDataFromAPI center="false" />
+				<ErrorLoadingDataFromAPI center="false" {error} />
 			{/await}
 		{/key}
 
 		<!-- Exact words in Quran -->
-		{#await fetchExactWordsInQuran}
+		{#await exactWordsInQuranData}
 			<Spinner />
-		{:then wordList}
-			{#if Array.isArray(wordList) && wordList.length}
+		{:then data}
+			{#if Array.isArray(data) && data.length}
 				<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-					<Table wordData={wordList} tableType={2} />
+					<Table wordData={data} tableType={2} />
 				</div>
 			{/if}
 		{:catch error}
-			<ErrorLoadingDataFromAPI center="false" />
+			<ErrorLoadingDataFromAPI center="false" {error} />
 		{/await}
 	</div>
 </div>

@@ -10,7 +10,7 @@
 	import About from '$svgs/About.svelte';
 	import Changelog from '$svgs/Changelog.svelte';
 	import LegacySite from '$svgs/LegacySite.svelte';
-	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __tokenModalVisible, __currentPage, __downloadModalVisible } from '$utils/stores';
+	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 

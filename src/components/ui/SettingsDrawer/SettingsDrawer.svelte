@@ -17,8 +17,6 @@
 
 	import {
 		__currentPage,
-		__chapterData,
-		__chapterNumber,
 		__fontType,
 		__displayType,
 		__websiteTheme,
@@ -29,8 +27,6 @@
 		__verseTranslations,
 		__verseTafsir,
 		__reciter,
-		__translationReciter,
-		__playbackSpeed,
 		__userSettings,
 		__wordTooltip,
 		__settingsDrawerHidden,
@@ -41,7 +37,7 @@
 		__wordMorphologyOnClick
 	} from '$utils/stores';
 
-	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, fontSizePresets, selectableVersePlayButtonOptions } from '$data/options';
+	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, fontSizePresets, selectableVersePlayButtonOptions } from '$data/options';
 
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
@@ -85,8 +81,8 @@
 	let settingsDrawerBackground = `${window.theme('bgMain')}`;
 	let individualSettingsComponent;
 	let mainSettingsScrollPos = 0;
-	let allSettingsVisible = true;
-	let individualSettingsVisible = false;
+	let showAllSettings = true;
+	let showIndividualSetting = false;
 	let totalVerseTransliterationsSelected = 0;
 	let arabicWordSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.arabicText);
 	let wordTranlationTransliterationSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
@@ -120,15 +116,15 @@
 
 	// Go back to main settings and restore scroll position
 	function goBackToMainSettings() {
-		allSettingsVisible = true;
-		individualSettingsVisible = false;
+		showAllSettings = true;
+		showIndividualSetting = false;
 
 		// Scroll to last known position
 		setTimeout(() => {
 			try {
 				document.getElementById('settings-drawer').scrollTop = mainSettingsScrollPos;
 			} catch (error) {
-				// console.log(error);
+				console.warn(error);
 			}
 		}, 0);
 	}
@@ -136,8 +132,8 @@
 	// Navigate to an individual setting component
 	function gotoIndividualSetting(type) {
 		mainSettingsScrollPos = document.getElementById('settings-drawer').scrollTop;
-		allSettingsVisible = false;
-		individualSettingsVisible = true;
+		showAllSettings = false;
+		showIndividualSetting = true;
 		individualSettingsComponent = individualSettingsComponents[type];
 
 		// Scroll to the individual setting view
@@ -145,7 +141,7 @@
 			try {
 				document.getElementById('individual-setting').scrollIntoView();
 			} catch (error) {
-				// console.log(error);
+				console.warn(error);
 			}
 		}, 0);
 	}
@@ -182,7 +178,7 @@
 <!-- settings drawer -->
 <Drawer placement="right" transitionType="fly" transitionParams={transitionParamsRight} bind:hidden={$__settingsDrawerHidden} class="w-full md:w-1/2 lg:w-[430px] md:rounded-tl-3xl md:rounded-bl-3xl pt-0 {settingsDrawerBackground}" id="settings-drawer">
 	<!-- all-settings -->
-	{#if allSettingsVisible}
+	{#if showAllSettings}
 		<div id="all-settings">
 			<div class="flex z-30 top-0 sticky {window.theme('bgMain')} border-b-2 {window.theme('border')} mb-4 {settingsDrawerOpacity}">
 				<h5 id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold">Settings</h5>
@@ -300,7 +296,6 @@
 					<div id="arabic-word-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">Arabic Word Size ({selectableFontSizes[arabicWordSizeValue].value.split('-')[1]})</span>
-							<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('arabic-word-size-setting')} on:mouseleave={() => onMouseLeave()}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={arabicWordSizeValue} class={rangeClasses} />
 							</div>
@@ -313,7 +308,6 @@
 					<div id="word-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">Word Translation/Transliteration Size ({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})</span>
-							<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('word-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranlationTransliterationSizeValue} class={rangeClasses} />
 							</div>
@@ -326,7 +320,6 @@
 					<div id="verse-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">{term('verse')} Translation/Transliteration Size ({selectableFontSizes[verseTranlationTransliterationSizeValue].value.split('-')[1]})</span>
-							<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('verse-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={verseTranlationTransliterationSizeValue} class={rangeClasses} />
 							</div>
@@ -505,15 +498,13 @@
 			<!-- website build version & timestamp -->
 			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 text-center {settingsDrawerOpacity}">
 				<!-- svelte-ignore missing-declaration -->
-				<p class="{settingsDescriptionClasses} !mb-0">
-					<a class={linkClasses} target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
-				</p>
+				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
 			</div>
 		</div>
 	{/if}
 
 	<!-- individual-setting -->
-	{#if individualSettingsVisible}
+	{#if showIndividualSetting}
 		<div id="individual-setting" transition:fly={{ duration: 150, x: 0, easing: sineIn }}>
 			<div class="flex z-30 top-0 sticky {window.theme('bgMain')} border-b-2 {window.theme('border')} mb-4">
 				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>← Back</button>

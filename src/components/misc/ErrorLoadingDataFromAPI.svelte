@@ -14,8 +14,12 @@
 			errorCode = null;
 		}
 	}
+
+	if (error !== null) {
+		console.warn(error);
+	}
 </script>
 
 <div class="flex justify-center text-center !text-sm" class:pt-[30vh]={center === true}>
-	<p>Sorry, we couldn’t load the data right now. Please try again in a moment{errorCode !== null ? ` (${errorCode})` : ''}.</p>
+	<p>Sorry, we couldn’t load the data right now. Please try again in a {errorCode !== null ? `moment (${errorCode})` : 'moment'}.</p>
 </div>
