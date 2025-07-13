@@ -130,16 +130,6 @@
 		theme
 	`;
 
-	// Function to get word div classes
-	function getWordDivClasses(wordIndex) {
-		const wordKey = `${chapter}:${verse}:${wordIndex + 1}`;
-		return `
-			word rounded-lg ${wordAndEndIconCommonClasses} text-center print:break-inside-avoid
-			${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? (selectableThemes[$__websiteTheme].palette === 1 ? `${window.theme('bgSecondaryDark')}` : `${window.theme('bgSecondaryDark')}`) : null}
-			${$__currentPage === 'supplications' && wordIndex + 1 < supplicationsFromQuran[key] ? ($__hideNonDuaPart ? 'hidden' : 'opacity-30') : null}
-		`;
-	}
-
 	// Function to check if word should be displayed
 	function shouldDisplayWord(wordIndex) {
 		return $__currentPage !== 'mushaf' || ($__currentPage === 'mushaf' && +value.words.line.split(splitDelimiter)[wordIndex] === line);
@@ -157,7 +147,15 @@
 		{@const wordKey = getWordKey(word)}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div id={wordKey} class={getWordDivClasses(word)} on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}>
+		<div
+			id={wordKey}
+			class={`
+				word rounded-lg ${wordAndEndIconCommonClasses} text-center print:break-inside-avoid
+				${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? window.theme('bgSecondaryDark') : ''}
+				${$__currentPage === 'supplications' && word + 1 < (supplicationsFromQuran[key] || 0) ? ($__hideNonDuaPart ? 'hidden' : 'opacity-30') : ''}
+			`.trim()}
+			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}
+		>
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 				<!-- Everything except Mushaf fonts -->
 				{#if ![2, 3].includes($__fontType)}
