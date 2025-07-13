@@ -15,35 +15,59 @@
 	const linkTextClasses = 'text-xs md:text-sm text-left w-fit capitalize truncate';
 
 	const params = new URLSearchParams(window.location.search);
-	let searchQuery = params.get('query') === null || params.get('query') === '' ? '' : params.get('query'); // Search text
+	let searchQuery = params.get('query') === null || params.get('query') === '' ? '' : params.get('query');
 	let fetchingNewData = false;
 	let resultsFound = false;
 	let badRequest = false;
 	let navigationResults = [];
 	let totalResults = 0;
 
+	// Cache object to store search results
+	let searchCache = {};
+
 	__keysToFetch.set(null);
 
-	// Update the search results whenever query changes
-	$: if (searchQuery.length > 0) goto(`/search?query=${searchQuery}`, { replaceState: false });
+	// Single reactive statement for search
+	$: if (searchQuery.length > 0) {
+		setVerseKeys();
+	}
 
-	// Get and set the new verse keys when the search term changes
-	$: if (searchQuery.length > 0) setVerseKeys();
-
-	// Get results from the new API
+	// Get results from cache or API
 	async function getSearchResults(searchQuery) {
+		// Check cache first
+		if (searchCache[searchQuery]) {
+			updateURL(searchQuery);
+			return searchCache[searchQuery];
+		}
+
 		try {
+			console.log('Fetching from API for:', searchQuery);
 			let response = await fetch(`https://api.kalimat.dev/search?query=${searchQuery}&numResults=50`, {
 				headers: {
 					'x-api-key': API_KEY
 				}
 			});
-			if (response.status !== 200) return (badRequest = true);
+
+			if (response.status !== 200) {
+				badRequest = true;
+				return null;
+			}
+
 			let data = await response.json();
+			searchCache[searchQuery] = data;
+			updateURL(searchQuery);
 			return data;
 		} catch (error) {
 			console.warn('Error fetching search results:', error);
 			badRequest = true;
+			return null;
+		}
+	}
+
+	// Function to update URL
+	function updateURL(query) {
+		if (query && query.length > 0) {
+			goto(`/search?query=${query}`, { replaceState: false });
 		}
 	}
 
@@ -79,7 +103,6 @@
 	// Update the search query if enter is pressed or search icon is clicked
 	async function updateSearchQuery(query) {
 		searchQuery = query;
-		setVerseKeys();
 	}
 
 	async function setVerseKeys() {
