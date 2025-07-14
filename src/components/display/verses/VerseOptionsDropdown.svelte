@@ -78,7 +78,7 @@
 	};
 
 	// Menu items configuration
-	const menuItems = [
+	$: menuItems = [
 		{
 			id: 'play',
 			icon: Play,
@@ -138,7 +138,7 @@
 	];
 
 	// Mode switching items
-	const modeItems =
+	$: modeItems =
 		$__currentPage === 'mushaf'
 			? [
 					{
