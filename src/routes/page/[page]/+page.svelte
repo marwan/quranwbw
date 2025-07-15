@@ -52,8 +52,14 @@
 			const apiData = data.verses;
 			localStorage.setItem('pageData', JSON.stringify(apiData));
 
-			startingLine = apiData[Object.keys(apiData)[0]].words.line[0];
-			endingLine = apiData[Object.keys(apiData)[Object.keys(apiData).length - 1]].words.end_line;
+			// Get the first line, of the first word, of the first verse
+			const firstVerse = Object.keys(apiData)[0];
+			startingLine = apiData[firstVerse].words.line[0];
+
+			// Get the last line, of the last word, of the last verse
+			const lastVerse = Object.keys(apiData)[Object.keys(apiData).length - 1];
+			const lastWord = apiData[lastVerse].words.line;
+			endingLine = lastWord[lastWord.length - 1];
 
 			// Get chapter numbers
 			for (const key of Object.keys(apiData)) {

@@ -102,7 +102,6 @@ export async function generateChapterVerseData(props) {
 				translation: translations,
 				transliteration: transliterations,
 				line: lineNumbers,
-				end_line: lineNumbers.length ? Number(lineNumbers[lineNumbers.length - 1]) : null,
 				end: endIcons[0] || ''
 			}
 		};
