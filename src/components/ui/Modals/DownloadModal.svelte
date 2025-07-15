@@ -71,8 +71,8 @@
 				if (!downloading || !abortController) break;
 
 				await fetch(`/${chapter}`);
-				await generateChapterVerseData({ chapter, skipSave: true, signal: abortController.signal });
-				await fetchVerseTranslationData({ chapter, skipSave: true, signal: abortController.signal });
+				await generateChapterVerseData({ chapter, preventStoreUpdate: true, signal: abortController.signal });
+				await fetchVerseTranslationData({ chapter, preventStoreUpdate: true, signal: abortController.signal });
 
 				completed++;
 

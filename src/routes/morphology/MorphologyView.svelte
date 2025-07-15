@@ -28,7 +28,7 @@
 
 	// Fetch verse data based on chapter and verse
 	$: chapterData = (async () => {
-		const data = await generateChapterVerseData({ chapter, fontType: $__fontType, wordTranslation: 1, wordTransliteration: 1, skipSave: true });
+		const data = await generateChapterVerseData({ chapter, fontType: $__fontType, wordTranslation: 1, wordTransliteration: 1, preventStoreUpdate: true });
 		return data[`${chapter}:${verse}`];
 	})();
 

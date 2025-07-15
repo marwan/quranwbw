@@ -10,7 +10,7 @@
 	$: fontType = [1, 2, 3, 5, 7, 8].includes($__fontType) ? 1 : 4;
 
 	$: chapterData = (async () => {
-		const data = await generateChapterVerseData({ chapter, fontType, skipSave: true, reRenderWhenTheseUpdates: [$__fontType] });
+		const data = await generateChapterVerseData({ chapter, fontType, preventStoreUpdate: true, reRenderWhenTheseUpdates: [$__fontType] });
 		return data[`${chapter}:${verse}`];
 	})();
 </script>

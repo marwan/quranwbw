@@ -5,7 +5,7 @@ import { staticEndpoint, apiVersion } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
 
 export async function generateChapterVerseData(props) {
-	if (!props.skipSave) __chapterData.set(null);
+	if (!props.preventStoreUpdate) __chapterData.set(null);
 
 	const chapter = Number(props.chapter);
 	const fontType = props.fontType || get(__fontType);
@@ -57,15 +57,14 @@ export async function generateChapterVerseData(props) {
 	}
 
 	// Update store
-	if (!props.skipSave) __chapterData.set(result);
+	if (!props.preventStoreUpdate) __chapterData.set(result);
 
 	return result;
 }
 
 // Fetch specific translations and cache the data
 export async function fetchVerseTranslationData(props) {
-	// Use translation IDs from props or fallback to store
-	if (!props.translations) props.translations = get(__verseTranslations);
+	const translations = get(__verseTranslations);
 
 	// Get current store data
 	const existingData = get(__verseTranslationData) || {};
@@ -76,7 +75,7 @@ export async function fetchVerseTranslationData(props) {
 	// Filter translation IDs that need to be fetched (not in store or cache)
 	const idsToFetch = [];
 
-	for (const id of props.translations) {
+	for (const id of translations) {
 		// Try to load from cache first
 		const cacheKey = `translation_${id}_${apiVersion}`;
 		const cached = await useCache(cacheKey, 'translation');
@@ -91,7 +90,7 @@ export async function fetchVerseTranslationData(props) {
 	// Early return if everything was found in cache/store
 	if (idsToFetch.length === 0) {
 		// Update the store
-		if (!props.skipSave) __verseTranslationData.set(updatedData);
+		if (!props.preventStoreUpdate) __verseTranslationData.set(updatedData);
 
 		return updatedData;
 	}
@@ -124,7 +123,7 @@ export async function fetchVerseTranslationData(props) {
 	}
 
 	// Update the store
-	if (!props.skipSave) __verseTranslationData.set(updatedData);
+	if (!props.preventStoreUpdate) __verseTranslationData.set(updatedData);
 
 	return updatedData;
 }

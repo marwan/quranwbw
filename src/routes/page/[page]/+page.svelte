@@ -138,7 +138,7 @@
 
 			const fetchPromises = Object.entries(chaptersWithVerses).map(async ([chapter, verses]) => {
 				try {
-					const data = await generateChapterVerseData({ chapter, skipSave: true });
+					const data = await generateChapterVerseData({ chapter, preventStoreUpdate: true });
 
 					// Filter only the required verses
 					verses.forEach((verse) => {
