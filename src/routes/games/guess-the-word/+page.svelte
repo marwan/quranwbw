@@ -6,11 +6,11 @@
 	import Cross from '$svgs/Cross.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
-	import { apiEndpoint } from '$data/websiteSettings';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
 	import { updateSettings } from '$utils/updateSettings';
 	import { playWordAudio } from '$utils/audioController';
+	import { fetchRandomWords } from '$utils/fetchData';
 
 	let randomID = 1;
 	let randomWordsData;
@@ -20,11 +20,7 @@
 	let randomWord = Math.floor(Math.random() * 3);
 
 	// Fetch random words
-	$: randomWordsData = (async () => {
-		const response = await fetch(`${apiEndpoint}/random-words?randomID=${randomID}`);
-		const data = await response.json();
-		return data.data;
-	})();
+	$: randomWordsData = fetchRandomWords(randomID);
 
 	// Check if the selected answer is correct
 	function checkAnswer() {
@@ -70,7 +66,7 @@
 			<div class="flex flex-col space-y-8 justify-center">
 				<!-- word -->
 				<button class="flex flex-col space-y-4 mx-auto items-center" on:click={() => playWordAudio({ key: data[randomWord].word_key })}>
-					<span class="text-5xl md:text-7xl arabic-font-1">{data[randomWord].word_uthmani}</span>
+					<span class="text-5xl md:text-7xl arabic-font-1">{data[randomWord].word_arabic}</span>
 					<span class="text-xs">{data[randomWord].word_transliteration}</span>
 				</button>
 

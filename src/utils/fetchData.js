@@ -4,6 +4,7 @@ import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, _
 import { staticEndpoint, apiVersion } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
 
+// Fetches and combines word-by-word data for a chapter including Arabic, translation, transliteration, and metadata
 export async function fetchChapterData(props) {
 	if (!props.preventStoreUpdate) __chapterData.set(null);
 
@@ -12,12 +13,14 @@ export async function fetchChapterData(props) {
 	const wordTranslation = props.wordTranslation || get(__wordTranslation);
 	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
 
-	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all([
-		fetchAndCacheJson(`${staticEndpoint}/words-data/arabic/${selectableFontTypes[fontType].apiId}.json?version=3`, 'chapter'),
-		fetchAndCacheJson(`${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=3`, 'chapter'),
-		fetchAndCacheJson(`${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=3`, 'chapter'),
-		fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other')
-	]);
+	const { arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(
+		// arabic data
+		selectableFontTypes[fontType].apiId,
+		// translation data
+		wordTranslation,
+		// transliteration data
+		wordTransliteration
+	);
 
 	const result = {};
 	const arabicVerses = arabicWordData[chapter] || {};
@@ -164,6 +167,37 @@ export async function fetchTimestampData(chapter) {
 	__timestampData.set(data);
 }
 
+// Fetches all word data and returns 4 random words with their Arabic, transliteration, and translation
+export async function fetchRandomWords() {
+	const { arabicWordData, translationWordData, transliterationWordData } = await fetchWordData(1, 1, 1);
+
+	const allWordEntries = [];
+
+	for (const chapter in arabicWordData) {
+		const verses = arabicWordData[chapter];
+		for (const verse in verses) {
+			const [arabicWords = []] = verses[verse];
+			const translations = translationWordData[chapter]?.[verse]?.[0] || [];
+			const transliterations = transliterationWordData[chapter]?.[verse]?.[0] || [];
+
+			for (let i = 0; i < arabicWords.length; i++) {
+				allWordEntries.push({
+					word_key: `${chapter}:${verse}:${i + 1}`,
+					word_arabic: arabicWords[i],
+					word_transliteration: transliterations[i] || '',
+					word_english: translations[i] || ''
+				});
+			}
+		}
+	}
+
+	// Shuffle and pick 4 random unique words
+	const shuffled = allWordEntries.sort(() => 0.5 - Math.random());
+	const selected = shuffled.slice(0, 4);
+
+	return selected;
+}
+
 // Unified cache utility for IndexedDB with version and freshness control
 async function useCache(key, type, dataToSet = undefined) {
 	try {
@@ -231,4 +265,21 @@ async function useCache(key, type, dataToSet = undefined) {
 		console.warn('IndexedDB cache error:', error?.message || error);
 		return dataToSet !== undefined ? false : null;
 	}
+}
+
+// Fetches Arabic, translation, transliteration, and meta verse data in parallel
+async function fetchWordData(fontType, wordTranslation, wordTransliteration) {
+	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all([
+		fetchAndCacheJson(`${staticEndpoint}/words-data/arabic/${fontType}.json?version=3`, 'chapter'),
+		fetchAndCacheJson(`${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=3`, 'chapter'),
+		fetchAndCacheJson(`${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=3`, 'chapter'),
+		fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other')
+	]);
+
+	return {
+		arabicWordData,
+		translationWordData,
+		transliterationWordData,
+		metaVerseData
+	};
 }
