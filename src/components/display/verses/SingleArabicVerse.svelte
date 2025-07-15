@@ -2,7 +2,7 @@
 	export let key;
 
 	import Spinner from '$svgs/Spinner.svelte';
-	import { generateChapterVerseData } from '$utils/fetchData';
+	import { fetchChapterData } from '$utils/fetchData';
 	import { __fontType } from '$utils/stores';
 
 	const [chapter, verse] = key.split(':').map(Number);
@@ -10,7 +10,7 @@
 	$: fontType = [1, 2, 3, 5, 7, 8].includes($__fontType) ? 1 : 4;
 
 	$: chapterData = (async () => {
-		const data = await generateChapterVerseData({ chapter, fontType, preventStoreUpdate: true, reRenderWhenTheseUpdates: [$__fontType] });
+		const data = await fetchChapterData({ chapter, fontType, preventStoreUpdate: true, reRenderWhenTheseUpdates: [$__fontType] });
 		return data[`${chapter}:${verse}`];
 	})();
 </script>

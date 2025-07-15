@@ -9,7 +9,7 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { __currentPage, __fontType, __morphologyKey } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
-	import { generateChapterVerseData, fetchAndCacheJson } from '$utils/fetchData';
+	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 
@@ -28,7 +28,7 @@
 
 	// Fetch verse data based on chapter and verse
 	$: chapterData = (async () => {
-		const data = await generateChapterVerseData({ chapter, fontType: $__fontType, wordTranslation: 1, wordTransliteration: 1, preventStoreUpdate: true });
+		const data = await fetchChapterData({ chapter, fontType: $__fontType, wordTranslation: 1, wordTransliteration: 1, preventStoreUpdate: true });
 		return data[`${chapter}:${verse}`];
 	})();
 

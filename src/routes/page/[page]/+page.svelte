@@ -18,7 +18,7 @@
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
-	import { generateChapterVerseData, fetchAndCacheJson } from '$utils/fetchData';
+	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
 	import '$utils/swiped-events.min.js';
 
 	// Lines to be centered instead of justified
@@ -138,7 +138,7 @@
 
 			const fetchPromises = Object.entries(chaptersWithVerses).map(async ([chapter, verses]) => {
 				try {
-					const data = await generateChapterVerseData({ chapter, preventStoreUpdate: true });
+					const data = await fetchChapterData({ chapter, preventStoreUpdate: true });
 
 					// Filter only the required verses
 					verses.forEach((verse) => {

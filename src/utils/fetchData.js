@@ -4,7 +4,7 @@ import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, _
 import { staticEndpoint, apiVersion } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
 
-export async function generateChapterVerseData(props) {
+export async function fetchChapterData(props) {
 	if (!props.preventStoreUpdate) __chapterData.set(null);
 
 	const chapter = Number(props.chapter);
