@@ -8,7 +8,7 @@
 	import Bismillah from '$misc/Bismillah.svelte';
 	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __keysToFetch, __keysToFetchData, __currentPage, __pageURL } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
-	import { fetchChapterData } from '$utils/fetchData';
+	import { generateChapterVerseData } from '$utils/fetchData';
 	import { isValidVerseKey } from '$utils/validateKey';
 	import { goto } from '$app/navigation';
 	import { inview } from 'svelte-inview';
@@ -157,7 +157,7 @@
 	 * 2. Identifies unique chapter numbers from those keys.
 	 * 3. Checks if data for each chapter is already cached in `__keysToFetchData`.
 	 *    - If cached, uses the cached data.
-	 *    - If not, fetches the chapter data using `fetchChapterData`.
+	 *    - If not, fetches the chapter data using `generateChapterVerseData`.
 	 * 4. Resolves all chapter data fetches in parallel.
 	 * 5. Maps the full verse keys (e.g., "1:2") to their corresponding data in `dataMap`.
 	 *
@@ -177,7 +177,7 @@
 				if (Object.prototype.hasOwnProperty.call(__keysToFetchData, chapter)) {
 					chapterFetchPromises[chapter] = __keysToFetchData[chapter];
 				} else {
-					chapterFetchPromises[chapter] = fetchChapterData({ chapter });
+					chapterFetchPromises[chapter] = generateChapterVerseData({ chapter });
 				}
 			}
 

@@ -4,7 +4,7 @@
 	import { buttonClasses } from '$data/commonClasses';
 	import { __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __downloadModalVisible, __downloadedDataInfo } from '$utils/stores';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
+	import { generateChapterVerseData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { updateSettings } from '$utils/updateSettings';
 	import { timeAgo } from '$utils/timeAgo';
 	import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
@@ -71,7 +71,7 @@
 				if (!downloading || !abortController) break;
 
 				await fetch(`/${chapter}`);
-				await fetchChapterData({ chapter, skipSave: true, signal: abortController.signal });
+				await generateChapterVerseData({ chapter, skipSave: true, signal: abortController.signal });
 				await fetchVerseTranslationData({ chapter, skipSave: true, signal: abortController.signal });
 
 				completed++;

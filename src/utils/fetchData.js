@@ -98,10 +98,10 @@ export async function generateChapterVerseData(props) {
 				words: meta.words
 			},
 			words: {
-				arabic: arabicWords.join('||'),
-				translation: translations.join('||'),
-				transliteration: transliterations.join('||'),
-				line: lineNumbers.join('||'),
+				arabic: arabicWords,
+				translation: translations,
+				transliteration: transliterations,
+				line: lineNumbers,
 				end_line: lineNumbers.length ? Number(lineNumbers[lineNumbers.length - 1]) : null,
 				end: endIcons[0] || ''
 			}

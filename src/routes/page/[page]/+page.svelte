@@ -17,9 +17,8 @@
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
-	import { splitDelimiter } from '$data/websiteSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
-	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
+	import { generateChapterVerseData, fetchAndCacheJson } from '$utils/fetchData';
 	import '$utils/swiped-events.min.js';
 
 	// Lines to be centered instead of justified
@@ -53,7 +52,7 @@
 			const apiData = data.verses;
 			localStorage.setItem('pageData', JSON.stringify(apiData));
 
-			startingLine = apiData[Object.keys(apiData)[0]].words.line.split(splitDelimiter)[0];
+			startingLine = apiData[Object.keys(apiData)[0]].words.line[0];
 			endingLine = apiData[Object.keys(apiData)[Object.keys(apiData).length - 1]].words.end_line;
 
 			// Get chapter numbers
@@ -76,7 +75,7 @@
 
 			// Get line numbers for chapters
 			chapters.forEach((chapter, index) => {
-				lines.push(+apiData[`${chapter}:${verses[index]}`].words.line.split(splitDelimiter)[0]);
+				lines.push(+apiData[`${chapter}:${verses[index]}`].words.line[0]);
 			});
 
 			// Set the mushaf page divisions
@@ -133,7 +132,7 @@
 
 			const fetchPromises = Object.entries(chaptersWithVerses).map(async ([chapter, verses]) => {
 				try {
-					const data = await fetchChapterData({ chapter, skipSave: true });
+					const data = await generateChapterVerseData({ chapter, skipSave: true });
 
 					// Filter only the required verses
 					verses.forEach((verse) => {
