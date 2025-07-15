@@ -1,58 +1,8 @@
 import { db } from '$utils/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
-import { apiEndpoint, staticEndpoint, apiVersion } from '$data/websiteSettings';
+import { staticEndpoint, apiVersion } from '$data/websiteSettings';
 import { selectableFontTypes } from '$data/options';
-
-// Fetch specific verses (startVerse to endVerse) and cache the data
-export async function fetchChapterData(props) {
-	if (!props.skipSave) __chapterData.set(null);
-
-	const fontType = props.fontType || get(__fontType);
-	const wordTranslation = props.wordTranslation || get(__wordTranslation);
-	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
-
-	// Generate a unique key for the data
-	const cacheKey = `${props.chapter}_${selectableFontTypes[fontType].apiId}_${wordTranslation}_${wordTransliteration}_${apiVersion}`;
-
-	// Try to load from cache
-	const cachedData = await useCache(cacheKey, 'chapter');
-	if (cachedData) {
-		if (!props.skipSave) __chapterData.set(cachedData);
-		return cachedData;
-	}
-
-	// Build API URL
-	const apiURL =
-		`${apiEndpoint}/chapter?` +
-		new URLSearchParams({
-			chapter: props.chapter,
-			word_type: selectableFontTypes[fontType].apiId,
-			word_translation: wordTranslation,
-			word_transliteration: wordTransliteration,
-			version: apiVersion
-		});
-
-	// Fetch from API
-	const response = await fetch(apiURL);
-	if (!response.ok) {
-		throw new Error(
-			JSON.stringify({
-				status: response.status,
-				statusText: response.statusText
-			})
-		);
-	}
-	const data = await response.json();
-
-	// Save to cache
-	await useCache(cacheKey, 'chapter', data.data.verses);
-
-	// Update store
-	if (!props.skipSave) __chapterData.set(data.data.verses);
-
-	return data.data.verses;
-}
 
 export async function generateChapterVerseData(props) {
 	if (!props.skipSave) __chapterData.set(null);
@@ -70,7 +20,6 @@ export async function generateChapterVerseData(props) {
 	]);
 
 	const result = {};
-
 	const arabicVerses = arabicWordData[chapter] || {};
 	const translationVerses = translationWordData[chapter] || {};
 	const transliterationVerses = transliterationWordData[chapter] || {};
