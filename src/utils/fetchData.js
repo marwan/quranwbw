@@ -54,6 +54,66 @@ export async function fetchChapterData(props) {
 	return data.data.verses;
 }
 
+export async function generateChapterVerseData(props) {
+	if (!props.skipSave) __chapterData.set(null);
+
+	const chapter = Number(props.chapter);
+	const fontType = props.fontType || get(__fontType);
+	const wordTranslation = props.wordTranslation || get(__wordTranslation);
+	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
+
+	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all([
+		fetchAndCacheJson(`${staticEndpoint}/words-data/arabic/${selectableFontTypes[fontType].apiId}.json?version=3`, 'chapter'),
+		fetchAndCacheJson(`${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=3`, 'chapter'),
+		fetchAndCacheJson(`${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=3`, 'chapter'),
+		fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other')
+	]);
+
+	const result = {};
+
+	const arabicVerses = arabicWordData[chapter] || {};
+	const translationVerses = translationWordData[chapter] || {};
+	const transliterationVerses = transliterationWordData[chapter] || {};
+
+	for (const verseStr in arabicVerses) {
+		const verseKey = `${chapter}:${verseStr}`;
+
+		const [arabicWords = [], lineNumbers = [], endIcons = []] = arabicVerses[verseStr];
+		const translations = (translationVerses[verseStr] && translationVerses[verseStr][0]) || [];
+		const transliterations = (transliterationVerses[verseStr] && transliterationVerses[verseStr][0]) || [];
+		const meta = metaVerseData[verseKey] || {
+			chapter: chapter,
+			verse: parseInt(verseStr, 10),
+			page: null,
+			juz: null,
+			words: arabicWords.length
+		};
+
+		result[verseKey] = {
+			meta: {
+				chapter: chapter,
+				verse: parseInt(verseStr, 10),
+				page: meta.page,
+				juz: meta.juz,
+				words: meta.words
+			},
+			words: {
+				arabic: arabicWords.join('||'),
+				translation: translations.join('||'),
+				transliteration: transliterations.join('||'),
+				line: lineNumbers.join('||'),
+				end_line: lineNumbers.length ? Number(lineNumbers[lineNumbers.length - 1]) : null,
+				end: endIcons[0] || ''
+			}
+		};
+	}
+
+	// Update store
+	if (!props.skipSave) __chapterData.set(result);
+
+	return result;
+}
+
 // Fetch specific translations and cache the data
 export async function fetchVerseTranslationData(props) {
 	// Use translation IDs from props or fallback to store

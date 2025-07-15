@@ -6,7 +6,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { parseURL } from '$utils/parseURL';
-	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
+	import { generateChapterVerseData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableDisplays } from '$data/options';
 	import { __userSettings, __currentPage, __chapterNumber, __displayType, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __firstVerseOnPage } from '$utils/stores';
@@ -29,7 +29,7 @@
 		[startVerse, endVerse] = parseURL();
 
 		// Fetch chapter data from API
-		chapterData = fetchChapterData({ chapter: $__chapterNumber });
+		chapterData = generateChapterVerseData({ chapter: $__chapterNumber });
 
 		// Update the first verse on page
 		__firstVerseOnPage.set(startVerse);
