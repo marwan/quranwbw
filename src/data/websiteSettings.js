@@ -8,10 +8,6 @@ export const wbwLanguages = 'English, Urdu, Hindi, Indonesian, Bangla, Turkish, 
 
 export const apiVersion = 141;
 
-export const useLocalAPI = false;
-
-export const apiEndpoint = useLocalAPI ? 'http://localhost:7500/v2' : 'https://api.quranwbw.com/v2';
-
 export const staticEndpoint = 'https://static.quranwbw.com/data/v4';
 
 export const wordsAudioURL = 'https://audios.quranwbw.com/words';
