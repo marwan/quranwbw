@@ -210,8 +210,6 @@ export const verseTranslationsLanguages = [
 	{ language_id: 174, language: 'Urdu' }
 ];
 
-export const rightToLeftVerseTranslations = [86, 840, 156, 97, 234, 158, 151, 54, 819, 135, 29, 238];
-
 export const selectableVerseTranslations = {
 	// albanian
 	88: {
@@ -258,12 +256,14 @@ export const selectableVerseTranslations = {
 	86: {
 		resource_id: 86,
 		resource_name: 'Office of the president of Maldives',
-		language_id: 34
+		language_id: 34,
+		is_rtl: true
 	},
 	840: {
 		resource_id: 840,
 		resource_name: 'Abu Bakr Ibrahim Ali (Bakurube)',
-		language_id: 34
+		language_id: 34,
+		is_rtl: true
 	},
 
 	// english
@@ -383,13 +383,15 @@ export const selectableVerseTranslations = {
 		resource_id: 135,
 		resource_name: 'IslamHouse.com',
 		language_id: 43,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 	29: {
 		resource_id: 29,
 		resource_name: 'Hussein Taji Kal Dari',
 		language_id: 43,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 
 	// russian
@@ -414,7 +416,8 @@ export const selectableVerseTranslations = {
 		resource_id: 238,
 		resource_name: 'Taj Mehmood Amroti',
 		language_id: 142,
-		font: 'font-Sindhi'
+		font: 'font-Sindhi',
+		is_rtl: true
 	},
 
 	// tamil
@@ -483,43 +486,50 @@ export const selectableVerseTranslations = {
 		resource_id: 156,
 		resource_name: "Fe Zilal al-Qur'an",
 		language_id: 174,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 	97: {
 		resource_id: 97,
 		resource_name: 'Tafheem Ul Quran - Abul Alaa Maududi',
 		language_id: 174,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 	234: {
 		resource_id: 234,
 		resource_name: 'Fatah Muhammad Jalandhari',
 		language_id: 174,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 	158: {
 		resource_id: 158,
 		resource_name: 'بیان القرآن (ڈاکٹر اسرار احمد)',
 		language_id: 174,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 	151: {
 		resource_id: 151,
 		resource_name: 'Shaykh al-Hind Mahmud al-Hasan (with Tafsir E Usmani)',
 		language_id: 174,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 	54: {
 		resource_id: 54,
 		resource_name: 'Maulana Muhammad Junagarhi',
 		language_id: 174,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 	819: {
 		resource_id: 819,
 		resource_name: 'Maulana Wahiduddin Khan',
 		language_id: 174,
-		font: 'font-Urdu'
+		font: 'font-Urdu',
+		is_rtl: true
 	},
 	831: {
 		resource_id: 831,
@@ -534,7 +544,7 @@ export const selectableWordTranslations = {
 	1: {
 		id: 1,
 		language: 'English',
-		version: 1
+		version: 4
 	},
 	2: {
 		id: 2,

@@ -2,7 +2,7 @@ import { db } from '$utils/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
 import { staticEndpoint, apiVersion } from '$data/websiteSettings';
-import { selectableFontTypes } from '$data/options';
+import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
 
 // Fetches and combines word-by-word data for a chapter including Arabic, translation, transliteration, and metadata
 export async function fetchChapterData(props) {
@@ -13,14 +13,7 @@ export async function fetchChapterData(props) {
 	const wordTranslation = props.wordTranslation || get(__wordTranslation);
 	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
 
-	const { arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(
-		// arabic data
-		selectableFontTypes[fontType].apiId,
-		// translation data
-		wordTranslation,
-		// transliteration data
-		wordTransliteration
-	);
+	const { arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(fontType, wordTranslation, wordTransliteration);
 
 	const result = {};
 	const arabicVerses = arabicWordData[chapter] || {};
@@ -269,12 +262,30 @@ async function useCache(key, type, dataToSet = undefined) {
 
 // Fetches Arabic, translation, transliteration, and meta verse data in parallel
 async function fetchWordData(fontType, wordTranslation, wordTransliteration) {
-	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all([
-		fetchAndCacheJson(`${staticEndpoint}/words-data/arabic/${fontType}.json?version=3`, 'chapter'),
-		fetchAndCacheJson(`${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=3`, 'chapter'),
-		fetchAndCacheJson(`${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=3`, 'chapter'),
-		fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other')
-	]);
+	const { apiId, version: arabicVersion } = selectableFontTypes[fontType];
+	const { version: translationVersion } = selectableWordTranslations[wordTranslation];
+	const { version: transliterationVersion } = selectableWordTransliterations[wordTransliteration];
+
+	const urls = [
+		{
+			url: `${staticEndpoint}/words-data/arabic/${apiId}.json?version=${arabicVersion}`,
+			type: 'chapter'
+		},
+		{
+			url: `${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=${translationVersion}`,
+			type: 'chapter'
+		},
+		{
+			url: `${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=${transliterationVersion}`,
+			type: 'chapter'
+		},
+		{
+			url: `${staticEndpoint}/meta/verseKeyData.json?version=2`,
+			type: 'other'
+		}
+	];
+
+	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
 
 	return {
 		arabicWordData,
