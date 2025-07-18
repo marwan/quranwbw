@@ -11,14 +11,78 @@ export const selectableDisplays = {
 export const fontTypes = ['Uthmanic', 'Indopak / Nastaleeq'];
 
 export const selectableFontTypes = {
-	1: { id: 1, type: 'Uthmanic', font: 'Digital Font', apiId: 1, displayOrder: 1, disallowedIn: ['mushaf'] },
-	2: { id: 2, type: 'Uthmanic', font: 'Mushaf 1441H', apiId: 2, displayOrder: 3, disallowedIn: [] },
-	3: { id: 3, type: 'Uthmanic', font: 'Mushaf Tajweed 1441H', apiId: 2, displayOrder: 4, disallowedIn: [] },
-	4: { id: 4, type: 'Indopak / Nastaleeq', font: 'Qalam Digital Font (Madinah Edition)', apiId: 3, displayOrder: 5, disallowedIn: ['mushaf'] },
-	5: { id: 5, type: 'Indopak / Nastaleeq', font: 'Uthman Taha Digital Font', apiId: 5, displayOrder: 7, disallowedIn: ['mushaf'] },
-	6: { id: 6, type: 'Indopak / Nastaleeq', font: 'Qalam Digital Font (Hanafi Edition)', apiId: 6, displayOrder: 6, disallowedIn: ['mushaf'] },
-	7: { id: 7, type: 'Uthmanic', font: 'Digital Bold Font', apiId: 1, displayOrder: 2, disallowedIn: ['mushaf'] },
-	8: { id: 8, type: 'Indopak / Nastaleeq', font: 'Uthman Taha Digital Bold Font', apiId: 5, displayOrder: 8, disallowedIn: ['mushaf'] }
+	1: {
+		id: 1,
+		type: 'Uthmanic',
+		font: 'Digital Font',
+		apiId: 1,
+		displayOrder: 1,
+		disallowedIn: ['mushaf'],
+		version: 1
+	},
+	2: {
+		id: 2,
+		type: 'Uthmanic',
+		font: 'Mushaf 1441H',
+		apiId: 2,
+		displayOrder: 3,
+		disallowedIn: [],
+		version: 1
+	},
+	3: {
+		id: 3,
+		type: 'Uthmanic',
+		font: 'Mushaf Tajweed 1441H',
+		apiId: 2,
+		displayOrder: 4,
+		disallowedIn: [],
+		version: 1
+	},
+	4: {
+		id: 4,
+		type: 'Indopak / Nastaleeq',
+		font: 'Qalam Digital Font (Madinah Edition)',
+		apiId: 3,
+		displayOrder: 5,
+		disallowedIn: ['mushaf'],
+		version: 1
+	},
+	5: {
+		id: 5,
+		type: 'Indopak / Nastaleeq',
+		font: 'Uthman Taha Digital Font',
+		apiId: 5,
+		displayOrder: 7,
+		disallowedIn: ['mushaf'],
+		version: 1
+	},
+	6: {
+		id: 6,
+		type: 'Indopak / Nastaleeq',
+		font: 'Qalam Digital Font (Hanafi Edition)',
+		apiId: 6,
+		displayOrder: 6,
+		disallowedIn: ['mushaf'],
+		version: 1
+	},
+	7: {
+		id: 7,
+		type: 'Uthmanic',
+		font: 'Digital Bold Font',
+		apiId: 1,
+		displayOrder: 2,
+		disallowedIn: ['mushaf'],
+		version: 1
+	},
+	8: {
+		id: 8,
+		type: 'Indopak / Nastaleeq',
+		font: 'Uthman Taha Digital Bold Font',
+		apiId: 5,
+		displayOrder: 8,
+		disallowedIn: ['mushaf'],
+		version: 1
+	}
 };
 
 export const themeColors = ['light', 'dark'];
@@ -467,32 +531,117 @@ export const selectableVerseTranslations = {
 export const selectableVerseTransliterations = [1, 3, 57];
 
 export const selectableWordTranslations = {
-	1: { id: 1, language: 'English' },
-	2: { id: 2, language: 'Urdu', font: 'font-Urdu' },
-	3: { id: 3, language: 'Hindi' },
-	4: { id: 4, language: 'Indonesian' },
-	5: { id: 5, language: 'Bangla' },
-	6: { id: 6, language: 'Turkish' },
-	7: { id: 7, language: 'Tamil' },
-	8: { id: 8, language: 'German' },
-	// 9: { id: 9, language: 'Russian' },
-	// 10: { id: 10, language: 'Ingush' },
-	11: { id: 11, language: 'French' },
-	12: { id: 12, language: 'Malayalam (Amani Thafseer)' },
-	13: { id: 13, language: 'Malayalam (Quran Lalithasaram)' },
-	14: { id: 14, language: 'Chinese (Traditional)' },
-	15: { id: 15, language: 'Chinese (Zhuyin)' },
-	16: { id: 16, language: 'Chinese (Simplified)' },
-	17: { id: 17, language: 'Chinese (Pinyin)' },
-	18: { id: 18, language: 'Divehi' },
-	19: { id: 19, language: 'Persian', font: 'font-Urdu' },
-	20: { id: 20, language: 'Sindhi', font: 'font-Sindhi' },
-	21: { id: 21, language: 'Albanian' }
+	1: {
+		id: 1,
+		language: 'English',
+		version: 1
+	},
+	2: {
+		id: 2,
+		language: 'Urdu',
+		font: 'font-Urdu',
+		version: 1
+	},
+	3: {
+		id: 3,
+		language: 'Hindi',
+		version: 1
+	},
+	4: {
+		id: 4,
+		language: 'Indonesian',
+		version: 1
+	},
+	5: {
+		id: 5,
+		language: 'Bangla',
+		version: 1
+	},
+	6: {
+		id: 6,
+		language: 'Turkish',
+		version: 1
+	},
+	7: {
+		id: 7,
+		language: 'Tamil',
+		version: 1
+	},
+	8: {
+		id: 8,
+		language: 'German',
+		version: 1
+	},
+	11: {
+		id: 11,
+		language: 'French',
+		version: 1
+	},
+	12: {
+		id: 12,
+		language: 'Malayalam (Amani Thafseer)',
+		version: 1
+	},
+	13: {
+		id: 13,
+		language: 'Malayalam (Quran Lalithasaram)',
+		version: 1
+	},
+	14: {
+		id: 14,
+		language: 'Chinese (Traditional)',
+		version: 1
+	},
+	15: {
+		id: 15,
+		language: 'Chinese (Zhuyin)',
+		version: 1
+	},
+	16: {
+		id: 16,
+		language: 'Chinese (Simplified)',
+		version: 1
+	},
+	17: {
+		id: 17,
+		language: 'Chinese (Pinyin)',
+		version: 1
+	},
+	18: {
+		id: 18,
+		language: 'Divehi',
+		version: 1
+	},
+	19: {
+		id: 19,
+		language: 'Persian',
+		font: 'font-Urdu',
+		version: 1
+	},
+	20: {
+		id: 20,
+		language: 'Sindhi',
+		font: 'font-Sindhi',
+		version: 1
+	},
+	21: {
+		id: 21,
+		language: 'Albanian',
+		version: 1
+	}
 };
 
 export const selectableWordTransliterations = {
-	1: { id: 1, language: 'Normal Transliteration' },
-	2: { id: 2, language: 'Tajweed Transliteration' }
+	1: {
+		id: 1,
+		language: 'Normal Transliteration',
+		version: 1
+	},
+	2: {
+		id: 2,
+		language: 'Tajweed Transliteration',
+		version: 1
+	}
 };
 
 export const selectableReciters = {
