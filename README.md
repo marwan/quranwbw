@@ -1,12 +1,7 @@
 <br />
 <div align="center">
-  <a target="_blank" href="https://quranwbw.com"><img src="https://raw.githubusercontent.com/marwan/quranwbw/main/static/images/logo.png" width="200"></a>
-
+  <a target="_blank" href="https://quranwbw.com"><img src="https://raw.githubusercontent.com/marwan/quranwbw/main/static/images/banner.png?v=2"></a>
   <br />
-  
-  [![bugs][bugs-shield]][bugs-url]
-  [![suggestions][suggestions-shield]][suggestions-url]
-
 </div>
 
 # About
@@ -42,10 +37,3 @@ This version of QuranWBW is built with [SvelteKit](https://kit.svelte.dev/).
 # Contribution
 
 You are free to add/suggest features, report bugs, or just use the website in general.
-
-<!-- MARKDOWN LINKS & IMAGES -->
-
-[bugs-shield]: https://img.shields.io/github/issues/marwan/quranwbw/bug?label=BUGS&style=for-the-badge&color=d73a4a
-[bugs-url]: https://github.com/marwan/quranwbw/issues?q=is%3Aopen+is%3Aissue+label%3Abug
-[suggestions-shield]: https://img.shields.io/github/issues/marwan/quranwbw/enhancement?label=SUGGESTIONS&style=for-the-badge&color=a2eeef
-[suggestions-url]: https://github.com/marwan/quranwbw/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement

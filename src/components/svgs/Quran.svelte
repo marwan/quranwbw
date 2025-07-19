@@ -1,3 +1,7 @@
+<script>
+	export let size = 'size-24 md:size-32';
+</script>
+
 <svg
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:cc="http://creativecommons.org/ns#"
@@ -8,7 +12,7 @@
 	xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
 	viewBox="0 0 299.74979 293.73068"
 	version="1.1"
-	class="size-24 md:size-32"
+	class={size}
 >
 	<g id="layer1" transform="translate(-26.135428,119.50411)">
 		<path
