@@ -18,7 +18,7 @@ export const selectableFontTypes = {
 		apiId: 1,
 		displayOrder: 1,
 		disallowedIn: ['mushaf'],
-		version: 1
+		version: 4
 	},
 	2: {
 		id: 2,
