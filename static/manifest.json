@@ -7,22 +7,9 @@
 	"background_color": "#ffffff",
 	"theme_color": "#ffffff",
 	"icons": [
-		{
-			"src": "/images/icon-192.png?v=1",
-			"type": "image/png",
-			"sizes": "192x192"
-		},
-		{
-			"src": "/images/icon-512.png?v=2",
-			"type": "image/png",
-			"sizes": "512x512"
-		},
-		{
-			"src": "/images/maskable-icon-512.png?v=2",
-			"sizes": "512x512",
-			"type": "image/png",
-			"purpose": "maskable"
-		}
+		{ "src": "/images/icon-192.png?v=2", "type": "image/png", "sizes": "192x192" },
+		{ "src": "/images/icon-512.png?v=2", "type": "image/png", "sizes": "512x512" },
+		{ "src": "/images/maskable-icon-512.png?v=2", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
 	],
 	"lang": "en",
 	"categories": ["books", "education"],
