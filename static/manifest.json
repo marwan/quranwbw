@@ -19,6 +19,11 @@
 		{ "src": "/images/screenshots/mobile/3.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
 		{ "src": "/images/screenshots/mobile/4.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
 		{ "src": "/images/screenshots/mobile/5.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
-		{ "src": "/images/screenshots/mobile/6.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" }
+		{ "src": "/images/screenshots/mobile/6.png?v=1", "type": "image/png", "sizes": "1242x2688", "form_factor": "narrow" },
+		{ "src": "/images/screenshots/desktop/1.png?v=1", "type": "image/png", "sizes": "1300x815", "form_factor": "wide" },
+		{ "src": "/images/screenshots/desktop/2.png?v=1", "type": "image/png", "sizes": "1300x815", "form_factor": "wide" },
+		{ "src": "/images/screenshots/desktop/3.png?v=1", "type": "image/png", "sizes": "1300x815", "form_factor": "wide" },
+		{ "src": "/images/screenshots/desktop/4.png?v=1", "type": "image/png", "sizes": "1300x815", "form_factor": "wide" },
+		{ "src": "/images/screenshots/desktop/5.png?v=1", "type": "image/png", "sizes": "1300x815", "form_factor": "wide" }
 	]
 }
