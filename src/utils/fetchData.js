@@ -1,8 +1,8 @@
 import { db } from '$utils/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
-import { staticEndpoint, apiVersion } from '$data/websiteSettings';
-import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
+import { staticEndpoint } from '$data/websiteSettings';
+import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
 // Fetches and combines word-by-word data for a chapter including Arabic, translation, transliteration, and metadata
 export async function fetchChapterData(props) {
@@ -72,8 +72,10 @@ export async function fetchVerseTranslationData(props) {
 	const idsToFetch = [];
 
 	for (const id of translations) {
+		const version = selectableVerseTranslations[id].version;
+
 		// Try to load from cache first
-		const cacheKey = `translation_${id}_${apiVersion}`;
+		const cacheKey = `translation_${id}_${version}`;
 		const cached = await useCache(cacheKey, 'translation');
 
 		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
@@ -93,14 +95,15 @@ export async function fetchVerseTranslationData(props) {
 
 	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
-		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=${apiVersion}`;
+		const version = selectableVerseTranslations[id].version;
+		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=${version}`;
 		try {
 			const res = await fetch(url);
 			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
 			const data = await res.json();
 
 			// Save to cache
-			await useCache(`translation_${id}_${apiVersion}`, 'translation', data);
+			await useCache(`translation_${id}_${version}`, 'translation', data);
 
 			return { id, data };
 		} catch (error) {
@@ -218,17 +221,6 @@ async function useCache(key, type, dataToSet = undefined) {
 		}
 
 		if (!table) throw new Error(`Table not found for type: ${type}`);
-
-		// Access the version table to verify current API version
-		const versionTable = db.data_version;
-		const versionRecord = await versionTable.get('version');
-		const storedVersion = versionRecord?.value;
-
-		// If no version exists or it doesn't match the current version,
-		// clear both caches and update the stored version
-		if (storedVersion !== apiVersion) {
-			await Promise.all([db.chapter_data.clear(), db.translation_data.clear(), versionTable.put({ key: 'version', value: apiVersion })]);
-		}
 
 		if (dataToSet !== undefined) {
 			// Set data in the cache with current timestamp
