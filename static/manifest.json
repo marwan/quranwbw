@@ -1,7 +1,7 @@
 {
 	"short_name": "QuranWBW",
 	"name": "QuranWBW.com",
-	"description": "Quran Word By Word & Morphology",
+	"description": "Quran Word By Word Translation, Transliteration And Morphology",
 	"start_url": "/",
 	"display": "fullscreen",
 	"background_color": "#ffffff",

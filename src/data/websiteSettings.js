@@ -13,7 +13,3 @@ export const wordsAudioURL = 'https://audios.quranwbw.com/words';
 export const mushafFontVersion = 8;
 
 export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4/COLRv1`;
-
-export const mushafHeaderFontLink = `${staticEndpoint}/fonts/Extras/chapter-headers/QCF_SurahHeader_COLOR-Regular.woff2`;
-
-export const splitDelimiter = '||';
