@@ -234,16 +234,7 @@ async function useCache(key, type, dataToSet = undefined) {
 			// Attempt to retrieve cached data
 			const record = await table.get(key);
 			if (!record) return null;
-
-			// Check if the cached data is fresh (within 7 days)
-			const isFresh = Date.now() - record.timestamp < 7 * 24 * 60 * 60 * 1000;
-			if (isFresh) {
-				return record.data;
-			} else {
-				// If stale, delete it and return null to trigger a fresh fetch
-				await table.delete(key);
-				return null;
-			}
+			return record.data;
 		}
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
