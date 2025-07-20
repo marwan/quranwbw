@@ -7,7 +7,7 @@
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { staticEndpoint } from '$data/websiteSettings';
-	import { __currentPage, __fontType, __morphologyKey } from '$utils/stores';
+	import { __currentPage, __fontType, __morphologyKey, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
@@ -28,7 +28,13 @@
 
 	// Fetch verse data based on chapter and verse
 	$: chapterData = (async () => {
-		const data = await fetchChapterData({ chapter, fontType: $__fontType, wordTranslation: 1, wordTransliteration: 1, preventStoreUpdate: true });
+		const data = await fetchChapterData({
+			chapter,
+			fontType: $__fontType,
+			wordTranslation: $__wordTranslation,
+			wordTransliteration: $__wordTransliteration,
+			preventStoreUpdate: true
+		});
 		return data[`${chapter}:${verse}`];
 	})();
 
@@ -55,7 +61,7 @@
 		// Fetch words with same root
 		wordsWithSameRootData = (async () => {
 			try {
-				return await fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root.json?version=1`, 'morphology');
+				return await fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root-keys.json?version=2`, 'morphology');
 			} catch {
 				return {};
 			}
@@ -74,10 +80,8 @@
 
 				const keyToMeta = keyMap?.data || {};
 				const uthmaniToKeys = exactMap?.data || {};
-
 				const keyMeta = keyToMeta[$__morphologyKey];
 
-				// Extract word_uthmani and root
 				let uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
 				wordRoot = Array.isArray(keyMeta) ? keyMeta[3] : '';
 
@@ -89,15 +93,7 @@
 
 				if (!uthmani) return [];
 
-				return (uthmaniToKeys[uthmani] || []).map((key) => {
-					const meta = keyToMeta[key] || [];
-					return {
-						key,
-						arabic: meta[0] || '',
-						transliteration: meta[1] || '',
-						translation: meta[2] || ''
-					};
-				});
+				return uthmaniToKeys[uthmani] || [];
 			} catch (error) {
 				console.warn('Failed to load exact words in Quran:', error);
 				return [];
@@ -210,7 +206,7 @@
 			{:then data}
 				{#if wordRoot in data.data}
 					<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-						<Table wordData={data.data[wordRoot]} tableType={1} />
+						<Table wordKeys={data.data[wordRoot]} tableType={1} />
 					</div>
 				{/if}
 			{:catch error}
@@ -224,7 +220,7 @@
 		{:then data}
 			{#if Array.isArray(data) && data.length}
 				<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
-					<Table wordData={data} tableType={2} />
+					<Table wordKeys={data} tableType={2} />
 				</div>
 			{/if}
 		{:catch error}
