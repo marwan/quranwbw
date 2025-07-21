@@ -201,8 +201,8 @@ async function useCache(key, type, dataToSet = undefined) {
 		let table;
 
 		switch (type) {
-			case 'chapter':
-				table = db.chapter_data;
+			case 'word':
+				table = db.word_data;
 				break;
 			case 'translation':
 				table = db.translation_data;
@@ -250,22 +250,10 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 	const { version: transliterationVersion } = selectableWordTransliterations[wordTransliteration];
 
 	const urls = [
-		{
-			url: `${staticEndpoint}/words-data/arabic/${apiId}.json?version=${arabicVersion}`,
-			type: 'chapter'
-		},
-		{
-			url: `${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=${translationVersion}`,
-			type: 'chapter'
-		},
-		{
-			url: `${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=${transliterationVersion}`,
-			type: 'chapter'
-		},
-		{
-			url: `${staticEndpoint}/meta/verseKeyData.json?version=2`,
-			type: 'other'
-		}
+		{ url: `${staticEndpoint}/words-data/arabic/${apiId}.json?version=${arabicVersion}`, type: 'word' },
+		{ url: `${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=${translationVersion}`, type: 'word' },
+		{ url: `${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=${transliterationVersion}`, type: 'word' },
+		{ url: `${staticEndpoint}/meta/verseKeyData.json?version=2`, type: 'other' }
 	];
 
 	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
