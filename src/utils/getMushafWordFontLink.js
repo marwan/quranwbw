@@ -2,15 +2,15 @@ import { get } from 'svelte/store';
 import { __websiteTheme } from '$utils/stores';
 
 const themeDirs = {
-	1: { dir: 'OT-SVG-L' },
-	2: { dir: 'OT-SVG-L' },
-	3: { dir: 'OT-SVG-L' },
-	4: { dir: 'OT-SVG-S' },
-	5: { dir: 'OT-SVG-D' },
-	6: { dir: 'OT-SVG-D' },
-	7: { dir: 'OT-SVG-D' },
-	8: { dir: 'OT-SVG-D' },
-	9: { dir: 'OT-SVG-D' }
+	1: { dir: 'OT-SVG-L' }, // Golden Glint
+	2: { dir: 'OT-SVG-L' }, // Classic Light
+	3: { dir: 'OT-SVG-L' }, // Silver Lining
+	4: { dir: 'OT-SVG-S' }, // Vintage Sepia
+	5: { dir: 'OT-SVG-D' }, // Mocha Night
+	6: { dir: 'OT-SVG-D' }, // Midnight Blue
+	7: { dir: 'OT-SVG-D' }, // Forest Green
+	8: { dir: 'OT-SVG-D' }, // Oled Black
+	9: { dir: 'OT-SVG-D' } // Dark Luxury
 };
 
 // Return the URL for the mushaf font by page
