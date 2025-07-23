@@ -16,6 +16,17 @@ const themeDirs = {
 // Return the URL for the mushaf font by page
 export function getMushafWordFontLink(page) {
 	const newLink = `https://ot-svg-fonts.pages.dev`;
+
+	// Check if `?prototype` is in the URL
+	const urlParams = new URLSearchParams(window.location.search);
+	const prototypeFolder = urlParams.get('prototype');
+
+	if (prototypeFolder && Number(page) === 1) {
+		// Load from prototype folder if param is set and page is 1
+		return `${newLink}/prototypes/${prototypeFolder}.woff2?version=1`;
+	}
+
+	// Normal logic
 	const dir = themeDirs[get(__websiteTheme)].dir;
 	return `${newLink}/${dir}/QCF4${`00${Number(page)}`.slice(-3)}_COLOR-Regular.woff2?version=1`;
 }
