@@ -7,7 +7,6 @@
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Minimize from '$svgs/Minimize.svelte';
-	// import BottomToolbarButtons from '$ui/BottomToolbar/BottomToolbarButtons.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
 	import { goto } from '$app/navigation';
@@ -187,9 +186,10 @@
 		<Spinner height="screen" margin="-mt-20" />
 	{:then}
 		<div class="space-y-2 mt-2.5">
+			<!-- single page -->
 			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
 				{#each Array.from(Array(endingLine + 1).keys()).slice(startingLine) as line}
-					<!-- if it's the first verse of a chapter -->
+					<!-- show the chapter header if it's the first verse of that chapter -->
 					{#if chapters.length > 0 && lines.includes(line) && verses[lines.indexOf(line)] === 1}
 						<div class="flex flex-col my-2">
 							<ChapterHeader chapter={chapters[lines.indexOf(line)]} />
