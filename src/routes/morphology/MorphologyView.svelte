@@ -28,69 +28,65 @@
 
 	// Fetch all data in parallel
 	$: allDataPromise = (async () => {
-		try {
-			// Fetch verse data
-			const chapterDataPromise = fetchChapterData({
-				chapter,
-				fontType: $__fontType,
-				wordTranslation: $__wordTranslation,
-				wordTransliteration: $__wordTransliteration,
-				preventStoreUpdate: true
-			}).then((data) => data[`${chapter}:${verse}`]);
+		// Fetch verse data
+		const chapterDataPromise = fetchChapterData({
+			chapter,
+			fontType: $__fontType,
+			wordTranslation: $__wordTranslation,
+			wordTransliteration: $__wordTransliteration,
+			preventStoreUpdate: true
+		}).then((data) => data[`${chapter}:${verse}`]);
 
-			// Fetch word summary data
-			const wordSummaryDataPromise = fetchAndCacheJson(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`, 'morphology').catch(() => ({}));
+		// Fetch word summary data
+		const wordSummaryDataPromise = fetchAndCacheJson(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`, 'morphology').catch(() => ({}));
 
-			// Fetch word verbs data
-			const wordVerbsDataPromise = fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`, 'morphology').catch(() => ({}));
+		// Fetch word verbs data
+		const wordVerbsDataPromise = fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`, 'morphology').catch(() => ({}));
 
-			// Fetch words with same root
-			const wordsWithSameRootDataPromise = fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root-keys.json?version=3`, 'morphology').catch(() => ({}));
+		// Fetch words with same root
+		const wordsWithSameRootDataPromise = fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root-keys.json?version=3`, 'morphology').catch(() => ({}));
 
-			// Fetch exact words in Quran
-			const exactWordsInQuranDataPromise = (async () => {
-				try {
-					const [keyMap, exactMap] = await Promise.all([fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-keys-map.json?version=1`, 'morphology'), fetchAndCacheJson(`${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=2`, 'morphology')]);
+		// Fetch exact words in Quran
+		const exactWordsInQuranDataPromise = (async () => {
+			try {
+				const [keyMap, exactMap] = await Promise.all([fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-keys-map.json?version=1`, 'morphology'), fetchAndCacheJson(`${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=2`, 'morphology')]);
 
-					const keyToMeta = keyMap?.data || {};
-					const uthmaniToKeys = exactMap?.data || {};
-					const keyMeta = keyToMeta[$__morphologyKey];
+				const keyToMeta = keyMap?.data || {};
+				const uthmaniToKeys = exactMap?.data || {};
+				const keyMeta = keyToMeta[$__morphologyKey];
 
-					let uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
-					wordRoot = Array.isArray(keyMeta) ? keyMeta[3] : '';
+				let uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
+				wordRoot = Array.isArray(keyMeta) ? keyMeta[3] : '';
 
-					// Remove trailing pause mark (e.g., ۛ, ۚ, etc.) from uthmani
-					const pauseMarkRegex = /[\u06D6-\u06DC\u06D7\u06D8\u06D9\u06DA\u06DB\u06E9]$/u;
-					if (uthmani) {
-						uthmani = uthmani.replace(pauseMarkRegex, '');
-					}
-
-					if (!uthmani) return [];
-
-					return uthmaniToKeys[uthmani] || [];
-				} catch (error) {
-					console.warn('Failed to load exact words in Quran:', error);
-					return [];
+				// Remove trailing pause mark (e.g., ۛ, ۚ, etc.) from uthmani
+				const pauseMarkRegex = /[\u06D6-\u06DC\u06D7\u06D8\u06D9\u06DA\u06DB\u06E9]$/u;
+				if (uthmani) {
+					uthmani = uthmani.replace(pauseMarkRegex, '');
 				}
-			})();
 
-			// Fetch arabic, translation and transliteration word data
-			const wordDataPromise = await fetchWordData(1, $__wordTranslation, $__wordTransliteration).catch(() => ({}));
+				if (!uthmani) return [];
 
-			// Wait for all promises to resolve
-			const [chapterData, wordVerbsData, wordSummaryData, wordsWithSameRootData, exactWordsInQuranData, wordData] = await Promise.all([chapterDataPromise, wordVerbsDataPromise, wordSummaryDataPromise, wordsWithSameRootDataPromise, exactWordsInQuranDataPromise, wordDataPromise]);
+				return uthmaniToKeys[uthmani] || [];
+			} catch (error) {
+				console.warn('Failed to load exact words in Quran:', error);
+				return [];
+			}
+		})();
 
-			return {
-				chapterData,
-				wordVerbsData,
-				wordSummaryData,
-				wordsWithSameRootData,
-				exactWordsInQuranData,
-				wordData
-			};
-		} catch (error) {
-			throw error;
-		}
+		// Fetch arabic, translation and transliteration word data
+		const wordDataPromise = await fetchWordData(1, $__wordTranslation, $__wordTransliteration).catch(() => ({}));
+
+		// Wait for all promises to resolve
+		const [chapterData, wordVerbsData, wordSummaryData, wordsWithSameRootData, exactWordsInQuranData, wordData] = await Promise.all([chapterDataPromise, wordVerbsDataPromise, wordSummaryDataPromise, wordsWithSameRootDataPromise, exactWordsInQuranDataPromise, wordDataPromise]);
+
+		return {
+			chapterData,
+			wordVerbsData,
+			wordSummaryData,
+			wordsWithSameRootData,
+			exactWordsInQuranData,
+			wordData
+		};
 	})();
 </script>
 
@@ -161,7 +157,7 @@
 
 		<div id="word-details" class="flex flex-col">
 			<!-- Verbs data -->
-			{#if allData.wordVerbsData && Object.prototype.hasOwnProperty.call(allData.wordVerbsData?.data, $__morphologyKey)}
+			{#if allData?.wordVerbsData?.data && $__morphologyKey in allData.wordVerbsData.data}
 				<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
 					<div class="flex flex-col">
 						<div id="different-verbs">
@@ -185,14 +181,14 @@
 			{/if}
 
 			<!-- Word with same root -->
-			{#if allData.wordsWithSameRootData && wordRoot && wordRoot in allData.wordsWithSameRootData.data}
+			{#if allData?.wordsWithSameRootData?.data && wordRoot && wordRoot in allData.wordsWithSameRootData.data}
 				<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
 					<Table wordKeys={allData.wordsWithSameRootData.data[wordRoot]} tableType={1} wordData={allData.wordData} />
 				</div>
 			{/if}
 
 			<!-- Exact words in Quran -->
-			{#if allData.exactWordsInQuranData && Array.isArray(allData.exactWordsInQuranData) && allData.exactWordsInQuranData.length}
+			{#if Array.isArray(allData?.exactWordsInQuranData) && allData.exactWordsInQuranData.length}
 				<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
 					<Table wordKeys={allData.exactWordsInQuranData} tableType={2} wordData={allData.wordData} />
 				</div>
