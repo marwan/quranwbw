@@ -47,7 +47,7 @@
 		lines = [];
 
 		pageData = (async () => {
-			const data = await fetchVersesByPage(page, selectableFontTypes[$__fontType].apiId, $__wordTranslation);
+			const data = await fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation);
 			const apiData = data.verses;
 			localStorage.setItem('pageData', JSON.stringify(apiData));
 
