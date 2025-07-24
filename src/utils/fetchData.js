@@ -137,7 +137,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	const cacheKey = `${secondLastPart}/${lastPart}${parsedUrl.search}`;
 
 	// Wait for a random delay between 5 to 15 seconds
-	await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 10001) + 5000));
+	// await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 10001) + 5000));
 
 	// Try to load from cache
 	const cachedData = await useCache(cacheKey, type);

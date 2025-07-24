@@ -15,7 +15,6 @@
 
 	let chapter, verse, word;
 	let wordRoot = '';
-	let allData = {};
 
 	// Extract chapter, verse, and word from the key, defaulting word to 1 if missing or invalid
 	$: {
