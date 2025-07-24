@@ -245,12 +245,12 @@ async function useCache(key, type, dataToSet = undefined) {
 
 // Fetches Arabic, translation, transliteration, and meta verse data in parallel
 export async function fetchWordData(fontType, wordTranslation, wordTransliteration) {
-	const { apiId, version: arabicVersion } = selectableFontTypes[fontType];
+	const { id: fontID, version: arabicVersion } = selectableFontTypes[fontType];
 	const { version: translationVersion } = selectableWordTranslations[wordTranslation];
 	const { version: transliterationVersion } = selectableWordTransliterations[wordTransliteration];
 
 	const urls = [
-		{ url: `${staticEndpoint}/words-data/arabic/${apiId}.json?version=${arabicVersion}`, type: 'word' },
+		{ url: `${staticEndpoint}/words-data/arabic/${fontID}.json?version=${arabicVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=${translationVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=${transliterationVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/meta/verseKeyData.json?version=2`, type: 'other' }
