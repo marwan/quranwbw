@@ -183,7 +183,7 @@
 
 <div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden">
 	{#await pageData}
-		<Spinner height="screen" margin="-mt-20" />
+		<Spinner />
 	{:then}
 		<div class="space-y-2 mt-2.5">
 			<!-- single page -->

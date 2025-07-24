@@ -60,7 +60,7 @@
 
 <div id="chapter-block">
 	{#await chapterData}
-		<Spinner height="screen" margin="-mt-20" />
+		<Spinner />
 	{:then}
 		<Bismillah {startVerse} />
 

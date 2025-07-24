@@ -136,6 +136,8 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	const secondLastPart = pathParts[pathParts.length - 2] || 'root'; // fallback if not present
 	const cacheKey = `${secondLastPart}/${lastPart}${parsedUrl.search}`;
 
+	await new Promise((r) => setTimeout(r, 5000)); // Simulate delay
+
 	// Try to load from cache
 	const cachedData = await useCache(cacheKey, type);
 	if (cachedData) {
