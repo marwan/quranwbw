@@ -8,7 +8,6 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { timeAgo } from '$utils/timeAgo';
 	import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
-	import { apiVersion } from '$data/websiteSettings';
 	import { db } from '$utils/db';
 
 	// State variables
@@ -92,7 +91,6 @@
 						wordTransliteration: $__wordTransliteration,
 						verseTranslations: $__verseTranslations,
 						lastDownloadAt: new Date().toISOString(),
-						apiVersion
 					}
 				});
 				showMessage('Download complete!');
@@ -178,15 +176,6 @@
 				{/if}
 			</div>
 		</div>
-
-		{#if $__downloadedDataInfo.apiVersion}
-			{#if $__downloadedDataInfo.apiVersion !== apiVersion}
-				<div class="p-3 rounded-md flex flex-row space-x-2 items-center {window.theme('bgSecondaryLight')}">
-					<Info />
-					<span>Your current downloaded data is outdated.</span>
-				</div>
-			{/if}
-		{/if}
 
 		{#if settingsChanged}
 			<div class="p-3 rounded-md flex flex-row space-x-2 items-center {window.theme('bgSecondaryLight')}">
