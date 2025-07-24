@@ -1,9 +1,10 @@
 <script>
 	import { page } from '$app/stores';
 	import { onDestroy } from 'svelte';
-	export let size = '20',
-		height = 'fit',
-		margin = '';
+
+	export let size = '16';
+	export let height = 'fit';
+	export let margin = '';
 
 	let message = '';
 	let timeouts = [];

@@ -74,28 +74,28 @@
 >
 	<div class="flex flex-col space-y-4">
 		{#key verse}
-			<div class="py-4">
-				<SingleArabicVerse key="{chapter}:{verse}" />
-			</div>
-		{/key}
+			{#await tafsirData}
+				<Spinner />
+			{:then data}
+				<div class="py-4">
+					<SingleArabicVerse key="{chapter}:{verse}" />
+				</div>
 
-		{#await tafsirData}
-			<Spinner />
-		{:then data}
-			<div class="text-sm flex flex-col space-y-6">
-				<div class="flex flex-col space-y-4">
-					<div class={tafsirTextClasses}>
-						{#each Object.entries(data.ayahs) as [_, tafsir]}
-							{#if tafsir.surah === chapter && tafsir.ayah === verse}
-								{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
-							{/if}
-						{/each}
+				<div class="text-sm flex flex-col space-y-6">
+					<div class="flex flex-col space-y-4">
+						<div class={tafsirTextClasses}>
+							{#each Object.entries(data.ayahs) as [_, tafsir]}
+								{#if tafsir.surah === chapter && tafsir.ayah === verse}
+									{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
+								{/if}
+							{/each}
+						</div>
 					</div>
 				</div>
-			</div>
-		{:catch error}
-			<ErrorLoadingDataFromAPI center="false" {error} />
-		{/await}
+			{:catch error}
+				<ErrorLoadingDataFromAPI center="false" {error} />
+			{/await}
+		{/key}
 	</div>
 
 	<svelte:fragment slot="footer">

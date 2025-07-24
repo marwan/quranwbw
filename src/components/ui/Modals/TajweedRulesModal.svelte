@@ -38,7 +38,7 @@
 
 <Modal bind:open={$__tajweedRulesModalVisible} title={modalTitle} transitionParams={getModalTransition('bottom')} class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6 space-y-4 flex-1 overflow-y-auto overscroll-contain border {window.theme('border')}" headerClass="flex justify-between items-center p-6 rounded-t-3xl" position="bottom" center outsideclose>
 	{#await tajweedRulesData}
-		<Spinner size={10} />
+		<Spinner size="10" />
 	{:then data}
 		<table class="w-full text-sm text-left rtl:text-right">
 			<thead class="text-xs uppercase {window.theme('bgSecondaryLight')}">
