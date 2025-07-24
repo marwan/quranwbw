@@ -61,7 +61,7 @@
 		// Fetch words with same root
 		wordsWithSameRootData = (async () => {
 			try {
-				return await fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root-keys.json?version=2`, 'morphology');
+				return await fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root-keys.json?version=3`, 'morphology');
 			} catch {
 				return {};
 			}

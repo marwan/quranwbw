@@ -18,7 +18,7 @@ export const selectableFontTypes = {
 		apiId: 1,
 		displayOrder: 1,
 		disallowedIn: ['mushaf'],
-		version: 4
+		version: 5
 	},
 	2: {
 		id: 2,
@@ -27,7 +27,7 @@ export const selectableFontTypes = {
 		apiId: 2,
 		displayOrder: 3,
 		disallowedIn: [],
-		version: 1
+		version: 5
 	},
 	3: {
 		id: 3,
@@ -36,7 +36,7 @@ export const selectableFontTypes = {
 		apiId: 2,
 		displayOrder: 4,
 		disallowedIn: [],
-		version: 1
+		version: 5
 	},
 	4: {
 		id: 4,
@@ -45,7 +45,7 @@ export const selectableFontTypes = {
 		apiId: 3,
 		displayOrder: 5,
 		disallowedIn: ['mushaf'],
-		version: 1
+		version: 5
 	},
 	5: {
 		id: 5,
@@ -54,7 +54,7 @@ export const selectableFontTypes = {
 		apiId: 5,
 		displayOrder: 7,
 		disallowedIn: ['mushaf'],
-		version: 1
+		version: 5
 	},
 	6: {
 		id: 6,
@@ -63,7 +63,7 @@ export const selectableFontTypes = {
 		apiId: 6,
 		displayOrder: 6,
 		disallowedIn: ['mushaf'],
-		version: 1
+		version: 5
 	},
 	7: {
 		id: 7,
@@ -72,7 +72,7 @@ export const selectableFontTypes = {
 		apiId: 1,
 		displayOrder: 2,
 		disallowedIn: ['mushaf'],
-		version: 1
+		version: 5
 	},
 	8: {
 		id: 8,
@@ -81,7 +81,7 @@ export const selectableFontTypes = {
 		apiId: 5,
 		displayOrder: 8,
 		disallowedIn: ['mushaf'],
-		version: 1
+		version: 5
 	}
 };
 
