@@ -68,13 +68,13 @@
 				{/each}
 			</tbody>
 		</table>
+
+		<!-- links to PDF files -->
+		<div class="mt-4 text-xs">
+			To learn the correct pronunciation of Arabic alphabets, please refer to
+			{@html createLink(`${staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf`, 'Makharij Al Huroof')}.
+		</div>
 	{:catch error}
 		<ErrorLoadingDataFromAPI center="false" {error} />
 	{/await}
-
-	<!-- links to PDF files -->
-	<div class="mt-4 text-xs">
-		To learn the correct pronunciation of Arabic alphabets, please refer to
-		{@html createLink(`${staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf`, 'Makharij Al Huroof')}.
-	</div>
 </Modal>
