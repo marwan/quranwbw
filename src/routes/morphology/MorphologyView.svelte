@@ -51,8 +51,8 @@
 				const [keyMap, exactMap] = await Promise.all([
 					// Uthmani text and root data
 					fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-uthmani-and-roots.json?version=1`, 'morphology'),
-					// Exact words data
-					fetchAndCacheJson(`${staticEndpoint}/morphology-data/exact-words-in-quran.json?version=2`, 'morphology')
+					// Exact words keys
+					fetchAndCacheJson(`${staticEndpoint}/morphology-data/exact-words-keys.json?version=1`, 'morphology')
 				]);
 
 				const keyToMeta = keyMap?.data || {};
@@ -62,15 +62,19 @@
 				let uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
 				wordRoot = Array.isArray(keyMeta) ? keyMeta[1] : '';
 
-				// Remove trailing pause mark (e.g., ۛ, ۚ, etc.) from uthmani
-				const pauseMarkRegex = /[\u06D6-\u06DC\u06D7\u06D8\u06D9\u06DA\u06DB\u06E9]$/u;
+				// Remove trailing pause mark (e.g., ۖ, ۗ, etc.) from uthmani using defined symbols
+				const unwantedSymbolsArray = ['ۖ', 'ۗ', 'ۘ', 'ۙ', 'ۚ', 'ۛ', 'ۜ', '۩', '۞'];
+				const unwantedRegex = new RegExp(`[${unwantedSymbolsArray.join('')}]`, 'g');
+
 				if (uthmani) {
-					uthmani = uthmani.replace(pauseMarkRegex, '');
+					uthmani = uthmani.replace(unwantedRegex, '');
 				}
 
 				if (!uthmani) return [];
 
-				return uthmaniToKeys[uthmani] || [];
+				// Return the matching word keys from the 'exact-words-keys' file if available.
+				// Since the 'exact-words-keys' file excludes unique words, if this word is not found, it means it's unique — so return the original word key.
+				return uthmaniToKeys[uthmani] || [$__morphologyKey];
 			} catch (error) {
 				console.warn('Failed to load exact words in Quran:', error);
 				return [];
