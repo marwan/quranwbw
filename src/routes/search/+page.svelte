@@ -3,7 +3,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search2 from '$svgs/Search2.svelte';
 	import Individual from '$display/verses/modes/Individual.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
 	import { __currentPage, __keysToFetch } from '$utils/stores';
 	import { term } from '$utils/terminologies';
@@ -169,7 +169,7 @@
 
 	{#if searchQuery.length > 0}
 		{#if badRequest}
-			<ErrorLoadingDataFromAPI center="false" />
+			<ErrorLoadingData center="false" />
 		{:else if !badRequest && fetchingNewData}
 			<Spinner />
 		{:else}

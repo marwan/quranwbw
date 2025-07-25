@@ -8,7 +8,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import Minimize from '$svgs/Minimize.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
 	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
@@ -40,7 +40,6 @@
 		}
 	}
 
-	// Fetching the page data from API
 	$: {
 		chapters = [];
 		verses = [];
@@ -48,20 +47,20 @@
 
 		pageData = (async () => {
 			const data = await fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation);
-			const apiData = data.verses;
-			localStorage.setItem('pageData', JSON.stringify(apiData));
+			const verseData = data.verses;
+			localStorage.setItem('pageData', JSON.stringify(verseData));
 
 			// Get the first line, of the first word, of the first verse
-			const firstVerse = Object.keys(apiData)[0];
-			startingLine = apiData[firstVerse].words.line[0];
+			const firstVerse = Object.keys(verseData)[0];
+			startingLine = verseData[firstVerse].words.line[0];
 
 			// Get the last line, of the last word, of the last verse
-			const lastVerse = Object.keys(apiData)[Object.keys(apiData).length - 1];
-			const lastWord = apiData[lastVerse].words.line;
+			const lastVerse = Object.keys(verseData)[Object.keys(verseData).length - 1];
+			const lastWord = verseData[lastVerse].words.line;
 			endingLine = lastWord[lastWord.length - 1];
 
 			// Get chapter numbers
-			for (const key of Object.keys(apiData)) {
+			for (const key of Object.keys(verseData)) {
 				const chapter = +key.split(':')[0];
 				if (!chapters.includes(chapter)) {
 					chapters.push(chapter);
@@ -71,7 +70,7 @@
 			// Get the first verse of each chapter
 			chapters.forEach((chapter) => {
 				for (let verse = 1; verse <= quranMetaData[chapter].verses; verse++) {
-					if (apiData[`${chapter}:${verse}`]) {
+					if (verseData[`${chapter}:${verse}`]) {
 						verses.push(verse);
 						break;
 					}
@@ -80,24 +79,24 @@
 
 			// Get line numbers for chapters
 			chapters.forEach((chapter, index) => {
-				lines.push(+apiData[`${chapter}:${verses[index]}`].words.line[0]);
+				lines.push(+verseData[`${chapter}:${verses[index]}`].words.line[0]);
 			});
 
 			// Set the mushaf page divisions
 			__mushafPageDivisions.set({
 				chapters: chapters,
-				juz: apiData[Object.keys(apiData)[0]].meta.juz
+				juz: verseData[Object.keys(verseData)[0]].meta.juz
 			});
 
 			// Update the last read page
-			updateSettings({ type: 'lastRead', value: apiData[Object.keys(apiData)[0]].meta });
+			updateSettings({ type: 'lastRead', value: verseData[Object.keys(verseData)[0]].meta });
 
 			// Event listeners for swipe gestures
 			const pageBlock = document.getElementById('page-block');
 			pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
 			pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
 
-			return apiData;
+			return verseData;
 		})();
 
 		// Update the page number
@@ -108,11 +107,10 @@
 	 * This function retrieves and processes Quranic verses for a given page number.
 	 * It first fetches a JSON file (`keysInPage.json`) containing verse keys mapped to pages,
 	 * then extracts the specific chapters and verses required for the given page.
-	 * After identifying the necessary chapters, it fetches their complete data from an API
+	 * After identifying the necessary chapters, it fetches their complete data
 	 * and filters out only the requested verses. The function then ensures that the verses
 	 * are sorted in ascending order based on chapter and verse numbers before returning
-	 * the final structured object. This optimizes API calls and provides well-organized data
-	 * for further use.
+	 * the final structured object. This provides well-organized data for further use.
 	 */
 	async function fetchVersesByPage(page) {
 		try {
@@ -215,7 +213,7 @@
 			</div>
 		</div>
 	{:catch error}
-		<ErrorLoadingDataFromAPI {error} />
+		<ErrorLoadingData {error} />
 	{/await}
 </div>
 

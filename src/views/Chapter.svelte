@@ -4,7 +4,7 @@
 	import Bismillah from '$misc/Bismillah.svelte';
 	import Chapter from '$display/verses/modes/Chapter.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { parseURL } from '$utils/parseURL';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { quranMetaData } from '$data/quranMeta';
@@ -28,7 +28,7 @@
 		// Parse URL to get the range of verses to load
 		[startVerse, endVerse] = parseURL();
 
-		// Fetch chapter data from API
+		// Fetch chapter data
 		chapterData = fetchChapterData({ chapter: $__chapterNumber });
 
 		// Update the first verse on page
@@ -77,6 +77,6 @@
 			<Chapter {startVerse} {endVerse} />
 		</div>
 	{:catch error}
-		<ErrorLoadingDataFromAPI {error} />
+		<ErrorLoadingData {error} />
 	{/await}
 </div>

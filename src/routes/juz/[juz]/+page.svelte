@@ -4,7 +4,7 @@
 	import PageHead from '$misc/PageHead.svelte';
 	import Individual from '$display/verses/modes/Individual.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __displayType, __keysToFetch, __keysToFetchData, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { term } from '$utils/terminologies';
@@ -49,5 +49,5 @@
 		<Individual />
 	</div>
 {:catch error}
-	<ErrorLoadingDataFromAPI {error} />
+	<ErrorLoadingData {error} />
 {/await}

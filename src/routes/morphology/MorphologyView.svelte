@@ -4,7 +4,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Table from './Table.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { __currentPage, __fontType, __morphologyKey, __wordTranslation, __wordTransliteration } from '$utils/stores';
@@ -132,7 +132,7 @@
 					<WordsBlock key={`${chapter}:${verse}`} value={allData.chapterData} />
 				</div>
 			{:else}
-				<ErrorLoadingDataFromAPI center="false" error="Failed to load verse data" />
+				<ErrorLoadingData center="false" error="Failed to load verse data" />
 			{/if}
 		</div>
 
@@ -204,5 +204,5 @@
 		</div>
 	</div>
 {:catch error}
-	<ErrorLoadingDataFromAPI center="false" {error} />
+	<ErrorLoadingData center="false" {error} />
 {/await}

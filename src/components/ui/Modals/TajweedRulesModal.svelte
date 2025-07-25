@@ -1,7 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __tajweedRulesModalVisible, __currentPage, __chapterNumber } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
@@ -75,6 +75,6 @@
 			{@html createLink(`${staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf`, 'Makharij Al Huroof')}.
 		</div>
 	{:catch error}
-		<ErrorLoadingDataFromAPI center="false" {error} />
+		<ErrorLoadingData center="false" {error} />
 	{/await}
 </Modal>

@@ -5,7 +5,7 @@
 	import Check from '$svgs/Check.svelte';
 	import Cross from '$svgs/Cross.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
 	import { updateSettings } from '$utils/updateSettings';
@@ -122,6 +122,6 @@
 			</div>
 		</div>
 	{:catch error}
-		<ErrorLoadingDataFromAPI {error} />
+		<ErrorLoadingData {error} />
 	{/await}
 </div>

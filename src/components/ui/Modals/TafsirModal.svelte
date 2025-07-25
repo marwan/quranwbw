@@ -2,7 +2,7 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import SingleArabicVerse from '$display/verses/SingleArabicVerse.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __tafsirModalVisible, __verseKey, __verseTafsir } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
@@ -93,7 +93,7 @@
 					</div>
 				</div>
 			{:catch error}
-				<ErrorLoadingDataFromAPI center="false" {error} />
+				<ErrorLoadingData center="false" {error} />
 			{/await}
 		{/key}
 	</div>

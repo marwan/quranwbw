@@ -80,7 +80,7 @@ if (browser) {
 	// to store the page number
 	__pageNumber = writable(1);
 
-	// to store the chapter data fetched from the API
+	// to store the chapter data fetched from the CDN
 	__chapterData = writable(null);
 
 	// to store the verse translation data fetch from Quran.com's API
