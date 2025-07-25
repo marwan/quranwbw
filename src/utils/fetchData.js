@@ -145,10 +145,10 @@ export async function fetchAndCacheJson(url, type = 'other') {
 		return cachedData;
 	}
 
-	// Fetch from API
+	// Fetch from CDN
 	const response = await fetch(url);
 	if (!response.ok) {
-		throw new Error('Failed to fetch data from the API');
+		throw new Error('Failed to fetch data from the CDN');
 	}
 	const data = await response.json();
 
