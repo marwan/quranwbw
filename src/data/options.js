@@ -864,7 +864,6 @@ export const selectableTooltipOptions = {
 	4: { id: 4, name: 'Both' }
 };
 
-export const fontSizePresets = [null, 'text-xs', 'text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl', 'text-3xl', 'text-4xl', 'text-5xl', 'text-6xl', 'text-7xl', 'text-8xl'];
 export const selectableFontSizes = {
 	1: { id: 1, value: 'text-xs' },
 	2: { id: 2, value: 'text-sm' },
