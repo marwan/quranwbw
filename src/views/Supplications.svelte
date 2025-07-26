@@ -1,7 +1,7 @@
 <!-- for supplications and duas routes -->
 <script>
 	import PageHead from '$misc/PageHead.svelte';
-	import Individual from '$display/verses/modes/Individual.svelte';
+	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { supplicationsFromQuran } from '$data/quranMeta';
@@ -13,5 +13,5 @@
 <PageHead title={`Quranic ${term('supplications')}`} />
 
 <div id="individual-verses-block">
-	<Individual keys={Object.keys(supplicationsFromQuran).toString()} />
+	<FullVersesDisplay keys={Object.keys(supplicationsFromQuran).toString()} />
 </div>

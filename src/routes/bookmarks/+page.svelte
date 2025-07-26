@@ -1,6 +1,6 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
-	import Individual from '$display/verses/modes/Individual.svelte';
+	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import { __currentPage, __displayType, __userBookmarks } from '$utils/stores';
 	import { term } from '$utils/terminologies';
@@ -19,6 +19,6 @@
 			<span>You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you. </span>
 		</div>
 	{:else}
-		<Individual keys={$__userBookmarks.toString()} />
+		<FullVersesDisplay keys={$__userBookmarks.toString()} />
 	{/if}
 </div>

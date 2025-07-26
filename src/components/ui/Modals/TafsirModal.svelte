@@ -1,7 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import SingleArabicVerse from '$display/verses/SingleArabicVerse.svelte';
+	import ArabicVerseWords from '$display/verses/ArabicVerseWords.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __tafsirModalVisible, __verseKey, __verseTafsir } from '$utils/stores';
@@ -75,7 +75,7 @@
 				<Spinner inline={true} />
 			{:then data}
 				<div class="py-4">
-					<SingleArabicVerse key="{chapter}:{verse}" />
+					<ArabicVerseWords key="{chapter}:{verse}" />
 				</div>
 
 				<div class="text-sm flex flex-col space-y-6">

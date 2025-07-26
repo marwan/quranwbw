@@ -91,7 +91,7 @@
 
 	function loadNextVerses() {
 		try {
-			import('./Individual.svelte').then((res) => (Individual = res.default));
+			import('./FullVersesDisplay.svelte').then((res) => (Individual = res.default));
 			const lastRenderedId = document.querySelectorAll('.verse')[document.querySelectorAll('.verse').length - 1].id;
 
 			nextStartIndex = findKeyIndices(keys, lastRenderedId, maxIndexesAllowedToRender).startIndex;

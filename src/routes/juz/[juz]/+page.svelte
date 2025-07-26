@@ -2,7 +2,7 @@
 	export let data;
 
 	import PageHead from '$misc/PageHead.svelte';
-	import Individual from '$display/verses/modes/Individual.svelte';
+	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __displayType, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
@@ -39,7 +39,7 @@
 	<Spinner />
 {:then juzKeys}
 	<div id="individual-verses-block">
-		<Individual keys={juzKeys.toString()} />
+		<FullVersesDisplay keys={juzKeys.toString()} />
 	</div>
 {:catch error}
 	<ErrorLoadingData {error} />

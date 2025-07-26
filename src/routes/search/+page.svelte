@@ -2,7 +2,7 @@
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search2 from '$svgs/Search2.svelte';
-	import Individual from '$display/verses/modes/Individual.svelte';
+	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
 	import { __currentPage } from '$utils/stores';
@@ -195,7 +195,7 @@
 				<div id="individual-verses-block">
 					{#key resultKeys}
 						{#if resultKeys}
-							<Individual keys={resultKeys.toString()} />
+							<FullVersesDisplay keys={resultKeys.toString()} />
 						{/if}
 					{/key}
 				</div>
