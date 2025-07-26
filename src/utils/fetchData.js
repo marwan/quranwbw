@@ -158,37 +158,6 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	return data;
 }
 
-// Fetches all word data and returns 4 random words with their Arabic, transliteration, and translation
-export async function fetchRandomWords() {
-	const { arabicWordData, translationWordData, transliterationWordData } = await fetchWordData(1, 1, 1);
-
-	const allWordEntries = [];
-
-	for (const chapter in arabicWordData) {
-		const verses = arabicWordData[chapter];
-		for (const verse in verses) {
-			const [arabicWords = []] = verses[verse];
-			const translations = translationWordData[chapter]?.[verse]?.[0] || [];
-			const transliterations = transliterationWordData[chapter]?.[verse]?.[0] || [];
-
-			for (let i = 0; i < arabicWords.length; i++) {
-				allWordEntries.push({
-					word_key: `${chapter}:${verse}:${i + 1}`,
-					word_arabic: arabicWords[i],
-					word_transliteration: transliterations[i] || '',
-					word_english: translations[i] || ''
-				});
-			}
-		}
-	}
-
-	// Shuffle and pick 4 random unique words
-	const shuffled = allWordEntries.sort(() => 0.5 - Math.random());
-	const selected = shuffled.slice(0, 4);
-
-	return selected;
-}
-
 // Unified cache utility for IndexedDB with version and freshness control
 async function useCache(key, type, dataToSet = undefined) {
 	try {
