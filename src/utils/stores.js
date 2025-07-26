@@ -7,7 +7,6 @@ let __websiteOnline,
 	__pageNumber,
 	__chapterData,
 	__verseTranslationData,
-	__notesData,
 	__verseKey,
 	__userSettings,
 	__userNotes,
@@ -83,9 +82,6 @@ if (browser) {
 
 	// to store the verse translation data fetch from Quran.com's API
 	__verseTranslationData = writable(null);
-
-	// to store the user notes data fetched from the API
-	__notesData = writable(null);
 
 	// to store the verse key
 	__verseKey = writable('1:1');
@@ -236,7 +232,6 @@ export {
 	__pageNumber,
 	__chapterData,
 	__verseTranslationData,
-	__notesData,
 	__verseKey,
 	__userSettings,
 	__userNotes,
