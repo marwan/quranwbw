@@ -15,29 +15,40 @@
 		<script>
 			const userSettings1 = JSON.parse(localStorage.getItem('userSettings'));
 			const fontType = userSettings1?.displaySettings?.fontType ?? '1';
+			const baseFontUrl = '%sveltekit.assets%/fonts';
+
 			const fontMap = {
-				1: '%sveltekit.assets%/fonts/Uthmanic_NeoCOLOR-Regular.woff2',
-				2: '%sveltekit.assets%/fonts/AlQuranNeov5x1.woff2',
-				3: '%sveltekit.assets%/fonts/Nastaleeq_COLOR-Regular.woff2',
-				7: '%sveltekit.assets%/fonts/Uthmanic_NeoBCOLOR-VF.woff2',
-				8: '%sveltekit.assets%/fonts/NastaleeqB_COLOR-Regular.woff2'
+				1: `${baseFontUrl}/Uthmanic_NeoCOLOR-Regular.woff2`,
+				2: `${baseFontUrl}/Uthmanic_NeoCOLOR-Regular.woff2`,
+				3: `${baseFontUrl}/Uthmanic_NeoCOLOR-Regular.woff2`,
+				4: `${baseFontUrl}/AlQuranNeov5x1.woff2`,
+				5: `${baseFontUrl}/Nastaleeq_COLOR-Regular.woff2`,
+				6: `${baseFontUrl}/AlQuranNeov5x1.woff2`,
+				7: `${baseFontUrl}/Uthmanic_NeoBCOLOR-VF.woff2`,
+				8: `${baseFontUrl}/NastaleeqB_COLOR-Regular.woff2`
 			};
 
-			const fontUrl = fontMap[fontType];
-			if (fontUrl) {
+			const preloadFont = (url) => {
 				const link = document.createElement('link');
 				link.rel = 'preload';
-				link.href = fontUrl;
+				link.href = url;
 				link.as = 'font';
 				link.type = 'font/woff2';
 				link.crossOrigin = 'anonymous';
 				document.head.appendChild(link);
+			};
+
+			const fontUrl = fontMap[fontType];
+			if (fontUrl) preloadFont(fontUrl);
+
+			// Also preload Bismillah font for all types except 4 and 6 (IndoPak)
+			if (![4, 6].includes(fontType)) {
+				preloadFont(`${baseFontUrl}/QCF_Bismillah_COLOR-Regular.woff2`);
 			}
 		</script>
 
 		<link rel="dns-prefetch" href="//static.quranwbw.com" />
 		<link rel="preconnect" href="https://static.quranwbw.com" crossorigin />
-		<link rel="preload" href="%sveltekit.assets%/fonts/QCF_Bismillah_COLOR-Regular.woff2" as="font" type="font/woff2" crossorigin />
 		<link crossorigin="anonymous" rel="manifest" href="%sveltekit.assets%/manifest.json?v=2" />
 		<link crossorigin="anonymous" rel="icon" type="image/png" href="%sveltekit.assets%/images/favicon.png?v=2" />
 		<link crossorigin="anonymous" href="%sveltekit.assets%/images/apple-touch-icon.png?v=2" rel="apple-touch-icon" />
