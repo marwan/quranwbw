@@ -21,7 +21,6 @@ let __websiteOnline,
 	__wordTransliterationEnabled,
 	__reciter,
 	__translationReciter,
-	__timestampData,
 	__playbackSpeed,
 	__displayType,
 	__websiteTheme,
@@ -124,9 +123,6 @@ if (browser) {
 	// to store reciter
 	__reciter = writable(userSettings.audioSettings.reciter);
 	__translationReciter = writable(userSettings.audioSettings.translationReciter);
-
-	// to store the word timestamp data fetched from the API
-	__timestampData = writable(null);
 
 	// to store playback speed
 	__playbackSpeed = writable(userSettings.audioSettings.playbackSpeed);
@@ -254,7 +250,6 @@ export {
 	__wordTransliterationEnabled,
 	__reciter,
 	__translationReciter,
-	__timestampData,
 	__playbackSpeed,
 	__displayType,
 	__websiteTheme,

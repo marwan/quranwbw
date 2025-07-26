@@ -1,6 +1,6 @@
 import { db } from '$utils/db';
 import { get } from 'svelte/store';
-import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
+import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 import { staticEndpoint } from '$data/websiteSettings';
 import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
@@ -156,14 +156,6 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	await useCache(cacheKey, type, data);
 
 	return data;
-}
-
-// Fetch timestamps for word-by-word highlighting
-export async function fetchTimestampData(chapter) {
-	const apiURL = `${staticEndpoint}/timestamps/${chapter}.json?version=1`;
-	const response = await fetch(apiURL);
-	const data = await response.json();
-	__timestampData.set(data);
 }
 
 // Fetches all word data and returns 4 random words with their Arabic, transliteration, and translation

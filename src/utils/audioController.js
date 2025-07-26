@@ -1,10 +1,10 @@
 import { get } from 'svelte/store';
 import { quranMetaData } from '$data/quranMeta';
-import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __timestampData, __keysToFetch } from '$utils/stores';
-import { wordsAudioURL } from '$data/websiteSettings';
+import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __keysToFetch } from '$utils/stores';
+import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
-import { fetchTimestampData } from '$utils/fetchData';
 import { scrollSmoothly } from '$utils/scrollSmoothly';
+import { fetchAndCacheJson } from '$utils/fetchData';
 
 // Getting the audio element
 let audio = document.querySelector('#player');
@@ -15,9 +15,7 @@ export async function playVerseAudio(props) {
 	const [playChapter, playVerse] = props.key.split(':').map(Number);
 	let playBoth = false;
 
-	// Reset audio settings and fetch timestamp data for word-by-word highlighting
 	resetAudioSettings();
-	await fetchTimestampData(playChapter);
 
 	// Default language to Arabic
 	if (props.language === undefined) props.language = 'arabic';
@@ -30,7 +28,8 @@ export async function playVerseAudio(props) {
 
 	console.log('playing', '-', props.key, '-', props.language);
 
-	const reciterAudioUrl = props.language === 'arabic' ? selectableReciters[get(__reciter)].url : selectableTranslationReciters[get(__translationReciter)].url;
+	const reciter = selectableReciters[get(__reciter)];
+	const reciterAudioUrl = props.language === 'arabic' ? reciter.url : selectableTranslationReciters[get(__translationReciter)].url;
 	const currentVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse).padStart(3, '0')}.mp3`;
 	const nextVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse + 1).padStart(3, '0')}.mp3`;
 
@@ -48,7 +47,8 @@ export async function playVerseAudio(props) {
 	audioSettings.audioType = 'verse';
 
 	// Attach word highlighting function for supported reciters
-	if (props.language === 'arabic' && selectableReciters[get(__reciter)].timestampSlug) {
+	if (props.language === 'arabic' && reciter.wbw) {
+		await fetchTimestampData();
 		audio.addEventListener('timeupdate', wordHighlighter);
 	}
 
@@ -199,16 +199,18 @@ export function resetAudioSettings(props) {
 export function showAudioModal(key) {
 	resetAudioSettings();
 	initializeAudioSettings(key);
+	// fetchTimestampData();
 	__audioModalVisible.set(true);
 }
 
 // Word audio controller
-export function wordAudioController(props) {
+export async function wordAudioController(props) {
 	const audioSettings = get(__audioSettings);
-	const timestampSlug = selectableReciters[get(__reciter)].timestampSlug;
+	const reciter = selectableReciters[get(__reciter)];
 
-	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && timestampSlug) {
-		const verseTimestamp = get(__timestampData).data[`${props.chapter}:${props.verse}`][timestampSlug];
+	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && reciter.wbw) {
+		const timestampData = await fetchTimestampData();
+		const verseTimestamp = timestampData.data[props.chapter][props.verse][reciter.id];
 		const wordTimestamp = verseTimestamp.split('|')[props.key.split(':')[2]];
 
 		return (audio.currentTime = wordTimestamp);
@@ -218,7 +220,7 @@ export function wordAudioController(props) {
 }
 
 // Highlight words during audio playback based on timestamps
-function wordHighlighter() {
+async function wordHighlighter() {
 	const audioSettings = get(__audioSettings);
 
 	try {
@@ -226,8 +228,10 @@ function wordHighlighter() {
 		const wordsInVerse = getWordsInVerse(audioSettings.playingKey);
 
 		// Retrieve verse timestamp data fetched in playVerseAudio function
-		const timestampSlug = selectableReciters[get(__reciter)].timestampSlug;
-		const verseTimestamp = get(__timestampData).data[audioSettings.playingKey][timestampSlug];
+		const [chapter, verse] = audioSettings.playingKey.split(':').map(Number);
+		const reciterId = selectableReciters[get(__reciter)].id;
+		const timestampData = await fetchTimestampData();
+		const verseTimestamp = timestampData.data[chapter][verse][reciterId];
 
 		// Loop through all the words to highlight them
 		for (let word = 0; word < wordsInVerse; word++) {
@@ -402,4 +406,9 @@ export function prepareVersesToPlay(key) {
 			// Handle invalid audioRange values
 			console.error('Invalid audioRange:', audioRange);
 	}
+}
+
+// Fetch timestamps for word-by-word highlighting
+async function fetchTimestampData() {
+	return await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
 }
