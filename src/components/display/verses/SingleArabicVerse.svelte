@@ -16,7 +16,7 @@
 </script>
 
 {#await chapterData}
-	<Spinner size="10" />
+	<Spinner size="8" inline={true} />
 {:then data}
 	<div class="direction-rtl text-3xl leading-normal arabic-font-{fontType}">
 		{data.words.arabic.join(' ')}

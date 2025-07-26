@@ -287,7 +287,7 @@
 								</li>
 							{/each}
 							{#if !maxChaptersLoaded}
-								<Spinner size="8" />
+								<Spinner size="8" inline={true} />
 							{/if}
 							<div class="invisible" use:inview on:inview_enter={() => loadMaxChapters()}></div>
 						</ul>
@@ -308,7 +308,7 @@
 									</li>
 								{/each}
 								{#if !maxVersesLoaded && chapterVerses > maxItemsToLoad}
-									<Spinner size="8" />
+									<Spinner size="8" inline={true} />
 								{/if}
 							{/key}
 

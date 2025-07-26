@@ -75,7 +75,7 @@
 	<div class="flex flex-col space-y-4">
 		{#key verse}
 			{#await tafsirData}
-				<Spinner />
+				<Spinner inline={true} />
 			{:then data}
 				<div class="py-4">
 					<SingleArabicVerse key="{chapter}:{verse}" />
