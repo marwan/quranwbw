@@ -69,7 +69,7 @@
 
 	<div class="flex flex-row">
 		<button on:click={() => updateNote()} class="w-full mr-2 mt-6 {buttonClasses}">Update</button>
-		<button on:click={() => resetNote()} class="w-fit mr-2 mt-6 {buttonOutlineClasses}">
+		<button on:click={() => resetNote()} class="w-fit mt-6 {buttonClasses}">
 			<span><Trash size={5} /></span>
 		</button>
 	</div>
