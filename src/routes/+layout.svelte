@@ -13,21 +13,16 @@
 	import QuranNavigationModal from '$ui/Modals/QuranNavigationModal.svelte';
 	import SiteNavigationModal from '$ui/Modals/SiteNavigationModal.svelte';
 	import SettingsSelectorModal from '$ui/Modals/SettingsSelectorModal.svelte';
-	// import ChangelogModal from '$ui/Modals/ChangelogModal.svelte';
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 
 	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
-	import { checkOldBookmarks } from '$utils/checkOldBookmarks';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
-
-	// Function to check old bookmarks for v3 update
-	checkOldBookmarks();
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
@@ -126,6 +121,22 @@
 	$: if ($__currentPage && $__currentPage !== 'mushaf') {
 		$__fontType = JSON.parse($__userSettings).displaySettings.fontType;
 	}
+
+	// Function to check old bookmarks for v3 update
+	(function checkOldBookmarks() {
+		const oldBookmarks = localStorage.getItem('bookmarks');
+
+		if (oldBookmarks) {
+			const bookmarkList = oldBookmarks.slice(0, -1).split('|');
+
+			bookmarkList.forEach((bookmark) => {
+				updateSettings({ type: 'userBookmarks', key: bookmark, oldCheck: true, set: true });
+			});
+
+			// remove the old bookmarks from localStorage as they're no longer needed
+			localStorage.removeItem('bookmarks');
+		}
+	})();
 
 	// Service Worker
 	// checkAndRegisterServiceWorker();
