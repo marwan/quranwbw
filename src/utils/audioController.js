@@ -369,13 +369,9 @@ export function playButtonHandler(key) {
 // Note: This function only prepares the verses to play.
 // The actual setting of verses to play in a global array is handled by another function called setVersesToPlay.
 export function prepareVersesToPlay(key) {
-	// Split the key into chapter and verse
 	const [chapter, verse] = key.split(':');
-	// Destructure audio settings
 	const { audioRange, startVerse, endVerse } = get(__audioSettings);
-	// Get the total number of verses in the chapter
 	const versesInChapter = quranMetaData[chapter].verses;
-	// Check if the current page is a special one (supplications, bookmarks, juz)
 	const isSpecialPage = ['supplications', 'bookmarks', 'juz'].includes(get(__currentPage));
 
 	// Helper function to set verses to play starting from the current key
@@ -389,7 +385,6 @@ export function prepareVersesToPlay(key) {
 		}
 	};
 
-	// Main switch statement to handle different audio ranges
 	switch (audioRange) {
 		case 'playThisVerse':
 			// Set verses to play for the current verse only

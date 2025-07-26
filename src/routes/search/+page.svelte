@@ -5,7 +5,7 @@
 	import Individual from '$display/verses/modes/Individual.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
-	import { __currentPage, __keysToFetch } from '$utils/stores';
+	import { __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
 
@@ -20,12 +20,11 @@
 	let resultsFound = false;
 	let badRequest = false;
 	let navigationResults = [];
+	let resultKeys;
 	let totalResults = 0;
 
 	// Cache object to store search results
 	let searchCache = {};
-
-	__keysToFetch.set(null);
 
 	// Single reactive statement for search
 	$: if (searchQuery.length > 0) {
@@ -118,12 +117,12 @@
 			resultsFound = verseKeys.length > 0 || navigationItems.length > 0;
 
 			// Set verse keys for the Individual component
-			__keysToFetch.set(verseKeys.length > 0 ? verseKeys.toString() : null);
+			resultKeys = verseKeys.length > 0 ? verseKeys : null;
 		} else {
 			navigationResults = [];
 			totalResults = 0;
 			resultsFound = false;
-			__keysToFetch.set(null);
+			resultKeys = null;
 		}
 
 		fetchingNewData = false;
@@ -194,9 +193,9 @@
 				{/if}
 
 				<div id="individual-verses-block">
-					{#key $__keysToFetch}
-						{#if $__keysToFetch}
-							<Individual />
+					{#key resultKeys}
+						{#if resultKeys}
+							<Individual keys={resultKeys.toString()} />
 						{/if}
 					{/key}
 				</div>
