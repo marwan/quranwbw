@@ -3,7 +3,6 @@ import { quranMetaData } from '$data/quranMeta';
 import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __keysToFetch } from '$utils/stores';
 import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
-import { scrollSmoothly } from '$utils/scrollSmoothly';
 import { fetchAndCacheJson } from '$utils/fetchData';
 
 // Getting the audio element
@@ -54,7 +53,15 @@ export async function playVerseAudio(props) {
 
 	// Scroll to the playing verse
 	try {
-		scrollSmoothly(document.getElementById(`${audioSettings.playingKey}`).offsetTop - 75, 500);
+		const element = document.getElementById(`${audioSettings.playingKey}`);
+		if (element) {
+			const y = element.offsetTop - 75;
+
+			window.scrollTo({
+				top: y,
+				behavior: 'smooth'
+			});
+		}
 	} catch (error) {
 		console.warn(error);
 	}
