@@ -1,6 +1,6 @@
 import { db } from '$utils/db';
 import { get } from 'svelte/store';
-import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
+import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 import { staticEndpoint } from '$data/websiteSettings';
 import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
@@ -156,45 +156,6 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	await useCache(cacheKey, type, data);
 
 	return data;
-}
-
-// Fetch timestamps for word-by-word highlighting
-export async function fetchTimestampData(chapter) {
-	const apiURL = `${staticEndpoint}/timestamps/${chapter}.json?version=1`;
-	const response = await fetch(apiURL);
-	const data = await response.json();
-	__timestampData.set(data);
-}
-
-// Fetches all word data and returns 4 random words with their Arabic, transliteration, and translation
-export async function fetchRandomWords() {
-	const { arabicWordData, translationWordData, transliterationWordData } = await fetchWordData(1, 1, 1);
-
-	const allWordEntries = [];
-
-	for (const chapter in arabicWordData) {
-		const verses = arabicWordData[chapter];
-		for (const verse in verses) {
-			const [arabicWords = []] = verses[verse];
-			const translations = translationWordData[chapter]?.[verse]?.[0] || [];
-			const transliterations = transliterationWordData[chapter]?.[verse]?.[0] || [];
-
-			for (let i = 0; i < arabicWords.length; i++) {
-				allWordEntries.push({
-					word_key: `${chapter}:${verse}:${i + 1}`,
-					word_arabic: arabicWords[i],
-					word_transliteration: transliterations[i] || '',
-					word_english: translations[i] || ''
-				});
-			}
-		}
-	}
-
-	// Shuffle and pick 4 random unique words
-	const shuffled = allWordEntries.sort(() => 0.5 - Math.random());
-	const selected = shuffled.slice(0, 4);
-
-	return selected;
 }
 
 // Unified cache utility for IndexedDB with version and freshness control

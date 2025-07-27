@@ -703,17 +703,17 @@ export const selectableWordTransliterations = {
 export const selectableReciters = {
 	1: {
 		id: 1,
-		timestampSlug: 'basit_mujawwad',
 		reciter: 'Abdul Basit (Mujawwad)',
 		url: 'https://everyayah.com/data/Abdul_Basit_Mujawwad_128kbps',
-		image: 'abdul-baset-abdel-samad-medium.webp'
+		image: 'abdul-baset-abdel-samad-medium.webp',
+		wbw: true
 	},
 	2: {
 		id: 2,
-		timestampSlug: 'basit_murattal',
 		reciter: 'Abdul Basit (Murattal)',
 		url: 'https://everyayah.com/data/Abdul_Basit_Murattal_192kbps',
-		image: 'abdul-baset-abdel-samad-medium.webp'
+		image: 'abdul-baset-abdel-samad-medium.webp',
+		wbw: true
 	},
 	3: {
 		id: 3,
@@ -735,10 +735,10 @@ export const selectableReciters = {
 	},
 	6: {
 		id: 6,
-		timestampSlug: 'rifai',
 		reciter: 'Hani Ar-Rifai',
 		url: 'https://everyayah.com/data/Hani_Rifai_192kbps',
-		image: 'hani-ar-rifai-medium.webp'
+		image: 'hani-ar-rifai-medium.webp',
+		wbw: true
 	},
 	7: {
 		id: 7,
@@ -748,10 +748,10 @@ export const selectableReciters = {
 	},
 	8: {
 		id: 8,
-		timestampSlug: 'husary',
 		reciter: 'Mahmoud Khalil Al-Husary',
 		url: 'https://everyayah.com/data/Husary_128kbps',
-		image: 'mahmoud-khalil-al-hussary-profile.webp'
+		image: 'mahmoud-khalil-al-hussary-profile.webp',
+		wbw: true
 	},
 	9: {
 		id: 9,
@@ -761,10 +761,10 @@ export const selectableReciters = {
 	},
 	10: {
 		id: 10,
-		timestampSlug: 'mishary',
 		reciter: 'Mishary Rashid Alafasy',
 		url: 'https://everyayah.com/data/Alafasy_128kbps',
-		image: 'mishary-rashid-alafasy-medium.webp'
+		image: 'mishary-rashid-alafasy-medium.webp',
+		wbw: true
 	},
 	11: {
 		id: 11,
@@ -792,10 +792,10 @@ export const selectableReciters = {
 	},
 	15: {
 		id: 15,
-		timestampSlug: 'shuraym',
 		reciter: 'Saood Ash-Shuraym',
 		url: 'https://everyayah.com/data/Saood_ash-Shuraym_128kbps',
-		image: 'saud-al-shuraim-medium.webp'
+		image: 'saud-al-shuraim-medium.webp',
+		wbw: true
 	},
 	16: {
 		id: 16,
@@ -864,7 +864,6 @@ export const selectableTooltipOptions = {
 	4: { id: 4, name: 'Both' }
 };
 
-export const fontSizePresets = [null, 'text-xs', 'text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl', 'text-3xl', 'text-4xl', 'text-5xl', 'text-6xl', 'text-7xl', 'text-8xl'];
 export const selectableFontSizes = {
 	1: { id: 1, value: 'text-xs' },
 	2: { id: 2, value: 'text-sm' },

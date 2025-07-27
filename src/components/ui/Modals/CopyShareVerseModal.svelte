@@ -7,7 +7,6 @@
 	import { linkClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { downloadTextFile } from '$utils/downloadTextFile';
 	import { selectableVerseTranslations } from '$data/options';
 
 	// CSS classes for radio buttons
@@ -143,6 +142,16 @@
 
 		console.log(generatedVerseData);
 		navigator.clipboard.writeText(generatedVerseData);
+	}
+
+	// function to download any text/string as a text file
+	function downloadTextFile(name, data) {
+		const link = document.createElement('a');
+		const file = new Blob([data], { type: 'text/plain' });
+		link.href = URL.createObjectURL(file);
+		link.download = `${name}.txt`;
+		link.click();
+		URL.revokeObjectURL(link.href);
 	}
 </script>
 

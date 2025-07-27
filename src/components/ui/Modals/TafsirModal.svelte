@@ -1,7 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import SingleArabicVerse from '$display/verses/SingleArabicVerse.svelte';
+	import ArabicVerseWords from '$display/verses/ArabicVerseWords.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __tafsirModalVisible, __verseKey, __verseTafsir } from '$utils/stores';
@@ -12,18 +12,15 @@
 
 	let tafsirData;
 
-	// URLs for fetching Tafsir data
+	// we have all the tafsirs on first endpoint and Tafheem Ul Quran (urdu) on second
 	const tafsirUrls = {
 		1: 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir',
 		2: 'https://static.quranwbw.com/data/v4/tafsirs'
 	};
 
-	// Reactive variables for selected Tafsir and verse details
 	$: selectedTafirId = $__verseTafsir || 30;
-	$: chapter = Number($__verseKey.split(':')[0]);
-	$: verse = Number($__verseKey.split(':')[1]);
+	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
-	// Load Tafsir data when the modal is visible
 	$: if ($__tafsirModalVisible) {
 		tafsirData = loadTafsirData();
 	}
@@ -78,7 +75,7 @@
 				<Spinner inline={true} />
 			{:then data}
 				<div class="py-4">
-					<SingleArabicVerse key="{chapter}:{verse}" />
+					<ArabicVerseWords key="{chapter}:{verse}" />
 				</div>
 
 				<div class="text-sm flex flex-col space-y-6">

@@ -10,17 +10,46 @@
 	import { buttonClasses, buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
 	import { updateSettings } from '$utils/updateSettings';
 	import { playWordAudio } from '$utils/audioController';
-	import { fetchRandomWords } from '$utils/fetchData';
+	import { fetchWordData } from '$utils/fetchData';
 
 	let randomID = 1;
-	let randomWordsData;
 	let selection = null;
 	let answerChecked = false;
 	let isAnswerCorrect = null;
 	let randomWord = Math.floor(Math.random() * 3);
 
-	// Fetch random words
 	$: randomWordsData = fetchRandomWords(randomID);
+
+	// Fetches all word data and returns 4 random words with their Arabic, transliteration, and translation
+	async function fetchRandomWords() {
+		const { arabicWordData, translationWordData, transliterationWordData } = await fetchWordData(1, 1, 1);
+
+		const allWordEntries = [];
+
+		for (const chapter in arabicWordData) {
+			const verses = arabicWordData[chapter];
+			for (const verse in verses) {
+				const [arabicWords = []] = verses[verse];
+				const translations = translationWordData[chapter]?.[verse]?.[0] || [];
+				const transliterations = transliterationWordData[chapter]?.[verse]?.[0] || [];
+
+				for (let i = 0; i < arabicWords.length; i++) {
+					allWordEntries.push({
+						word_key: `${chapter}:${verse}:${i + 1}`,
+						word_arabic: arabicWords[i],
+						word_transliteration: transliterations[i] || '',
+						word_english: translations[i] || ''
+					});
+				}
+			}
+		}
+
+		// Shuffle and pick 4 random unique words
+		const shuffled = allWordEntries.sort(() => 0.5 - Math.random());
+		const selected = shuffled.slice(0, 4);
+
+		return selected;
+	}
 
 	// Check if the selected answer is correct
 	function checkAnswer() {
