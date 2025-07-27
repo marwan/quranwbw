@@ -1,6 +1,9 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { execSync } from 'node:child_process';
+import { config } from 'dotenv';
+
+config();
 
 function getVersion() {
 	try {
