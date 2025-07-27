@@ -6,10 +6,23 @@
 </script>
 
 <svelte:head>
-	<title>{title} - {websiteURL}</title>
-	<meta name="description" content="{title} - {websiteTagline} in {wbwLanguages} - {websiteURL}" />
-	<meta name="og:site_name" content={websiteTitle} />
-	<meta name="og:title" content="{title} - {websiteTagline} in {wbwLanguages} - {websiteURL}" />
-	<meta name="og:image" content="" />
-	<meta name="og:url" content={$page.url.href} />
+	<!-- HTML Meta Tags -->
+	<title>{websiteTitle}</title>
+	<meta name="description" content="{websiteTagline} in {wbwLanguages} - {websiteURL}" />
+
+	<!-- Facebook / Open Graph -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:title" content="{title} - {websiteTagline} in {wbwLanguages}" />
+	<meta property="og:description" content="{websiteTagline} in {wbwLanguages} - {websiteURL}" />
+	<meta property="og:image" content="/images/icon-512.png" />
+	<meta property="og:site_name" content={websiteTitle} />
+
+	<!-- Twitter Meta Tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="twitter:domain" content="quranwbw.com" />
+	<meta property="twitter:url" content={$page.url.href} />
+	<meta name="twitter:title" content="{title} - {websiteTagline}" />
+	<meta name="twitter:description" content="{websiteTagline} in {wbwLanguages} - {websiteURL}" />
+	<meta name="twitter:image" content="/images/icon-512.png" />
 </svelte:head>
