@@ -9,6 +9,8 @@
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
 
+	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
+
 	const linkClasses = `w-fit flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const linkTextClasses = 'text-xs md:text-sm text-left w-fit capitalize truncate';
 
@@ -38,7 +40,11 @@
 		}
 
 		try {
-			const response = await fetch(`?query=${encodeURIComponent(searchQuery)}`);
+			const response = await fetch(`https://api.kalimat.dev/search?query=${searchQuery}&numResults=50`, {
+				headers: {
+					'x-api-key': API_KEY
+				}
+			});
 
 			if (response.status !== 200) {
 				badRequest = true;
