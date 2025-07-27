@@ -3,7 +3,7 @@
 	import Trash from '$svgs/Trash.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __verseKey, __userNotes, __notesModalVisible } from '$utils/stores';
-	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
+	import { buttonClasses } from '$data/commonClasses';
 	import { timeAgo } from '$utils/timeAgo';
 	import { updateSettings } from '$utils/updateSettings';
 	import { getModalTransition } from '$utils/getModalTransition';
