@@ -489,6 +489,10 @@ svg {
   color: rgb(0, 255, 0);
 }
 
+#notes-value {
+  resize: none;
+}
+
 .markdown {
   @apply space-y-4; /* Add spacing between block elements */
 }

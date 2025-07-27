@@ -74,9 +74,3 @@
 		</button>
 	</div>
 </Modal>
-
-<style>
-	#notes-value {
-		resize: none;
-	}
-</style>
