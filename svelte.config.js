@@ -21,6 +21,9 @@ const config = {
 			$misc: path.resolve('./src/components/misc')
 		}
 	},
+	output: {
+		bundleStrategy: 'single'
+	},
 	preprocess: vitePreprocess()
 };
 
