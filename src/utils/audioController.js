@@ -206,7 +206,7 @@ export function resetAudioSettings(props) {
 export function showAudioModal(key) {
 	resetAudioSettings();
 	initializeAudioSettings(key);
-	// fetchTimestampData();
+	fetchTimestampData();
 	__audioModalVisible.set(true);
 }
 
