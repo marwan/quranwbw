@@ -1,7 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __tajweedRulesModalVisible, __currentPage, __chapterNumber } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
@@ -38,7 +38,7 @@
 
 <Modal bind:open={$__tajweedRulesModalVisible} title={modalTitle} transitionParams={getModalTransition('bottom')} class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6 space-y-4 flex-1 overflow-y-auto overscroll-contain border {window.theme('border')}" headerClass="flex justify-between items-center p-6 rounded-t-3xl" position="bottom" center outsideclose>
 	{#await tajweedRulesData}
-		<Spinner size={10} />
+		<Spinner inline={true} />
 	{:then data}
 		<table class="w-full text-sm text-left rtl:text-right">
 			<thead class="text-xs uppercase {window.theme('bgSecondaryLight')}">
@@ -68,13 +68,13 @@
 				{/each}
 			</tbody>
 		</table>
-	{:catch error}
-		<ErrorLoadingDataFromAPI center="false" {error} />
-	{/await}
 
-	<!-- links to PDF files -->
-	<div class="mt-4 text-xs">
-		To learn the correct pronunciation of Arabic alphabets, please refer to
-		{@html createLink(`${staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf`, 'Makharij Al Huroof')}.
-	</div>
+		<!-- links to PDF files -->
+		<div class="mt-4 text-xs">
+			To learn the correct pronunciation of Arabic alphabets, please refer to
+			{@html createLink(`${staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf`, 'Makharij Al Huroof')}.
+		</div>
+	{:catch error}
+		<ErrorLoadingData center="false" {error} />
+	{/await}
 </Modal>

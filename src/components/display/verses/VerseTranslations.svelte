@@ -5,7 +5,7 @@
 	import Skeleton from '$ui/FlowbiteSvelte/skeleton/Skeleton.svelte';
 	import { __currentPage, __verseTranslations, __verseTranslationData, __userSettings } from '$utils/stores';
 	import { fetchVerseTranslationData } from '$utils/fetchData';
-	import { selectableVerseTranslations, rightToLeftVerseTranslations } from '$data/options';
+	import { selectableVerseTranslations } from '$data/options';
 
 	$: fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	$: verseTranslationClasses = `verseTranslationText flex flex-col space-y-4 leading-normal ${fontSizes.verseTranslationText}`;
@@ -66,7 +66,7 @@
 	}
 
 	function isTranslationRTL(id) {
-		return rightToLeftVerseTranslations.includes(selectableVerseTranslations[id].resource_id);
+		return selectableVerseTranslations[id]?.is_rtl === true;
 	}
 
 	// Function to highlight the searched text in verse text

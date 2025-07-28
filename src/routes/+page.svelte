@@ -11,6 +11,11 @@
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import Notes from '$svgs/Notes.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
+	import Menu from '$svgs/Menu.svelte';
+	import SupplicationBold from '$svgs/SupplicationBold.svelte';
+	import MorphologyBold from '$svgs/MorphologyBold.svelte';
+	import BookFilled from '$svgs/BookFilled.svelte';
+	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
 	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
@@ -19,11 +24,7 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchAndCacheJson } from '$utils/fetchData';
-	import Menu from '$svgs/Menu.svelte';
-	import SupplicationBold from '$svgs/SupplicationBold.svelte';
-	import MorphologyBold from '$svgs/MorphologyBold.svelte';
-	import BookFilled from '$svgs/BookFilled.svelte';
-	import Search2Bold from '$svgs/Search2Bold.svelte';
+	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
 	const svgData = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
@@ -60,33 +61,23 @@
 		})();
 	}
 
-	// Ensure chapter icons are visible if panel changes
-	$: if (divisionsActiveTab) renderChapterIcons();
-
-	// Remove 'invisible' class from chapter icons once fonts are loaded
-	document.fonts.ready.then(() => {
-		document.querySelectorAll('.chapter-icons').forEach((element) => {
-			element.classList.remove('invisible');
-		});
-	});
-
 	function sortDivisions() {
 		divisionsSortIsAscending = !divisionsSortIsAscending;
 		chapterListOrder = divisionsSortIsAscending ? [...quranMetaData] : [...quranMetaData].reverse();
 		juzListOrder = divisionsSortIsAscending ? [...juzMeta] : [...juzMeta].reverse();
-
-		// Ensure chapter icons are visible after sorting
-		renderChapterIcons();
 	}
 
-	// Function to remove the invisibility of chapter icons after a short time
-	function renderChapterIcons() {
-		setTimeout(() => {
-			document.querySelectorAll('.chapter-icons').forEach((element) => {
-				element.classList.remove('invisible');
-			});
-		}, 10);
-	}
+	let chapterDataLoaded = false;
+
+	// On first scroll (after 50px), fetch chapter and translation data without updating the store
+	window.addEventListener('scroll', async function onScroll() {
+		if (!chapterDataLoaded && window.scrollY > 50) {
+			chapterDataLoaded = true;
+			fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+			fetchVerseTranslationData({ preventStoreUpdate: true });
+			window.removeEventListener('scroll', onScroll);
+		}
+	});
 
 	__currentPage.set('home');
 </script>
@@ -133,7 +124,7 @@
 				<div class="flex flex-row space-x-2 w-full">
 					{#if isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
-							<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[18].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[18].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
 								<span>Al Kahf</span>
@@ -143,7 +134,7 @@
 
 					{#if isNight}
 						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Waaqia Reminder Button')}>
-							<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[56].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[56].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Evening Reminder:</span>
 								<span>Al Waaqia</span>
@@ -151,7 +142,7 @@
 						</a>
 
 						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
-							<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[67].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[67].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
 								<span>Al Mulk</span>
@@ -310,7 +301,7 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
-							<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span class="truncate">
 								Continue Reading:
 								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
@@ -353,7 +344,7 @@
 											</div>
 										</div>
 
-										<div class="invisible chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+										<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
 									</div>
 								</a>
 							{/if}
@@ -370,7 +361,7 @@
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadJuz = $__lastRead.juz}
 						<a href="/juz/{lastReadJuz}?startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
-							<span class="invisible chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('juz')}
 								{lastReadJuz}, {lastReadChapter}:{lastReadVerse}

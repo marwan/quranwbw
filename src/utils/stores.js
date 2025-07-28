@@ -7,7 +7,6 @@ let __websiteOnline,
 	__pageNumber,
 	__chapterData,
 	__verseTranslationData,
-	__notesData,
 	__verseKey,
 	__userSettings,
 	__userNotes,
@@ -21,7 +20,6 @@ let __websiteOnline,
 	__wordTransliterationEnabled,
 	__reciter,
 	__translationReciter,
-	__timestampData,
 	__playbackSpeed,
 	__displayType,
 	__websiteTheme,
@@ -61,7 +59,6 @@ let __websiteOnline,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
-	__keysToFetchData,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible;
 
@@ -80,14 +77,11 @@ if (browser) {
 	// to store the page number
 	__pageNumber = writable(1);
 
-	// to store the chapter data fetched from the API
+	// to store the chapter data fetched from the CDN
 	__chapterData = writable(null);
 
 	// to store the verse translation data fetch from Quran.com's API
 	__verseTranslationData = writable(null);
-
-	// to store the user notes data fetched from the API
-	__notesData = writable(null);
 
 	// to store the verse key
 	__verseKey = writable('1:1');
@@ -125,9 +119,6 @@ if (browser) {
 	// to store reciter
 	__reciter = writable(userSettings.audioSettings.reciter);
 	__translationReciter = writable(userSettings.audioSettings.translationReciter);
-
-	// to store the word timestamp data fetched from the API
-	__timestampData = writable(null);
 
 	// to store playback speed
 	__playbackSpeed = writable(userSettings.audioSettings.playbackSpeed);
@@ -227,9 +218,6 @@ if (browser) {
 	// storing the total keys to fetch by Individual component
 	__keysToFetch = writable(null);
 
-	// storing the keys data fetched by Individual component
-	__keysToFetchData = writable({});
-
 	// what happens when a user clicks on a word
 	__wordMorphologyOnClick = writable(userSettings.displaySettings.wordMorphologyOnClick);
 
@@ -244,7 +232,6 @@ export {
 	__pageNumber,
 	__chapterData,
 	__verseTranslationData,
-	__notesData,
 	__verseKey,
 	__userSettings,
 	__userNotes,
@@ -258,7 +245,6 @@ export {
 	__wordTransliterationEnabled,
 	__reciter,
 	__translationReciter,
-	__timestampData,
 	__playbackSpeed,
 	__displayType,
 	__websiteTheme,
@@ -298,7 +284,6 @@ export {
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
-	__keysToFetchData,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible
 };

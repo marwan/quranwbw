@@ -211,7 +211,7 @@
 											{@const [juzChapter, juzVerse] = juzMeta[value - 1]['from'].split(':').map(Number)}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/{juzChapter}/{juzVerse}" class={linkTextClasses}>{term('juz')} {value} ({quranMetaData[juzChapter].transliteration})</a>
+												<a href="/{juzChapter}/{juzVerse}" class={linkTextClasses}>{term('juz')} {value} ({juzMeta[value - 1].name})</a>
 											</div>
 										{:else if key === 'key'}
 											{@const [keyChapter, keyVerse] = value.split(':').map(Number)}
@@ -287,7 +287,7 @@
 								</li>
 							{/each}
 							{#if !maxChaptersLoaded}
-								<Spinner size="8" />
+								<Spinner size="8" inline={true} />
 							{/if}
 							<div class="invisible" use:inview on:inview_enter={() => loadMaxChapters()}></div>
 						</ul>
@@ -308,7 +308,7 @@
 									</li>
 								{/each}
 								{#if !maxVersesLoaded && chapterVerses > maxItemsToLoad}
-									<Spinner size="8" />
+									<Spinner size="8" inline={true} />
 								{/if}
 							{/key}
 

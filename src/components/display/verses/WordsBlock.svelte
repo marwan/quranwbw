@@ -7,21 +7,20 @@
 	import VerseOptionsDropdown from '$display/verses/VerseOptionsDropdown.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { goto } from '$app/navigation';
-	import { selectableDisplays, selectableThemes, selectableWordTranslations } from '$data/options';
+	import { selectableDisplays, selectableWordTranslations } from '$data/options';
 	import { supplicationsFromQuran } from '$data/quranMeta';
 	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick, __wordTranslation, __wordTranslationEnabled, __wordTransliterationEnabled, __wordTooltip, __hideNonDuaPart } from '$utils/stores';
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
-	import { splitDelimiter } from '$data/websiteSettings';
 
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	const chapter = key.split(':')[0];
 	const verse = key.split(':')[1];
-	const arabicSplit = value.words.arabic.split(splitDelimiter);
-	const transliterationSplit = value.words.transliteration.split(splitDelimiter);
-	const translationSplit = value.words.translation.split(splitDelimiter);
+	const arabicWords = value.words.arabic;
+	const transliterationWords = value.words.transliteration;
+	const translationWords = value.words.translation;
 
 	// fix for Ba'da Ma Ja'aka for page 254
 	// since it's just a cosmetic change, there's no need of changing it at database level
@@ -132,7 +131,7 @@
 
 	// Function to check if word should be displayed
 	function shouldDisplayWord(wordIndex) {
-		return $__currentPage !== 'mushaf' || ($__currentPage === 'mushaf' && +value.words.line.split(splitDelimiter)[wordIndex] === line);
+		return $__currentPage !== 'mushaf' || ($__currentPage === 'mushaf' && +value.words.line[wordIndex] === line);
 	}
 
 	// Function to get word key
@@ -159,7 +158,7 @@
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 				<!-- Everything except Mushaf fonts -->
 				{#if ![2, 3].includes($__fontType)}
-					{arabicSplit[word]}
+					{arabicWords[word]}
 					<!-- Mushaf fonts -->
 				{:else}
 					<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" class={v4hafsClasses}>
@@ -167,7 +166,7 @@
 						{#if Object.prototype.hasOwnProperty.call(fixedMushafWords, wordKey)}
 							{fixedMushafWords[wordKey]}
 						{:else}
-							{arabicSplit[word]}
+							{arabicWords[word]}
 						{/if}
 					</span>
 				{/if}
@@ -176,8 +175,8 @@
 			<!-- word translation and transliteration, only for wbw modes -->
 			{#if [1, 3, 7].includes($__displayType)}
 				<div class={wordTranslationClasses} data-fontSize={fontSizes.wordTranslationText}>
-					<span class="leading-normal {$__wordTransliterationEnabled ? 'block' : 'hidden'}">{transliterationSplit[word]}</span>
-					<span class="leading-normal {selectableWordTranslations[$__wordTranslation].font} {$__wordTranslationEnabled ? 'block' : 'hidden'}">{translationSplit[word]}</span>
+					<span class="leading-normal {$__wordTransliterationEnabled ? 'block' : 'hidden'}">{transliterationWords[word]}</span>
+					<span class="leading-normal {selectableWordTranslations[$__wordTranslation].font} {$__wordTranslationEnabled ? 'block' : 'hidden'}">{translationWords[word]}</span>
 				</div>
 			{/if}
 		</div>
@@ -186,11 +185,11 @@
 		{#if $__wordTooltip > 1}
 			<Tooltip arrow={false} type="light" class="z-30 hidden md:block text-center inline-flex font-sans font-normal">
 				{#if $__wordTooltip === 2}
-					{@html transliterationSplit[word]}
+					{@html transliterationWords[word]}
 				{:else if $__wordTooltip === 3}
-					{@html translationSplit[word]}
+					{@html translationWords[word]}
 				{:else if $__wordTooltip === 4}
-					{@html `<div class="flex flex-col">${transliterationSplit[word]} <div class="border-t"></div> ${translationSplit[word]}</div>`}
+					{@html `<div class="flex flex-col">${transliterationWords[word]} <div class="border-t"></div> ${translationWords[word]}</div>`}
 				{/if}
 			</Tooltip>
 		{/if}
@@ -198,7 +197,7 @@
 {/each}
 
 <!-- end icon -->
-{#if $__currentPage != 'mushaf' || ($__currentPage === 'mushaf' && value.words.end_line === line)}
+{#if $__currentPage !== 'mushaf' || ($__currentPage === 'mushaf' && value.words.line[value.words.line.length - 1] === line)}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>
