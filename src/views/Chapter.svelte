@@ -1,5 +1,4 @@
 <script>
-	// Import necessary components and utilities
 	import PageHead from '$misc/PageHead.svelte';
 	import Bismillah from '$misc/Bismillah.svelte';
 	import Chapter from '$display/verses/modes/Chapter.svelte';

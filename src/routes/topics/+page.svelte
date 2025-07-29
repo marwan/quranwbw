@@ -1,25 +1,33 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
+	import Spinner from '$svgs/Spinner.svelte';
 	import { __currentPage } from '$utils/stores';
-	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { debounce } from '$utils/debounce';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
-	import { disabledClasses } from '$data/commonClasses';
 
 	let topics = {};
 	let allTopics = [];
 	let filteredTopics = [];
-	let selectedLetter = 'A';
 	let searchQuery = '';
 	let debouncedSearch = '';
 	let isSearching = false;
 
 	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 
-	// Update selectedLetter from URL
-	$: selectedLetter = $page.url.searchParams.get('letter')?.toUpperCase() || 'A';
+	let groupedTopics = {};
+
+	$: {
+		groupedTopics = {};
+		for (const [topic, verses] of filteredTopics) {
+			const firstLetter = topic[0].toUpperCase();
+			if (!groupedTopics[firstLetter]) {
+				groupedTopics[firstLetter] = [];
+			}
+			groupedTopics[firstLetter].push([topic, verses]);
+		}
+	}
 
 	// Debounce handler
 	function updateDebouncedSearch() {
@@ -32,7 +40,6 @@
 
 	// Run this whenever searchQuery changes
 	$: searchQuery, updateDebouncedSearch();
-	$: searchQueryLength = searchQuery.length;
 
 	// Filter topics on debouncedSearch or selectedLetter
 	$: filteredTopics = allTopics
@@ -40,7 +47,7 @@
 			if (debouncedSearch) {
 				return topic.toLowerCase().includes(debouncedSearch);
 			}
-			return topic.toUpperCase().startsWith(selectedLetter);
+			return true;
 		})
 		.sort((a, b) => a[0].localeCompare(b[0]));
 
@@ -49,21 +56,19 @@
 		allTopics = Object.entries(topics);
 	});
 
-	$: filteredTopicsCount = filteredTopics.length;
-
 	__currentPage.set('topics');
 </script>
 
 <PageHead title="Topics" />
 
-<div class="mx-auto py-4">
+<div class="mx-auto px-4">
 	<!-- Search Input -->
-	<div class="relative flex max-w-xl mx-auto mb-4">
+	<!-- <div class="relative flex max-w-xl mx-auto mb-4">
 		<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-3xl w-full text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search topics..." required />
-	</div>
+	</div> -->
 
 	<!-- Search Count -->
-	<div id="search-results-information" class="text-center text-xs">
+	<!-- <div id="search-results-information" class="text-center text-xs">
 		{#if filteredTopicsCount > 0}
 			{#if searchQueryLength > 0}
 				<span>Showing {filteredTopicsCount} results related to "{searchQuery}".</span>
@@ -71,48 +76,30 @@
 				<span>Showing {filteredTopicsCount} results starting with the alphabet "{selectedLetter}".</span>
 			{/if}
 		{/if}
-	</div>
-
-	<!-- Alphabet Filter (disabled when searching) -->
-	{#if !searchQuery.trim()}
-		<div class="flex flex-wrap gap-1 mb-6 items-center justify-center text-lg mt-6">
-			{#each alphabet as letter, i}
-				<a
-					href={`?letter=${letter}`}
-					class="px-1 py-1 cursor-pointer transition
-					{letter === selectedLetter ? `font-bold underline ${window.theme('textSecondary')}` : ''}"
-				>
-					{letter}
-				</a>
-				{#if i < alphabet.length - 1}
-					<span class={disabledClasses}>•</span>
-				{/if}
-			{/each}
-		</div>
-	{/if}
+	</div> -->
 
 	<!-- Loading Message -->
 	{#if isSearching}
-		<p class="italic mb-4">Loading...</p>
+		<Spinner />
 	{/if}
 
-	<!-- Topic List -->
-	{#if filteredTopics.length === 0 && !isSearching}
-		<p>No topics found.</p>
-	{:else if !isSearching}
-		<div id="search-result-items" class="space-y-6 {searchQuery.length > 0 && 'mt-6'}">
-			{#each filteredTopics as [topic, verses]}
-				<div class="pb-4 border-b {window.theme('border')}">
-					<h2 class="text-xl font-semibold {window.theme('textSecondary')}">{topic}</h2>
-					<p>
-						{#each verses as verse, i}
-							<a href={`https://quranwbw.com/${verse.replace(':', '/')}`} class="hover:underline" target="_blank" rel="noopener">
-								{verse}
-							</a>{i < verses.length - 1 ? ', ' : ''}
+	<!-- Grouped Topics by Alphabet -->
+	{#if !isSearching}
+		{#each alphabet as letter}
+			<div class="py-8 border-b {window.theme('border')}">
+				<h2 class="text-2xl font-bold mb-2 {window.theme('textSecondary')}">{letter}</h2>
+				{#if groupedTopics[letter] && groupedTopics[letter].length > 0}
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-1 gap-x-4">
+						{#each groupedTopics[letter] as [topic, verses]}
+							<a href={`verses?keys=${verses.join(',')}`} class="hover:underline" target="_blank" rel="noopener">
+								{topic} ({verses.length})
+							</a>
 						{/each}
-					</p>
-				</div>
-			{/each}
-		</div>
+					</div>
+				{:else}
+					<p class="text-sm text-gray-500 italic">No topics under this letter.</p>
+				{/if}
+			</div>
+		{/each}
 	{/if}
 </div>
