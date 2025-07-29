@@ -1,63 +1,66 @@
 import { db } from '$utils/db';
 import { get } from 'svelte/store';
-import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __timestampData } from '$utils/stores';
-import { apiEndpoint, staticEndpoint, apiVersion } from '$data/websiteSettings';
-import { selectableFontTypes } from '$data/options';
+import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
+import { staticEndpoint } from '$data/websiteSettings';
+import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
-// Fetch specific verses (startVerse to endVerse) and cache the data
+// Fetches and combines word-by-word data for a chapter including Arabic, translation, transliteration, and metadata
 export async function fetchChapterData(props) {
-	if (!props.skipSave) __chapterData.set(null);
+	if (!props.preventStoreUpdate) __chapterData.set(null);
 
+	const chapter = Number(props.chapter);
 	const fontType = props.fontType || get(__fontType);
 	const wordTranslation = props.wordTranslation || get(__wordTranslation);
 	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
 
-	// Generate a unique key for the data
-	const cacheKey = `${props.chapter}_${selectableFontTypes[fontType].apiId}_${wordTranslation}_${wordTransliteration}_${apiVersion}`;
+	const { arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(fontType, wordTranslation, wordTransliteration);
 
-	// Try to load from cache
-	const cachedData = await useCache(cacheKey, 'chapter');
-	if (cachedData) {
-		if (!props.skipSave) __chapterData.set(cachedData);
-		return cachedData;
+	const result = {};
+	const arabicVerses = arabicWordData[chapter] || {};
+	const translationVerses = translationWordData[chapter] || {};
+	const transliterationVerses = transliterationWordData[chapter] || {};
+
+	for (const verseStr in arabicVerses) {
+		const verseKey = `${chapter}:${verseStr}`;
+
+		const [arabicWords = [], lineNumbers = [], endIcons = []] = arabicVerses[verseStr];
+		const translations = (translationVerses[verseStr] && translationVerses[verseStr][0]) || [];
+		const transliterations = (transliterationVerses[verseStr] && transliterationVerses[verseStr][0]) || [];
+		const meta = metaVerseData[verseKey] || {
+			chapter: chapter,
+			verse: parseInt(verseStr, 10),
+			page: null,
+			juz: null,
+			words: arabicWords.length
+		};
+
+		result[verseKey] = {
+			meta: {
+				chapter: chapter,
+				verse: parseInt(verseStr, 10),
+				page: meta.page,
+				juz: meta.juz,
+				words: meta.words
+			},
+			words: {
+				arabic: arabicWords,
+				translation: translations,
+				transliteration: transliterations,
+				line: lineNumbers,
+				end: endIcons[0] || ''
+			}
+		};
 	}
-
-	// Build API URL
-	const apiURL =
-		`${apiEndpoint}/chapter?` +
-		new URLSearchParams({
-			chapter: props.chapter,
-			word_type: selectableFontTypes[fontType].apiId,
-			word_translation: wordTranslation,
-			word_transliteration: wordTransliteration,
-			version: apiVersion
-		});
-
-	// Fetch from API
-	const response = await fetch(apiURL);
-	if (!response.ok) {
-		throw new Error(
-			JSON.stringify({
-				status: response.status,
-				statusText: response.statusText
-			})
-		);
-	}
-	const data = await response.json();
-
-	// Save to cache
-	await useCache(cacheKey, 'chapter', data.data.verses);
 
 	// Update store
-	if (!props.skipSave) __chapterData.set(data.data.verses);
+	if (!props.preventStoreUpdate) __chapterData.set(result);
 
-	return data.data.verses;
+	return result;
 }
 
 // Fetch specific translations and cache the data
 export async function fetchVerseTranslationData(props) {
-	// Use translation IDs from props or fallback to store
-	if (!props.translations) props.translations = get(__verseTranslations);
+	const translations = get(__verseTranslations);
 
 	// Get current store data
 	const existingData = get(__verseTranslationData) || {};
@@ -68,9 +71,11 @@ export async function fetchVerseTranslationData(props) {
 	// Filter translation IDs that need to be fetched (not in store or cache)
 	const idsToFetch = [];
 
-	for (const id of props.translations) {
+	for (const id of translations) {
+		const version = selectableVerseTranslations[id].version;
+
 		// Try to load from cache first
-		const cacheKey = `translation_${id}_${apiVersion}`;
+		const cacheKey = `translation_${id}_${version}`;
 		const cached = await useCache(cacheKey, 'translation');
 
 		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
@@ -83,21 +88,22 @@ export async function fetchVerseTranslationData(props) {
 	// Early return if everything was found in cache/store
 	if (idsToFetch.length === 0) {
 		// Update the store
-		if (!props.skipSave) __verseTranslationData.set(updatedData);
+		if (!props.preventStoreUpdate) __verseTranslationData.set(updatedData);
 
 		return updatedData;
 	}
 
 	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
-		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=${apiVersion}`;
+		const version = selectableVerseTranslations[id].version;
+		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=${version}`;
 		try {
 			const res = await fetch(url);
 			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
 			const data = await res.json();
 
 			// Save to cache
-			await useCache(`translation_${id}_${apiVersion}`, 'translation', data);
+			await useCache(`translation_${id}_${version}`, 'translation', data);
 
 			return { id, data };
 		} catch (error) {
@@ -116,7 +122,7 @@ export async function fetchVerseTranslationData(props) {
 	}
 
 	// Update the store
-	if (!props.skipSave) __verseTranslationData.set(updatedData);
+	if (!props.preventStoreUpdate) __verseTranslationData.set(updatedData);
 
 	return updatedData;
 }
@@ -130,16 +136,19 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	const secondLastPart = pathParts[pathParts.length - 2] || 'root'; // fallback if not present
 	const cacheKey = `${secondLastPart}/${lastPart}${parsedUrl.search}`;
 
+	// Wait for a random delay between 5 to 15 seconds
+	// await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 10001) + 5000));
+
 	// Try to load from cache
 	const cachedData = await useCache(cacheKey, type);
 	if (cachedData) {
 		return cachedData;
 	}
 
-	// Fetch from API
+	// Fetch from CDN
 	const response = await fetch(url);
 	if (!response.ok) {
-		throw new Error('Failed to fetch data from the API');
+		throw new Error('Failed to fetch data from the CDN');
 	}
 	const data = await response.json();
 
@@ -149,14 +158,6 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	return data;
 }
 
-// Fetch timestamps for word-by-word highlighting
-export async function fetchTimestampData(chapter) {
-	const apiURL = `${staticEndpoint}/timestamps/${chapter}.json?version=1`;
-	const response = await fetch(apiURL);
-	const data = await response.json();
-	__timestampData.set(data);
-}
-
 // Unified cache utility for IndexedDB with version and freshness control
 async function useCache(key, type, dataToSet = undefined) {
 	try {
@@ -164,8 +165,8 @@ async function useCache(key, type, dataToSet = undefined) {
 		let table;
 
 		switch (type) {
-			case 'chapter':
-				table = db.chapter_data;
+			case 'word':
+				table = db.word_data;
 				break;
 			case 'translation':
 				table = db.translation_data;
@@ -185,17 +186,6 @@ async function useCache(key, type, dataToSet = undefined) {
 
 		if (!table) throw new Error(`Table not found for type: ${type}`);
 
-		// Access the version table to verify current API version
-		const versionTable = db.data_version;
-		const versionRecord = await versionTable.get('version');
-		const storedVersion = versionRecord?.value;
-
-		// If no version exists or it doesn't match the current version,
-		// clear both caches and update the stored version
-		if (storedVersion !== apiVersion) {
-			await Promise.all([db.chapter_data.clear(), db.translation_data.clear(), versionTable.put({ key: 'version', value: apiVersion })]);
-		}
-
 		if (dataToSet !== undefined) {
 			// Set data in the cache with current timestamp
 			await table.put({
@@ -208,20 +198,34 @@ async function useCache(key, type, dataToSet = undefined) {
 			// Attempt to retrieve cached data
 			const record = await table.get(key);
 			if (!record) return null;
-
-			// Check if the cached data is fresh (within 7 days)
-			const isFresh = Date.now() - record.timestamp < 7 * 24 * 60 * 60 * 1000;
-			if (isFresh) {
-				return record.data;
-			} else {
-				// If stale, delete it and return null to trigger a fresh fetch
-				await table.delete(key);
-				return null;
-			}
+			return record.data;
 		}
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
 		console.warn('IndexedDB cache error:', error?.message || error);
 		return dataToSet !== undefined ? false : null;
 	}
+}
+
+// Fetches Arabic, translation, transliteration, and meta verse data in parallel
+export async function fetchWordData(fontType, wordTranslation, wordTransliteration) {
+	const { id: fontID, version: arabicVersion } = selectableFontTypes[fontType];
+	const { version: translationVersion } = selectableWordTranslations[wordTranslation];
+	const { version: transliterationVersion } = selectableWordTransliterations[wordTransliteration];
+
+	const urls = [
+		{ url: `${staticEndpoint}/words-data/arabic/${fontID}.json?version=${arabicVersion}`, type: 'word' },
+		{ url: `${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=${translationVersion}`, type: 'word' },
+		{ url: `${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=${transliterationVersion}`, type: 'word' },
+		{ url: `${staticEndpoint}/meta/verseKeyData.json?version=2`, type: 'other' }
+	];
+
+	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
+
+	return {
+		arabicWordData,
+		translationWordData,
+		transliterationWordData,
+		metaVerseData
+	};
 }

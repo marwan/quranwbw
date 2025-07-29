@@ -48,7 +48,7 @@ export function updateSettings(props) {
 		// for font types
 		case 'fontType':
 			__fontType.set(props.value);
-			if (props.skipSave) return;
+			if (props.preventStoreUpdate) return;
 			userSettings.displaySettings.fontType = props.value;
 			trackEvent = true;
 			break;
@@ -56,7 +56,7 @@ export function updateSettings(props) {
 		// for display types
 		case 'displayType':
 			__displayType.set(props.value);
-			if (props.skipSave) return;
+			if (props.preventStoreUpdate) return;
 			userSettings.displaySettings.displayType = props.value;
 			if (!props.skipTrackEvent) trackEvent = true;
 			break;
@@ -239,7 +239,6 @@ export function updateSettings(props) {
 		case 'hideNonDuaPart':
 			__hideNonDuaPart.set(props.value);
 			userSettings.displaySettings.hideNonDuaPart = props.value;
-			location.reload();
 			break;
 
 		// for quiz correct answers

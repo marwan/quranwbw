@@ -19,6 +19,9 @@ const config = {
 			$svgs: path.resolve('./src/components/svgs'),
 			$display: path.resolve('./src/components/display'),
 			$misc: path.resolve('./src/components/misc')
+		},
+		output: {
+			bundleStrategy: 'single'
 		}
 	},
 	preprocess: vitePreprocess()

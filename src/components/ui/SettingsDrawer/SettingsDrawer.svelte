@@ -37,7 +37,7 @@
 		__wordMorphologyOnClick
 	} from '$utils/stores';
 
-	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, fontSizePresets, selectableVersePlayButtonOptions } from '$data/options';
+	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
 
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
@@ -84,9 +84,9 @@
 	let showAllSettings = true;
 	let showIndividualSetting = false;
 	let totalVerseTransliterationsSelected = 0;
-	let arabicWordSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.arabicText);
-	let wordTranlationTransliterationSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
-	let verseTranlationTransliterationSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.verseTranslationText);
+	let arabicWordSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.arabicText);
+	let wordTranlationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
+	let verseTranlationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.verseTranslationText);
 	let playbackSpeedValue = JSON.parse($__userSettings).audioSettings.playbackSpeed;
 
 	// Update settings when sliders are changed
@@ -172,6 +172,15 @@
 		settingsDrawerOpacity = 'opacity-100';
 		settingsDrawerBackground = `${window.theme('bgMain')}`;
 		document.querySelector('.settings-backdrop').classList.remove('opacityyy-10');
+	}
+
+	function getFontSizeIdByClass(className) {
+		for (const key in selectableFontSizes) {
+			if (selectableFontSizes[key].value === className) {
+				return Number(key);
+			}
+		}
+		return null;
 	}
 </script>
 

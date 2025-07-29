@@ -37,6 +37,7 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 - [Quranic Universal Library (QUL)](https://qul.tarteel.ai/) for their Persian words database.
 - Abdul Aziz Korejo and [Dr. Usama Nonnenmacher](https://drusaman.github.io/), his family and others for their contributions to Sindhi word-by-word Quran translation.
 - Ustadh Jahja Hondozi for the Albanian word-by-word translation.
+- [Kalimat](https://www.kalimat.dev/) for their AI powered semantic search API.
 
 All data used on this website belongs to their respective owners and authors. Permission must be obtained from them before copying any content.
 
