@@ -134,9 +134,10 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	// await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 10001) + 5000));
 
 	// Try to load from cache
-	const cachedData = await useCache(cacheKey, type);
+	const cachedData = await manageCache(cacheKey, type);
 	if (cachedData) {
-		return cachedData;
+		console.log(cachedData.key, cachedData.timestamp);
+		return cachedData.data;
 	}
 
 	// Fetch from CDN
@@ -147,38 +148,25 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	const data = await response.json();
 
 	// Save to cache
-	await useCache(cacheKey, type, data);
+	await manageCache(cacheKey, type, data);
 
 	return data;
 }
 
 // Unified cache utility for IndexedDB with version and freshness control
-async function useCache(key, type, dataToSet = undefined) {
+async function manageCache(key, type, dataToSet = undefined) {
 	try {
 		// Select the appropriate table based on the type
-		let table;
+		const tableMap = {
+			word: db.word_data,
+			translation: db.verse_translation_data,
+			morphology: db.morphology_data,
+			tafsir: db.tafsir_data,
+			other: db.other_data
+		};
 
-		switch (type) {
-			case 'word':
-				table = db.word_data;
-				break;
-			case 'translation':
-				table = db.verse_translation_data;
-				break;
-			case 'morphology':
-				table = db.morphology_data;
-				break;
-			case 'tafsir':
-				table = db.tafsir_data;
-				break;
-			case 'other':
-				table = db.other_data;
-				break;
-			default:
-				throw new Error(`Invalid table for type: ${type}`);
-		}
-
-		if (!table) throw new Error(`Table not found for type: ${type}`);
+		const table = tableMap[type];
+		if (!table) throw new Error(`Invalid table for type: ${type}`);
 
 		if (dataToSet !== undefined) {
 			// Set data in the cache with current timestamp
@@ -192,7 +180,7 @@ async function useCache(key, type, dataToSet = undefined) {
 			// Attempt to retrieve cached data
 			const record = await table.get(key);
 			if (!record) return null;
-			return record.data;
+			return record;
 		}
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
