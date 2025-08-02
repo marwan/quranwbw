@@ -1,4 +1,4 @@
-import { cacheTableMap } from '$utils/db';
+import { cacheTableMap } from '$utils/dexie';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 import { staticEndpoint } from '$data/websiteSettings';

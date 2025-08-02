@@ -1,6 +1,6 @@
 import { updateSettings } from '$utils/updateSettings';
 import { quranMetaData } from '$data/quranMeta';
-import { cacheTableMap } from '$utils/db';
+import { cacheTableMap } from '$utils/dexie';
 
 // Set of functions for testing/debugging certain features
 class devTools {
