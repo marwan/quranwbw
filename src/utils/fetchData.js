@@ -73,10 +73,7 @@ export async function fetchVerseTranslationData(props) {
 
 	for (const id of translations) {
 		const version = selectableVerseTranslations[id].version;
-
-		// Try to load from cache first
-		const cacheKey = `translation_${id}_${version}`;
-		const cached = await useCache(cacheKey, 'translation');
+		const cached = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
 
 		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
 			updatedData[id] = cached;
@@ -96,14 +93,11 @@ export async function fetchVerseTranslationData(props) {
 	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
 		const version = selectableVerseTranslations[id].version;
-		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=${version}`;
 		try {
-			const res = await fetch(url);
+			const res = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+
 			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
 			const data = await res.json();
-
-			// Save to cache
-			await useCache(`translation_${id}_${version}`, 'translation', data);
 
 			return { id, data };
 		} catch (error) {
@@ -169,7 +163,7 @@ async function useCache(key, type, dataToSet = undefined) {
 				table = db.word_data;
 				break;
 			case 'translation':
-				table = db.translation_data;
+				table = db.verse_translation_data;
 				break;
 			case 'morphology':
 				table = db.morphology_data;
