@@ -1,4 +1,4 @@
-import { db } from '$utils/db';
+import { cacheTableMap } from '$utils/db';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 import { staticEndpoint } from '$data/websiteSettings';
@@ -121,33 +121,48 @@ export async function fetchVerseTranslationData(props) {
 	return updatedData;
 }
 
-// Generic fetch and cache utility
+// Generic fetch and cache utility with safe 7-day expiry logic
 export async function fetchAndCacheJson(url, type = 'other') {
-	// Generate a unique key for the data
 	const parsedUrl = new URL(url);
-	const pathParts = parsedUrl.pathname.split('/').filter(Boolean); // removes empty strings
+	const pathParts = parsedUrl.pathname.split('/').filter(Boolean);
 	const lastPart = pathParts[pathParts.length - 1] || '';
-	const secondLastPart = pathParts[pathParts.length - 2] || 'root'; // fallback if not present
+	const secondLastPart = pathParts[pathParts.length - 2] || 'root';
 	const cacheKey = `${secondLastPart}/${lastPart}${parsedUrl.search}`;
+	const maxCacheAge = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 	// Wait for a random delay between 5 to 15 seconds
 	// await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 10001) + 5000));
 
 	// Try to load from cache
 	const cachedData = await manageCache(cacheKey, type);
+
 	if (cachedData) {
-		console.log(cachedData.key, cachedData.timestamp);
+		const age = Date.now() - cachedData.timestamp;
+
+		// If stale, update in background (non-blocking)
+		if (age > maxCacheAge) {
+			(async () => {
+				try {
+					const response = await fetch(url);
+					if (!response.ok) throw new Error('CDN response not ok');
+					const freshData = await response.json();
+					await manageCache(cacheKey, type, freshData);
+					console.log('Cache updated in background');
+				} catch (err) {
+					console.warn('Background cache update failed:', err?.message || err);
+				}
+			})();
+		}
+
+		// Return cached data (even if stale) immediately
 		return cachedData.data;
 	}
 
-	// Fetch from CDN
+	// No cache found, fetch from CDN
 	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error('Failed to fetch data from the CDN');
-	}
-	const data = await response.json();
+	if (!response.ok) throw new Error('Failed to fetch data from the CDN');
 
-	// Save to cache
+	const data = await response.json();
 	await manageCache(cacheKey, type, data);
 
 	return data;
@@ -156,16 +171,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 // Unified cache utility for IndexedDB with version and freshness control
 async function manageCache(key, type, dataToSet = undefined) {
 	try {
-		// Select the appropriate table based on the type
-		const tableMap = {
-			word: db.word_data,
-			translation: db.verse_translation_data,
-			morphology: db.morphology_data,
-			tafsir: db.tafsir_data,
-			other: db.other_data
-		};
-
-		const table = tableMap[type];
+		const table = cacheTableMap[type];
 		if (!table) throw new Error(`Invalid table for type: ${type}`);
 
 		if (dataToSet !== undefined) {
