@@ -216,17 +216,17 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- only show the minimize minimal mode button when it is enabled -->
-		{#if $__mushafMinimalModeEnabled}
-			<div class="flex justify-center -mt-12 pb-16">
-				<button class="w-fit flex flex-row space-x-2 py-3 px-3 rounded-xl items-center cursor-pointer {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={toggleMushafMinimalMode} data-umami-event="Mushaf Minimal Mode Button">
-					<Minimize size={3} />
-				</button>
-				<Tooltip arrow={false} type="light" class="z-30 hidden md:block font-normal">Minimal Mode</Tooltip>
-			</div>
-		{/if}
 	</div>
 {:catch error}
 	<ErrorLoadingData {error} />
 {/await}
+
+<!-- only show the minimize minimal mode button when it is enabled -->
+{#if $__mushafMinimalModeEnabled}
+	<div class="flex justify-center -mt-12 pb-16">
+		<button class="w-fit flex flex-row space-x-2 py-3 px-3 rounded-xl items-center cursor-pointer {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={toggleMushafMinimalMode} data-umami-event="Mushaf Minimal Mode Button">
+			<Minimize size={3} />
+		</button>
+		<Tooltip arrow={false} type="light" class="z-30 hidden md:block font-normal">Minimal Mode</Tooltip>
+	</div>
+{/if}
