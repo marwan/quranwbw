@@ -4,8 +4,6 @@ import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, _
 import { staticEndpoint } from '$data/websiteSettings';
 import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
-const test = 1;
-
 // Fetches and combines word-by-word data for a chapter including Arabic, translation, transliteration, and metadata
 export async function fetchChapterData(props) {
 	if (!props.preventStoreUpdate) __chapterData.set(null);
