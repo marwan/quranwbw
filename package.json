@@ -6,10 +6,8 @@
 		"dev": "vite dev --host",
 		"build": "vite build",
 		"preview": "vite preview",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write .",
 		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify",
-		"lintVars": "eslint . --ext .js,.ts,.svelte"
+		"lint:unused": "eslint . --ext .js,.ts,.svelte --max-warnings=0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
@@ -26,7 +24,6 @@
 		"flowbite-svelte": "^0.46.1",
 		"postcss": "^8.4.38",
 		"prettier": "^3.1.1",
-		"prettier-plugin-svelte": "^3.1.2",
 		"svelte": "^4.2.19",
 		"tailwind-scrollbar": "^3.1.0",
 		"tailwindcss": "^3.4.1",
