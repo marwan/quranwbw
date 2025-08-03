@@ -22,6 +22,7 @@
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
@@ -142,7 +143,7 @@
 	// checkAndRegisterServiceWorker();
 </script>
 
-<div class="max-w-screen-lg mx-auto {paddingTop} {paddingBottom} {paddingX}">
+<div class={`${getWebsiteWidth()} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
 	<Navbar />
 	<SettingsDrawer />
 	<QuranNavigationModal />
