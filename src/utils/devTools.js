@@ -1,5 +1,6 @@
 import { updateSettings } from '$utils/updateSettings';
 import { quranMetaData } from '$data/quranMeta';
+import { cacheTableMap } from '$utils/dexie';
 
 // Set of functions for testing/debugging certain features
 class devTools {
@@ -65,6 +66,39 @@ class devTools {
 
 	deleteNotes() {
 		updateSettings({ type: 'userNotes', key: {}, override: true });
+	}
+
+	// Simulate stale cache records by setting their timestamps to over 7 days ago
+	async markRandomCacheStale() {
+		const maxCacheAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+		const tableKeys = Object.keys(cacheTableMap);
+		const numTablesToTouch = Math.floor(Math.random() * tableKeys.length) + 1;
+
+		const randomTables = tableKeys.sort(() => 0.5 - Math.random()).slice(0, numTablesToTouch);
+
+		for (const type of randomTables) {
+			const table = cacheTableMap[type];
+
+			const allKeys = await table.toCollection().primaryKeys();
+			if (allKeys.length === 0) continue;
+
+			const numRecordsToUpdate = Math.max(1, Math.floor(allKeys.length * 0.8)); // 80% or at least 1
+			const randomKeys = allKeys.sort(() => 0.5 - Math.random()).slice(0, numRecordsToUpdate);
+
+			await Promise.all(
+				randomKeys.map(async (key) => {
+					const record = await table.get(key);
+					if (record) {
+						await table.put({
+							...record,
+							timestamp: maxCacheAge
+						});
+					}
+				})
+			);
+		}
+
+		console.log('Some cache records marked as stale.');
 	}
 }
 
