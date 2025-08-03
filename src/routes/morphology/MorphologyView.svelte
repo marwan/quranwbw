@@ -12,6 +12,7 @@
 	import { fetchChapterData, fetchAndCacheJson, fetchWordData } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
+	import { fade } from 'svelte/transition';
 
 	let chapter, verse, word;
 	let wordRoot = '';
@@ -101,7 +102,7 @@
 {#await allDataPromise}
 	<Spinner />
 {:then allData}
-	<div class="space-y-6 my-8">
+	<div class="space-y-6 my-8" in:fade={{ duration: 300 }}>
 		{#if $__currentPage === 'morphology'}
 			<div id="verse-navigator" class="flex flex-row justify-center space-x-8 text-sm">
 				<!-- previous chapter -->
