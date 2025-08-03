@@ -8,7 +8,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { timeAgo } from '$utils/timeAgo';
 	import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
-	import { db } from '$utils/db';
+	import { db } from '$utils/dexie';
 
 	// State variables
 	let progressMessage = '';
@@ -90,7 +90,7 @@
 						wordTranslation: $__wordTranslation,
 						wordTransliteration: $__wordTransliteration,
 						verseTranslations: $__verseTranslations,
-						lastDownloadAt: new Date().toISOString(),
+						lastDownloadAt: new Date().toISOString()
 					}
 				});
 				showMessage('Download complete!');
