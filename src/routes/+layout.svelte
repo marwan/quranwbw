@@ -16,12 +16,13 @@
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
-
 	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { fade } from 'svelte/transition';
+	import { page } from '$app/stores'; // SvelteKit store for page data
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
@@ -159,5 +160,10 @@
 	<MorphologyModal />
 	<CopyShareVerseModal />
 	<BottomToolbar />
-	<slot />
+
+	{#key $page.url.pathname}
+		<div in:fade={{ duration: 300 }}>
+			<slot />
+		</div>
+	{/key}
 </div>
