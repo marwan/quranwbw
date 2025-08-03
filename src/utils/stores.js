@@ -60,7 +60,8 @@ let __websiteOnline,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible;
+	__homepageExtrasPanelVisible,
+	__wideWesbiteLayout;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -223,6 +224,9 @@ if (browser) {
 
 	// visibiliy of the extras panel on homepage (bookmarks, notes, etc...)
 	__homepageExtrasPanelVisible = writable(userSettings.displaySettings.homepageExtrasPanelVisible);
+
+	// to store the website wide layout option
+	__wideWesbiteLayout = writable(userSettings.displaySettings.wideWesbiteLayout);
 }
 
 export {
@@ -285,5 +289,6 @@ export {
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible
+	__homepageExtrasPanelVisible,
+	__wideWesbiteLayout
 };

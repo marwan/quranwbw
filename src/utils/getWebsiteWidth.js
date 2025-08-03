@@ -1,6 +1,6 @@
-const option = 1;
+import { get } from 'svelte/store';
+import { __wideWesbiteLayout } from '$utils/stores';
 
 export function getWebsiteWidth() {
-	if (option === 1) return 'max-w-screen-lg';
-	else if (option === 2) return 'max-w-screen-xl';
+	return get(__wideWesbiteLayout) ? 'max-w-screen-xl' : 'max-w-screen-lg';
 }

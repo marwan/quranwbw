@@ -29,7 +29,8 @@ import {
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__downloadedDataInfo
+	__downloadedDataInfo,
+	__wideWesbiteLayout
 } from '$utils/stores';
 
 // function to update website settings
@@ -278,6 +279,13 @@ export function updateSettings(props) {
 		case 'downloadedDataInfo':
 			__downloadedDataInfo.set(props.value);
 			userSettings.downloadedDataInfo = props.value;
+			break;
+
+		// for toggling website wide layout
+		case 'wideWesbiteLayout':
+			__wideWesbiteLayout.set(props.value);
+			userSettings.displaySettings.wideWesbiteLayout = props.value;
+			location.reload();
 			break;
 
 		// for increasing/decreasing font sizes
