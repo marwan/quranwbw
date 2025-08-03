@@ -137,7 +137,8 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	const cachedData = await manageCache(cacheKey, type);
 
 	if (cachedData) {
-		const age = Date.now() - cachedData.timestamp;
+		const hasValidTimestamp = typeof cachedData.timestamp === 'number' && !isNaN(cachedData.timestamp);
+		const age = hasValidTimestamp ? Date.now() - cachedData.timestamp : Infinity;
 
 		// If stale, update in background (non-blocking)
 		if (age > maxCacheAge) {
