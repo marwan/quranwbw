@@ -34,7 +34,8 @@
 		__englishTerminology,
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
-		__wordMorphologyOnClick
+		__wordMorphologyOnClick,
+		__wideWesbiteLayoutEnabled
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -275,6 +276,20 @@
 							<p class={settingsDescriptionClasses}>Enabling this option will prevent your screen from dimming or sleeping. Please note that you will need to manually enable this option for each session.</p>
 						</div>
 					{/if}
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- wide-website-layout-setting -->
+					<div id="wide-website-layout-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Wide Website Layout</span>
+							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWesbiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWesbiteLayoutEnabled', value: event.target.checked })} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width). Best for larger screens.</p>
+					</div>
 				</div>
 			</div>
 
