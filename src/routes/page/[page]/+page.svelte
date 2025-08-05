@@ -1,10 +1,8 @@
 <script>
 	export let data;
 
-	import Bismillah from '$misc/Bismillah.svelte';
-	import ChapterHeader from '$misc/ChapterHeader.svelte';
+	import PageRenderer from './PageRenderer.svelte';
 	import PageHead from '$misc/PageHead.svelte';
-	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Minimize from '$svgs/Minimize.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
@@ -37,13 +35,20 @@
 	const centeredPageLines = ['528:9', '545:6', '594:5', '602:5', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
 	let rightPageData;
+	let leftPageData;
 
 	let rightPageStartingLine;
 	let rightPageEndingLine;
+	let leftPageStartingLine;
+	let leftPageEndingLine;
 
 	let rightPageChapters = [];
 	let rightPageVerses = [];
 	let rightPageLines = [];
+
+	let leftPageChapters = [];
+	let leftPageVerses = [];
+	let leftPageLines = [];
 
 	let rightPageNumber;
 	let leftPageNumber;
@@ -51,7 +56,7 @@
 	// Set the page number
 	$: page = +data.page;
 
-	const bookModeEnabled = false;
+	const bookModeEnabled = true;
 
 	$: if (bookModeEnabled) {
 		rightPageNumber = pagePairs[page][0];
@@ -129,62 +134,82 @@
 			return verseData;
 		})();
 
-		// leftPageData = (async () => {
-		// 	const data = await fetchVersesByPage(leftPageNumber, selectableFontTypes[$__fontType].id, $__wordTranslation);
-		// 	const verseData = data.verses;
-		// 	localStorage.setItem('leftPageData', JSON.stringify(verseData));
-
-		// 	// Get the first line, of the first word, of the first verse
-		// 	const firstVerse = Object.keys(verseData)[0];
-		// 	startingLine = verseData[firstVerse].words.line[0];
-
-		// 	// Get the last line, of the last word, of the last verse
-		// 	const lastVerse = Object.keys(verseData)[Object.keys(verseData).length - 1];
-		// 	const lastWord = verseData[lastVerse].words.line;
-		// 	endingLine = lastWord[lastWord.length - 1];
-
-		// 	// Get chapter numbers
-		// 	for (const key of Object.keys(verseData)) {
-		// 		const chapter = +key.split(':')[0];
-		// 		if (!chapters.includes(chapter)) {
-		// 			chapters.push(chapter);
-		// 		}
-		// 	}
-
-		// 	// Get the first verse of each chapter
-		// 	chapters.forEach((chapter) => {
-		// 		for (let verse = 1; verse <= quranMetaData[chapter].verses; verse++) {
-		// 			if (verseData[`${chapter}:${verse}`]) {
-		// 				verses.push(verse);
-		// 				break;
-		// 			}
-		// 		}
-		// 	});
-
-		// 	// Get line numbers for chapters
-		// 	chapters.forEach((chapter, index) => {
-		// 		lines.push(+verseData[`${chapter}:${verses[index]}`].words.line[0]);
-		// 	});
-
-		// 	// // Set the mushaf page divisions
-		// 	// __mushafPageDivisions.set({
-		// 	// 	chapters: chapters,
-		// 	// 	juz: verseData[Object.keys(verseData)[0]].meta.juz
-		// 	// });
-
-		// 	// // Update the last read page
-		// 	// updateSettings({ type: 'lastRead', value: verseData[Object.keys(verseData)[0]].meta });
-
-		// 	// // Event listeners for swipe gestures
-		// 	// const pageBlock = document.getElementById('page-block');
-		// 	// pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
-		// 	// pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
-
-		// 	return verseData;
-		// })();
-
 		// Update the page number
 		__pageNumber.set(page);
+	}
+
+	$: {
+		rightPageData = getPageData(rightPageNumber).then((data) => {
+			rightPageChapters = data.chapters;
+			rightPageVerses = data.verses;
+			rightPageLines = data.lines;
+			rightPageStartingLine = data.startingLine;
+			rightPageEndingLine = data.endingLine;
+			return data.verseData;
+		});
+	}
+
+	$: {
+		leftPageData = getPageData(leftPageNumber).then((data) => {
+			leftPageChapters = data.chapters;
+			leftPageVerses = data.verses;
+			leftPageLines = data.lines;
+			leftPageStartingLine = data.startingLine;
+			leftPageEndingLine = data.endingLine;
+			return data.verseData;
+		});
+	}
+
+	async function getPageData(pageNumber) {
+		const chapters = [];
+		const verses = [];
+		const lines = [];
+
+		const data = await fetchVersesByPage(pageNumber, selectableFontTypes[$__fontType].id, $__wordTranslation);
+
+		const verseData = data.verses;
+		localStorage.setItem(`pageData-${pageNumber}`, JSON.stringify(verseData));
+
+		const verseKeys = Object.keys(verseData);
+
+		// First and last line
+		const firstVerse = verseKeys[0];
+		const lastVerse = verseKeys[verseKeys.length - 1];
+
+		const startingLine = verseData[firstVerse].words.line[0];
+		const endingLine = verseData[lastVerse].words.line.at(-1); // last line of last word
+
+		// Unique chapter numbers
+		for (const key of verseKeys) {
+			const chapter = +key.split(':')[0];
+			if (!chapters.includes(chapter)) {
+				chapters.push(chapter);
+			}
+		}
+
+		// First verse per chapter
+		chapters.forEach((chapter) => {
+			for (let verse = 1; verse <= quranMetaData[chapter].verses; verse++) {
+				if (verseData[`${chapter}:${verse}`]) {
+					verses.push(verse);
+					break;
+				}
+			}
+		});
+
+		// Line numbers for chapters
+		chapters.forEach((chapter, index) => {
+			lines.push(+verseData[`${chapter}:${verses[index]}`].words.line[0]);
+		});
+
+		return {
+			verseData,
+			startingLine,
+			endingLine,
+			chapters,
+			verses,
+			lines
+		};
 	}
 
 	/**
@@ -268,43 +293,11 @@
 		<Spinner />
 	{:then}
 		<div class="space-y-2 mt-2.5">
-			<!-- single page -->
+			<!-- Single page layout -->
 			<div class="flex flex-row">
-				<!-- right page -->
-				<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+rightPageNumber === 1 ? 'space-y-1' : 'space-y-2'}">
-					{#each Array.from(Array(rightPageEndingLine + 1).keys()).slice(rightPageStartingLine) as line}
-						{#if rightPageChapters.length > 0 && rightPageLines.includes(line) && rightPageVerses[rightPageLines.indexOf(line)] === 1}
-							<div class="flex flex-col my-2">
-								<ChapterHeader chapter={rightPageChapters[rightPageLines.indexOf(line)]} />
-								<Bismillah chapters={rightPageChapters} lines={rightPageLines} {line} />
-							</div>
-						{/if}
+				<PageRenderer pageNumber={leftPageNumber} chapters={leftPageChapters} verses={leftPageVerses} lines={leftPageLines} startingLine={leftPageStartingLine} endingLine={leftPageEndingLine} dataKey={`pageData-${leftPageNumber}`} fontType={$__fontType} {centeredPageLines} />
 
-						<div class="line {line} flex px-2 arabic-font-{$__fontType} {+rightPageNumber < 3 || centeredPageLines.includes(`${+rightPageNumber}:${line}`) ? 'justify-center' : null} {+rightPageNumber > 2 && !centeredPageLines.includes(`${+rightPageNumber}:${line}`) ? 'justify-between' : null}">
-							{#each Object.entries(JSON.parse(localStorage.getItem('rightPageData'))) as [key, value]}
-								<WordsBlock {key} {value} {line} />
-							{/each}
-						</div>
-					{/each}
-				</div>
-
-				<!-- left page -->
-				<!-- <div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
-					{#each Array.from(Array(endingLine + 1).keys()).slice(startingLine) as line}
-						{#if chapters.length > 0 && lines.includes(line) && verses[lines.indexOf(line)] === 1}
-							<div class="flex flex-col my-2">
-								<ChapterHeader chapter={chapters[lines.indexOf(line)]} />
-								<Bismillah {chapters} {lines} {line} />
-							</div>
-						{/if}
-
-						<div class="line {line} flex px-2 arabic-font-{$__fontType} {+page < 3 || centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : null} {+page > 2 && !centeredPageLines.includes(`${+page}:${line}`) ? 'justify-between' : null}">
-							{#each Object.entries(JSON.parse(localStorage.getItem('pageData'))) as [key, value]}
-								<WordsBlock {key} {value} {line} />
-							{/each}
-						</div>
-					{/each}
-				</div> -->
+				<PageRenderer pageNumber={rightPageNumber} chapters={rightPageChapters} verses={rightPageVerses} lines={rightPageLines} startingLine={rightPageStartingLine} endingLine={rightPageEndingLine} dataKey={`pageData-${rightPageNumber}`} fontType={$__fontType} {centeredPageLines} />
 			</div>
 
 			<!-- page number -->
