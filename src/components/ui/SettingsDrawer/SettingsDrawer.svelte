@@ -288,7 +288,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width) for pages other than the homepage. Best for larger screens.</p>
+						<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width). Best for larger screens.</p>
 					</div>
 				</div>
 			</div>
