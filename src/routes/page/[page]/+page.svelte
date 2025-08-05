@@ -76,65 +76,6 @@
 	}
 
 	$: {
-		rightPageChapters = [];
-		rightPageVerses = [];
-		rightPageLines = [];
-
-		rightPageData = (async () => {
-			const data = await fetchVersesByPage(rightPageNumber, selectableFontTypes[$__fontType].id, $__wordTranslation);
-			const verseData = data.verses;
-			localStorage.setItem('rightPageData', JSON.stringify(verseData));
-
-			// Get the first line, of the first word, of the first verse
-			const firstVerse = Object.keys(verseData)[0];
-			rightPageStartingLine = verseData[firstVerse].words.line[0];
-
-			// Get the last line, of the last word, of the last verse
-			const lastVerse = Object.keys(verseData)[Object.keys(verseData).length - 1];
-			const lastWord = verseData[lastVerse].words.line;
-			rightPageEndingLine = lastWord[lastWord.length - 1];
-
-			// Get chapter numbers
-			for (const key of Object.keys(verseData)) {
-				const chapter = +key.split(':')[0];
-				if (!rightPageChapters.includes(chapter)) {
-					rightPageChapters.push(chapter);
-				}
-			}
-
-			// Get the first verse of each chapter
-			rightPageChapters.forEach((chapter) => {
-				for (let verse = 1; verse <= quranMetaData[chapter].verses; verse++) {
-					if (verseData[`${chapter}:${verse}`]) {
-						rightPageVerses.push(verse);
-						break;
-					}
-				}
-			});
-
-			// Get line numbers for chapters
-			rightPageChapters.forEach((chapter, index) => {
-				rightPageLines.push(+verseData[`${chapter}:${rightPageVerses[index]}`].words.line[0]);
-			});
-
-			// // Set the mushaf page divisions
-			// __mushafPageDivisions.set({
-			// 	chapters: chapters,
-			// 	juz: verseData[Object.keys(verseData)[0]].meta.juz
-			// });
-
-			// // Update the last read page
-			// updateSettings({ type: 'lastRead', value: verseData[Object.keys(verseData)[0]].meta });
-
-			// // Event listeners for swipe gestures
-			// const pageBlock = document.getElementById('page-block');
-			// pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
-			// pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
-
-			return verseData;
-		})();
-
-		// Update the page number
 		__pageNumber.set(page);
 	}
 
@@ -289,7 +230,7 @@
 <PageHead title={`Page ${page}`} />
 
 <div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden">
-	{#await rightPageData}
+	{#await rightPageData && leftPageData}
 		<Spinner />
 	{:then}
 		<div class="space-y-2 mt-2.5">
