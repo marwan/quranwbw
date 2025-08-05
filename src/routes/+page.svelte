@@ -17,7 +17,7 @@
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -84,7 +84,7 @@
 
 <PageHead title={`Quran ${websiteTagline}`} />
 
-<div class="max-w-5xl mx-auto flex flex-col space-y-4 md:px-4">
+<div class={`${!$__wideWesbiteLayoutEnabled && 'max-w-5xl'} mx-auto flex flex-col space-y-4 md:px-4`}>
 	<!-- top menu -->
 	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">

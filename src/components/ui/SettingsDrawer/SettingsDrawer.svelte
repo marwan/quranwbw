@@ -35,7 +35,7 @@
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
-		__wideWesbiteLayout
+		__wideWesbiteLayoutEnabled
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -284,7 +284,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Wide Website Layout</span>
 							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWesbiteLayout} on:click={(event) => updateSettings({ type: 'wideWesbiteLayout', value: event.target.checked })} />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWesbiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWesbiteLayoutEnabled', value: event.target.checked })} />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>

@@ -61,7 +61,7 @@ let __websiteOnline,
 	__keysToFetch,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__wideWesbiteLayout;
+	__wideWesbiteLayoutEnabled;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -226,7 +226,7 @@ if (browser) {
 	__homepageExtrasPanelVisible = writable(userSettings.displaySettings.homepageExtrasPanelVisible);
 
 	// to store the website wide layout option
-	__wideWesbiteLayout = writable(userSettings.displaySettings.wideWesbiteLayout);
+	__wideWesbiteLayoutEnabled = writable(userSettings.displaySettings.wideWesbiteLayoutEnabled);
 }
 
 export {
@@ -290,5 +290,5 @@ export {
 	__keysToFetch,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__wideWesbiteLayout
+	__wideWesbiteLayoutEnabled
 };
