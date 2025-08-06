@@ -18,7 +18,9 @@
 
 ### Jun 25, 2025
 
-- **Faster Loading with Smarter Caching:** We’ve upgraded how data is saved in your browser using a more efficient method called IndexedDB. This helps reduce repeated loading times and speeds things up after your first visit.
+- **Smarter Caching:** We've upgraded how the website stores data using **IndexedDB**, making pages load faster and feel smoother — especially when you return.
+- **Instant Footnotes:** Verse translations now come from **static files with footnotes built in**, so footnotes appear instantly without waiting for extra loading.
+- **New Transliteration Option:** We've added a **normal verse transliteration**, joining Tajweed and Syllables — giving you more ways to follow and recite accurately.
 
 ---
 
