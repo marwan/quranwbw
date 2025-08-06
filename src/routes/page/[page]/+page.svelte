@@ -28,7 +28,9 @@
 		7: [7, 8],
 		8: [7, 8],
 		9: [9, 10],
-		10: [9, 10]
+		10: [9, 10],
+		603: [603, 604],
+		604: [603, 604]
 	};
 
 	// Lines to be centered instead of justified
@@ -227,7 +229,7 @@
 	__currentPage.set('mushaf');
 </script>
 
-<PageHead title={`Page ${page}`} />
+<PageHead title={`Page ${rightPageNumber}-${leftPageNumber}`} />
 
 <div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden">
 	{#await rightPageData && leftPageData}
@@ -242,7 +244,7 @@
 			</div>
 
 			<!-- page number -->
-			<div class="max-w-3xl md:max-w-[40rem] mx-auto justify-center text-sm">
+			<div class="mx-auto justify-center text-sm">
 				<div class="flex items-center">
 					<div class="flex-1 border-t-2 {window.theme('border')}"></div>
 					<span class="px-3">{page}</span>
