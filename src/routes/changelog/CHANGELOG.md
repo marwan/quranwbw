@@ -1,3 +1,27 @@
+### Aug 6, 2025
+
+- **Extra Wide Layout:** You can now make the website even wider! Perfect for big screens and easier reading.
+
+---
+
+### Jul 28, 2025
+
+- **Faster & More Reliable Quran Loading:** The website is now quicker and more stable because Quran data is loaded directly from our own built-in files instead of relying on external servers. This means fewer delays, fewer errors, and a smoother experience every time you use the site.
+
+---
+
+### Jul 15, 2025
+
+- **Audio Repeat Range Increased:** You can now repeat verses up to 50 times (in steps of 5), great for deep memorization.
+
+---
+
+### Jun 25, 2025
+
+- **Faster Loading with Smarter Caching:** We’ve upgraded how data is saved in your browser using a more efficient method called IndexedDB. This helps reduce repeated loading times and speeds things up after your first visit.
+
+---
+
 ### Mar 15, 2025
 
 - **New Font:** Added **Nastaleeq Hafs Bold**, a bold version of the standard **Nastaleeq Hafs** font for enhanced readability.
