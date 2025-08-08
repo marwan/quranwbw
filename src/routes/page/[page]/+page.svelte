@@ -7,9 +7,7 @@
 	import Minimize from '$svgs/Minimize.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
-	import { goto } from '$app/navigation';
-	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
-	import { updateSettings } from '$utils/updateSettings';
+	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
@@ -240,7 +238,9 @@
 			<div class="flex flex-row">
 				<PageRenderer pageNumber={leftPageNumber} chapters={leftPageChapters} verses={leftPageVerses} lines={leftPageLines} startingLine={leftPageStartingLine} endingLine={leftPageEndingLine} dataKey={`pageData-${leftPageNumber}`} fontType={$__fontType} {centeredPageLines} />
 
-				<PageRenderer pageNumber={rightPageNumber} chapters={rightPageChapters} verses={rightPageVerses} lines={rightPageLines} startingLine={rightPageStartingLine} endingLine={rightPageEndingLine} dataKey={`pageData-${rightPageNumber}`} fontType={$__fontType} {centeredPageLines} />
+				{#if bookModeEnabled}
+					<PageRenderer pageNumber={rightPageNumber} chapters={rightPageChapters} verses={rightPageVerses} lines={rightPageLines} startingLine={rightPageStartingLine} endingLine={rightPageEndingLine} dataKey={`pageData-${rightPageNumber}`} fontType={$__fontType} {centeredPageLines} />
+				{/if}
 			</div>
 
 			<!-- page number -->
