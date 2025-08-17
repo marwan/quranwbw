@@ -9,9 +9,9 @@
 	let session = get(page).data.session;
 
 	// Subscribe to the $page store to update session if it changes (e.g., after OAuth login redirect).
-	const unsubscribe = page.subscribe(($page) => {
-		session = $page.data.session;
-	});
+	// const unsubscribe = page.subscribe(($page) => {
+	// 	session = $page.data.session;
+	// });
 </script>
 
 <Modal title="Login" id="loginModal" bind:open={$__loginModalVisible} class="rounded-3xl" bodyClass="p-6 space-y-4 flex-1 overflow-y-auto overscroll-contain" headerClass="flex justify-between items-center p-6 rounded-t-3xl" center outsideclose>

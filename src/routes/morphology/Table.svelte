@@ -1,8 +1,8 @@
 <script>
-	export let wordData = []; // Ensure a default empty array
+	export let wordKeys = [];
 	export let tableType;
+	export let wordData;
 
-	import { __fontType } from '$utils/stores';
 	import { buttonClasses, linkClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 
@@ -15,8 +15,8 @@
 	const loadAll = params.get('load_all') === 'true';
 
 	// Fallbacks
-	const sanitizedWordData = Array.isArray(wordData) ? wordData : [];
-	const totalAvailableWords = sanitizedWordData.length;
+	const sanitizedwordKeys = Array.isArray(wordKeys) ? wordKeys : [];
+	const totalAvailableWords = sanitizedwordKeys.length;
 	const maxResultsToLoad = 50;
 
 	let lastWordToLoad = calculateInitialLastWordToLoad(loadAll, totalAvailableWords, maxResultsToLoad);
@@ -47,18 +47,21 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each sanitizedWordData.slice(0, lastWordToLoad) as item, i}
-							{@const [chapter, verse] = item.key.split(':')}
+						{#each sanitizedwordKeys.slice(0, lastWordToLoad) as item, i}
+							{@const [chapter, verse, word] = item.split(':')}
+							{@const arabic = wordData.arabicWordData[chapter][verse][0][word - 1]}
+							{@const translation = wordData.translationWordData[chapter][verse][0][word - 1]}
+							{@const transliteration = wordData.transliterationWordData[chapter][verse][0][word - 1]}
 							<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
 								<td class="px-6 py-4">{i + 1}</td>
-								<td class="px-6 py-4 arabic-font-1 text-xl md:text-2xl">{item.arabic}</td>
-								<td class="px-6 py-4">{item.translation}</td>
-								<td class="px-6 py-4">{item.transliteration}</td>
+								<td class="px-6 py-4 text-xl md:text-2xl arabic-font-1">{arabic}</td>
+								<td class="px-6 py-4">{translation}</td>
+								<td class="px-6 py-4">{transliteration}</td>
 								<td class="px-6 py-4">
 									<a class={linkClasses} href="/{chapter}?startVerse={verse}">{chapter}:{verse}</a>
 								</td>
 								<td class="px-6 py-4">
-									<a class={linkClasses} href="/morphology?word={item.key}">{item.key}</a>
+									<a class={linkClasses} href="/morphology?word={item}">{item}</a>
 								</td>
 							</tr>
 						{/each}

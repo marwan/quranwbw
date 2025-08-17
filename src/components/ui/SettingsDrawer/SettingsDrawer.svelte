@@ -13,11 +13,10 @@
 	import Drawer from '$ui/FlowbiteSvelte/drawer/Drawer.svelte';
 	import Range from '$ui/FlowbiteSvelte/forms/Range.svelte';
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
+	import ResetSettings from '$svgs/ResetSettings.svelte';
 
 	import {
 		__currentPage,
-		__chapterData,
-		__chapterNumber,
 		__fontType,
 		__displayType,
 		__websiteTheme,
@@ -28,8 +27,6 @@
 		__verseTranslations,
 		__verseTafsir,
 		__reciter,
-		__translationReciter,
-		__playbackSpeed,
 		__userSettings,
 		__wordTooltip,
 		__settingsDrawerHidden,
@@ -37,14 +34,15 @@
 		__englishTerminology,
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
-		__wordMorphologyOnClick
+		__wordMorphologyOnClick,
+		__wideWesbiteLayoutEnabled
 	} from '$utils/stores';
 
-	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, fontSizePresets, selectableVersePlayButtonOptions } from '$data/options';
+	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
 
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
-	import { disabledClasses, buttonClasses } from '$data/commonClasses';
+	import { disabledClasses, buttonClasses, linkClasses } from '$data/commonClasses';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
@@ -84,12 +82,12 @@
 	let settingsDrawerBackground = `${window.theme('bgMain')}`;
 	let individualSettingsComponent;
 	let mainSettingsScrollPos = 0;
-	let allSettingsVisible = true;
-	let individualSettingsVisible = false;
+	let showAllSettings = true;
+	let showIndividualSetting = false;
 	let totalVerseTransliterationsSelected = 0;
-	let arabicWordSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.arabicText);
-	let wordTranlationTransliterationSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
-	let verseTranlationTransliterationSizeValue = fontSizePresets.indexOf(JSON.parse($__userSettings).displaySettings.fontSizes.verseTranslationText);
+	let arabicWordSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.arabicText);
+	let wordTranlationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
+	let verseTranlationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.verseTranslationText);
 	let playbackSpeedValue = JSON.parse($__userSettings).audioSettings.playbackSpeed;
 
 	// Update settings when sliders are changed
@@ -119,15 +117,15 @@
 
 	// Go back to main settings and restore scroll position
 	function goBackToMainSettings() {
-		allSettingsVisible = true;
-		individualSettingsVisible = false;
+		showAllSettings = true;
+		showIndividualSetting = false;
 
 		// Scroll to last known position
 		setTimeout(() => {
 			try {
 				document.getElementById('settings-drawer').scrollTop = mainSettingsScrollPos;
 			} catch (error) {
-				// console.log(error);
+				console.warn(error);
 			}
 		}, 0);
 	}
@@ -135,8 +133,8 @@
 	// Navigate to an individual setting component
 	function gotoIndividualSetting(type) {
 		mainSettingsScrollPos = document.getElementById('settings-drawer').scrollTop;
-		allSettingsVisible = false;
-		individualSettingsVisible = true;
+		showAllSettings = false;
+		showIndividualSetting = true;
 		individualSettingsComponent = individualSettingsComponents[type];
 
 		// Scroll to the individual setting view
@@ -144,7 +142,7 @@
 			try {
 				document.getElementById('individual-setting').scrollIntoView();
 			} catch (error) {
-				// console.log(error);
+				console.warn(error);
 			}
 		}, 0);
 	}
@@ -176,12 +174,21 @@
 		settingsDrawerBackground = `${window.theme('bgMain')}`;
 		document.querySelector('.settings-backdrop').classList.remove('opacityyy-10');
 	}
+
+	function getFontSizeIdByClass(className) {
+		for (const key in selectableFontSizes) {
+			if (selectableFontSizes[key].value === className) {
+				return Number(key);
+			}
+		}
+		return null;
+	}
 </script>
 
 <!-- settings drawer -->
 <Drawer placement="right" transitionType="fly" transitionParams={transitionParamsRight} bind:hidden={$__settingsDrawerHidden} class="w-full md:w-1/2 lg:w-[430px] md:rounded-tl-3xl md:rounded-bl-3xl pt-0 {settingsDrawerBackground}" id="settings-drawer">
 	<!-- all-settings -->
-	{#if allSettingsVisible}
+	{#if showAllSettings}
 		<div id="all-settings">
 			<div class="flex z-30 top-0 sticky {window.theme('bgMain')} border-b-2 {window.theme('border')} mb-4 {settingsDrawerOpacity}">
 				<h5 id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold">Settings</h5>
@@ -269,6 +276,20 @@
 							<p class={settingsDescriptionClasses}>Enabling this option will prevent your screen from dimming or sleeping. Please note that you will need to manually enable this option for each session.</p>
 						</div>
 					{/if}
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- wide-website-layout-setting -->
+					<div id="wide-website-layout-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Wide Website Layout</span>
+							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWesbiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWesbiteLayoutEnabled', value: event.target.checked })} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width). Best for larger screens.</p>
+					</div>
 				</div>
 			</div>
 
@@ -299,7 +320,6 @@
 					<div id="arabic-word-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">Arabic Word Size ({selectableFontSizes[arabicWordSizeValue].value.split('-')[1]})</span>
-							<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('arabic-word-size-setting')} on:mouseleave={() => onMouseLeave()}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={arabicWordSizeValue} class={rangeClasses} />
 							</div>
@@ -312,7 +332,6 @@
 					<div id="word-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">Word Translation/Transliteration Size ({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})</span>
-							<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('word-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranlationTransliterationSizeValue} class={rangeClasses} />
 							</div>
@@ -325,7 +344,6 @@
 					<div id="verse-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">{term('verse')} Translation/Transliteration Size ({selectableFontSizes[verseTranlationTransliterationSizeValue].value.split('-')[1]})</span>
-							<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('verse-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={verseTranlationTransliterationSizeValue} class={rangeClasses} />
 							</div>
@@ -464,7 +482,7 @@
 						<p class={settingsDescriptionClasses}>Show/hide the non-{term('supplications')} words in the {term('supplications')} page.</p>
 					</div>
 
-					<!-- <div class="border-b {window.theme('border')}"></div> -->
+					<div class="border-b {window.theme('border')}"></div>
 
 					<!-- show-morphology-on-word-click-toggle -->
 					<div id="show-morphology-on-word-click" class={settingsBlockClasses}>
@@ -477,32 +495,40 @@
 						</div>
 						<p class={settingsDescriptionClasses}>Show morphology on word click, instead of playing audio.</p>
 					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- reset-setting-button -->
+					<div id="reset-setting-button" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Reset Settings</span>
+							<button
+								on:click={() => {
+									const userResponse = confirm('Are you sure you want to reset settings? This action cannot be reversed.');
+									if (userResponse) {
+										resetSettings();
+									}
+								}}
+								class="text-sm {buttonClasses}"
+							>
+								<ResetSettings />
+							</button>
+						</div>
+						<p class={settingsDescriptionClasses}>Reset all website settings to default without affecting your bookmarks or notes.</p>
+					</div>
 				</div>
 			</div>
 
-			<!-- reset settings button -->
-			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 {settingsDrawerOpacity}">
-				<!-- Reset Settings button -->
-				<button
-					on:click={() => {
-						// Show the confirm dialog
-						const userResponse = confirm('Are you sure you want to reset settings? This action cannot be reversed.');
-						if (userResponse) {
-							resetSettings();
-						}
-					}}
-					class="text-sm {buttonClasses}"
-				>
-					Reset Settings
-				</button>
-
-				<p class={settingsDescriptionClasses}>Your bookmarks and notes will remain unaffected.</p>
+			<!-- website build version & timestamp -->
+			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 text-center {settingsDrawerOpacity}">
+				<!-- svelte-ignore missing-declaration -->
+				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
 			</div>
 		</div>
 	{/if}
 
 	<!-- individual-setting -->
-	{#if individualSettingsVisible}
+	{#if showIndividualSetting}
 		<div id="individual-setting" transition:fly={{ duration: 150, x: 0, easing: sineIn }}>
 			<div class="flex z-30 top-0 sticky {window.theme('bgMain')} border-b-2 {window.theme('border')} mb-4">
 				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>← Back</button>

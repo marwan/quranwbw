@@ -4,7 +4,7 @@
 	import { __websiteTheme } from '$utils/stores';
 	import { selectableThemes, themeColors } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
-	import { selectedRadioOrCheckboxClasses, linkClasses, individualRadioClasses } from '$data/commonClasses';
+	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { createLink } from '$utils/createLink';
 </script>
 
@@ -13,7 +13,7 @@
 		<div class="flex flex-col space-y-2 pb-6">
 			<div id="color-name" class="text-md font-medium capitalize">{color}</div>
 			<div id="color-list" class="space-y-3">
-				{#each Object.entries(selectableThemes) as [id, theme]}
+				{#each Object.entries(selectableThemes) as [_, theme]}
 					{#if theme.color === color}
 						<Radio name="websiteTheme" bind:group={$__websiteTheme} value={theme.id} on:change={(event) => updateSettings({ type: 'websiteTheme', value: +event.target.value })} custom>
 							<div class="{individualRadioClasses} {$__websiteTheme === theme.id && selectedRadioOrCheckboxClasses}">

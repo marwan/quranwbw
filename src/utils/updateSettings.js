@@ -29,9 +29,10 @@ import {
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__downloadedDataInfo
+	__downloadedDataInfo,
+	__wideWesbiteLayoutEnabled
 } from '$utils/stores';
-import { uploadSettingsToCloud } from '$utils/supabase';
+// import { uploadSettingsToCloud } from '$utils/supabase';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -49,7 +50,7 @@ export function updateSettings(props) {
 		// for font types
 		case 'fontType':
 			__fontType.set(props.value);
-			if (props.skipSave) return;
+			if (props.preventStoreUpdate) return;
 			userSettings.displaySettings.fontType = props.value;
 			trackEvent = true;
 			break;
@@ -57,7 +58,7 @@ export function updateSettings(props) {
 		// for display types
 		case 'displayType':
 			__displayType.set(props.value);
-			if (props.skipSave) return;
+			if (props.preventStoreUpdate) return;
 			userSettings.displaySettings.displayType = props.value;
 			if (!props.skipTrackEvent) trackEvent = true;
 			break;
@@ -155,11 +156,6 @@ export function updateSettings(props) {
 		case 'audioSettings':
 			__audioSettings.set(props.value);
 			userSettings.audioSettings = props.value;
-			break;
-
-		// for Initial Setup
-		case 'initialSetupCompleted':
-			userSettings.initialSetupCompleted = props.value;
 			break;
 
 		case 'userBookmarks':
@@ -294,6 +290,12 @@ export function updateSettings(props) {
 		case 'downloadedDataInfo':
 			__downloadedDataInfo.set(props.value);
 			userSettings.downloadedDataInfo = props.value;
+			break;
+
+		// for toggling website wide layout
+		case 'wideWesbiteLayoutEnabled':
+			__wideWesbiteLayoutEnabled.set(props.value);
+			userSettings.displaySettings.wideWesbiteLayoutEnabled = props.value;
 			break;
 
 		// for increasing/decreasing font sizes

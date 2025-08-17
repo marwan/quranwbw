@@ -2,114 +2,143 @@
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search2 from '$svgs/Search2.svelte';
-	import Individual from '$display/verses/modes/Individual.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
-	import { __currentPage, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __settingsSelectorModal, __keysToFetch } from '$utils/stores';
-	import { apiEndpoint } from '$data/websiteSettings';
-	import { buttonOutlineClasses } from '$data/commonClasses';
+	import { __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
+
+	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
 
 	const linkClasses = `w-fit flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const linkTextClasses = 'text-xs md:text-sm text-left w-fit capitalize truncate';
 
 	const params = new URLSearchParams(window.location.search);
-	let searchQuery = params.get('query') === null || params.get('query') === '' ? '' : params.get('query'); // Search text
-	let searchPage = params.get('page') === null || params.get('page') === '' ? 1 : +params.get('page'); // Selected page
-	let previousSearchQuery = '';
-	let resultsPerPage = 50;
-	let totalResults;
-	let pagePagination = null;
-	let pageChanged = false;
+	let searchQuery = params.get('query') === null || params.get('query') === '' ? '' : params.get('query');
 	let fetchingNewData = false;
 	let resultsFound = false;
 	let badRequest = false;
-	let navigationResults = null;
+	let navigationResults = [];
+	let resultKeys;
+	let totalResults = 0;
 
-	__keysToFetch.set(null);
+	// Cache object to store search results
+	let searchCache = {};
 
-	// Basic checks
-	$: if (searchPage < 1 || isNaN(searchPage)) searchPage = 1;
+	// Single reactive statement for search
+	$: if (searchQuery.length > 0) {
+		setVerseKeys();
+	}
 
-	// Update the search results whenever query changes
-	$: if (searchQuery.length > 0) goto(`/search?query=${searchQuery}&page=${searchPage}`, { replaceState: false });
+	// Get results from cache or API
+	async function getSearchResults(searchQuery) {
+		// Check cache first
+		if (searchCache[searchQuery]) {
+			updateURL(searchQuery);
+			return searchCache[searchQuery];
+		}
 
-	// Get and set the new verse keys when the search term or page is changed
-	$: if (searchQuery.length > 0 || (searchPage && pageChanged === true)) setVerseKeys();
-
-	// Get verse keys from the API
-	async function getVerseKeys(searchQuery) {
 		try {
-			let response = await fetch(`${apiEndpoint}/search?query=${searchQuery}&size=${resultsPerPage}&page=${searchPage}`);
-			if (response.status !== 200) return (badRequest = true);
-			let data = await response.json();
-			let versesKeyData = data;
-			const { pagination } = versesKeyData;
-			totalResults = pagination.total_records;
-			pagePagination = pagination;
-			navigationResults = versesKeyData.result.navigation;
-			return generateKeys(versesKeyData);
+			const response = await fetch(`https://api.kalimat.dev/search?query=${searchQuery}&numResults=50`, {
+				headers: {
+					'x-api-key': API_KEY
+				}
+			});
+
+			if (response.status !== 200) {
+				badRequest = true;
+				return null;
+			}
+
+			const data = await response.json();
+			searchCache[searchQuery] = data;
+			updateURL(searchQuery);
+			return data;
 		} catch (error) {
-			console.error('Error fetching verse keys:', error);
+			console.warn('Error fetching search results:', error);
 			badRequest = true;
+			return null;
 		}
 	}
 
-	// Generate keys from the API response (string format, after parsing)
-	function generateKeys(data) {
+	// Function to update URL
+	function updateURL(query) {
+		if (query && query.length > 0) {
+			goto(`/search?query=${query}`, { replaceState: false });
+		}
+	}
+
+	// Process the API response and separate navigation items from verse keys
+	function processSearchResults(data) {
+		if (!data || !Array.isArray(data)) return { verseKeys: [], navigationItems: [] };
+
 		const verseKeys = [];
+		const navigationItems = [];
 
-		// Check if navigation exists and has a valid entry
-		if (data.result.navigation && data.result.navigation.length > 0) {
-			const firstItem = data.result.navigation[0];
+		data.forEach((item) => {
+			if (item.type === 'quran_verse') {
+				verseKeys.push(item.id);
+			} else {
+				// For navigation items, remove alphabet prefix from id
+				let processedId = item.id;
+				if (item.type === 'quran_page') {
+					processedId = item.id.replace(/^p/, '');
+				} else if (item.type === 'quran_juz') {
+					processedId = item.id.replace(/^j/, '');
+				}
 
-			// Check if result_type is 'ayah'
-			if (firstItem.result_type === 'ayah') {
-				verseKeys.push(firstItem.key);
-				return verseKeys.toString();
+				navigationItems.push({
+					...item,
+					processedId: processedId
+				});
 			}
-		}
+		});
 
-		// If not 'ayah', check verses and extract their keys
-		if (data.result.verses && Array.isArray(data.result.verses) && data.result.verses.length > 0) {
-			data.result.verses.forEach(function (verse) {
-				verseKeys.push(verse.verse_key);
-			});
-		}
-
-		return verseKeys.toString();
+		return { verseKeys, navigationItems };
 	}
 
 	// Update the search query if enter is pressed or search icon is clicked
 	async function updateSearchQuery(query) {
-		previousSearchQuery = searchQuery;
 		searchQuery = query;
-		if (previousSearchQuery !== searchPage) searchPage = 1;
-		setVerseKeys();
 	}
 
 	async function setVerseKeys() {
 		fetchingNewData = true;
 		badRequest = false;
-		const keys = await getVerseKeys(searchQuery);
-		resultsFound = keys === null || keys === '' ? false : true;
-		__keysToFetch.set(keys);
+
+		const data = await getSearchResults(searchQuery);
+
+		if (data) {
+			const { verseKeys, navigationItems } = processSearchResults(data);
+
+			navigationResults = navigationItems;
+			totalResults = data.length;
+			resultsFound = verseKeys.length > 0 || navigationItems.length > 0;
+
+			// Set verse keys for the Individual component
+			resultKeys = verseKeys.length > 0 ? verseKeys : null;
+		} else {
+			navigationResults = [];
+			totalResults = 0;
+			resultsFound = false;
+			resultKeys = null;
+		}
+
 		fetchingNewData = false;
 	}
 
-	// Function to generate the correct link based on result_type
+	// Function to generate the correct link based on result type
 	function getNavigationLink(item) {
 		const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 		const linkMap = {
-			surah: [`${term('chapter')} ${quranMetaData[item.key]?.transliteration} (${item.key})`, `${baseUrl}/${item.key}`],
-			ayah: [`Verse ${item.key}`, `${baseUrl}/${item.key}`],
-			range: [`${item.key}`, `${baseUrl}/${item.key}`],
-			page: [`Page ${item.key}`, `${baseUrl}/page/${item.key}`],
-			juz: [`Juz ${item.key}`, `${baseUrl}/juz/${item.key}`]
+			quran_chapter: [`${term('chapter')} ${quranMetaData[item.processedId]?.transliteration} (${item.processedId})`, `${baseUrl}/${item.processedId}`],
+			quran_page: [`Page ${item.processedId}`, `${baseUrl}/page/${item.processedId}`],
+			quran_juz: [`Juz ${item.processedId}`, `${baseUrl}/juz/${item.processedId}`],
+			quran_range: [`${item.processedId}`, `${baseUrl}/${item.processedId}`]
 		};
 
-		return linkMap[item.result_type] || ['#', '#']; // Fallback to '#' if no match
+		return linkMap[item.type] || ['#', '#']; // Fallback to '#' if no match
 	}
 
 	__currentPage.set('search');
@@ -139,29 +168,20 @@
 
 	{#if searchQuery.length > 0}
 		{#if badRequest}
-			<ErrorLoadingDataFromAPI center="false" />
+			<ErrorLoadingData center="false" />
 		{:else if !badRequest && fetchingNewData}
 			<Spinner />
 		{:else}
 			<div id="search-block">
 				<div id="search-results-information" class="text-center text-xs">
 					{#if resultsFound}
-						<span>Showing {totalResults}</span>
-						<span>{totalResults === 1 ? 'result' : 'results'} related to</span>
-						{#key pagePagination}
-							{#if pagePagination.total_pages > 1}
-								"{searchQuery}"
-								<span>(page {pagePagination.current_page}).</span>
-							{:else}
-								"{searchQuery}".
-							{/if}
-						{/key}
+						<span>Showing {totalResults >= 50 ? 'top ' : ''}{totalResults} {totalResults === 1 ? 'result' : 'results'} related to "{searchQuery}".</span>
 					{:else if !resultsFound && navigationResults.length === 0}
 						<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results. Please try using a different keyword.</div>
 					{/if}
 				</div>
 
-				{#if typeof navigationResults !== 'undefined' && navigationResults.length > 0}
+				{#if navigationResults.length > 0}
 					<div id="navigation-results" class="flex flex-wrap space-x-4 justify-center mt-6">
 						{#each navigationResults as item}
 							{@const [itemTitle, itemLink] = getNavigationLink(item)}
@@ -173,40 +193,12 @@
 				{/if}
 
 				<div id="individual-verses-block">
-					{#key $__keysToFetch}
-						{#if $__keysToFetch}
-							<Individual />
+					{#key resultKeys}
+						{#if resultKeys}
+							<FullVersesDisplay keys={resultKeys.toString()} />
 						{/if}
 					{/key}
 				</div>
-
-				{#if pagePagination !== null}
-					<div class="flex flex-row space-x-4 mt-8 justify-center">
-						{#if pagePagination.current_page > 1}
-							<button
-								class="{buttonOutlineClasses} text-xs"
-								on:click={() => {
-									searchPage = pagePagination.current_page - 1;
-									pageChanged = true;
-								}}>{@html '&#x2190;'} {pagePagination.current_page - 1}</button
-							>
-						{/if}
-
-						{#if pagePagination.total_pages > 1}
-							<button>Page {pagePagination.current_page}</button>
-						{/if}
-
-						{#if pagePagination.next_page !== null}
-							<button
-								class="{buttonOutlineClasses} text-xs"
-								on:click={() => {
-									searchPage = pagePagination.next_page;
-									pageChanged = true;
-								}}>{pagePagination.next_page} {@html '&#x2192;'}</button
-							>
-						{/if}
-					</div>
-				{/if}
 			</div>
 		{/if}
 	{/if}

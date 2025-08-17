@@ -6,14 +6,11 @@ let __websiteOnline,
 	__chapterNumber,
 	__pageNumber,
 	__chapterData,
-	__chapterDataLoaded,
 	__verseTranslationData,
-	__notesData,
 	__verseKey,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
-	__userToken,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -23,7 +20,6 @@ let __websiteOnline,
 	__wordTransliterationEnabled,
 	__reciter,
 	__translationReciter,
-	__timestampData,
 	__playbackSpeed,
 	__displayType,
 	__websiteTheme,
@@ -50,11 +46,9 @@ let __websiteOnline,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
 	__lexiconModalVisible,
-	__changelogModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__downloadModalVisible,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
@@ -65,10 +59,10 @@ let __websiteOnline,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
-	__keysToFetchData,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__settingsConflictOptions;
+	__settingsConflictOptions,
+	__wideWesbiteLayoutEnabled;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -85,17 +79,11 @@ if (browser) {
 	// to store the page number
 	__pageNumber = writable(1);
 
-	// to store the chapter data fetched from the API
+	// to store the chapter data fetched from the CDN
 	__chapterData = writable(null);
 
 	// to store the verse translation data fetch from Quran.com's API
 	__verseTranslationData = writable(null);
-
-	// to store the boolean value of the complete chapter data load
-	__chapterDataLoaded = writable(null);
-
-	// to store the user notes data fetched from the API
-	__notesData = writable(null);
 
 	// to store the verse key
 	__verseKey = writable('1:1');
@@ -108,9 +96,6 @@ if (browser) {
 
 	// to store the user bookmarks
 	__userBookmarks = writable(userSettings.userBookmarks);
-
-	// to store the token
-	__userToken = writable(localStorage.getItem('userToken'));
 
 	// to store the font type - Uthmani, IndoPak, etc...
 	__fontType = writable(userSettings.displaySettings.fontType);
@@ -136,9 +121,6 @@ if (browser) {
 	// to store reciter
 	__reciter = writable(userSettings.audioSettings.reciter);
 	__translationReciter = writable(userSettings.audioSettings.translationReciter);
-
-	// to store the word timestamp data fetched from the API
-	__timestampData = writable(null);
 
 	// to store playback speed
 	__playbackSpeed = writable(userSettings.audioSettings.playbackSpeed);
@@ -200,11 +182,9 @@ if (browser) {
 		visible: false
 	});
 	__lexiconModalVisible = writable(false);
-	__changelogModalVisible = writable(false);
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
-	__downloadModalVisible = writable(false);
 
 	// wake lock settings
 	__wakeLockEnabled = writable(userSettings.displaySettings.wakeLockEnabled);
@@ -240,9 +220,6 @@ if (browser) {
 	// storing the total keys to fetch by Individual component
 	__keysToFetch = writable(null);
 
-	// storing the keys data fetched by Individual component
-	__keysToFetchData = writable({});
-
 	// what happens when a user clicks on a word
 	__wordMorphologyOnClick = writable(userSettings.displaySettings.wordMorphologyOnClick);
 
@@ -251,6 +228,8 @@ if (browser) {
 
 	// for supabase's settings conflict detection and modal
 	__settingsConflictOptions = writable({});
+	// to store the website wide layout option
+	__wideWesbiteLayoutEnabled = writable(userSettings.displaySettings.wideWesbiteLayoutEnabled);
 }
 
 export {
@@ -259,14 +238,11 @@ export {
 	__chapterNumber,
 	__pageNumber,
 	__chapterData,
-	__chapterDataLoaded,
 	__verseTranslationData,
-	__notesData,
 	__verseKey,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
-	__userToken,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -276,7 +252,6 @@ export {
 	__wordTransliterationEnabled,
 	__reciter,
 	__translationReciter,
-	__timestampData,
 	__playbackSpeed,
 	__displayType,
 	__websiteTheme,
@@ -303,11 +278,9 @@ export {
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
 	__lexiconModalVisible,
-	__changelogModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__downloadModalVisible,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
@@ -318,8 +291,8 @@ export {
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
-	__keysToFetchData,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__settingsConflictOptions
+	__settingsConflictOptions,
+	__wideWesbiteLayoutEnabled
 };

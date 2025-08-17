@@ -1,8 +1,8 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import SingleArabicVerse from '$display/verses/SingleArabicVerse.svelte';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ArabicVerseWords from '$display/verses/ArabicVerseWords.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __tafsirModalVisible, __verseKey, __verseTafsir } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
@@ -12,18 +12,15 @@
 
 	let tafsirData;
 
-	// URLs for fetching Tafsir data
+	// we have all the tafsirs on first endpoint and Tafheem Ul Quran (urdu) on second
 	const tafsirUrls = {
 		1: 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir',
 		2: 'https://static.quranwbw.com/data/v4/tafsirs'
 	};
 
-	// Reactive variables for selected Tafsir and verse details
 	$: selectedTafirId = $__verseTafsir || 30;
-	$: chapter = Number($__verseKey.split(':')[0]);
-	$: verse = Number($__verseKey.split(':')[1]);
+	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
-	// Load Tafsir data when the modal is visible
 	$: if ($__tafsirModalVisible) {
 		tafsirData = loadTafsirData();
 	}
@@ -34,7 +31,7 @@
 			const selectedTafsir = selectableTafsirs[selectedTafirId];
 			return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
 		} catch (error) {
-			console.error(error);
+			console.warn(error);
 			return [];
 		}
 	}
@@ -54,8 +51,7 @@
 				tafsirModal.getElementsByTagName('div')[1].scrollTop = 0;
 			}
 		} catch (error) {
-			// Ignore errors
-			console.error(error);
+			console.warn(error);
 		}
 	}
 </script>
@@ -75,28 +71,28 @@
 >
 	<div class="flex flex-col space-y-4">
 		{#key verse}
-			<div class="py-4">
-				<SingleArabicVerse key="{chapter}:{verse}" />
-			</div>
-		{/key}
+			{#await tafsirData}
+				<Spinner inline={true} />
+			{:then data}
+				<div class="py-4">
+					<ArabicVerseWords key="{chapter}:{verse}" />
+				</div>
 
-		{#await tafsirData}
-			<Spinner />
-		{:then tafsirData}
-			<div class="text-sm flex flex-col space-y-6">
-				<div class="flex flex-col space-y-4">
-					<div class={tafsirTextClasses}>
-						{#each Object.entries(tafsirData.ayahs) as [id, tafsir]}
-							{#if tafsir.surah === chapter && tafsir.ayah === verse}
-								{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
-							{/if}
-						{/each}
+				<div class="text-sm flex flex-col space-y-6">
+					<div class="flex flex-col space-y-4">
+						<div class={tafsirTextClasses}>
+							{#each Object.entries(data.ayahs) as [_, tafsir]}
+								{#if tafsir.surah === chapter && tafsir.ayah === verse}
+									{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
+								{/if}
+							{/each}
+						</div>
 					</div>
 				</div>
-			</div>
-		{:catch error}
-			<ErrorLoadingDataFromAPI center="false" />
-		{/await}
+			{:catch error}
+				<ErrorLoadingData center="false" {error} />
+			{/await}
+		{/key}
 	</div>
 
 	<svelte:fragment slot="footer">

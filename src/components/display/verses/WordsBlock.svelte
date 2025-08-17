@@ -5,17 +5,30 @@
 	export let exampleVerse = false;
 
 	import VerseOptionsDropdown from '$display/verses/VerseOptionsDropdown.svelte';
-	import Word from '$display/verses/Word.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { goto } from '$app/navigation';
-	import { selectableDisplays } from '$data/options';
-	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick } from '$utils/stores';
+	import { selectableDisplays, selectableWordTranslations } from '$data/options';
+	import { supplicationsFromQuran } from '$data/quranMeta';
+	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick, __wordTranslation, __wordTranslationEnabled, __wordTransliterationEnabled, __wordTooltip, __hideNonDuaPart } from '$utils/stores';
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
+	const chapter = key.split(':')[0];
+	const verse = key.split(':')[1];
+	const arabicWords = value.words.arabic;
+	const transliterationWords = value.words.transliteration;
+	const translationWords = value.words.translation;
+
+	// fix for Ba'da Ma Ja'aka for page 254
+	// since it's just a cosmetic change, there's no need of changing it at database level
+	const fixedMushafWords = {
+		'13:37:8': 'ﱿ', // 6th line last word - Ba'da
+		'13:37:9': 'ﲀﲁ' // 7th line first word - Ma Ja'aka
+	};
+
 	$: displayIsContinuous = selectableDisplays[$__displayType].continuous;
 
 	// Dynamically load the fonts if mushaf fonts are selected
@@ -108,15 +121,83 @@
 		${wordAndEndIconCommonClasses}
 		${$__websiteTheme === 1 && `${window.theme('textSecondary')}`}
 	`;
+
+	// Classes for word translation and transliteration
+	$: wordTranslationClasses = `
+		wordTranslationText flex flex-col direction-ltr
+		${fontSizes.wordTranslationText}
+		theme
+	`;
+
+	// Function to check if word should be displayed
+	function shouldDisplayWord(wordIndex) {
+		return $__currentPage !== 'mushaf' || ($__currentPage === 'mushaf' && +value.words.line[wordIndex] === line);
+	}
+
+	// Function to get word key
+	function getWordKey(wordIndex) {
+		return `${chapter}:${verse}:${wordIndex + 1}`;
+	}
 </script>
 
 <!-- words -->
 {#each { length: value.meta.words } as _, word}
-	<Word {value} {word} {key} {line} {wordClickHandler} {wordAndEndIconCommonClasses} {wordSpanClasses} {v4hafsClasses} />
+	{#if shouldDisplayWord(word)}
+		{@const wordKey = getWordKey(word)}
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div
+			id={wordKey}
+			class={`
+				word rounded-lg ${wordAndEndIconCommonClasses} text-center print:break-inside-avoid
+				${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? window.theme('bgSecondaryDark') : ''}
+				${$__currentPage === 'supplications' && word + 1 < (supplicationsFromQuran[key] || 0) ? ($__hideNonDuaPart ? 'hidden' : 'opacity-30') : ''}
+			`.trim()}
+			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}
+		>
+			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
+				<!-- Everything except Mushaf fonts -->
+				{#if ![2, 3].includes($__fontType)}
+					{arabicWords[word]}
+					<!-- Mushaf fonts -->
+				{:else}
+					<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" class={v4hafsClasses}>
+						<!-- word fix, see fixedMushafWords -->
+						{#if Object.prototype.hasOwnProperty.call(fixedMushafWords, wordKey)}
+							{fixedMushafWords[wordKey]}
+						{:else}
+							{arabicWords[word]}
+						{/if}
+					</span>
+				{/if}
+			</span>
+
+			<!-- word translation and transliteration, only for wbw modes -->
+			{#if [1, 3, 7].includes($__displayType)}
+				<div class={wordTranslationClasses} data-fontSize={fontSizes.wordTranslationText}>
+					<span class="leading-normal {$__wordTransliterationEnabled ? 'block' : 'hidden'}">{transliterationWords[word]}</span>
+					<span class="leading-normal {selectableWordTranslations[$__wordTranslation].font} {$__wordTranslationEnabled ? 'block' : 'hidden'}">{translationWords[word]}</span>
+				</div>
+			{/if}
+		</div>
+
+		<!-- word tooltip -->
+		{#if $__wordTooltip > 1}
+			<Tooltip arrow={false} type="light" class="z-30 hidden md:block text-center inline-flex font-sans font-normal">
+				{#if $__wordTooltip === 2}
+					{@html transliterationWords[word]}
+				{:else if $__wordTooltip === 3}
+					{@html translationWords[word]}
+				{:else if $__wordTooltip === 4}
+					{@html `<div class="flex flex-col">${transliterationWords[word]} <div class="border-t"></div> ${translationWords[word]}</div>`}
+				{/if}
+			</Tooltip>
+		{/if}
+	{/if}
 {/each}
 
 <!-- end icon -->
-{#if $__currentPage != 'mushaf' || ($__currentPage === 'mushaf' && value.words.end_line === line)}
+{#if $__currentPage !== 'mushaf' || ($__currentPage === 'mushaf' && value.words.line[value.words.line.length - 1] === line)}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>

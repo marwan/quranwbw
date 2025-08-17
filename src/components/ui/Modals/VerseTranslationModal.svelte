@@ -1,7 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
-	import Translations from '$display/verses/translations/Translations.svelte';
-	import SingleArabicVerse from '$display/verses/SingleArabicVerse.svelte';
+	import VerseTranslations from '$display/verses/VerseTranslations.svelte';
+	import ArabicVerseWords from '$display/verses/ArabicVerseWords.svelte';
 	import { __currentPage, __verseTranslationModalVisible, __chapterData, __verseKey } from '$utils/stores';
 	import { quranMetaData } from '$data/quranMeta';
 
@@ -26,9 +26,9 @@
 >
 	<div class="flex flex-col space-y-4">
 		<div class="py-4">
-			<SingleArabicVerse key={$__verseKey} />
+			<ArabicVerseWords key={$__verseKey} />
 		</div>
 
-		<Translations value={chapterData[$__verseKey]} />
+		<VerseTranslations value={chapterData[$__verseKey]} />
 	</div>
 </Modal>

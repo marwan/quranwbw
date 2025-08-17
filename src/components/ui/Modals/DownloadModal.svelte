@@ -8,8 +8,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { timeAgo } from '$utils/timeAgo';
 	import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
-	import { apiVersion } from '$data/websiteSettings';
-	import { db } from '$lib/db';
+	import { db } from '$utils/dexie';
 
 	// State variables
 	let progressMessage = '';
@@ -71,8 +70,8 @@
 				if (!downloading || !abortController) break;
 
 				await fetch(`/${chapter}`);
-				await fetchChapterData({ chapter, skipSave: true, signal: abortController.signal });
-				await fetchVerseTranslationData({ chapter, skipSave: true, signal: abortController.signal });
+				await fetchChapterData({ chapter, preventStoreUpdate: true, signal: abortController.signal });
+				await fetchVerseTranslationData({ chapter, preventStoreUpdate: true, signal: abortController.signal });
 
 				completed++;
 
@@ -91,8 +90,7 @@
 						wordTranslation: $__wordTranslation,
 						wordTransliteration: $__wordTransliteration,
 						verseTranslations: $__verseTranslations,
-						lastDownloadAt: new Date().toISOString(),
-						apiVersion
+						lastDownloadAt: new Date().toISOString()
 					}
 				});
 				showMessage('Download complete!');
@@ -104,7 +102,7 @@
 				if (downloadStopped) {
 					downloadStopped = false;
 				} else {
-					console.error('Download failed:', error);
+					console.warn('Download failed:', error);
 					showMessage('Error downloading data.');
 				}
 			}
@@ -127,7 +125,7 @@
 				value: {}
 			});
 		} catch (error) {
-			console.error('Error deleting api_data:', error);
+			console.warn('Error deleting api_data:', error);
 			showMessage('Error deleting data.');
 		}
 	}
@@ -140,6 +138,7 @@
 				swRegistered = registrations.length > 0;
 			} catch (error) {
 				swRegistered = false;
+				console.warn(error);
 			}
 		} else {
 			swRegistered = false;
@@ -177,15 +176,6 @@
 				{/if}
 			</div>
 		</div>
-
-		{#if $__downloadedDataInfo.apiVersion}
-			{#if $__downloadedDataInfo.apiVersion !== apiVersion}
-				<div class="p-3 rounded-md flex flex-row space-x-2 items-center {window.theme('bgSecondaryLight')}">
-					<Info />
-					<span>Your current downloaded data is outdated.</span>
-				</div>
-			{/if}
-		{/if}
 
 		{#if settingsChanged}
 			<div class="p-3 rounded-md flex flex-row space-x-2 items-center {window.theme('bgSecondaryLight')}">

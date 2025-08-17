@@ -3,39 +3,22 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __verseKey, __copyShareVerseModalVisible, __verseTranslations } from '$utils/stores';
-	import { disabledClasses, linkClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
+	import { __verseKey, __copyShareVerseModalVisible, __verseTranslationData } from '$utils/stores';
+	import { linkClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { createLink } from '$utils/createLink';
-	import { apiEndpoint, staticEndpoint } from '$data/websiteSettings';
-	import { downloadTextFile } from '$utils/downloadTextFile';
-	import { getVerseText } from '$utils/getVerseText';
+	import { selectableVerseTranslations } from '$data/options';
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
 
-	// Selectable font types for copy/share
-	const fontTypes = {
-		4: {
-			id: 4,
-			name: 'Uthmani'
-		},
-		7: {
-			id: 7,
-			name: 'Indopak'
-		}
-	};
-
 	// Options
 	let copyType = 1;
 	let textType = 1;
-	let fontType = 4;
 	let includeKey = true;
 	let includeTranslationNames = true;
 	let includeFootNotes = false;
 	let includeLink = true;
-	let fetchingData = false;
 	let generatedVerseData = '';
 	let websiteLink = '';
 
@@ -46,99 +29,129 @@
 	$: websiteLink = `https://quranwbw.com/${chapter}/${verse}`;
 
 	// Reset the generated data variable whenever any of the option changes
-	$: if ($__copyShareVerseModalVisible || $__verseKey || copyType || textType || fontType || includeKey || includeTranslationNames || includeFootNotes || includeLink || fetchingData) {
+	$: if ($__copyShareVerseModalVisible || $__verseKey || copyType || textType || includeKey || includeTranslationNames || includeFootNotes || includeLink) {
 		generatedVerseData = '';
 	}
 
-	// Function to fetch data from Quran.com's API
-	async function fetchVerseData() {
-		fetchingData = true;
+	function getVerseArabicText(key) {
+		try {
+			const [chapter, verse] = key.split(':').map(Number);
+			const words = document.querySelectorAll(`.verse-${chapter}-${verse} .arabicText`);
+			let wordsArray = [];
 
-		const params = {
-			raw: true,
-			from: $__verseKey,
-			to: $__verseKey,
-			footnote: includeFootNotes,
-			translator_name: includeTranslationNames
-		};
-
-		// Append mushaf param if Arabic text was selected
-		if ([1, 3].includes(textType)) params.mushaf = fontType;
-
-		// Append translation param if translation was selected
-		if ([2, 3].includes(textType)) params.translations = $__verseTranslations.toString();
-
-		const api = `${apiEndpoint}/advanced-copy?` + new URLSearchParams(params);
-		const response = await fetch(api);
-		const data = await response.json();
-		fetchingData = false;
-
-		return data.data.result;
-	}
-
-	// Function to manipulate the fetched string data
-	function manipulateString(result, includeKey, includeLink, quranMetaData, chapter, $__verseKey) {
-		// Replace all line breaks despite their counts with just 2
-		result = replaceLineBreaks(result);
-
-		// Replace the 2 line breaks in authors name with just 1
-		result = result.replace(/\n\n—/g, '\n—');
-
-		// Replace sup tags with brackets
-		result = result.replace(/<sup.*?>/g, '[').replace(/<\/sup>/g, ']');
-
-		// Replace verse key with complete name
-		if (includeKey) {
-			result = detectAndReplaceVerseKey(result, `${quranMetaData[chapter || 1].transliteration}, ${$__verseKey}`);
-		} else {
-			result = detectAndReplaceVerseKey(result, '');
-			result = result.replace(/\n\n/, '');
-		}
-
-		// Include link if selected
-		if (includeLink) result += `\n\n${websiteLink}`;
-
-		return result;
-	}
-
-	// Function to detect verse key (e.g. 1:1) and replace them with complete names
-	function detectAndReplaceVerseKey(inputString, replaceWith) {
-		const regex = /\b\d{1,3}:\d{1,3}\b/g;
-		return inputString.replace(regex, replaceWith);
-	}
-
-	// Function to replace all line breaks despite their counts with just 2
-	function replaceLineBreaks(inputString) {
-		let updatedString = inputString.replace(/^\n+/, '');
-		updatedString = updatedString.replace(/\n+$/, '');
-		const regex = /(\n)+/g;
-		updatedString = updatedString.replace(regex, '\n\n');
-		return updatedString;
-	}
-
-	// Open share menu
-	function shareVerse() {
-		if (navigator.share) {
-			navigator.share({
-				title: generatedVerseData,
-				text: generatedVerseData
+			// Join all the words
+			words.forEach((word) => {
+				wordsArray.push(word.innerText);
 			});
+
+			return wordsArray.join(' ');
+		} catch (error) {
+			console.warn(error);
+			return key;
 		}
 	}
 
-	// Function to fetch, process and return the final data
+	function getVerseTranslationText(key, includeTranslationNames = true, includeFootnotes = true) {
+		const allTranslations = [];
+		let output = '';
+		let footnoteCounter = 1;
+		const allFootnotes = [];
+
+		// Collect translations
+		for (const translationId in $__verseTranslationData) {
+			const translation = $__verseTranslationData[translationId];
+			if (translation && translation[key]) {
+				allTranslations.push({
+					translationId,
+					authorName: selectableVerseTranslations[translationId].resource_name,
+					text: translation[key].text,
+					footnotes: translation[key].footnotes || null
+				});
+			}
+		}
+
+		// Format output
+		for (const entry of allTranslations) {
+			// Replace <sup foot_note=X>Y</sup> with [N]
+			let text = entry.text.replace(/<sup[^>]*?>\d+<\/sup>/g, () => `[${footnoteCounter++}]`);
+
+			// Remove remaining HTML tags
+			text = text.replace(/<[^>]+>/g, '');
+
+			output += text;
+
+			if (includeTranslationNames) {
+				output += `\n— ${entry.authorName}`;
+			}
+
+			output += `\n\n`;
+
+			// Add footnotes
+			if (includeFootnotes && entry.footnotes) {
+				for (const footnote of entry.footnotes) {
+					const cleanFootnote = footnote.replace(/<[^>]+>/g, '').trim();
+					output += `[${allFootnotes.length + 1}] ${cleanFootnote}\n\n`;
+					allFootnotes.push(cleanFootnote);
+				}
+			}
+		}
+
+		return output.trim();
+	}
+
+	function advancedCopy(key, textType, includeKey, includeTranslationNames, includeFootNotes, includeLink) {
+		let results = '';
+		const [chapter] = key.split(':');
+
+		// Add verse key on top
+		if (includeKey) {
+			results += `${quranMetaData[chapter].transliteration}, ${key}\n\n`;
+		}
+
+		// Get Arabic and/or translation text
+		const arabicText = getVerseArabicText(key);
+		const translationText = getVerseTranslationText(key, includeTranslationNames, includeFootNotes);
+
+		if (textType === 1) {
+			// Only Arabic
+			results += `${arabicText}\n\n`;
+		} else if (textType === 2) {
+			// Only translation
+			results += `${translationText}\n\n`;
+		} else if (textType === 3) {
+			// Both Arabic and translation
+			results += `${arabicText}\n\n${translationText}\n\n`;
+		}
+
+		// Add website link at the end
+		if (includeLink) {
+			results += websiteLink;
+		}
+
+		return results.trim();
+	}
+
 	async function processAndCopyVerseData() {
 		if (copyType === 1) {
-			generatedVerseData = getVerseText($__verseKey);
+			generatedVerseData = getVerseArabicText($__verseKey);
 		} else if (copyType === 2) {
 			generatedVerseData = websiteLink;
 		} else if (copyType === 3) {
-			const verseData = await fetchVerseData();
-			const manipulatedData = manipulateString(verseData, includeKey, includeLink, quranMetaData, chapter, $__verseKey);
-			generatedVerseData = manipulatedData;
+			generatedVerseData = advancedCopy($__verseKey, textType, includeKey, includeTranslationNames, includeFootNotes, includeLink);
 		}
 
+		console.log(generatedVerseData);
 		navigator.clipboard.writeText(generatedVerseData);
+	}
+
+	// function to download any text/string as a text file
+	function downloadTextFile(name, data) {
+		const link = document.createElement('a');
+		const file = new Blob([data], { type: 'text/plain' });
+		link.href = URL.createObjectURL(file);
+		link.download = `${name}.txt`;
+		link.click();
+		URL.revokeObjectURL(link.href);
 	}
 </script>
 
@@ -218,27 +231,6 @@
 							</div>
 						</div>
 					</div>
-
-					<!-- Font Type -->
-					{#if textType !== 2}
-						<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
-							<span class="text-sm">Font</span>
-							<div class="flex flex-row space-x-2">
-								{#each Object.entries(fontTypes) as [id, font]}
-									<Radio bind:group={fontType} value={font.id} custom>
-										<div class="{radioClasses} {fontType === font.id && selectedRadioOrCheckboxClasses}">
-											<div class="w-full">{font.name}</div>
-										</div>
-									</Radio>
-								{/each}
-							</div>
-
-							<!-- Font Links -->
-							<span class="flex flex-col space-y-3 text-xs opacity-70">
-								<span>You may download the fonts from {@html createLink('https://github.com/marwan/quranwbw/tree/main/static/fonts', 'here')}.</span>
-							</span>
-						</div>
-					{/if}
 				</div>
 
 				<!-- Other Options -->
@@ -276,8 +268,7 @@
 		{/if}
 
 		<div class="flex flex-row">
-			<button class="w-full {buttonClasses} {fetchingData && disabledClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">{fetchingData ? 'Please wait...' : 'Copy'}</button>
-			<!-- <button class="w-full mr-2 {buttonClasses} {fetchingData && disabledClasses}" on:click={shareVerse}>Share</button> -->
+			<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">Copy</button>
 		</div>
 	</div>
 </Modal>

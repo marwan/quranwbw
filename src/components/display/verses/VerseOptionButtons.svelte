@@ -87,7 +87,7 @@
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Play</Tooltip>
 
 			<!-- notes button -->
-			{#if $__userNotes.hasOwnProperty(key)}
+			{#if Object.prototype.hasOwnProperty.call($__userNotes, key)}
 				<button
 					on:click={() => {
 						__verseKey.set(key);

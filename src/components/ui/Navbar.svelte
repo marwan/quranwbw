@@ -3,8 +3,9 @@
 	import Home from '$svgs/Home.svelte';
 	import ChevronDown from '$svgs/ChevronDown.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __chapterNumber, __currentPage, __lastRead, __pageURL, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible } from '$utils/stores';
+	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { term } from '$utils/terminologies';
+	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 
 	let lastReadPage;
 	let lastReadJuz;
@@ -15,9 +16,10 @@
 	// Classes for the navbar
 	$: navbarClasses = `${window.theme('bgMain')} border-b ${window.theme('border')} fixed w-full z-20 top-0 left-0 print:hidden ${$__currentPage === 'home' ? 'hidden' : 'block'}`;
 	$: topNavClasses = `
+		${getWebsiteWidth($__wideWesbiteLayoutEnabled)}
 		${$__topNavbarVisible ? 'block' : 'hidden'} 
 		${['chapter', 'mushaf'].includes($__currentPage) && `border-b ${window.theme('border')} `}
-		flex flex-row items-center justify-between max-w-screen-lg mx-auto px-4 py-2
+		flex flex-row items-center justify-between mx-auto px-4 py-2
 	`;
 
 	// Update last read details
@@ -26,14 +28,14 @@
 		lastReadPage = lastReadElement?.getAttribute('data-page');
 		lastReadJuz = lastReadElement?.getAttribute('data-juz');
 	} catch (error) {
-		console.log(error);
+		console.warn(error);
 	}
 
 	// Get the revelation type of the current chapter
 	$: chapterRevelation = quranMetaData[$__chapterNumber].revelation;
 
 	// Calculate the scroll progress percentage for the current chapter
-	$: chapterProgress = $__lastRead.hasOwnProperty('chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
+	$: chapterProgress = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
 
 	// Get the chapter name for the navbar
 	$: {
@@ -51,7 +53,7 @@
 			mushafJuz = `${term('juz')} ${$__mushafPageDivisions.juz}`;
 			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => quranMetaData[value].transliteration);
 		} catch (error) {
-			// console.log(error);
+			console.warn(error);
 		}
 	}
 </script>
@@ -106,7 +108,7 @@
 
 	<!-- mini nav for chapter page -->
 	{#if $__currentPage === 'chapter'}
-		<div id="bottom-nav" class="flex flex-row items-center justify-between text-xs max-w-screen-lg mx-auto px-6">
+		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between text-xs mx-auto px-6`}>
 			<div id="navbar-bottom-chapter-revalation" class="flex flex-row items-center py-2">
 				{#if !$__topNavbarVisible}
 					<span>{@html navbarChapterName}</span>
@@ -126,7 +128,7 @@
 
 	<!-- mini nav for mushaf page -->
 	{#if $__currentPage === 'mushaf'}
-		<div id="bottom-nav" class="flex flex-row items-center justify-between border-t {window.theme('border')} text-xs max-w-screen-lg mx-auto px-6">
+		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between border-t ${window.theme('border')} text-xs mx-auto px-6`}>
 			<div class="flex flex-row items-center py-2">
 				{#if !$__topNavbarVisible}
 					<span>Page {$__pageNumber} -&nbsp;</span>

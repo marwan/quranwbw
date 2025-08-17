@@ -6,7 +6,7 @@
 	import Search from '$svgs/Search.svelte';
 	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
-	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey } from '$utils/stores';
+	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { inview } from 'svelte-inview';
 	import { validateKey } from '$utils/validateKey';
 	import { staticEndpoint } from '$data/websiteSettings';
@@ -14,6 +14,7 @@
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 
 	// CSS classes
 	const linkClasses = 'flex flex-row space-x-2 items-center';
@@ -91,7 +92,7 @@
 </script>
 
 <Modal id="quranNavigationModal" bind:open={$__quranNavigationModalVisible} transitionParams={getModalTransition('top')} title="Navigate" size="md" class="!rounded-t-none md:!rounded-3xl" bodyClass="md:p-2 !border-t-0" headerClass="hidden" placement="center" position="top" outsideclose>
-	<div class="flex flex-col space-y-2 justify-between max-w-screen-lg px-4 py-5 mx-auto">
+	<div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-col space-y-2 justify-between px-4 py-5 mx-auto`}>
 		<!-- search block -->
 		<div id="search-block" class="mx-2">
 			<div id="navigation-inputs" class="flex flex-col justify-start">
@@ -113,7 +114,7 @@
 				{#if searchedKey.length === 0 && $__currentPage === 'home'}
 					<div id="search-suggestions" class="flex flex-col text-base md:text-lg max-h-64 min-h-64 overflow-y-auto">
 						<!-- Last Read -->
-						{#if $__lastRead.hasOwnProperty('chapter')}
+						{#if Object.prototype.hasOwnProperty.call($__lastRead, 'chapter')}
 							{@const lastReadChapter = $__lastRead.chapter}
 							{@const lastReadVerse = $__lastRead.verse}
 							<div id="last-read-links" class="py-2 space-y-2">
@@ -128,7 +129,7 @@
 						<!-- Suggestions -->
 						<div id="suggestions-links" class="py-2 space-y-2">
 							<span class="text-xs font-semibold pt-2">Suggestions</span>
-							{#each Object.entries(mostRead) as [id, item]}
+							{#each Object.entries(mostRead) as [_, item]}
 								<div class={linkClasses}>
 									<span>{@html '&#10230'}</span>
 									<a href={item.url} class={linkTextClasses}>{quranMetaData[item.chapter].transliteration} ({item.verses})</a>
@@ -211,7 +212,7 @@
 											{@const [juzChapter, juzVerse] = juzMeta[value - 1]['from'].split(':').map(Number)}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/{juzChapter}/{juzVerse}" class={linkTextClasses}>{term('juz')} {value} ({quranMetaData[juzChapter].transliteration})</a>
+												<a href="/{juzChapter}/{juzVerse}" class={linkTextClasses}>{term('juz')} {value} ({juzMeta[value - 1].name})</a>
 											</div>
 										{:else if key === 'key'}
 											{@const [keyChapter, keyVerse] = value.split(':').map(Number)}
@@ -287,7 +288,7 @@
 								</li>
 							{/each}
 							{#if !maxChaptersLoaded}
-								<Spinner size="8" />
+								<Spinner size="8" inline={true} />
 							{/if}
 							<div class="invisible" use:inview on:inview_enter={() => loadMaxChapters()}></div>
 						</ul>
@@ -308,7 +309,7 @@
 									</li>
 								{/each}
 								{#if !maxVersesLoaded && chapterVerses > maxItemsToLoad}
-									<Spinner size="8" />
+									<Spinner size="8" inline={true} />
 								{/if}
 							{/key}
 

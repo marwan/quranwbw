@@ -17,7 +17,8 @@ export const defaultSettings = {
 			arabicText: window.matchMedia('(min-width: 1280px)').matches || window.matchMedia('(min-width: 1024px)').matches || window.matchMedia('(min-width: 768px)').matches ? 'text-4xl' : 'text-2xl',
 			wordTranslationText: 'text-sm',
 			verseTranslationText: 'text-sm'
-		}
+		},
+		wideWesbiteLayoutEnabled: false
 	},
 	translations: {
 		word: 1,
@@ -49,7 +50,6 @@ export const defaultSettings = {
 	userBookmarks: [],
 	userNotes: {},
 	favouriteChapters: [1, 5, 18],
-	initialSetupCompleted: false,
 	chapter: 1,
 	downloadedDataInfo: {}
 };

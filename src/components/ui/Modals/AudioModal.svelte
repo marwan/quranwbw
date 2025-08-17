@@ -8,10 +8,10 @@
 	import Input from '$ui/FlowbiteSvelte/forms/Input.svelte';
 	import Search from '$svgs/Search.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __currentPage, __chapterNumber, __audioSettings, __userSettings, __audioModalVisible, __keysToFetch, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
+	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
-	import { selectableReciters, selectableTranslationReciters, selectableAudioDelays } from '$data/options';
+	import { selectableReciters, selectableTranslationReciters, selectableAudioDelays, selectableRepeatTimes } from '$data/options';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { updateSettings } from '$utils/updateSettings';
@@ -41,12 +41,14 @@
 		prepareVersesToPlay($__audioSettings.playingKey);
 
 		// Initialize endVerse as startVerse if undefined
-		$__audioSettings.endVerse ??= startVerse;
+		if ($__audioSettings.endVerse == null) {
+			$__audioSettings.endVerse = startVerse;
+		}
 
 		// Validate verse and repeat times
 		invalidStartVerse = startVerse < 1 || startVerse > versesInChapter;
 		invalidEndVerse = endVerse < 1 || endVerse > versesInChapter || endVerse < startVerse;
-		invalidTimesToRepeat = timesToRepeat < 1 || timesToRepeat > 20 || isNaN(timesToRepeat);
+		invalidTimesToRepeat = !selectableRepeatTimes.includes(timesToRepeat);
 	}
 
 	// Allow only "playThisVerse" option for non-chapter pages
@@ -70,7 +72,7 @@
 	}
 
 	// Default to repeat 1 time
-	if ($__audioSettings.timesToRepeat === undefined) {
+	if ($__audioSettings.timesToRepeat === undefined || !selectableRepeatTimes.includes($__audioSettings.timesToRepeat)) {
 		$__audioSettings.timesToRepeat = 1;
 	}
 
@@ -372,14 +374,17 @@
 							<div>{$__audioSettings.timesToRepeat} {$__audioSettings.timesToRepeat > 1 ? 'times' : 'time'}</div>
 						</button>
 						<Dropdown bind:open={timesToRepeatDropdownOpen} class="max-h-52 overflow-y-auto my-2 px-2">
-							{#each Array.from({ length: 20 }, (_, i) => i + 1) as n}
+							{#each selectableRepeatTimes as n}
 								<DropdownItem
 									class={dropdownItemClasses}
 									on:click={() => {
 										$__audioSettings.timesToRepeat = n;
 										timesToRepeatDropdownOpen = !timesToRepeatDropdownOpen;
-									}}>{n} {n > 1 ? 'times' : 'time'}</DropdownItem
+									}}
 								>
+									{n}
+									{n > 1 ? 'times' : 'time'}
+								</DropdownItem>
 							{/each}
 						</Dropdown>
 					</div>

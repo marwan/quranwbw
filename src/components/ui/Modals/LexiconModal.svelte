@@ -3,7 +3,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { __lexiconModalVisible, __wordRoot } from '$utils/stores';
-	import ErrorLoadingDataFromAPI from '$misc/ErrorLoadingDataFromAPI.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 
 	let lexiconData;
 
@@ -37,6 +37,6 @@
 			</div>
 		</div>
 	{:catch error}
-		<ErrorLoadingDataFromAPI center="false" />
+		<ErrorLoadingData center="false" {error} />
 	{/await}
 </Modal>
