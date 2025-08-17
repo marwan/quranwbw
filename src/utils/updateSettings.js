@@ -32,7 +32,7 @@ import {
 	__downloadedDataInfo,
 	__wideWesbiteLayoutEnabled
 } from '$utils/stores';
-// import { uploadSettingsToCloud } from '$utils/supabase';
+import { uploadSettingsToCloud } from '$utils/supabase';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -338,6 +338,6 @@ export function updateSettings(props) {
 
 	// upload settings to cloud if uploadSettings was set to true, which we only do for bookmarks and notes at the moment
 	if (uploadSettings === true) {
-		// uploadSettingsToCloud(userSettings);
+		uploadSettingsToCloud(userSettings);
 	}
 }

@@ -27,10 +27,10 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
-	// import { initSupabaseAuthListener } from '$utils/supabase.js';
+	import { initSupabaseAuthListener } from '$utils/supabase.js';
 
 	// Initialize Supabase Auth
-	// initSupabaseAuthListener();
+	initSupabaseAuthListener();
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
