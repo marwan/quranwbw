@@ -1,3 +1,4 @@
+import { get } from 'svelte/store';
 import { createClient } from '@supabase/supabase-js';
 import { updateSettings } from '$utils/updateSettings';
 import { __userBookmarks, __userNotes, __settingsConflictOptions } from '$utils/stores';
@@ -123,31 +124,34 @@ export function useSupabaseSettings() {
 
 // Upload local settings to Supabase (user chooses local version)
 export async function useLocalSettings() {
-	__settingsConflictOptions.update(async (conflictObj) => {
-		if (!conflictObj?.local) return conflictObj;
+	const conflictObj = get(__settingsConflictOptions);
+	if (!conflictObj?.local) return;
 
-		await uploadSettingsToCloud(conflictObj.local);
-		return { conflict: false };
-	});
+	await uploadSettingsToCloud(conflictObj.local);
+	__settingsConflictOptions.set({ conflict: false });
 }
 
 // Upload the given settings object to Supabase for the current user
 export async function uploadSettingsToCloud(settings) {
+	console.log('[uploadSettingsToCloud] Called');
+
 	if (!settings || typeof settings !== 'object') {
 		console.warn('[uploadSettingsToCloud] Invalid settings object:', settings);
 		return;
 	}
 
-	// Get current logged-in user session
+	// Make sure we have a session first (sometimes getUser() is stale right after login)
 	const {
-		data: { user },
-		error: userError
-	} = await supabase.auth.getUser();
+		data: { session },
+		error: sessionError
+	} = await supabase.auth.getSession();
 
-	if (userError || !user) {
-		console.error('[uploadSettingsToCloud] User not logged in:', userError?.message);
+	if (sessionError || !session?.user) {
+		console.error('[uploadSettingsToCloud] No active session:', sessionError?.message);
 		return;
 	}
+
+	const user = session.user;
 
 	const payload = {
 		id: user.id,
@@ -155,14 +159,15 @@ export async function uploadSettingsToCloud(settings) {
 		updated_at: new Date().toISOString()
 	};
 
-	console.log('[uploadSettingsToCloud] Uploading:', payload);
+	console.log('[uploadSettingsToCloud] Uploading payload:', payload);
 
-	const { error } = await supabase.from('user_settings').upsert(payload);
+	// upsert with onConflict to ensure it always updates the same row
+	const { data, error } = await supabase.from('user_settings').upsert(payload, { onConflict: 'id' }).select();
 
 	if (error) {
 		console.error('[uploadSettingsToCloud] Upload failed:', error.message);
 	} else {
-		console.log('[uploadSettingsToCloud] Upload successful');
+		console.log('[uploadSettingsToCloud] Upload successful:', data);
 	}
 }
 
