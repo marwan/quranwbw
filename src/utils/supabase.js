@@ -3,26 +3,45 @@ import { createClient } from '@supabase/supabase-js';
 import { updateSettings } from '$utils/updateSettings';
 import { __userBookmarks, __userNotes, __settingsConflictOptions } from '$utils/stores';
 
-export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY, {
+	auth: {
+		persistSession: true,
+		autoRefreshToken: true,
+		detectSessionInUrl: true
+	}
+});
 
 // Initialize the auth listener once per session and sync settings if logged in
-export async function initSupabaseAuthListener() {
-	if (window.__supabaseAuthListenerInitialized) return;
-	window.__supabaseAuthListenerInitialized = true;
+export function initSupabaseAuthListener() {
+	console.log('[initSupabaseAuthListener] Setting up listener...');
 
-	// Handle settings on first page load if already signed in
-	const {
-		data: { session }
-	} = await supabase.auth.getSession();
+	supabase.auth.onAuthStateChange((event, session) => {
+		console.log('[Auth] Event:', event, session);
 
-	if (session) {
-		await handleSettingsSync();
-	}
+		switch (event) {
+			case 'SIGNED_IN':
+				console.log('[Auth] User signed in');
+				break;
 
-	// Handle settings on future sign-ins
-	supabase.auth.onAuthStateChange(async (event, session) => {
-		if (event === 'SIGNED_IN' && session) {
-			await handleSettingsSync();
+			case 'SIGNED_OUT':
+				console.log('[Auth] User signed out');
+				break;
+
+			case 'TOKEN_REFRESHED':
+				console.log('[Auth] Token refreshed successfully');
+				break;
+
+			case 'TOKEN_REFRESH_FAILED':
+				console.error('[Auth] Token refresh failed — forcing sign out to recover');
+				supabase.auth.signOut(); // prevents client from hanging forever
+				break;
+
+			case 'USER_UPDATED':
+				console.log('[Auth] User updated');
+				break;
+
+			default:
+				console.log('[Auth] Other event:', event);
 		}
 	});
 }
@@ -135,39 +154,47 @@ export async function useLocalSettings() {
 export async function uploadSettingsToCloud(settings) {
 	console.log('[uploadSettingsToCloud] Called');
 
-	if (!settings || typeof settings !== 'object') {
-		console.warn('[uploadSettingsToCloud] Invalid settings object:', settings);
-		return;
-	}
+	try {
+		if (!settings || typeof settings !== 'object') {
+			console.warn('[uploadSettingsToCloud] Invalid settings object:', settings);
+			return;
+		}
 
-	// Make sure we have a session first (sometimes getUser() is stale right after login)
-	const {
-		data: { session },
-		error: sessionError
-	} = await supabase.auth.getSession();
+		console.log('[uploadSettingsToCloud] Calling getSession…');
 
-	if (sessionError || !session?.user) {
-		console.error('[uploadSettingsToCloud] No active session:', sessionError?.message);
-		return;
-	}
+		// Add a timeout so we know if getSession() hangs
+		const promise = supabase.auth.getSession();
+		const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('getSession timeout after 5s')), 5000));
 
-	const user = session.user;
+		const { data: sessionData, error: sessionError } = await Promise.race([promise, timeout]);
 
-	const payload = {
-		id: user.id,
-		settings,
-		updated_at: new Date().toISOString()
-	};
+		console.log('[uploadSettingsToCloud] getSession result:', { sessionData, sessionError });
 
-	console.log('[uploadSettingsToCloud] Uploading payload:', payload);
+		if (sessionError || !sessionData?.session?.user) {
+			console.error('[uploadSettingsToCloud] No active session/user:', sessionError?.message);
+			return;
+		}
 
-	// upsert with onConflict to ensure it always updates the same row
-	const { data, error } = await supabase.from('user_settings').upsert(payload, { onConflict: 'id' }).select();
+		const user = sessionData.session.user;
 
-	if (error) {
-		console.error('[uploadSettingsToCloud] Upload failed:', error.message);
-	} else {
-		console.log('[uploadSettingsToCloud] Upload successful:', data);
+		const payload = {
+			id: user.id,
+			settings,
+			updated_at: new Date().toISOString()
+		};
+
+		console.log('[uploadSettingsToCloud] Uploading payload:', payload);
+
+		// Upsert with onConflict to ensure it always updates the same row
+		const { data, error } = await supabase.from('user_settings').upsert(payload, { onConflict: 'id' }).select();
+
+		if (error) {
+			console.error('[uploadSettingsToCloud] Upload failed:', error.message);
+		} else {
+			console.log('[uploadSettingsToCloud] Upload successful:', data);
+		}
+	} catch (err) {
+		console.error('[uploadSettingsToCloud] Unexpected error:', err);
 	}
 }
 

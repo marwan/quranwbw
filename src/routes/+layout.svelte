@@ -28,8 +28,8 @@
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 	import { initSupabaseAuthListener } from '$utils/supabase.js';
+	import { page } from '$app/stores';
 
-	// Initialize Supabase Auth
 	initSupabaseAuthListener();
 
 	const defaultPaddingTop = 'pt-16';
