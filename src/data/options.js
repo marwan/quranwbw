@@ -74,6 +74,14 @@ export const selectableFontTypes = {
 		displayOrder: 8,
 		disallowedIn: ['mushaf'],
 		version: 5
+	},
+	9: {
+		id: 9,
+		type: 'Indopak / Nastaleeq',
+		font: 'Indonesian Misbah',
+		displayOrder: 9,
+		disallowedIn: ['mushaf'],
+		version: 1
 	}
 };
 
@@ -683,6 +691,11 @@ export const selectableWordTranslations = {
 	21: {
 		id: 21,
 		language: 'Albanian',
+		version: 1
+	},
+	22: {
+		id: 22,
+		language: 'Sign Language',
 		version: 1
 	}
 };

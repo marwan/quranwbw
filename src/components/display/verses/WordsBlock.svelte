@@ -176,7 +176,9 @@
 			{#if [1, 3, 7].includes($__displayType)}
 				<div class={wordTranslationClasses} data-fontSize={fontSizes.wordTranslationText}>
 					<span class="leading-normal {$__wordTransliterationEnabled ? 'block' : 'hidden'}">{transliterationWords[word]}</span>
-					<span class="leading-normal {selectableWordTranslations[$__wordTranslation].font} {$__wordTranslationEnabled ? 'block' : 'hidden'}">{translationWords[word]}</span>
+					<span class="leading-normal {selectableWordTranslations[$__wordTranslation].font} {$__wordTranslationEnabled ? 'block' : 'hidden'}">
+						<span class="font-Arabic-Sign-Language mt-2">{translationWords[word]}</span>
+					</span>
 				</div>
 			{/if}
 		</div>

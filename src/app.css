@@ -43,6 +43,22 @@
 }
 
 @font-face {
+  font-family: "Indonesian-Misbah";
+  src: url("../fonts/LPMQIsepMisbah-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Arabic-Sign-Language";
+  src: url("../fonts/LPMQ-MSI-ISYARAT.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "chapter-icons";
   src: url("../fonts/surahs_v4-Regular.woff2") format("woff2");
   font-weight: normal;
@@ -218,7 +234,9 @@ svg {
 .arabic-font-4,
 .arabic-font-5,
 .arabic-font-6,
-.arabic-font-7 {
+.arabic-font-7,
+.arabic-font-8,
+.arabic-font-9  {
   direction: rtl;
 }
 
@@ -240,6 +258,10 @@ svg {
 
 .arabic-font-8 {
   font-family: "Nastaleeq-Hafs-Bold";
+}
+
+.arabic-font-9 {
+  font-family: "Indonesian-Misbah";
 }
 
 .chapter-icons {
@@ -276,6 +298,10 @@ svg {
 
 .font-Sindhi {
   font-family: "sindhi";
+}
+
+.font-Arabic-Sign-Language {
+  font-family: "Arabic-Sign-Language";
 }
 
 .direction-rtl {
