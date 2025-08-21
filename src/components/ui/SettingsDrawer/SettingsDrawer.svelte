@@ -250,7 +250,7 @@
 					<div class="border-b {window.theme('border')}"></div>
 
 					<!-- word-transliteration-toggle-setting -->
-					<div id="word-transliteration-toggle-setting" class={settingsBlockClasses}>
+					<div id="word-transliteration-toggle-setting" class="{settingsBlockClasses} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Word Transliteration</span>
 							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
@@ -314,7 +314,7 @@
 
 				<div class="flex flex-col flex-wrap text-base">
 					<!-- quran-font-setting -->
-					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity}">
+					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Quran Font</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
@@ -373,7 +373,7 @@
 
 				<div class="flex flex-col flex-wrap text-base">
 					<!-- word-translation-setting -->
-					<div id="word-translation-setting" class={settingsBlockClasses}>
+					<div id="word-translation-setting" class="{settingsBlockClasses} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Word Translation</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('word-translation')}>{selectableWordTranslations[$__wordTranslation].language}</button>
