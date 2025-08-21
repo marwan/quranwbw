@@ -61,7 +61,8 @@ let __websiteOnline,
 	__keysToFetch,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__wideWesbiteLayoutEnabled;
+	__wideWesbiteLayoutEnabled,
+	__signLanguageModeEnabled;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -227,6 +228,9 @@ if (browser) {
 
 	// to store the website wide layout option
 	__wideWesbiteLayoutEnabled = writable(userSettings.displaySettings.wideWesbiteLayoutEnabled);
+
+	// to store the sign language mode option
+	__signLanguageModeEnabled = writable(userSettings.displaySettings.signLanguageModeEnabled);
 }
 
 export {
@@ -290,5 +294,6 @@ export {
 	__keysToFetch,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__wideWesbiteLayoutEnabled
+	__wideWesbiteLayoutEnabled,
+	__signLanguageModeEnabled
 };

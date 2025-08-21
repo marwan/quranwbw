@@ -17,7 +17,7 @@
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 
-	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled } from '$utils/stores';
+	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
@@ -119,8 +119,17 @@
 	// Restore the user's preferred font when navigating away from the Mushaf page,
 	// since the Mushaf page enforces a specific font (v4).
 	// This ensures the original fontType is re-applied on all other pages.
-	$: if ($__currentPage && $__currentPage !== 'mushaf') {
+	$: if ($__currentPage && $__currentPage !== 'mushaf' && !$__signLanguageModeEnabled) {
+		$__wordTranslation = JSON.parse($__userSettings).translations.word;
 		$__fontType = JSON.parse($__userSettings).displaySettings.fontType;
+		$__wordTransliterationEnabled = JSON.parse($__userSettings).displaySettings.wordTransliterationEnabled;
+	}
+
+	// Use custom settings for sign language mode
+	$: if ($__signLanguageModeEnabled) {
+		$__wordTranslation = 22;
+		$__fontType = 9;
+		$__wordTransliterationEnabled = false;
 	}
 
 	// Function to check old bookmarks for v3 update

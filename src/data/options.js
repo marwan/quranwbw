@@ -78,10 +78,10 @@ export const selectableFontTypes = {
 	9: {
 		id: 9,
 		type: 'Indopak / Nastaleeq',
-		font: 'Indonesian Misbah',
+		font: 'Indonesian Isep Misbah Digital Font',
 		displayOrder: 9,
 		disallowedIn: ['mushaf'],
-		version: 1
+		version: 2
 	}
 };
 

@@ -18,7 +18,8 @@ export const defaultSettings = {
 			wordTranslationText: 'text-sm',
 			verseTranslationText: 'text-sm'
 		},
-		wideWesbiteLayoutEnabled: false
+		wideWesbiteLayoutEnabled: false,
+		signLanguageModeEnabled: false
 	},
 	translations: {
 		word: 1,

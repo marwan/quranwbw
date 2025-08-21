@@ -35,7 +35,8 @@
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
-		__wideWesbiteLayoutEnabled
+		__wideWesbiteLayoutEnabled,
+		__signLanguageModeEnabled
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -285,6 +286,20 @@
 							<span class="block">Wide Website Layout</span>
 							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
 								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWesbiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWesbiteLayoutEnabled', value: event.target.checked })} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width). Best for larger screens.</p>
+					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- arabic-sign-language-setting -->
+					<div id="arabic-sign-language-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Arabic Sign Language</span>
+							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__signLanguageModeEnabled} on:click={(event) => updateSettings({ type: 'signLanguageModeEnabled', value: event.target.checked })} />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
