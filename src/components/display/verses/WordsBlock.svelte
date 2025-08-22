@@ -101,7 +101,7 @@
 		arabic-font-${$__fontType} 
 		${$__currentPage !== 'mushaf' && fontSizes.arabicText} 
 		${displayIsContinuous && 'inline-block'}
-		${$__signLanguageModeEnabled && 'pb-4'}
+		${$__fontType === 9 && 'pb-4'}
 	`;
 
 	// Classes for v4 hafs words

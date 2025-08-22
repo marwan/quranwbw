@@ -1,11 +1,71 @@
 export const selectableDisplays = {
-	1: { displayID: 1, displayName: 'Word by Word', displayComponent: 'WBWDisplay', layout: 'wbw', continuous: false, customClasses: null, disallowedIn: [] },
-	2: { displayID: 2, displayName: 'Normal', displayComponent: 'NormalDisplay', layout: 'normal', continuous: false, customClasses: null, disallowedIn: [] },
-	3: { displayID: 3, displayName: 'Continuous Word by Word', displayComponent: 'ContinuousDisplay', layout: 'wbw', continuous: true, customClasses: 'text-center direction-rtl', disallowedIn: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'] },
-	4: { displayID: 4, displayName: 'Continuous Normal', displayComponent: 'ContinuousDisplay', layout: 'normal', continuous: true, customClasses: 'text-center direction-rtl', disallowedIn: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'] },
-	5: { displayID: 5, displayName: 'Side By Side', displayComponent: 'SideBySideDisplay', layout: 'normal', continuous: false, customClasses: null, disallowedIn: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'] },
-	6: { displayID: 6, displayName: 'Mushaf', continuous: true, disallowedIn: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'] },
-	7: { displayID: 7, displayName: 'Translation/Transliteration', displayComponent: 'TranslationTransliteration', layout: 'wbw', continuous: false, customClasses: null, disallowedIn: ['morphology', 'search'] }
+	1: {
+		displayID: 1,
+		displayName: 'Word by Word',
+		displayComponent: 'WBWDisplay',
+		layout: 'wbw',
+		continuous: false,
+		customClasses: null,
+		disallowedInPages: [],
+		disallowedInFontTypes: []
+	},
+	2: {
+		displayID: 2,
+		displayName: 'Normal',
+		displayComponent: 'NormalDisplay',
+		layout: 'normal',
+		continuous: false,
+		customClasses: null,
+		disallowedInPages: [],
+		disallowedInFontTypes: [9]
+	},
+	3: {
+		displayID: 3,
+		displayName: 'Continuous Word by Word',
+		displayComponent: 'ContinuousDisplay',
+		layout: 'wbw',
+		continuous: true,
+		customClasses: 'text-center direction-rtl',
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInFontTypes: []
+	},
+	4: {
+		displayID: 4,
+		displayName: 'Continuous Normal',
+		displayComponent: 'ContinuousDisplay',
+		layout: 'normal',
+		continuous: true,
+		customClasses: 'text-center direction-rtl',
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInFontTypes: [9]
+	},
+	5: {
+		displayID: 5,
+		displayName: 'Side By Side',
+		displayComponent: 'SideBySideDisplay',
+		layout: 'normal',
+		continuous: false,
+		customClasses: null,
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInFontTypes: [9]
+	},
+	6: {
+		displayID: 6,
+		displayName: 'Mushaf',
+		continuous: true,
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInFontTypes: [9]
+	},
+	7: {
+		displayID: 7,
+		displayName: 'Translation/Transliteration',
+		displayComponent: 'TranslationTransliteration',
+		layout: 'wbw',
+		continuous: false,
+		customClasses: null,
+		disallowedInPages: ['morphology', 'search'],
+		disallowedInFontTypes: [9]
+	}
 };
 
 export const fontTypes = ['Uthmanic', 'Indopak / Nastaleeq'];
@@ -16,7 +76,7 @@ export const selectableFontTypes = {
 		type: 'Uthmanic',
 		font: 'Digital Font',
 		displayOrder: 1,
-		disallowedIn: ['mushaf'],
+		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	2: {
@@ -24,7 +84,7 @@ export const selectableFontTypes = {
 		type: 'Uthmanic',
 		font: 'Mushaf 1441H',
 		displayOrder: 3,
-		disallowedIn: [],
+		disallowedInPages: [],
 		version: 5
 	},
 	3: {
@@ -32,7 +92,7 @@ export const selectableFontTypes = {
 		type: 'Uthmanic',
 		font: 'Mushaf Tajweed 1441H',
 		displayOrder: 4,
-		disallowedIn: [],
+		disallowedInPages: [],
 		version: 5
 	},
 	4: {
@@ -40,7 +100,7 @@ export const selectableFontTypes = {
 		type: 'Indopak / Nastaleeq',
 		font: 'Qalam Digital Font (Madinah Edition)',
 		displayOrder: 5,
-		disallowedIn: ['mushaf'],
+		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	5: {
@@ -48,7 +108,7 @@ export const selectableFontTypes = {
 		type: 'Indopak / Nastaleeq',
 		font: 'Uthman Taha Digital Font',
 		displayOrder: 7,
-		disallowedIn: ['mushaf'],
+		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	6: {
@@ -56,7 +116,7 @@ export const selectableFontTypes = {
 		type: 'Indopak / Nastaleeq',
 		font: 'Qalam Digital Font (Hanafi Edition)',
 		displayOrder: 6,
-		disallowedIn: ['mushaf'],
+		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	7: {
@@ -64,7 +124,7 @@ export const selectableFontTypes = {
 		type: 'Uthmanic',
 		font: 'Digital Bold Font',
 		displayOrder: 2,
-		disallowedIn: ['mushaf'],
+		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	8: {
@@ -72,7 +132,7 @@ export const selectableFontTypes = {
 		type: 'Indopak / Nastaleeq',
 		font: 'Uthman Taha Digital Bold Font',
 		displayOrder: 8,
-		disallowedIn: ['mushaf'],
+		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	9: {
@@ -80,7 +140,7 @@ export const selectableFontTypes = {
 		type: 'Indopak / Nastaleeq',
 		font: 'Indonesian Isep Misbah Digital Font',
 		displayOrder: 9,
-		disallowedIn: ['mushaf'],
+		disallowedInPages: ['mushaf'],
 		version: 2
 	}
 };

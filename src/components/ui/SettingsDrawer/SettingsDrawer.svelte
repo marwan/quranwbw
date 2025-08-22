@@ -303,7 +303,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Enable this to switch the Quran view to Arabic Sign Language mode. The Indonesian Isep Misbah Digital font will be used, and word transliteration will be disabled.</p>
+						<p class={settingsDescriptionClasses}>Enable this to switch the Quran view to Arabic Sign Language mode. The Indonesian Isep Misbah Digital font will be used, and some options will be disabled.</p>
 					</div>
 				</div>
 			</div>

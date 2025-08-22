@@ -302,6 +302,7 @@ svg {
 
 .font-Arabic-Sign-Language {
   font-family: "Arabic-Sign-Language";
+  unicode-bidi: plaintext;
 }
 
 .direction-rtl {
