@@ -118,8 +118,7 @@
 			updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
 		}
 
-		// Restore the user's preferred font when navigating away from the Mushaf page,
-		// since the Mushaf page enforces a specific font (v4).
+		// Restore the user's preferred font when navigating away from the Mushaf page, since the Mushaf page enforces a specific font (v4).
 		// This ensures the original fontType is re-applied on all other pages.
 		if ($__currentPage && $__currentPage !== 'mushaf' && !$__signLanguageModeEnabled) {
 			$__wordTranslation = JSON.parse($__userSettings).translations.word;
