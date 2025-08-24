@@ -20,6 +20,9 @@
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
+
+	const MAX_REPEAT_TIMES = 100;
+
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;
@@ -30,6 +33,8 @@
 	let startVerseSearch = ''; // Holds search input for start verse
 	let endVerseSearch = ''; // Holds search input for end verse
 	$: versesInChapter = quranMetaData[$__chapterNumber].verses;
+	$: decDisabled = $__audioSettings.timesToRepeat <= 1;
+	$: incDisabled = $__audioSettings.timesToRepeat >= MAX_REPEAT_TIMES;
 
 	// Update settings and validate verses when audio modal is visible
 	$: if ($__audioModalVisible) {
@@ -48,7 +53,7 @@
 		// Validate verse and repeat times
 		invalidStartVerse = startVerse < 1 || startVerse > versesInChapter;
 		invalidEndVerse = endVerse < 1 || endVerse > versesInChapter || endVerse < startVerse;
-		invalidTimesToRepeat = !selectableRepeatTimes.includes(timesToRepeat);
+		invalidTimesToRepeat = timesToRepeat < 1 || timesToRepeat > MAX_REPEAT_TIMES || isNaN(timesToRepeat);
 	}
 
 	// Allow only "playThisVerse" option for non-chapter pages
@@ -72,8 +77,17 @@
 	}
 
 	// Default to repeat 1 time
-	if ($__audioSettings.timesToRepeat === undefined || !selectableRepeatTimes.includes($__audioSettings.timesToRepeat)) {
+	if ($__audioSettings.timesToRepeat === undefined) {
 		$__audioSettings.timesToRepeat = 1;
+	}
+
+	// Clamp timesToRepeat within valid range
+	$: {
+		if ($__audioSettings.timesToRepeat > MAX_REPEAT_TIMES) {
+			$__audioSettings.timesToRepeat = MAX_REPEAT_TIMES;
+		} else if ($__audioSettings.timesToRepeat < 1) {
+			$__audioSettings.timesToRepeat = 1;
+		}
 	}
 
 	// For any page other than chapter page, default to verse repeat
@@ -387,6 +401,33 @@
 								</DropdownItem>
 							{/each}
 						</Dropdown>
+
+						<!-- Stepper controls -->
+						<div class="flex flex-row items-center space-x-2">
+							<button
+								class="{buttonClasses} {decDisabled ? disabledClasses : null}"
+								title="Decrease repeats"
+								aria-label="Decrease repeats"
+								on:click={() => {
+									$__audioSettings.timesToRepeat = Math.max(1, $__audioSettings.timesToRepeat - 1);
+								}}
+								disabled={decDisabled}
+							>
+								<span class="font-bold leading-none">−</span>
+							</button>
+
+							<button
+								class="{buttonClasses} {incDisabled ? disabledClasses : null}"
+								title="Increase repeats"
+								aria-label="Increase repeats"
+								on:click={() => {
+									$__audioSettings.timesToRepeat++;
+								}}
+								disabled={incDisabled}
+								>
+								<span class="font-bold leading-none">+</span>
+							</button>
+						</div>
 					</div>
 
 					<!-- repeat delay -->
