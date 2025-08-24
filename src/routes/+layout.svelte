@@ -76,18 +76,6 @@
 		}
 	})();
 
-	// Update display and font type based on current page
-	$: if ($__currentPage === 'mushaf') {
-		$__displayType = 6;
-		// We do not need Uthmani digital and Indopak fonts in mushaf page
-		if (![2, 3].includes($__fontType)) {
-			__fontType.set(2);
-		}
-	} else {
-		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-		updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
-	}
-
 	// If wbw language was set to Russian or Ingush, switch back to English
 	$: if ([9, 10].includes($__wordTranslation)) {
 		updateSettings({ type: 'wordTranslation', value: 1 });
@@ -116,20 +104,40 @@
 		__websiteOnline.set(false);
 	});
 
-	// Restore the user's preferred font when navigating away from the Mushaf page,
-	// since the Mushaf page enforces a specific font (v4).
-	// This ensures the original fontType is re-applied on all other pages.
-	$: if ($__currentPage && $__currentPage !== 'mushaf' && !$__signLanguageModeEnabled) {
-		$__wordTranslation = JSON.parse($__userSettings).translations.word;
-		$__fontType = JSON.parse($__userSettings).displaySettings.fontType;
-		$__wordTransliterationEnabled = JSON.parse($__userSettings).displaySettings.wordTransliterationEnabled;
-	}
+	// Combined reactive statement handling all page-specific settings
+	$: {
+		// Update display and font type based on current page
+		if ($__currentPage === 'mushaf') {
+			$__displayType = 6;
+			// We do not need Uthmani digital and Indopak fonts in mushaf page
+			if (![2, 3].includes($__fontType)) {
+				__fontType.set(2);
+			}
+		} else {
+			const userSettings = JSON.parse(localStorage.getItem('userSettings'));
+			updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
+		}
 
-	// Use custom settings for sign language mode
-	$: if ($__signLanguageModeEnabled) {
-		$__wordTranslation = 22;
-		$__fontType = 9;
-		$__wordTransliterationEnabled = false;
+		// Restore the user's preferred font when navigating away from the Mushaf page,
+		// since the Mushaf page enforces a specific font (v4).
+		// This ensures the original fontType is re-applied on all other pages.
+		if ($__currentPage && $__currentPage !== 'mushaf' && !$__signLanguageModeEnabled) {
+			$__wordTranslation = JSON.parse($__userSettings).translations.word;
+			$__fontType = JSON.parse($__userSettings).displaySettings.fontType;
+			$__wordTransliterationEnabled = JSON.parse($__userSettings).displaySettings.wordTransliterationEnabled;
+		}
+
+		// Use custom settings for sign language mode
+		if ($__currentPage !== 'mushaf' && $__signLanguageModeEnabled) {
+			$__wordTranslation = 22;
+			$__fontType = 9;
+			$__wordTransliterationEnabled = false;
+		}
+
+		// // Update display and font type based on current page
+		// if ($__signLanguageModeEnabled && ![1, 3].includes($__displayType) && $__currentPage !== 'mushaf') {
+		// 	$__displayType = 1;
+		// }
 	}
 
 	// Function to check old bookmarks for v3 update
