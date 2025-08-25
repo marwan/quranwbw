@@ -6,6 +6,8 @@
 	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+	import Mecca from '$svgs/Mecca.svelte';
+	import Madinah from '$svgs/Madinah.svelte';
 
 	let lastReadPage;
 	let lastReadJuz;
@@ -33,6 +35,11 @@
 
 	// Get the revelation type of the current chapter
 	$: chapterRevelation = quranMetaData[$__chapterNumber].revelation;
+
+	let RevelationIcon;
+	$: revelation = chapterRevelation === 1 ? { termKey: 'meccan', Icon: Mecca } : { termKey: 'medinan', Icon: Madinah };
+	$: revelationTerm = term(revelation.termKey);
+	$: RevelationIcon = revelation.Icon;
 
 	// Calculate the scroll progress percentage for the current chapter
 	$: chapterProgress = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
@@ -110,11 +117,14 @@
 	{#if $__currentPage === 'chapter'}
 		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between text-xs mx-auto px-6`}>
 			<div id="navbar-bottom-chapter-revalation" class="flex flex-row items-center py-2">
-				{#if !$__topNavbarVisible}
-					<span>{@html navbarChapterName}</span>
-				{:else}
-					<span>{chapterRevelation === 1 ? term('meccan') : term('medinan')}</span>
-				{/if}
+				<span class="py-2 flex flex-row items-center gap-1">
+					<svelte:component this={RevelationIcon} />
+					{#if !$__topNavbarVisible}
+						<span>{@html navbarChapterName}</span>
+					{:else}
+						{revelationTerm}
+					{/if}
+				</span>
 			</div>
 			<div class="flex flex-row items-center py-2">
 				<span>{lastReadPage ? `Page ${lastReadPage}` : '...'}</span>
