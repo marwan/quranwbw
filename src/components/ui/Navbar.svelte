@@ -14,6 +14,7 @@
 	let navbarChapterName;
 	let mushafChapters = [];
 	let mushafJuz = '...';
+	let mushafChapterInfo = [];
 
 	// Classes for the navbar
 	$: navbarClasses = `${window.theme('bgMain')} border-b ${window.theme('border')} fixed w-full z-20 top-0 left-0 print:hidden ${$__currentPage === 'home' ? 'hidden' : 'block'}`;
@@ -59,6 +60,10 @@
 		try {
 			mushafJuz = `${term('juz')} ${$__mushafPageDivisions.juz}`;
 			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => quranMetaData[value].transliteration);
+			mushafChapterInfo = Object.values($__mushafPageDivisions.chapters).map((chapter) => ({
+				name: quranMetaData[chapter].transliteration,
+				Icon: quranMetaData[chapter].revelation === 1 ? Mecca : Madinah
+			}));
 		} catch (error) {
 			console.warn(error);
 		}
@@ -143,7 +148,20 @@
 				{#if !$__topNavbarVisible}
 					<span>Page {$__pageNumber} -&nbsp;</span>
 				{/if}
-				<span>{mushafChapters.join(' / ')}</span>
+				<span class="flex items-center">
+					{#if mushafChapterInfo.length ?? false}
+						{#each mushafChapterInfo as item, i (item.name)}
+							<span class="flex items-center gap-1">
+								<svelte:component this={item.Icon} /> {item.name}
+							</span>
+							{#if i < mushafChapterInfo.length - 1}
+								<span class="px-1">/</span>
+							{/if}
+						{/each}
+					{:else}
+						<span>{mushafChapters.join(' / ')}</span>
+					{/if}
+				</span>
 			</div>
 			<div class="flex flex-row items-center py-2">{mushafJuz}</div>
 		</div>
