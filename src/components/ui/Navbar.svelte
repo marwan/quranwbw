@@ -6,12 +6,15 @@
 	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+	import Mecca from '$svgs/Mecca.svelte';
+	import Madinah from '$svgs/Madinah.svelte';
 
 	let lastReadPage;
 	let lastReadJuz;
 	let navbarChapterName;
 	let mushafChapters = [];
 	let mushafJuz = '...';
+	let mushafChapterInfo = [];
 
 	// Classes for the navbar
 	$: navbarClasses = `${window.theme('bgMain')} border-b ${window.theme('border')} fixed w-full z-20 top-0 left-0 print:hidden ${$__currentPage === 'home' ? 'hidden' : 'block'}`;
@@ -34,6 +37,11 @@
 	// Get the revelation type of the current chapter
 	$: chapterRevelation = quranMetaData[$__chapterNumber].revelation;
 
+	let RevelationIcon;
+	$: revelation = chapterRevelation === 1 ? { termKey: 'meccan', Icon: Mecca } : { termKey: 'medinan', Icon: Madinah };
+	$: revelationTerm = term(revelation.termKey);
+	$: RevelationIcon = revelation.Icon;
+
 	// Calculate the scroll progress percentage for the current chapter
 	$: chapterProgress = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
 
@@ -52,6 +60,10 @@
 		try {
 			mushafJuz = `${term('juz')} ${$__mushafPageDivisions.juz}`;
 			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => quranMetaData[value].transliteration);
+			mushafChapterInfo = Object.values($__mushafPageDivisions.chapters).map((chapter) => ({
+				name: quranMetaData[chapter].transliteration,
+				Icon: quranMetaData[chapter].revelation === 1 ? Mecca : Madinah
+			}));
 		} catch (error) {
 			console.warn(error);
 		}
@@ -110,11 +122,14 @@
 	{#if $__currentPage === 'chapter'}
 		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between text-xs mx-auto px-6`}>
 			<div id="navbar-bottom-chapter-revalation" class="flex flex-row items-center py-2">
-				{#if !$__topNavbarVisible}
-					<span>{@html navbarChapterName}</span>
-				{:else}
-					<span>{chapterRevelation === 1 ? term('meccan') : term('medinan')}</span>
-				{/if}
+				<span class="py-2 flex flex-row items-center gap-1">
+					<svelte:component this={RevelationIcon} />
+					{#if !$__topNavbarVisible}
+						<span>{@html navbarChapterName}</span>
+					{:else}
+						{revelationTerm}
+					{/if}
+				</span>
 			</div>
 			<div class="flex flex-row items-center py-2">
 				<span>{lastReadPage ? `Page ${lastReadPage}` : '...'}</span>
@@ -129,13 +144,27 @@
 	<!-- mini nav for mushaf page -->
 	{#if $__currentPage === 'mushaf'}
 		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between border-t ${window.theme('border')} text-xs mx-auto px-6`}>
-			<div class="flex flex-row items-center py-2">
+			<div class="flex flex-row items-center py-2 truncate">
 				{#if !$__topNavbarVisible}
 					<span>Page {$__pageNumber} -&nbsp;</span>
 				{/if}
-				<span>{mushafChapters.join(' / ')}</span>
+				<span class="flex items-center">
+					{#if mushafChapterInfo.length ?? false}
+						{#each mushafChapterInfo as item, i (item.name)}
+							<span class="flex items-center gap-1">
+								<svelte:component this={item.Icon} />
+								{item.name}
+							</span>
+							{#if i < mushafChapterInfo.length - 1}
+								<span class="px-1">/</span>
+							{/if}
+						{/each}
+					{:else}
+						<span>{mushafChapters.join(' / ')}</span>
+					{/if}
+				</span>
 			</div>
-			<div class="flex flex-row items-center py-2">{mushafJuz}</div>
+			<div class="flex flex-row items-center py-2 truncate">{mushafJuz}</div>
 		</div>
 	{/if}
 </nav>
