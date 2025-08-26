@@ -144,7 +144,7 @@
 	<!-- mini nav for mushaf page -->
 	{#if $__currentPage === 'mushaf'}
 		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between border-t ${window.theme('border')} text-xs mx-auto px-6`}>
-			<div class="flex flex-row items-center py-2">
+			<div class="flex flex-row items-center py-2 truncate">
 				{#if !$__topNavbarVisible}
 					<span>Page {$__pageNumber} -&nbsp;</span>
 				{/if}
@@ -152,7 +152,8 @@
 					{#if mushafChapterInfo.length ?? false}
 						{#each mushafChapterInfo as item, i (item.name)}
 							<span class="flex items-center gap-1">
-								<svelte:component this={item.Icon} /> {item.name}
+								<svelte:component this={item.Icon} />
+								{item.name}
 							</span>
 							{#if i < mushafChapterInfo.length - 1}
 								<span class="px-1">/</span>
@@ -163,7 +164,7 @@
 					{/if}
 				</span>
 			</div>
-			<div class="flex flex-row items-center py-2">{mushafJuz}</div>
+			<div class="flex flex-row items-center py-2 truncate">{mushafJuz}</div>
 		</div>
 	{/if}
 </nav>
