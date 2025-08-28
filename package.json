@@ -7,9 +7,12 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify",
-		"lint:unused": "eslint . --ext .js,.ts,.svelte --max-warnings=0"
+		"lint:unused": "eslint . --ext .js,.ts,.svelte --max-warnings=0",
+		"test:e2e": "playwright test",
+		"test:debug": "playwright test --debug --grep"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.47.2",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.26.1",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
