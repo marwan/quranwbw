@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { storageResetInit, mockStaticData, mockSearchApi } from '../utils/testUtils';
+import { storageResetInit } from '../utils/testUtils';
 
 test.beforeEach(async ({ page }) => {
   await storageResetInit(page);
