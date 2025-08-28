@@ -8,8 +8,9 @@
 		"preview": "vite preview",
 		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify",
 		"lint:unused": "eslint . --ext .js,.ts,.svelte --max-warnings=0",
-		"test:e2e": "playwright test",
-		"test:debug": "playwright test --debug --grep"
+		"test:setup": "playwright install",
+		"test:e2e": "npm run test:setup && playwright test",
+		"test:debug": "npm run test:setup && playwright test --headed --debug"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.47.2",
