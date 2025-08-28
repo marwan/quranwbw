@@ -57,7 +57,7 @@ test('mushaf responsive design on different screen sizes', async ({ page }) => {
   await page.goto(`/page/${randomPage}`);
   await page.waitForLoadState('domcontentloaded');
 
-  let pageContent = page.locator('#page-block');
+  const pageContent = page.locator('#page-block');
   await expect(pageContent).toBeVisible();
   await expectFifteenLines(page, randomPage);
 
