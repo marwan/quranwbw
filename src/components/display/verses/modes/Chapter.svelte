@@ -32,7 +32,6 @@
 	const urlParams = new URLSearchParams(window.location.search);
 	const startVerseParam = urlParams.get('startVerse');
 	const chapterTotalVerses = quranMetaData[$__chapterNumber].verses;
-	let Chapter; // for the "Chapter" component
 	let versesLoadType; // previous/next
 	let nextVersesProps = {};
 	let nextVersesStart;
@@ -42,8 +41,6 @@
 	function loadNextVerses() {
 		versesLoadType = 'next';
 
-		// Importing the same component to be re-used when the "Load Next Verses" button is pressed
-		import('./Chapter.svelte').then((res) => (Chapter = res.default));
 
 		// Max verses to load when the next set is requested
 		const versesToLoad = 5;
@@ -97,6 +94,6 @@
 	{/if}
 
 	{#if versesLoadType === 'next'}
-		<svelte:component this={Chapter} {...nextVersesProps} />
+		<svelte:self {...nextVersesProps} />
 	{/if}
 {/if}
