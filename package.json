@@ -7,13 +7,19 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify",
-		"lint:unused": "eslint . --ext .js,.ts,.svelte --max-warnings=0"
+		"lint:unused": "eslint . --ext .js,.ts,.svelte --max-warnings=0",
+		"test:setup": "playwright install",
+		"test:e2e": "npm run test:setup && playwright test",
+		"test:debug": "npm run test:setup && playwright test --headed --debug"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.47.2",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.26.1",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.0",
+		"@typescript-eslint/eslint-plugin": "^8.41.0",
+		"@typescript-eslint/parser": "^8.41.0",
 		"autoprefixer": "^10.4.19",
 		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",
@@ -27,6 +33,7 @@
 		"svelte": "^4.2.19",
 		"tailwind-scrollbar": "^3.1.0",
 		"tailwindcss": "^3.4.1",
+		"typescript": "^5.9.2",
 		"vite": "^5.4.15"
 	},
 	"type": "module",

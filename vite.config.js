@@ -28,7 +28,7 @@ function getVersion() {
 
 		const formatted = `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
 		return `${commit} (${formatted})`;
-	} catch (e) {
+	} catch {
 		return 'unknown';
 	}
 }
