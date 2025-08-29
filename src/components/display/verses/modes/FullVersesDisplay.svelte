@@ -41,7 +41,6 @@
 	};
 
 	const params = new URLSearchParams(window.location.search);
-	let Individual; // for the "Individual" component
 	let nextVersesProps = {};
 	let versesLoadType; // previous/next
 	let keysArray = keys.split(',');
@@ -91,7 +90,6 @@
 
 	function loadNextVerses() {
 		try {
-			import('./FullVersesDisplay.svelte').then((res) => (Individual = res.default));
 			const lastRenderedId = document.querySelectorAll('.verse')[document.querySelectorAll('.verse').length - 1].id;
 
 			nextStartIndex = findKeyIndices(keys, lastRenderedId, maxIndexesAllowedToRender).startIndex;
@@ -256,7 +254,7 @@
 		{/if}
 
 		{#if versesLoadType === 'next'}
-			<svelte:component this={Individual} {...nextVersesProps} />
+			<svelte:self {...nextVersesProps} />
 		{/if}
 	{/if}
 {/key}
