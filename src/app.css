@@ -589,12 +589,3 @@ svg {
 .theme-9 .markdown hr { @apply border-[#dca54c]/20; } /* Dark Luxury */
 .theme-9 .markdown a { @apply text-[#dca54c]; } /* Dark Luxury */
 .theme-9 .markdown h3 { @apply text-[#dca54c]; } /* Dark Luxury */
-
-/* Firefox-only glyph rendering fix: add a transparent text-shadow with blur equal to font-size.
-  This mitigates occasional glyph edge artifacts when drawing Arabic glyphs in Firefox.
-  Target only Mushaf/v4 words (.v4-words). */
-@supports (-moz-appearance: none) {
-  .v4-words {
-    text-shadow: 0 0 1em transparent;
-  }
-}
