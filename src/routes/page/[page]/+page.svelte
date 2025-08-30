@@ -5,6 +5,7 @@
 	import ChapterHeader from '$misc/ChapterHeader.svelte';
 	import PageHead from '$misc/PageHead.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
+	import MushafPageNumber from '$display/MushafPageNumber.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Minimize from '$svgs/Minimize.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
@@ -204,13 +205,7 @@
 			</div>
 
 			<!-- page number -->
-			<div class="max-w-3xl md:max-w-[40rem] mx-auto justify-center text-sm">
-				<div class="flex items-center">
-					<div class="flex-1 border-t-2 {window.theme('border')}"></div>
-					<span class="px-3">{page}</span>
-					<div class="flex-1 border-t-2 {window.theme('border')}"></div>
-				</div>
-			</div>
+			<MushafPageNumber {page} />
 		</div>
 	{:catch error}
 		<ErrorLoadingData {error} />
