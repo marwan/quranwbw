@@ -1,4 +1,5 @@
 <script>
+    import '../app.css';
 	import '$utils/checkURLParameters';
 	import '$utils/keyDownHandler';
 	import '$utils/devTools';
