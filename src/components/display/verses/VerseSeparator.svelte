@@ -1,7 +1,7 @@
 <script>
 	export let key;
 
-	import { __currentPage, __displayType } from '$utils/stores';
+	import { __currentPage } from '$utils/stores';
 	import { quranMetaData } from '$data/quranMeta';
 
 	const [chapter, verse] = key.split(':').map(Number);
