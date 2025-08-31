@@ -153,8 +153,10 @@
 								<svelte:component this={item.Icon} />
 								{item.name}
 								{#if !$__topNavbarVisible}
-									({item.verses_count}
-									{term('verses')})
+									<span class="hidden sm:inline">
+										({item.verses_count}
+										{term('verses')})
+									</span>
 								{/if}
 							</span>
 							{#if i < mushafChapterInfo.length - 1}
