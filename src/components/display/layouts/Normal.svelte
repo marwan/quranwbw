@@ -5,6 +5,7 @@
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import VerseTranslations from '$display/verses/VerseTranslations.svelte';
 	import PageDivider from '$display/verses/PageDivider.svelte';
+	import VerseSeparator from '$display/verses/VerseSeparator.svelte';
 	import { updateSettings } from '$utils/updateSettings';
 	import { inview } from 'svelte-inview';
 </script>
@@ -25,5 +26,5 @@
 		<VerseTranslations {value} />
 	</div>
 
-	<div class="border-b {window.theme('border')}"></div>
+	<VerseSeparator {key} />
 {/if}

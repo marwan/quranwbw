@@ -6,6 +6,7 @@
 	import Normal from '$display/layouts/Normal.svelte';
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
 	import Bismillah from '$misc/Bismillah.svelte';
+	import ChapterHeader from '$misc/ChapterHeader.svelte';
 	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __currentPage, __keysToFetch, __pageURL } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
@@ -14,17 +15,9 @@
 	import { inview } from 'svelte-inview';
 	import { term } from '$utils/terminologies';
 	import { selectableDisplays } from '$data/options';
-	import { quranMetaData } from '$data/quranMeta';
 
 	// set this so we can use it for the 'setPlayFromHere' functionality in the audio modal
 	$: $__keysToFetch = keys;
-
-	const dividerClasses = `
-		flex flex-row justify-center text-center mx-auto w-full my-4 
-		py-2 px-4 text-sm rounded-full
-		${window.theme('hoverBorder')}
-		${window.theme('bgSecondaryLight')}
-	`;
 
 	const displayComponents = {
 		1: { component: WordByWord },
@@ -234,7 +227,7 @@
 				{#if $__currentPage === 'juz' && +key.split(':')[1] === 1}
 					{@const chapter = +key.split(':')[0]}
 					<div class="mt-4">
-						<div class={dividerClasses}>{term('chapter')} {chapter} - {quranMetaData[chapter].transliteration}</div>
+						<ChapterHeader {chapter} />
 						<Bismillah {chapter} startVerse={+key.split(':')[1]} />
 					</div>
 				{/if}
