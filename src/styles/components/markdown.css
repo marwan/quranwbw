@@ -1,0 +1,128 @@
+/* Markdown Component Styles for All Themes */
+/* These styles are used in About and Changelog pages */
+
+/* Theme 1 - Golden Glint */
+.theme-1 .markdown hr,
+[data-theme="golden-glint"] .markdown hr { 
+  border-color: #b1901f33; /* 20% opacity */
+}
+.theme-1 .markdown a,
+[data-theme="golden-glint"] .markdown a { 
+  color: #b1901f;
+}
+.theme-1 .markdown h3,
+[data-theme="golden-glint"] .markdown h3 { 
+  color: #b1901f;
+}
+
+/* Theme 2 - Classic Light */
+.theme-2 .markdown hr,
+[data-theme="classic-light"] .markdown hr { 
+  border-color: #00000033; /* 20% opacity */
+}
+.theme-2 .markdown a,
+[data-theme="classic-light"] .markdown a { 
+  color: #000000;
+}
+.theme-2 .markdown h3,
+[data-theme="classic-light"] .markdown h3 { 
+  color: #000000;
+}
+
+/* Theme 3 - Silver Lining */
+.theme-3 .markdown hr,
+[data-theme="silver-lining"] .markdown hr { 
+  border-color: #00000033; /* 20% opacity */
+}
+.theme-3 .markdown a,
+[data-theme="silver-lining"] .markdown a { 
+  color: #000000;
+}
+.theme-3 .markdown h3,
+[data-theme="silver-lining"] .markdown h3 { 
+  color: #000000;
+}
+
+/* Theme 4 - Vintage Sepia */
+.theme-4 .markdown hr,
+[data-theme="vintage-sepia"] .markdown hr { 
+  border-color: #553c0f33; /* 20% opacity */
+}
+.theme-4 .markdown a,
+[data-theme="vintage-sepia"] .markdown a { 
+  color: #553c0f;
+}
+.theme-4 .markdown h3,
+[data-theme="vintage-sepia"] .markdown h3 { 
+  color: #553c0f;
+}
+
+/* Theme 5 - Mocha Night */
+.theme-5 .markdown hr,
+[data-theme="mocha-night"] .markdown hr { 
+  border-color: #dca54c33; /* 20% opacity */
+}
+.theme-5 .markdown a,
+[data-theme="mocha-night"] .markdown a { 
+  color: #dca54c;
+}
+.theme-5 .markdown h3,
+[data-theme="mocha-night"] .markdown h3 { 
+  color: #dca54c;
+}
+
+/* Theme 6 - Midnight Blue */
+.theme-6 .markdown hr,
+[data-theme="midnight-blue"] .markdown hr { 
+  border-color: #c2c2c233; /* 20% opacity */
+}
+.theme-6 .markdown a,
+[data-theme="midnight-blue"] .markdown a { 
+  color: #c2c2c2;
+}
+.theme-6 .markdown h3,
+[data-theme="midnight-blue"] .markdown h3 { 
+  color: #c2c2c2;
+}
+
+/* Theme 7 - Forest Green */
+.theme-7 .markdown hr,
+[data-theme="forest-green"] .markdown hr { 
+  border-color: #dddddd33; /* 20% opacity */
+}
+.theme-7 .markdown a,
+[data-theme="forest-green"] .markdown a { 
+  color: #dddddd;
+}
+.theme-7 .markdown h3,
+[data-theme="forest-green"] .markdown h3 { 
+  color: #dddddd;
+}
+
+/* Theme 8 - OLED Black */
+.theme-8 .markdown hr,
+[data-theme="oled-black"] .markdown hr { 
+  border-color: #dddddd33; /* 20% opacity */
+}
+.theme-8 .markdown a,
+[data-theme="oled-black"] .markdown a { 
+  color: #dddddd;
+}
+.theme-8 .markdown h3,
+[data-theme="oled-black"] .markdown h3 { 
+  color: #dddddd;
+}
+
+/* Theme 9 - Dark Luxury */
+.theme-9 .markdown hr,
+[data-theme="dark-luxury"] .markdown hr { 
+  border-color: #dca54c33; /* 20% opacity */
+}
+.theme-9 .markdown a,
+[data-theme="dark-luxury"] .markdown a { 
+  color: #dca54c;
+}
+.theme-9 .markdown h3,
+[data-theme="dark-luxury"] .markdown h3 { 
+  color: #dca54c;
+}

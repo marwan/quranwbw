@@ -13,7 +13,7 @@
 	--color-bg-surface: 255, 255, 255;         /* #ffffff */
 	
 	/* Accent colors */
-	--color-accent-primary: 212, 175, 55;      /* #d4af37 - gold */
+	--color-accent-primary: 177, 144, 31;      /* #d4af37 - gold */
 	--color-accent-secondary: 177, 144, 31;    /* #b1901f - darker gold */
 	
 	/* Quran-specific colors */
@@ -28,7 +28,14 @@
 	
 	/* Borders and dividers */
 	--color-border: 252, 211, 77;              /* #fcd34d - amber-300 */
+	--color-border-primary: 252, 211, 77;      /* #fcd34d - amber-300 */
+	--color-border-secondary: 254, 215, 170;   /* #fed7aa - orange-200 */
 	--color-divider: 254, 243, 199;            /* #fef3c7 - amber-100 */
+	
+	/* Interactive states */
+	--color-bg-hover: 254, 243, 199;           /* #fef3c7 - amber-100 */
+	--color-bg-secondary-dark: 251, 191, 36;   /* #fbbf24 - amber-400 */
+	--color-input-primary: 255, 255, 255;      /* #ffffff - white */
 	
 	/* Legacy variables for backward compatibility */
 	--icon-color: #b1901f;

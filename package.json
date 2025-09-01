@@ -27,6 +27,7 @@
 		"eslint-plugin-unused-imports": "^4.1.4",
 		"flowbite": "^2.3.0",
 		"flowbite-svelte": "^0.46.1",
+		"playwright": "^1.55.0",
 		"postcss": "^8.4.38",
 		"prettier": "^3.1.1",
 		"sass": "^1.91.0",

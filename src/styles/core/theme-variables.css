@@ -28,5 +28,12 @@
   
   /* Borders and dividers */
   --color-border: 229, 231, 235;           /* #e5e7eb - borders */
+  --color-border-primary: 229, 231, 235;   /* #e5e7eb - primary borders */
+  --color-border-secondary: 209, 213, 219; /* #d1d5db - secondary borders */
   --color-divider: 243, 244, 246;          /* #f3f4f6 - dividers */
+  
+  /* Interactive states */
+  --color-bg-hover: 249, 250, 251;         /* #f9fafb - hover background */
+  --color-bg-secondary-dark: 229, 231, 235;/* #e5e7eb - darker secondary */
+  --color-input-primary: 255, 255, 255;    /* #ffffff - input backgrounds */
 }

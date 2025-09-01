@@ -28,7 +28,14 @@
 	
 	/* Borders and dividers */
 	--color-border: 75, 85, 99;                /* #4b5563 - gray-600 */
+	--color-border-primary: 75, 85, 99;        /* #4b5563 - gray-600 */
+	--color-border-secondary: 55, 65, 81;      /* #374151 - gray-700 */
 	--color-divider: 31, 41, 55;               /* #1f2937 - gray-800 */
+	
+	/* Interactive elements */
+	--color-bg-hover: 31, 41, 55;              /* #1f2937 - gray-800 */
+	--color-bg-secondary-dark: 17, 24, 39;     /* #111827 - gray-900 */
+	--color-input-primary: 31, 41, 55;         /* #1f2937 - gray-800 */
 	
 	/* Legacy variables for backward compatibility */
 	--icon-color: #e5e7eb;
@@ -60,7 +67,7 @@ html[data-theme="oled-black"] ::-webkit-scrollbar-thumb {
 }
 .theme-8 .theme-palette-tajweed,
 [data-theme="oled-black"] .theme-palette-tajweed { 
-	font-palette: --palette0; 
+	font-palette: --palette1; 
 }
 .theme-8 .header,
 [data-theme="oled-black"] .header { 

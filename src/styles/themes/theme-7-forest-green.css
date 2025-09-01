@@ -60,7 +60,7 @@ html[data-theme="forest-green"] ::-webkit-scrollbar-thumb {
 }
 .theme-7 .theme-palette-tajweed,
 [data-theme="forest-green"] .theme-palette-tajweed { 
-	font-palette: --palette0; 
+	font-palette: --palette1; 
 }
 .theme-7 .header,
 [data-theme="forest-green"] .header { 

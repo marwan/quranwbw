@@ -60,7 +60,7 @@ html[data-theme="mocha-night"] ::-webkit-scrollbar-thumb {
 }
 .theme-5 .theme-palette-tajweed,
 [data-theme="mocha-night"] .theme-palette-tajweed { 
-	font-palette: --palette0; 
+	font-palette: --palette1; 
 }
 .theme-5 .header,
 [data-theme="mocha-night"] .header { 

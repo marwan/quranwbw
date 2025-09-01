@@ -106,6 +106,22 @@
 			const userSettings = JSON.parse(localStorage.getItem('userSettings'));
 			const usersTheme = userSettings ? +userSettings.displaySettings.websiteTheme : 1;
 
+			// Map numeric theme id to data-theme slug used by CSS variable themes
+			function themeIdToSlug(id) {
+				const map = {
+					1: 'golden-glint',
+					2: 'classic-light',
+					3: 'silver-lining',
+					4: 'vintage-sepia',
+					5: 'mocha-night',
+					6: 'midnight-blue',
+					7: 'forest-green',
+					8: 'oled-black',
+					9: 'dark-luxury'
+				};
+				return map[id] || 'golden-glint';
+			}
+
 			function theme(type, id = usersTheme) {
 				try {
 					const themes = {
@@ -331,8 +347,9 @@
 				currentTheme = 1;
 			}
 
-			// Apply the theme class to the document's root element
+			// Apply the theme class and data-theme attribute to the document's root element
 			document.documentElement.classList += `theme-${currentTheme} ${window.theme('bgMain')}`;
+			document.documentElement.setAttribute('data-theme', themeIdToSlug(currentTheme));
 		</script>
 
 		<!-- Umami -->

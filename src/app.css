@@ -1,9 +1,4 @@
-/* Tailwind directives for JIT and dev mode */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Import core styles */
+/* Import core styles first */
 @import './styles/core/theme-variables.css';
 @import './styles/core/fonts.css';
 @import './styles/core/layout.css';
@@ -23,3 +18,8 @@
 
 /* Import components */
 @import './styles/components/components.css';
+
+/* Tailwind directives for JIT and dev mode */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

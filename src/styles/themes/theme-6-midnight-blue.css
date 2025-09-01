@@ -60,7 +60,7 @@ html[data-theme="midnight-blue"] ::-webkit-scrollbar-thumb {
 }
 .theme-6 .theme-palette-tajweed,
 [data-theme="midnight-blue"] .theme-palette-tajweed { 
-	font-palette: --palette0; 
+	font-palette: --palette1; 
 }
 .theme-6 .header,
 [data-theme="midnight-blue"] .header { 

@@ -60,7 +60,7 @@ html[data-theme="dark-luxury"] ::-webkit-scrollbar-thumb {
 }
 .theme-9 .theme-palette-tajweed,
 [data-theme="dark-luxury"] .theme-palette-tajweed { 
-	font-palette: --palette0; 
+	font-palette: --palette1; 
 }
 .theme-9 .header,
 [data-theme="dark-luxury"] .header { 
