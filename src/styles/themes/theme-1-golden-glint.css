@@ -1,0 +1,78 @@
+/* Theme 1 - Golden Glint */
+/* New CSS Variables Approach */
+
+[data-theme="golden-glint"] {
+	/* Text colors */
+	--color-text-primary: 51, 51, 51;          /* #333333 */
+	--color-text-secondary: 102, 102, 102;     /* #666666 */
+	--color-text-muted: 153, 153, 153;         /* #999999 */
+	
+	/* Background colors */
+	--color-bg-primary: 255, 248, 220;         /* #fff8dc - cornsilk */
+	--color-bg-secondary: 254, 252, 232;       /* #fefce8 - yellow-50 */
+	--color-bg-surface: 255, 255, 255;         /* #ffffff */
+	
+	/* Accent colors */
+	--color-accent-primary: 212, 175, 55;      /* #d4af37 - gold */
+	--color-accent-secondary: 177, 144, 31;    /* #b1901f - darker gold */
+	
+	/* Quran-specific colors */
+	--color-quran-text: 0, 0, 0;               /* #000000 */
+	--color-verse-highlight: 255, 251, 235;    /* #fffbeb - amber-50 */
+	--color-chapter-header: 146, 64, 14;       /* #92400e - amber-800 */
+	
+	/* Interactive elements */
+	--color-button-primary: 212, 175, 55;      /* #d4af37 */
+	--color-button-hover: 177, 144, 31;        /* #b1901f */
+	--color-link: 177, 144, 31;                /* #b1901f */
+	
+	/* Borders and dividers */
+	--color-border: 252, 211, 77;              /* #fcd34d - amber-300 */
+	--color-divider: 254, 243, 199;            /* #fef3c7 - amber-100 */
+	
+	/* Legacy variables for backward compatibility */
+	--icon-color: #b1901f;
+}
+
+/* Scrollbar Colors - using CSS variables */
+html[data-theme="golden-glint"] ::-webkit-scrollbar-thumb { 
+	background: rgb(var(--color-accent-secondary)); 
+}
+
+/* Checkbox Colors - using CSS variables */
+[data-theme="golden-glint"] [type='checkbox'], 
+[data-theme="golden-glint"] [type='checkbox']:checked { 
+	background-color: transparent; 
+	border-color: rgb(var(--color-accent-secondary)); 
+}
+[data-theme="golden-glint"] [type='checkbox']:checked { 
+	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23b1901f'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); 
+}
+
+/* Font Palettes - Support both old and new selectors */
+.theme-1 .colored-fonts,
+[data-theme="golden-glint"] .colored-fonts { 
+	font-palette: --palette4; 
+}
+.theme-1 .theme-palette-normal,
+[data-theme="golden-glint"] .theme-palette-normal { 
+	font-palette: --palette3; 
+}
+.theme-1 .theme-palette-tajweed,
+[data-theme="golden-glint"] .theme-palette-tajweed { 
+	font-palette: --palette0; 
+}
+.theme-1 .header,
+[data-theme="golden-glint"] .header { 
+	font-palette: --palette2; 
+}
+
+/* Custom Colors */
+.theme-1 .custom-ayah-icon-color,
+[data-theme="golden-glint"] .custom-ayah-icon-color { 
+	font-palette: --AyahIconGoldTheme !important; 
+}
+.theme-1 .custom-header-color,
+[data-theme="golden-glint"] .custom-header-color { 
+	font-palette: --GoldenGlintHeaderColor !important; 
+}

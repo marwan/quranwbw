@@ -1,0 +1,32 @@
+/* Base CSS Variables for Theme System */
+/* This file defines the default theme (Golden Glint) as fallback */
+
+:root {
+  /* Text colors */
+  --color-text-primary: 51, 51, 51;        /* #333333 - main text */
+  --color-text-secondary: 102, 102, 102;   /* #666666 - secondary text */
+  --color-text-muted: 153, 153, 153;       /* #999999 - muted text */
+  
+  /* Background colors */
+  --color-bg-primary: 255, 248, 220;       /* #fff8dc - main background (cornsilk) */
+  --color-bg-secondary: 248, 250, 252;     /* #f8fafc - secondary background */
+  --color-bg-surface: 255, 255, 255;       /* #ffffff - surface/card background */
+  
+  /* Accent colors */
+  --color-accent-primary: 212, 175, 55;    /* #d4af37 - gold primary */
+  --color-accent-secondary: 184, 134, 11;  /* #b8860b - dark goldenrod */
+  
+  /* Quran-specific colors */
+  --color-quran-text: 0, 0, 0;             /* #000000 - Quran text */
+  --color-verse-highlight: 255, 251, 235;  /* #fffbeb - verse highlight */
+  --color-chapter-header: 146, 64, 14;     /* #92400e - chapter headers */
+  
+  /* Interactive elements */
+  --color-button-primary: 212, 175, 55;    /* #d4af37 - primary buttons */
+  --color-button-hover: 184, 134, 11;      /* #b8860b - button hover state */
+  --color-link: 59, 130, 246;              /* #3b82f6 - links */
+  
+  /* Borders and dividers */
+  --color-border: 229, 231, 235;           /* #e5e7eb - borders */
+  --color-divider: 243, 244, 246;          /* #f3f4f6 - dividers */
+}

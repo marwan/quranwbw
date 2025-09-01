@@ -1,0 +1,35 @@
+/* Theme 2 - Classic Light */
+/* New CSS Variables Approach */
+
+[data-theme="classic-light"] {
+	/* Text colors */
+	--color-text-primary: 31, 41, 55;          /* #1f2937 - gray-800 */
+	--color-text-secondary: 75, 85, 99;        /* #4b5563 - gray-600 */
+	--color-text-muted: 107, 114, 128;         /* #6b7280 - gray-500 */
+	
+	/* Background colors */
+	--color-bg-primary: 255, 255, 255;         /* #ffffff - white */
+	--color-bg-secondary: 249, 250, 251;       /* #f9fafb - gray-50 */
+	--color-bg-surface: 255, 255, 255;         /* #ffffff - white */
+	
+	/* Accent colors */
+	--color-accent-primary: 79, 70, 229;       /* #4f46e5 - indigo-600 */
+	--color-accent-secondary: 0, 0, 0;         /* #000000 - black */
+	
+	/* Quran-specific colors */
+	--color-quran-text: 0, 0, 0;               /* #000000 - black */
+	--color-verse-highlight: 238, 242, 255;    /* #eef2ff - indigo-50 */
+	--color-chapter-header: 55, 48, 163;       /* #3730a3 - indigo-800 */
+	
+	/* Interactive elements */
+	--color-button-primary: 79, 70, 229;       /* #4f46e5 - indigo-600 */
+	--color-button-hover: 67, 56, 202;         /* #4338ca - indigo-700 */
+	--color-link: 79, 70, 229;                 /* #4f46e5 - indigo-600 */
+	
+	/* Borders and dividers */
+	--color-border: 209, 213, 219;             /* #d1d5db - gray-300 */
+	--color-divider: 243, 244, 246;            /* #f3f4f6 - gray-100 */
+	
+	/* Legacy variables for backward compatibility */
+	--icon-color: #000000;
+}

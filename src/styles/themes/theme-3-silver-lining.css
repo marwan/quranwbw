@@ -1,0 +1,78 @@
+/* Theme 3 - Silver Lining */
+/* New CSS Variables Approach */
+
+[data-theme="silver-lining"] {
+	/* Text colors */
+	--color-text-primary: 51, 51, 51;          /* #333333 - dark gray */
+	--color-text-secondary: 107, 114, 128;     /* #6b7280 - gray-500 */
+	--color-text-muted: 156, 163, 175;         /* #9ca3af - gray-400 */
+	
+	/* Background colors */
+	--color-bg-primary: 248, 250, 252;         /* #f8fafc - slate-50 */
+	--color-bg-secondary: 241, 245, 249;       /* #f1f5f9 - slate-100 */
+	--color-bg-surface: 255, 255, 255;         /* #ffffff - white */
+	
+	/* Accent colors */
+	--color-accent-primary: 148, 163, 184;     /* #94a3b8 - slate-400 */
+	--color-accent-secondary: 100, 116, 139;   /* #64748b - slate-500 */
+	
+	/* Quran-specific colors */
+	--color-quran-text: 30, 41, 59;            /* #1e293b - slate-800 */
+	--color-verse-highlight: 248, 250, 252;    /* #f8fafc - slate-50 */
+	--color-chapter-header: 51, 65, 85;        /* #334155 - slate-700 */
+	
+	/* Interactive elements */
+	--color-button-primary: 148, 163, 184;     /* #94a3b8 - slate-400 */
+	--color-button-hover: 100, 116, 139;       /* #64748b - slate-500 */
+	--color-link: 100, 116, 139;               /* #64748b - slate-500 */
+	
+	/* Borders and dividers */
+	--color-border: 203, 213, 225;             /* #cbd5e1 - slate-300 */
+	--color-divider: 226, 232, 240;            /* #e2e8f0 - slate-200 */
+	
+	/* Legacy variables for backward compatibility */
+	--icon-color: #64748b;
+}
+
+/* Scrollbar Colors - using CSS variables */
+html[data-theme="silver-lining"] ::-webkit-scrollbar-thumb { 
+	background: rgb(var(--color-accent-secondary)); 
+}
+
+/* Checkbox Colors - using CSS variables */
+[data-theme="silver-lining"] [type='checkbox'], 
+[data-theme="silver-lining"] [type='checkbox']:checked { 
+	background-color: transparent; 
+	border-color: rgb(var(--color-accent-secondary)); 
+}
+[data-theme="silver-lining"] [type='checkbox']:checked { 
+	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%2364748b'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); 
+}
+
+/* Font Palettes - Support both old and new selectors */
+.theme-3 .colored-fonts,
+[data-theme="silver-lining"] .colored-fonts { 
+	font-palette: --palette4; 
+}
+.theme-3 .theme-palette-normal,
+[data-theme="silver-lining"] .theme-palette-normal { 
+	font-palette: --palette3; 
+}
+.theme-3 .theme-palette-tajweed,
+[data-theme="silver-lining"] .theme-palette-tajweed { 
+	font-palette: --palette0; 
+}
+.theme-3 .header,
+[data-theme="silver-lining"] .header { 
+	font-palette: --palette2; 
+}
+
+/* Custom Colors */
+.theme-3 .custom-ayah-icon-color,
+[data-theme="silver-lining"] .custom-ayah-icon-color { 
+	font-palette: --AyahIconSilverTheme !important; 
+}
+.theme-3 .custom-header-color,
+[data-theme="silver-lining"] .custom-header-color { 
+	font-palette: --SilverLiningHeaderColor !important; 
+}

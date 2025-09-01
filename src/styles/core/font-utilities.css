@@ -1,0 +1,79 @@
+/* Font Utility Classes */
+
+/* Arabic Font Classes */
+.arabic-font-1,
+.arabic-font-2,
+.arabic-font-3,
+.arabic-font-4,
+.arabic-font-5,
+.arabic-font-6,
+.arabic-font-7 {
+  direction: rtl;
+}
+
+.arabic-font-1, .arabic-font-2, .arabic-font-3 {
+  font-family: "Uthmani-Hafs";
+}
+
+.arabic-font-4, .arabic-font-6 {
+  font-family: "IndoPak";
+}
+
+.arabic-font-5 {
+  font-family: "Nastaleeq-Hafs";
+}
+
+.arabic-font-7 {
+  font-family: "Uthmani-Hafs-Bold";
+}
+
+.arabic-font-8 {
+  font-family: "Nastaleeq-Hafs-Bold";
+}
+
+/* Special Icon Fonts */
+.chapter-icons {
+  font-family: chapter-icons !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-display: block;
+}
+
+.juz-icons {
+  font-family: juz-icons !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-display: block;
+}
+
+/* System and Special Fonts */
+.system-font {
+  font-family: 'system-ui';
+}
+
+.tajweed-rules {
+  font-family: "tajweed-rules";
+  font-display: block;
+}
+
+.bismillah {
+  font-family: "bismillah";
+  font-display: block;
+}
+
+.font-Urdu {
+  font-family: "urdu";
+}
+
+.font-Sindhi {
+  font-family: "sindhi";
+}
+
+/* Text Direction Utilities */
+.direction-rtl {
+  direction: rtl;
+}
+
+.direction-ltr {
+  direction: ltr;
+}

@@ -1,0 +1,61 @@
+/* Unified Font Palette Definitions - SCSS Version with Variables */
+
+// Base fonts variable
+$base-quran-fonts: "Uthmani-Hafs", "Uthmani-Hafs-Bold", "Nastaleeq-Hafs", "Nastaleeq-Hafs-Bold", "chapter-headers", "bismillah", "tajweed-rules";
+
+// Page fonts list - defined once, used everywhere
+$page-fonts: ();
+@for $i from 1 through 604 {
+  $page-fonts: append($page-fonts, unquote("p#{$i}"), comma);
+}
+
+// Complete font family list combining base fonts and page fonts
+$complete-font-list: join($base-quran-fonts, $page-fonts, comma);
+
+// CSS Custom Properties for runtime use
+:root {
+  --base-quran-fonts: #{$base-quran-fonts};
+}
+
+// Mixin for creating font palette values
+@mixin font-palette($name, $base-palette, $font-list: $complete-font-list) {
+  @font-palette-values #{$name} {
+    font-family: #{$font-list};
+    base-palette: #{$base-palette};
+    @content; // Allow additional properties like override-colors
+  }
+}
+
+// Generate base palettes 0-5
+@for $i from 0 through 5 {
+  @include font-palette(--palette#{$i}, $i);
+}
+
+// Theme-specific palettes with custom color overrides
+@include font-palette(--AyahIconGoldTheme, 0, $page-fonts) {
+  override-colors:
+    10 #008000,
+    11 #b1901f,
+    12 #f8efd3,
+    13 #000000;
+}
+
+@include font-palette(--MochaNightFontColor, 4, join(bismillah, $page-fonts, comma)) {
+  override-colors:
+    0 #c59f60,
+    1 #c59f60,
+    2 #c59f60,
+    3 #c59f60,
+    4 #c59f60,
+    5 #c59f60,
+    6 #c59f60,
+    7 #c59f60,
+    8 #c59f60,
+    9 #c59f60,
+    10 #c59f60,
+    11 #c59f60,
+    12 #c59f60,
+    13 #c59f60,
+    14 #c59f60,
+    15 #c59f60;
+}
