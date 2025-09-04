@@ -1,78 +1,27 @@
 /* Theme 4 - Vintage Sepia */
-/* New CSS Variables Approach */
+/* Minimal theme mappings for icon palettes only */
 
 [data-theme="vintage-sepia"] {
-	/* Text colors */
-	--color-text-primary: 69, 39, 12;          /* #45270c - amber-900 dark */
-	--color-text-secondary: 120, 69, 16;       /* #784510 - amber-800 */
-	--color-text-muted: 146, 91, 29;           /* #925b1d - amber-700 */
-	
-	/* Background colors */
-	--color-bg-primary: 254, 252, 232;         /* #fefce8 - amber-50 */
-	--color-bg-secondary: 254, 243, 199;       /* #fef3c7 - amber-100 */
-	--color-bg-surface: 255, 248, 220;         /* #fff8dc - cornsilk */
-	
-	/* Accent colors */
-	--color-accent-primary: 180, 83, 9;        /* #b45309 - amber-700 */
-	--color-accent-secondary: 146, 64, 14;     /* #92400e - amber-800 */
-	
-	/* Quran-specific colors */
-	--color-quran-text: 69, 39, 12;            /* #45270c - amber-900 dark */
-	--color-verse-highlight: 255, 251, 235;    /* #fffbeb - amber-50 light */
-	--color-chapter-header: 120, 53, 15;       /* #78350f - amber-900 */
-	
-	/* Interactive elements */
-	--color-button-primary: 180, 83, 9;        /* #b45309 - amber-700 */
-	--color-button-hover: 146, 64, 14;         /* #92400e - amber-800 */
-	--color-link: 146, 64, 14;                 /* #92400e - amber-800 */
-	
-	/* Borders and dividers */
-	--color-border: 217, 119, 6;               /* #d97706 - amber-600 */
-	--color-divider: 252, 211, 77;             /* #fcd34d - amber-300 */
-	
-	/* Legacy variables for backward compatibility */
-	--icon-color: #92400e;
-}
-
-/* Scrollbar Colors - using CSS variables */
-html[data-theme="vintage-sepia"] ::-webkit-scrollbar-thumb { 
-	background: rgb(var(--color-accent-secondary)); 
-}
-
-/* Checkbox Colors - using CSS variables */
-[data-theme="vintage-sepia"] [type='checkbox'], 
-[data-theme="vintage-sepia"] [type='checkbox']:checked { 
-	background-color: transparent; 
-	border-color: rgb(var(--color-accent-secondary)); 
-}
-[data-theme="vintage-sepia"] [type='checkbox']:checked { 
-	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%2392400e'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); 
+	--color-accent-primary: 85, 60, 15;        /* #553c0f */
+	--color-accent-secondary: 85, 60, 15;      /* #553c0f */
+	--color-text-primary: 85, 60, 15;          /* #553c0f */
+	--color-text-secondary: 85, 60, 15;        /* #553c0f */
 }
 
 /* Font Palettes - Support both old and new selectors */
 .theme-4 .colored-fonts,
 [data-theme="vintage-sepia"] .colored-fonts { 
-	font-palette: --palette4; 
+	font-palette: --palette2; 
 }
 .theme-4 .theme-palette-normal,
 [data-theme="vintage-sepia"] .theme-palette-normal { 
-	font-palette: --palette3; 
+	font-palette: --palette5; 
 }
 .theme-4 .theme-palette-tajweed,
 [data-theme="vintage-sepia"] .theme-palette-tajweed { 
-	font-palette: --palette0; 
+	font-palette: --palette2; 
 }
 .theme-4 .header,
 [data-theme="vintage-sepia"] .header { 
-	font-palette: --palette2; 
-}
-
-/* Custom Colors */
-.theme-4 .custom-ayah-icon-color,
-[data-theme="vintage-sepia"] .custom-ayah-icon-color { 
-	font-palette: --AyahIconSepiaTheme !important; 
-}
-.theme-4 .custom-header-color,
-[data-theme="vintage-sepia"] .custom-header-color { 
-	font-palette: --VintageSepiaHeaderColor !important; 
+	font-palette: --palette5; 
 }

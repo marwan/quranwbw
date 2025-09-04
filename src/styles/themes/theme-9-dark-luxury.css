@@ -1,62 +1,21 @@
 /* Theme 9 - Dark Luxury */
-/* New CSS Variables Approach */
+/* Minimal theme mappings for icon palettes only */
 
 [data-theme="dark-luxury"] {
-	/* Text colors */
-	--color-text-primary: 245, 245, 244;       /* #f5f5f4 - stone-100 */
-	--color-text-secondary: 214, 211, 209;     /* #d6d3d1 - stone-300 */
-	--color-text-muted: 168, 162, 158;         /* #a8a29e - stone-400 */
-	
-	/* Background colors */
-	--color-bg-primary: 28, 25, 23;            /* #1c1917 - stone-900 */
-	--color-bg-secondary: 41, 37, 36;          /* #292524 - stone-800 */
-	--color-bg-surface: 57, 54, 53;            /* #393635 - stone-700 */
-	
-	/* Accent colors */
-	--color-accent-primary: 212, 175, 55;      /* #d4af37 - gold */
-	--color-accent-secondary: 255, 215, 0;     /* #ffd700 - bright gold */
-	
-	/* Quran-specific colors */
-	--color-quran-text: 245, 245, 244;         /* #f5f5f4 - stone-100 */
-	--color-verse-highlight: 41, 37, 36;       /* #292524 - stone-800 */
-	--color-chapter-header: 255, 215, 0;       /* #ffd700 - bright gold */
-	
-	/* Interactive elements */
-	--color-button-primary: 212, 175, 55;      /* #d4af37 - gold */
-	--color-button-hover: 255, 215, 0;         /* #ffd700 - bright gold */
-	--color-link: 255, 215, 0;                 /* #ffd700 - bright gold */
-	
-	/* Borders and dividers */
-	--color-border: 177, 144, 31;              /* #b1901f - darker gold */
-	--color-divider: 68, 64, 60;               /* #44403c - stone-600 */
-	
-	/* Legacy variables for backward compatibility */
-	--icon-color: #ffd700;
-}
-
-/* Scrollbar Colors - using CSS variables */
-html[data-theme="dark-luxury"] ::-webkit-scrollbar-thumb { 
-	background: rgb(var(--color-accent-secondary)); 
-}
-
-/* Checkbox Colors - using CSS variables */
-[data-theme="dark-luxury"] [type='checkbox'], 
-[data-theme="dark-luxury"] [type='checkbox']:checked { 
-	background-color: transparent; 
-	border-color: rgb(var(--color-accent-secondary)); 
-}
-[data-theme="dark-luxury"] [type='checkbox']:checked { 
-	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23ffd700'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); 
+	--color-accent-primary: 220, 165, 76;      /* #dca54c */
+	--color-accent-secondary: 220, 165, 76;    /* #dca54c */
+	--color-text-primary: 220, 165, 76;        /* #dca54c */
+	--color-text-secondary: 220, 165, 76;      /* #dca54c */
 }
 
 /* Font Palettes - Support both old and new selectors */
 .theme-9 .colored-fonts,
 [data-theme="dark-luxury"] .colored-fonts { 
-	font-palette: --palette4; 
+	font-palette: --palette5; 
 }
 .theme-9 .theme-palette-normal,
 [data-theme="dark-luxury"] .theme-palette-normal { 
-	font-palette: --palette3; 
+	font-palette: --palette4; 
 }
 .theme-9 .theme-palette-tajweed,
 [data-theme="dark-luxury"] .theme-palette-tajweed { 
@@ -64,15 +23,10 @@ html[data-theme="dark-luxury"] ::-webkit-scrollbar-thumb {
 }
 .theme-9 .header,
 [data-theme="dark-luxury"] .header { 
-	font-palette: --palette2; 
+	font-palette: --palette1; 
 }
 
-/* Custom Colors */
-.theme-9 .custom-ayah-icon-color,
-[data-theme="dark-luxury"] .custom-ayah-icon-color { 
-	font-palette: --AyahIconLuxuryTheme !important; 
-}
-.theme-9 .custom-header-color,
-[data-theme="dark-luxury"] .custom-header-color { 
-	font-palette: --DarkLuxuryHeaderColor !important; 
+.theme-9 .colored-bismillah,
+[data-theme="dark-luxury"] .colored-bismillah { 
+	font-palette: --MochaNightBismillahColor; 
 }

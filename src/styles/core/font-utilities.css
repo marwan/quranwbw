@@ -77,3 +77,12 @@
 .direction-ltr {
   direction: ltr;
 }
+
+/* Palette utility classes used by components */
+.mocha-night-font-color {
+  font-palette: --MochaNightFontColor !important;
+}
+
+.dark-luxury-font-color {
+  font-palette: --DarkLuxuryFontColor !important;
+}

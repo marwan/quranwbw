@@ -1,62 +1,21 @@
 /* Theme 6 - Midnight Blue */
-/* New CSS Variables Approach */
+/* Minimal theme mappings for icon palettes only */
 
 [data-theme="midnight-blue"] {
-	/* Text colors */
-	--color-text-primary: 248, 250, 252;       /* #f8fafc - slate-50 */
-	--color-text-secondary: 203, 213, 225;     /* #cbd5e1 - slate-300 */
-	--color-text-muted: 148, 163, 184;         /* #94a3b8 - slate-400 */
-	
-	/* Background colors */
-	--color-bg-primary: 15, 23, 42;            /* #0f172a - slate-900 */
-	--color-bg-secondary: 30, 41, 59;          /* #1e293b - slate-800 */
-	--color-bg-surface: 51, 65, 85;            /* #334155 - slate-700 */
-	
-	/* Accent colors */
-	--color-accent-primary: 59, 130, 246;      /* #3b82f6 - blue-500 */
-	--color-accent-secondary: 37, 99, 235;     /* #2563eb - blue-600 */
-	
-	/* Quran-specific colors */
-	--color-quran-text: 248, 250, 252;         /* #f8fafc - slate-50 */
-	--color-verse-highlight: 30, 41, 59;       /* #1e293b - slate-800 */
-	--color-chapter-header: 96, 165, 250;      /* #60a5fa - blue-400 */
-	
-	/* Interactive elements */
-	--color-button-primary: 59, 130, 246;      /* #3b82f6 - blue-500 */
-	--color-button-hover: 37, 99, 235;         /* #2563eb - blue-600 */
-	--color-link: 96, 165, 250;                /* #60a5fa - blue-400 */
-	
-	/* Borders and dividers */
-	--color-border: 71, 85, 105;               /* #475569 - slate-600 */
-	--color-divider: 51, 65, 85;               /* #334155 - slate-700 */
-	
-	/* Legacy variables for backward compatibility */
-	--icon-color: #60a5fa;
-}
-
-/* Scrollbar Colors - using CSS variables */
-html[data-theme="midnight-blue"] ::-webkit-scrollbar-thumb { 
-	background: rgb(var(--color-accent-secondary)); 
-}
-
-/* Checkbox Colors - using CSS variables */
-[data-theme="midnight-blue"] [type='checkbox'], 
-[data-theme="midnight-blue"] [type='checkbox']:checked { 
-	background-color: transparent; 
-	border-color: rgb(var(--color-accent-secondary)); 
-}
-[data-theme="midnight-blue"] [type='checkbox']:checked { 
-	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%232563eb'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); 
+	--color-accent-primary: 194, 194, 194;     /* #c2c2c2 */
+	--color-accent-secondary: 194, 194, 194;   /* #c2c2c2 */
+	--color-text-primary: 194, 194, 194;       /* #c2c2c2 */
+	--color-text-secondary: 194, 194, 194;     /* #c2c2c2 */
 }
 
 /* Font Palettes - Support both old and new selectors */
 .theme-6 .colored-fonts,
 [data-theme="midnight-blue"] .colored-fonts { 
-	font-palette: --palette4; 
+	font-palette: --palette1; 
 }
 .theme-6 .theme-palette-normal,
 [data-theme="midnight-blue"] .theme-palette-normal { 
-	font-palette: --palette3; 
+	font-palette: --palette4; 
 }
 .theme-6 .theme-palette-tajweed,
 [data-theme="midnight-blue"] .theme-palette-tajweed { 
@@ -64,15 +23,5 @@ html[data-theme="midnight-blue"] ::-webkit-scrollbar-thumb {
 }
 .theme-6 .header,
 [data-theme="midnight-blue"] .header { 
-	font-palette: --palette2; 
-}
-
-/* Custom Colors */
-.theme-6 .custom-ayah-icon-color,
-[data-theme="midnight-blue"] .custom-ayah-icon-color { 
-	font-palette: --AyahIconBlueTheme !important; 
-}
-.theme-6 .custom-header-color,
-[data-theme="midnight-blue"] .custom-header-color { 
-	font-palette: --MidnightBlueHeaderColor !important; 
+	font-palette: --palette3; 
 }

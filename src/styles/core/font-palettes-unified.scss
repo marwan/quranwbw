@@ -104,3 +104,15 @@ $complete-font-list: list.join($base-quran-fonts, $page-fonts, comma);
     14 #b1901f,
     15 #b1901f;
 }
+
+// Custom Bismillah color used in Mocha Night and Dark Luxury themes (from original)
+@include font-palette(--MochaNightBismillahColor, 0, list.join("bismillah", $page-fonts, comma)) {
+  override-colors:
+    0 #dca54c,
+    1 #dca54c,
+    2 #dca54c,
+    4 #dca54c,
+    5 #dca54c,
+    7 #dca54c,
+    15 #dca54c;
+}

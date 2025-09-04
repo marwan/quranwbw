@@ -1,62 +1,21 @@
 /* Theme 5 - Mocha Night */
-/* New CSS Variables Approach */
+/* Minimal theme mappings for icon palettes only */
 
 [data-theme="mocha-night"] {
-	/* Text colors */
-	--color-text-primary: 245, 245, 244;       /* #f5f5f4 - stone-100 */
-	--color-text-secondary: 214, 211, 209;     /* #d6d3d1 - stone-300 */
-	--color-text-muted: 168, 162, 158;         /* #a8a29e - stone-400 */
-	
-	/* Background colors */
-	--color-bg-primary: 41, 28, 20;            /* #291c14 - amber-900 very dark */
-	--color-bg-secondary: 54, 35, 25;          /* #362319 - amber-900 dark */
-	--color-bg-surface: 68, 44, 32;            /* #442c20 - amber-800 dark */
-	
-	/* Accent colors */
-	--color-accent-primary: 217, 119, 6;       /* #d97706 - amber-600 */
-	--color-accent-secondary: 245, 158, 11;    /* #f59e0b - amber-500 */
-	
-	/* Quran-specific colors */
-	--color-quran-text: 245, 245, 244;         /* #f5f5f4 - stone-100 */
-	--color-verse-highlight: 68, 44, 32;       /* #442c20 - amber-800 dark */
-	--color-chapter-header: 245, 158, 11;      /* #f59e0b - amber-500 */
-	
-	/* Interactive elements */
-	--color-button-primary: 217, 119, 6;       /* #d97706 - amber-600 */
-	--color-button-hover: 245, 158, 11;        /* #f59e0b - amber-500 */
-	--color-link: 245, 158, 11;                /* #f59e0b - amber-500 */
-	
-	/* Borders and dividers */
-	--color-border: 120, 69, 16;               /* #784510 - amber-800 */
-	--color-divider: 92, 57, 38;               /* #5c3926 - amber-800 darker */
-	
-	/* Legacy variables for backward compatibility */
-	--icon-color: #f59e0b;
-}
-
-/* Scrollbar Colors - using CSS variables */
-html[data-theme="mocha-night"] ::-webkit-scrollbar-thumb { 
-	background: rgb(var(--color-accent-secondary)); 
-}
-
-/* Checkbox Colors - using CSS variables */
-[data-theme="mocha-night"] [type='checkbox'], 
-[data-theme="mocha-night"] [type='checkbox']:checked { 
-	background-color: transparent; 
-	border-color: rgb(var(--color-accent-secondary)); 
-}
-[data-theme="mocha-night"] [type='checkbox']:checked { 
-	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23f59e0b'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); 
+	--color-accent-primary: 220, 165, 76;      /* #dca54c */
+	--color-accent-secondary: 220, 165, 76;    /* #dca54c */
+	--color-text-primary: 220, 165, 76;        /* #dca54c */
+	--color-text-secondary: 220, 165, 76;      /* #dca54c */
 }
 
 /* Font Palettes - Support both old and new selectors */
 .theme-5 .colored-fonts,
 [data-theme="mocha-night"] .colored-fonts { 
-	font-palette: --palette4; 
+	font-palette: --palette5; 
 }
 .theme-5 .theme-palette-normal,
 [data-theme="mocha-night"] .theme-palette-normal { 
-	font-palette: --palette3; 
+	font-palette: --palette4; 
 }
 .theme-5 .theme-palette-tajweed,
 [data-theme="mocha-night"] .theme-palette-tajweed { 
@@ -64,15 +23,10 @@ html[data-theme="mocha-night"] ::-webkit-scrollbar-thumb {
 }
 .theme-5 .header,
 [data-theme="mocha-night"] .header { 
-	font-palette: --palette2; 
+	font-palette: --palette5; 
 }
 
-/* Custom Colors */
-.theme-5 .custom-ayah-icon-color,
-[data-theme="mocha-night"] .custom-ayah-icon-color { 
-	font-palette: --AyahIconMochaTheme !important; 
-}
-.theme-5 .custom-header-color,
-[data-theme="mocha-night"] .custom-header-color { 
-	font-palette: --MochaNightHeaderColor !important; 
+.theme-5 .colored-bismillah,
+[data-theme="mocha-night"] .colored-bismillah { 
+	font-palette: --MochaNightBismillahColor; 
 }
