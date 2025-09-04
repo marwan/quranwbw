@@ -15,7 +15,7 @@ html {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("../images/bg-image.png");
+  background-image: url("images/bg-image.png");
   background-position: center center;
   background-size: cover;
   opacity: 0.5;
