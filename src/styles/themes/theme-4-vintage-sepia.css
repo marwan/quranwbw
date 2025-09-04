@@ -25,3 +25,7 @@
 [data-theme="vintage-sepia"] .header { 
 	font-palette: --palette5; 
 }
+
+/* Scrollbar color */
+html.theme-4,
+[data-theme="vintage-sepia"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }

@@ -32,7 +32,6 @@
 		"prettier": "^3.1.1",
 		"sass": "^1.91.0",
 		"svelte": "^4.2.19",
-		"tailwind-scrollbar": "^3.1.0",
 		"tailwindcss": "^3.4.1",
 		"typescript": "^5.9.2",
 		"vite": "^5.4.15"

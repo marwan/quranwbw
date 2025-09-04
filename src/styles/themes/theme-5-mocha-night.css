@@ -30,3 +30,7 @@
 [data-theme="mocha-night"] .colored-bismillah { 
 	font-palette: --MochaNightBismillahColor; 
 }
+
+/* Scrollbar color */
+html.theme-5,
+[data-theme="mocha-night"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }

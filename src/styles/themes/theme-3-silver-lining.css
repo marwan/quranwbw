@@ -25,3 +25,7 @@
 [data-theme="silver-lining"] .header { 
 	font-palette: --palette3; 
 }
+
+/* Scrollbar color */
+html.theme-3,
+[data-theme="silver-lining"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }

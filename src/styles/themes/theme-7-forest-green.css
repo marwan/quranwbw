@@ -25,3 +25,7 @@
 [data-theme="forest-green"] .header { 
 	font-palette: --palette1; 
 }
+
+/* Scrollbar color */
+html.theme-7,
+[data-theme="forest-green"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }

@@ -25,3 +25,7 @@
 [data-theme="classic-light"] .header {
 	font-palette: --palette0;
 }
+
+/* Scrollbar color */
+html.theme-2,
+[data-theme="classic-light"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }

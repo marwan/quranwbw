@@ -1,13 +1,7 @@
 /* Layout and Base Styles */
 
-/* Custom scrollbar styles */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  height: 70px;
-  border-radius: 15px;
+html {
+  scrollbar-width: thin;
 }
 
 /* Homepage background image utility */

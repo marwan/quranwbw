@@ -35,3 +35,7 @@
 [data-theme="golden-glint"] .custom-header-color { 
 	font-palette: --GoldenGlintHeaderColor !important; 
 }
+
+/* Scrollbar color */
+html.theme-1,
+[data-theme="golden-glint"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }

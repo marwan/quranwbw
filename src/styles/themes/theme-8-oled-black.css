@@ -25,3 +25,7 @@
 [data-theme="oled-black"] .header { 
 	font-palette: --palette1; 
 }
+
+/* Scrollbar color */
+html.theme-8,
+[data-theme="oled-black"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }
