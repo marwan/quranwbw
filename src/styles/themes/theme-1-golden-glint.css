@@ -39,3 +39,17 @@
 /* Scrollbar color */
 html.theme-1,
 [data-theme="golden-glint"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }
+
+/* Markdown component colors */
+.theme-1 .markdown hr,
+[data-theme="golden-glint"] .markdown hr { 
+	border-color: rgba(var(--color-accent-secondary), 0.2);
+}
+.theme-1 .markdown a,
+[data-theme="golden-glint"] .markdown a { 
+	color: rgb(var(--color-accent-secondary));
+}
+.theme-1 .markdown h3,
+[data-theme="golden-glint"] .markdown h3 { 
+	color: rgb(var(--color-accent-secondary));
+}

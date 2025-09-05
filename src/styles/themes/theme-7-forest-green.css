@@ -29,3 +29,17 @@
 /* Scrollbar color */
 html.theme-7,
 [data-theme="forest-green"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }
+
+/* Markdown component colors */
+.theme-7 .markdown hr,
+[data-theme="forest-green"] .markdown hr { 
+	border-color: rgba(var(--color-accent-secondary), 0.2);
+}
+.theme-7 .markdown a,
+[data-theme="forest-green"] .markdown a { 
+	color: rgb(var(--color-accent-secondary));
+}
+.theme-7 .markdown h3,
+[data-theme="forest-green"] .markdown h3 { 
+	color: rgb(var(--color-accent-secondary));
+}
