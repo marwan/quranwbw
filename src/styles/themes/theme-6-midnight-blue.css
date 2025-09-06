@@ -28,7 +28,7 @@
 
 /* Scrollbar color */
 html.theme-6,
-[data-theme="midnight-blue"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }
+[data-theme="midnight-blue"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent;   }
 
 /* Markdown component colors */
 .theme-6 .markdown hr,

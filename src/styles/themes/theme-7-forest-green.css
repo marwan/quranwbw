@@ -28,7 +28,7 @@
 
 /* Scrollbar color */
 html.theme-7,
-[data-theme="forest-green"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; scrollbar-width: thin; }
+[data-theme="forest-green"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent;   }
 
 /* Markdown component colors */
 .theme-7 .markdown hr,

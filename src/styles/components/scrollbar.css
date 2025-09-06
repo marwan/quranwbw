@@ -1,18 +1,12 @@
 /* Safari/Chrome (WebKit) scrollbar styling and theme colors */
 
-/* Base scrollbar size and shape */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
-/* Thumb styling uses theme variable for color */
-/* The value comes from --color-accent-secondary set per theme. */
-/* Support both root and body scrollbars for broader compatibility. */
-/* Apply to all scrollable elements as well */
-*::-webkit-scrollbar-thumb,
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-accent-primary));
   height: 70px;
   border-radius: 15px;
-  background: rgb(var(--color-accent-secondary));
 }
+
