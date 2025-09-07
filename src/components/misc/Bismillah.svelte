@@ -21,7 +21,7 @@
 
 	const chapterBismillahClasses = `
 		${window.theme('text')}
-		flex flex-col text-center flex-wrap block pt-6 pb-4 
+		flex flex-col text-center flex-wrap block pt-10 pb-2 
 		${[1, 2, 3, 5, 7, 8].includes($__fontType) ? `bismillah ${chapter === 2 ? 'text-3xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
 		${commonClasses}
 		`;
