@@ -7,6 +7,7 @@ import { fetchAndCacheJson } from '$utils/fetchData';
 
 // Getting the audio element
 let audio = document.querySelector('#player');
+let lastPlayedKey = null;
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -52,19 +53,7 @@ export async function playVerseAudio(props) {
 	}
 
 	// Scroll to the playing verse
-	try {
-		const element = document.getElementById(`${audioSettings.playingKey}`);
-		if (element) {
-			const y = element.offsetTop - 75;
-
-			window.scrollTo({
-				top: y,
-				behavior: 'smooth'
-			});
-		}
-	} catch (error) {
-		console.warn(error);
-	}
+	scrollElementIntoView(audioSettings.playingKey);
 
 	audio.onended = async function () {
 		audio.removeEventListener('timeupdate', wordHighlighter);
@@ -252,6 +241,11 @@ async function wordHighlighter() {
 
 		// Update the audio settings
 		__audioSettings.set(audioSettings);
+
+		if (audioSettings.playingWordKey && lastPlayedKey !== audioSettings.playingWordKey) {
+			scrollElementIntoView(audioSettings.playingWordKey);
+			lastPlayedKey = audioSettings.playingWordKey;
+		}
 	} catch (error) {
 		console.warn('wordHighlighter error:', error);
 	}
@@ -418,4 +412,19 @@ export function prepareVersesToPlay(key) {
 // Fetch timestamps for word-by-word highlighting
 async function fetchTimestampData() {
 	return await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
+}
+
+function scrollElementIntoView(id) {
+	try {
+		if (!id) return;
+		const element = document.getElementById(String(id));
+		if (!element) return;
+
+		element.scrollIntoView({
+			behavior: 'smooth',
+			block: 'center'
+		});
+	} catch (error) {
+		console.warn('scrollElementIntoView error:', error);
+	}
 }
