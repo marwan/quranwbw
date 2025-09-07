@@ -53,7 +53,9 @@ export async function playVerseAudio(props) {
 	}
 
 	// Scroll to the playing verse
-	scrollElementIntoView(audioSettings.playingKey);
+	if (!reciter.wbw) {
+		scrollElementIntoView(audioSettings.playingKey);
+	}
 
 	audio.onended = async function () {
 		audio.removeEventListener('timeupdate', wordHighlighter);
