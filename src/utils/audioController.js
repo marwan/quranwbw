@@ -53,9 +53,7 @@ export async function playVerseAudio(props) {
 	}
 
 	// Scroll to the playing verse
-	if (!reciter.wbw) {
-		scrollElementIntoView(audioSettings.playingKey);
-	}
+	scrollElementIntoView(audioSettings.playingKey);
 
 	audio.onended = async function () {
 		audio.removeEventListener('timeupdate', wordHighlighter);
@@ -418,9 +416,7 @@ async function fetchTimestampData() {
 
 function scrollElementIntoView(id) {
 	try {
-		if (!id) return;
 		const element = document.getElementById(String(id));
-		if (!element) return;
 
 		element.scrollIntoView({
 			behavior: 'smooth',
