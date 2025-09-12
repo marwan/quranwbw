@@ -379,6 +379,7 @@
 
 				// Initial apply and react to data-theme changes
 				updateMetaThemeColor();
+				window.addEventListener('load', updateMetaThemeColor, { once: true });
 				new MutationObserver((m) => {
 					for (const rec of m) {
 						if (rec.type === 'attributes' && rec.attributeName === 'data-theme') {
