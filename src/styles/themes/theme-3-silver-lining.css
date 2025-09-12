@@ -1,11 +1,14 @@
 /* Theme 3 - Silver Lining */
 /* Minimal theme mappings for icon palettes only */
 
+
+/* Provide a browser chrome color derived from theme */
 [data-theme="silver-lining"] {
 	--color-accent-primary: 0, 0, 0;           /* #000000 */
 	--color-accent-secondary: 0, 0, 0;         /* #000000 */
 	--color-text-primary: 0, 0, 0;             /* #000000 */
 	--color-text-secondary: 0, 0, 0;           /* #000000 */
+	--theme-chrome: #e1e1e1;                   /* URL/status bar color */
 }
 
 /* Font Palettes - Support both old and new selectors */

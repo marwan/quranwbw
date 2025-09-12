@@ -1,11 +1,14 @@
 /* Theme 1 - Golden Glint */
 /* Minimal theme mappings for icon palettes only */
 
+
+/* Provide a browser chrome color derived from theme */
 [data-theme="golden-glint"] {
 	--color-accent-primary: 177, 144, 31;      /* #b1901f */
 	--color-accent-secondary: 177, 144, 31;    /* #b1901f */
 	--color-text-primary: 0, 0, 0;             /* #000000 */
 	--color-text-secondary: 177, 144, 31;      /* #b1901f */
+	--theme-chrome: #ffffff;                   /* URL/status bar color */
 }
 
 /* Font Palettes - Support both old and new selectors */

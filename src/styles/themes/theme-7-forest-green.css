@@ -1,11 +1,14 @@
 /* Theme 7 - Forest Green */
 /* Minimal theme mappings for icon palettes only */
 
+
+/* Provide a browser chrome color derived from theme */
 [data-theme="forest-green"] {
 	--color-accent-primary: 221, 221, 221;     /* #dddddd */
 	--color-accent-secondary: 221, 221, 221;   /* #dddddd */
 	--color-text-primary: 221, 221, 221;       /* #dddddd */
 	--color-text-secondary: 221, 221, 221;     /* #dddddd */
+	--theme-chrome: #001617;                   /* URL/status bar color */
 }
 
 /* Font Palettes - Support both old and new selectors */

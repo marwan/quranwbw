@@ -1,11 +1,14 @@
 /* Theme 4 - Vintage Sepia */
 /* Minimal theme mappings for icon palettes only */
 
+
+/* Provide a browser chrome color derived from theme */
 [data-theme="vintage-sepia"] {
 	--color-accent-primary: 85, 60, 15;        /* #553c0f */
 	--color-accent-secondary: 85, 60, 15;      /* #553c0f */
 	--color-text-primary: 85, 60, 15;          /* #553c0f */
 	--color-text-secondary: 85, 60, 15;        /* #553c0f */
+	--theme-chrome: #e9e3d7;                   /* URL/status bar color */
 }
 
 /* Font Palettes - Support both old and new selectors */

@@ -1,11 +1,14 @@
 /* Theme 2 - Classic Light */
 /* Minimal theme mappings for icon palettes only */
 
+
+/* Provide a browser chrome color derived from theme */
 [data-theme="classic-light"] {
 	--color-accent-primary: 0, 0, 0;           /* #000000 */
 	--color-accent-secondary: 0, 0, 0;         /* #000000 */
 	--color-text-primary: 0, 0, 0;             /* #000000 */
 	--color-text-secondary: 0, 0, 0;           /* #000000 */
+	--theme-chrome: #ffffff;                   /* URL/status bar color */
 }
 
 /* Font Palettes - Support both old and new selectors (from original) */

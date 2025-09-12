@@ -1,11 +1,14 @@
 /* Theme 6 - Midnight Blue */
 /* Minimal theme mappings for icon palettes only */
 
+
+/* Provide a browser chrome color derived from theme */
 [data-theme="midnight-blue"] {
 	--color-accent-primary: 194, 194, 194;     /* #c2c2c2 */
 	--color-accent-secondary: 194, 194, 194;   /* #c2c2c2 */
 	--color-text-primary: 194, 194, 194;       /* #c2c2c2 */
 	--color-text-secondary: 194, 194, 194;     /* #c2c2c2 */
+	--theme-chrome: #02021b;                   /* URL/status bar color */
 }
 
 /* Font Palettes - Support both old and new selectors */

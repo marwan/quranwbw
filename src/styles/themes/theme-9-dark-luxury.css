@@ -1,11 +1,14 @@
 /* Theme 9 - Dark Luxury */
 /* Minimal theme mappings for icon palettes only */
 
+
+/* Provide a browser chrome color derived from theme */
 [data-theme="dark-luxury"] {
 	--color-accent-primary: 220, 165, 76;      /* #dca54c */
 	--color-accent-secondary: 220, 165, 76;    /* #dca54c */
 	--color-text-primary: 220, 165, 76;        /* #dca54c */
 	--color-text-secondary: 220, 165, 76;      /* #dca54c */
+	--theme-chrome: #09090b;                   /* URL/status bar color */
 }
 
 /* Font Palettes - Support both old and new selectors */

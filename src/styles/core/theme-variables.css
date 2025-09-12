@@ -36,4 +36,7 @@
   --color-bg-hover: 249, 250, 251;         /* #f9fafb - hover background */
   --color-bg-secondary-dark: 229, 231, 235;/* #e5e7eb - darker secondary */
   --color-input-primary: 255, 255, 255;    /* #ffffff - input backgrounds */
+
+  /* Browser UI (URL/status bar) color derived from theme */
+  --theme-chrome: #ffffff;
 }

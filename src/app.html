@@ -350,6 +350,44 @@
 			// Apply the theme class and data-theme attribute to the document's root element
 			document.documentElement.classList += `theme-${currentTheme} ${window.theme('bgMain')}`;
 			document.documentElement.setAttribute('data-theme', themeIdToSlug(currentTheme));
+
+			// CSS-first status bar/URL bar color sync using data-theme and CSS var --theme-chrome
+			(function setupThemeColorSync() {
+				function updateMetaThemeColor() {
+					try {
+						const color = getComputedStyle(document.documentElement).getPropertyValue('--theme-chrome').trim() || '#ffffff';
+						let meta = document.querySelector('meta[name="theme-color"]');
+						if (!meta) {
+							meta = document.createElement('meta');
+							meta.setAttribute('name', 'theme-color');
+							document.head.appendChild(meta);
+						}
+						meta.setAttribute('content', color);
+
+						// iOS Safari 15+ honors theme-color; keep status-bar-style sane for standalone
+						let apple = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+						if (!apple) {
+							apple = document.createElement('meta');
+							apple.setAttribute('name', 'apple-mobile-web-app-status-bar-style');
+							document.head.appendChild(apple);
+						}
+						if (!apple.getAttribute('content')) apple.setAttribute('content', 'default');
+					} catch (e) {
+						console.warn('Theme color sync failed', e);
+					}
+				}
+
+				// Initial apply and react to data-theme changes
+				updateMetaThemeColor();
+				new MutationObserver((m) => {
+					for (const rec of m) {
+						if (rec.type === 'attributes' && rec.attributeName === 'data-theme') {
+							updateMetaThemeColor();
+							break;
+						}
+					}
+				}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+			})();
 		</script>
 
 		<!-- Umami -->

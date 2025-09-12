@@ -1,11 +1,14 @@
 /* Theme 8 - OLED Black */
 /* Minimal theme mappings for icon palettes only */
 
+
+/* Provide a browser chrome color derived from theme */
 [data-theme="oled-black"] {
 	--color-accent-primary: 221, 221, 221;     /* #dddddd */
 	--color-accent-secondary: 221, 221, 221;   /* #dddddd */
 	--color-text-primary: 221, 221, 221;       /* #dddddd */
 	--color-text-secondary: 221, 221, 221;     /* #dddddd */
+	--theme-chrome: #000000;                   /* URL/status bar color */
 }
 
 /* Font Palettes - Support both old and new selectors */
