@@ -61,7 +61,8 @@ let __websiteOnline,
 	__keysToFetch,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__wideWesbiteLayoutEnabled;
+	__wideWesbiteLayoutEnabled,
+	__verseWordBlocks;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -227,6 +228,9 @@ if (browser) {
 
 	// to store the website wide layout option
 	__wideWesbiteLayoutEnabled = writable(userSettings.displaySettings.wideWesbiteLayoutEnabled);
+
+	// to store the visibility state of word blocks per verse
+	__verseWordBlocks = writable({});
 }
 
 export {
@@ -290,5 +294,6 @@ export {
 	__keysToFetch,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__wideWesbiteLayoutEnabled
+	__wideWesbiteLayoutEnabled,
+	__verseWordBlocks
 };
