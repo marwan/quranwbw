@@ -1,6 +1,11 @@
 import { staticEndpoint } from '$data/websiteSettings';
 
 export async function checkAndRegisterServiceWorker() {
+	// Skip in E2E test environments
+	if (import.meta.env?.VITE_E2E) {
+		console.log('Skipping Service Worker in E2E mode');
+		return;
+	}
 	if (!('serviceWorker' in navigator)) {
 		console.log('Service Workers are not supported in this browser.');
 		return;
