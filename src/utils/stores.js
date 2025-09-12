@@ -62,7 +62,8 @@ let __websiteOnline,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
-	__signLanguageModeEnabled;
+	__signLanguageModeEnabled,
+	__verseWordBlocks;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -231,6 +232,9 @@ if (browser) {
 
 	// to store the sign language mode option
 	__signLanguageModeEnabled = writable(userSettings.displaySettings.signLanguageModeEnabled);
+
+	// to store the visibility state of word blocks per verse
+	__verseWordBlocks = writable({});
 }
 
 export {
@@ -295,5 +299,6 @@ export {
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
-	__signLanguageModeEnabled
+	__signLanguageModeEnabled,
+	__verseWordBlocks
 };

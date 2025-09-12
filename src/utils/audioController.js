@@ -1,12 +1,13 @@
 import { get } from 'svelte/store';
 import { quranMetaData } from '$data/quranMeta';
-import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __keysToFetch } from '$utils/stores';
+import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __keysToFetch, __displayType, __verseWordBlocks } from '$utils/stores';
 import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
 
 // Getting the audio element
 let audio = document.querySelector('#player');
+let lastPlayedKey = null;
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -52,18 +53,8 @@ export async function playVerseAudio(props) {
 	}
 
 	// Scroll to the playing verse
-	try {
-		const element = document.getElementById(`${audioSettings.playingKey}`);
-		if (element) {
-			const y = element.offsetTop - 75;
-
-			window.scrollTo({
-				top: y,
-				behavior: 'smooth'
-			});
-		}
-	} catch (error) {
-		console.warn(error);
+	if (!reciter.wbw || (get(__displayType) === 7 && !get(__verseWordBlocks)[audioSettings.playingKey])) {
+		scrollElementIntoView(audioSettings.playingKey);
 	}
 
 	audio.onended = async function () {
@@ -252,6 +243,11 @@ async function wordHighlighter() {
 
 		// Update the audio settings
 		__audioSettings.set(audioSettings);
+
+		if (audioSettings.playingWordKey && lastPlayedKey !== audioSettings.playingWordKey) {
+			scrollElementIntoView(audioSettings.playingWordKey);
+			lastPlayedKey = audioSettings.playingWordKey;
+		}
 	} catch (error) {
 		console.warn('wordHighlighter error:', error);
 	}
@@ -418,4 +414,19 @@ export function prepareVersesToPlay(key) {
 // Fetch timestamps for word-by-word highlighting
 async function fetchTimestampData() {
 	return await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
+}
+
+function scrollElementIntoView(id) {
+	try {
+		if (!id) return;
+		const element = document.getElementById(String(id));
+		if (!element) return;
+
+		element.scrollIntoView({
+			behavior: 'smooth',
+			block: 'center'
+		});
+	} catch (error) {
+		console.warn('scrollElementIntoView error:', error);
+	}
 }

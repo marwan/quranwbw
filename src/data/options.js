@@ -101,7 +101,7 @@ export const selectableFontTypes = {
 		font: 'Qalam Digital Font (Madinah Edition)',
 		displayOrder: 5,
 		disallowedInPages: ['mushaf'],
-		version: 5
+		version: 6
 	},
 	5: {
 		id: 5,
@@ -117,7 +117,7 @@ export const selectableFontTypes = {
 		font: 'Qalam Digital Font (Hanafi Edition)',
 		displayOrder: 6,
 		disallowedInPages: ['mushaf'],
-		version: 5
+		version: 6
 	},
 	7: {
 		id: 1,
