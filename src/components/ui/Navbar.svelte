@@ -62,7 +62,8 @@
 			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => quranMetaData[value].transliteration);
 			mushafChapterInfo = Object.values($__mushafPageDivisions.chapters).map((chapter) => ({
 				name: quranMetaData[chapter].transliteration,
-				Icon: quranMetaData[chapter].revelation === 1 ? Mecca : Madinah
+				Icon: quranMetaData[chapter].revelation === 1 ? Mecca : Madinah,
+				verses_count: quranMetaData[chapter].verses
 			}));
 		} catch (error) {
 			console.warn(error);
@@ -145,15 +146,18 @@
 	{#if $__currentPage === 'mushaf'}
 		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between border-t ${window.theme('border')} text-xs mx-auto px-6`}>
 			<div class="flex flex-row items-center py-2 truncate">
-				{#if !$__topNavbarVisible}
-					<span>Page {$__pageNumber} -&nbsp;</span>
-				{/if}
 				<span class="flex items-center">
 					{#if mushafChapterInfo.length ?? false}
 						{#each mushafChapterInfo as item, i (item.name)}
 							<span class="flex items-center gap-1">
 								<svelte:component this={item.Icon} />
 								{item.name}
+								{#if !$__topNavbarVisible}
+									<span class="hidden sm:inline">
+										({item.verses_count}
+										{term('verses')})
+									</span>
+								{/if}
 							</span>
 							{#if i < mushafChapterInfo.length - 1}
 								<span class="px-1">/</span>
