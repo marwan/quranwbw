@@ -1,0 +1,12 @@
+/* Safari/Chrome (WebKit) scrollbar styling and theme colors */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-accent-primary));
+  height: 70px;
+  border-radius: 15px;
+}
+

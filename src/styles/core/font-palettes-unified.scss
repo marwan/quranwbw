@@ -1,0 +1,118 @@
+/* Unified Font Palette Definitions - SCSS Version with Modern Sass Modules */
+@use "sass:string";
+@use "sass:list";
+
+// Base fonts variable
+$base-quran-fonts: "Uthmani-Hafs", "Uthmani-Hafs-Bold", "Nastaleeq-Hafs", "Nastaleeq-Hafs-Bold", "chapter-headers", "bismillah", "tajweed-rules";
+
+// Page fonts list - defined once, used everywhere
+$page-fonts: ();
+@for $i from 1 through 604 {
+  $page-fonts: list.append($page-fonts, string.unquote("p#{$i}"), comma);
+}
+
+// Complete font family list combining base fonts and page fonts
+$complete-font-list: list.join($base-quran-fonts, $page-fonts, comma);
+
+// CSS Custom Properties for runtime use
+:root {
+  --base-quran-fonts: #{$base-quran-fonts};
+}
+
+@mixin font-palette($name, $base-palette, $font-list: $complete-font-list) {
+  @at-root {
+    @#{'font-palette-values'} #{$name} {
+      font-family: #{$font-list};
+      base-palette: #{$base-palette};
+      @content;
+    }
+  }
+}
+
+// Generate base palettes 0-5
+@for $i from 0 through 5 {
+  @include font-palette(--palette#{$i}, $i);
+}
+
+// Theme-specific palettes with custom color overrides
+@include font-palette(--AyahIconGoldTheme, 0, $page-fonts) {
+  override-colors:
+    10 #008000,
+    11 #b1901f,
+    12 #f8efd3,
+    13 #000000;
+}
+
+@include font-palette(--MochaNightFontColor, 4, list.join("bismillah", $page-fonts, comma)) {
+  override-colors:
+    0 #c59f60,
+    1 #c59f60,
+    2 #c59f60,
+    3 #c59f60,
+    4 #c59f60,
+    5 #c59f60,
+    6 #c59f60,
+    7 #c59f60,
+    8 #c59f60,
+    9 #c59f60,
+    10 #c59f60,
+    11 #c59f60,
+    12 #c59f60,
+    13 #c59f60,
+    14 #c59f60,
+    15 #c59f60;
+}
+
+// Additional theme-specific font palettes
+@include font-palette(--DarkLuxuryFontColor, 4, list.join("bismillah", $page-fonts, comma)) {
+  override-colors:
+    0 #dca54c,
+    1 #dca54c,
+    2 #dca54c,
+    3 #dca54c,
+    4 #dca54c,
+    5 #dca54c,
+    6 #dca54c,
+    7 #dca54c,
+    8 #dca54c,
+    9 #dca54c,
+    10 #dca54c,
+    11 #dca54c,
+    12 #dca54c,
+    13 #dca54c,
+    14 #dca54c,
+    15 #dca54c;
+}
+
+// Golden Glint Header Color (specific to theme 1)
+@include font-palette(--GoldenGlintHeaderColor, 2, list.join("bismillah", $page-fonts, comma)) {
+  override-colors:
+    0 #b1901f,
+    1 #b1901f,
+    2 #b1901f,
+    3 #b1901f,
+    4 #b1901f,
+    5 #b1901f,
+    6 #b1901f,
+    7 #b1901f,
+    8 #b1901f,
+    9 #b1901f,
+    10 #b1901f,
+    11 #b1901f,
+    12 #b1901f,
+    13 #b1901f,
+    14 #b1901f,
+    15 #b1901f;
+}
+
+// Custom Bismillah color used in Mocha Night and Dark Luxury themes (from original)
+@include font-palette(--MochaNightBismillahColor, 0, list.join("bismillah", $page-fonts, comma)) {
+  override-colors:
+    0 #dca54c,
+    1 #dca54c,
+    2 #dca54c,
+    4 #dca54c,
+    5 #dca54c,
+    7 #dca54c,
+    15 #dca54c;
+}

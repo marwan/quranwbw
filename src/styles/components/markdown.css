@@ -1,0 +1,71 @@
+/* Markdown Component Styles for All Themes */
+/* These styles are used in About and Changelog pages */
+
+/* Base Markdown styles */
+.markdown {
+  @apply space-y-4; /* Add spacing between block elements */
+}
+
+.markdown h1 {
+  @apply text-3xl mb-4;
+}
+
+.markdown h2 {
+  @apply text-2xl mb-3;
+}
+
+.markdown h3 {
+  @apply text-xl font-semibold mb-2;
+}
+
+.markdown p {
+  @apply text-sm leading-relaxed mb-4;
+}
+
+.markdown ul {
+  @apply list-disc pl-6;
+}
+
+.markdown ol {
+  @apply list-decimal pl-6;
+}
+
+.markdown li {
+  @apply text-sm mb-1;
+}
+
+.markdown a {
+  @apply underline;
+}
+
+.markdown blockquote {
+  @apply italic border-l-4 pl-4 ml-2;
+}
+
+.markdown code {
+  @apply font-mono text-sm px-1 py-0.5 border rounded;
+}
+
+.markdown pre {
+  @apply bg-gray-100 p-4 rounded-md overflow-x-auto text-sm;
+}
+
+.markdown img {
+  @apply max-w-full rounded-md;
+}
+
+.markdown table {
+  @apply table-auto border-collapse border border-gray-300 w-full text-left;
+}
+
+.markdown th {
+  @apply px-4 py-2 border border-gray-300 font-semibold;
+}
+
+.markdown td {
+  @apply px-4 py-2 border border-gray-300;
+}
+
+.markdown strong {
+  @apply font-semibold;
+}

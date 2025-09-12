@@ -104,7 +104,7 @@
 			<div><Quran /></div>
 
 			<div class="flex flex-col">
-				<div id="site-title" class="text-2xl md:text-3xl font-bold pb-2" style="color: {window.theme('icon')}">
+				<div id="site-title" class="text-2xl md:text-3xl font-bold pb-2 text-accent-primary">
 					<span class="block md:hidden">QuranWBW</span>
 					<span class="hidden md:block">Quran Word By Word</span>
 				</div>
@@ -124,7 +124,7 @@
 				<div class="flex flex-row space-x-2 w-full">
 					{#if isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[18].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-accent-primary">{@html `&#xE9${quranMetaData[18].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
 								<span>Al Kahf</span>
@@ -134,7 +134,7 @@
 
 					{#if isNight}
 						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Waaqia Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[56].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-accent-primary">{@html `&#xE9${quranMetaData[56].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Evening Reminder:</span>
 								<span>Al Waaqia</span>
@@ -142,7 +142,7 @@
 						</a>
 
 						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[67].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-accent-primary">{@html `&#xE9${quranMetaData[67].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
 								<span>Al Mulk</span>
@@ -301,7 +301,7 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-accent-primary">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span class="truncate">
 								Continue Reading:
 								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
@@ -317,9 +317,9 @@
 										<div class="flex flex-row space-x-2">
 											<div class="flex items-center">
 												<!-- number star -->
-												<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
+												<svg class="w-10 h-10 rounded-full flex items-center justify-center fill-accent-primary" viewBox="0 0 24 24">
 													{@html svgData}
-													<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{id}</text>
+													<text x="50%" y="53%" text-anchor="middle" class="text stroke-accent-primary" stroke-width="0.5px" dy=".3em" style="font-size: 7px;">{id}</text>
 												</svg>
 											</div>
 
@@ -344,7 +344,7 @@
 											</div>
 										</div>
 
-										<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+										<div class="chapter-icons justify-items-end text-5xl text-accent-primary">{@html `&#xE9${quranMetaData[id].icon};`}</div>
 									</div>
 								</a>
 							{/if}
@@ -361,7 +361,7 @@
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadJuz = $__lastRead.juz}
 						<a href="/juz/{lastReadJuz}?startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-accent-primary">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('juz')}
 								{lastReadJuz}, {lastReadChapter}:{lastReadVerse}
@@ -376,9 +376,9 @@
 									<div class="flex flex-row space-x-2">
 										<div class="flex items-center">
 											<!-- number star -->
-											<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
+											<svg class="w-10 h-10 rounded-full flex items-center justify-center fill-accent-primary" viewBox="0 0 24 24">
 												{@html svgData}
-												<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{juz.juz}</text>
+												<text x="50%" y="53%" text-anchor="middle" class="text stroke-accent-primary" stroke-width="0.5px" dy=".3em" style="font-size: 7px;">{juz.juz}</text>
 											</svg>
 										</div>
 
@@ -393,7 +393,7 @@
 										</div>
 									</div>
 
-									<div class="juz-icons justify-items-end text-xl md:text-2xl" style="color: {window.theme('icon')}">{juz.icon}</div>
+									<div class="juz-icons justify-items-end text-xl md:text-2xl text-accent-primary">{juz.icon}</div>
 								</div>
 							</a>
 						{/each}

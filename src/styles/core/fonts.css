@@ -1,0 +1,109 @@
+/* Font Face Definitions */
+
+@font-face {
+  font-family: "Uthmani-Hafs";
+  src: url("/fonts/Uthmanic_NeoCOLOR-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Uthmani-Hafs-Bold";
+  src: url("/fonts/Uthmanic_NeoBCOLOR-VF.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IndoPak";
+  src: url("/fonts/AlQuranNeov5x1.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nastaleeq-Hafs";
+  src: url("/fonts/Nastaleeq_COLOR-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nastaleeq-Hafs-Bold";
+  src: url("/fonts/NastaleeqB_COLOR-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "chapter-icons";
+  src: url("/fonts/surahs_v4-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "tajweed-rules";
+  src: url("/fonts/QCF4_TajweedRules-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "bismillah";
+  src: url("/fonts/QCF_Bismillah_COLOR-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "urdu";
+  src: url("/fonts/Mehr-Nastaliq.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "sindhi";
+  src: url("/fonts/MBLateefi.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "lexicon";
+  src: url("/fonts/lexicon.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "juz-icons";
+  src: url("/fonts/juz_names-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Additional system and page fonts */
+@layer base {
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  }
+}
+
+/* Generate page fonts dynamically */
+@layer base {
+  /* These will be generated from external CSS files as needed */
+}

@@ -1,0 +1,48 @@
+/* Theme 2 - Classic Light */
+/* Minimal theme mappings for icon palettes only */
+
+
+/* Provide a browser chrome color derived from theme */
+[data-theme="classic-light"] {
+	--color-accent-primary: 0, 0, 0;           /* #000000 */
+	--color-accent-secondary: 0, 0, 0;         /* #000000 */
+	--color-text-primary: 0, 0, 0;             /* #000000 */
+	--color-text-secondary: 0, 0, 0;           /* #000000 */
+	--theme-chrome: #ffffff;                   /* URL/status bar color */
+}
+
+/* Font Palettes - Support both old and new selectors (from original) */
+.theme-2 .colored-fonts,
+[data-theme="classic-light"] .colored-fonts {
+	font-palette: --palette0;
+}
+.theme-2 .theme-palette-normal,
+[data-theme="classic-light"] .theme-palette-normal {
+	font-palette: --palette3;
+}
+.theme-2 .theme-palette-tajweed,
+[data-theme="classic-light"] .theme-palette-tajweed {
+	font-palette: --palette0;
+}
+.theme-2 .header,
+[data-theme="classic-light"] .header {
+	font-palette: --palette0;
+}
+
+/* Scrollbar color */
+html.theme-2,
+[data-theme="classic-light"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent; }
+
+/* Markdown component colors */
+.theme-2 .markdown hr,
+[data-theme="classic-light"] .markdown hr { 
+	border-color: rgba(var(--color-accent-secondary), 0.2);
+}
+.theme-2 .markdown a,
+[data-theme="classic-light"] .markdown a { 
+	color: rgb(var(--color-accent-secondary));
+}
+.theme-2 .markdown h3,
+[data-theme="classic-light"] .markdown h3 { 
+	color: rgb(var(--color-accent-secondary));
+}
