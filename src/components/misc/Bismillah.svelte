@@ -8,7 +8,7 @@
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
 
-	$: isFontTypeUthmani = [1, 2, 3, 5, 7, 8].includes($__fontType) ? true : false;
+	$: isUthmaniFontType = [1, 2, 3, 5, 7, 8].includes($__fontType) ? true : false;
 
 	const bismillahTypes = {
 		uthmaniType1: 'ﲚﲛﲞﲤ',
@@ -25,8 +25,8 @@
 	$: chapterBismillahClasses = `
 		${window.theme('text')}
 		flex flex-col text-center flex-wrap block pb-2 
-		${isFontTypeUthmani && chapter === 2 ? 'pt-8' : 'pt-12'}
-		${isFontTypeUthmani ? `bismillah ${chapter === 2 ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
+		${isUthmaniFontType && chapter === 2 ? 'pt-8' : 'pt-12'}
+		${isUthmaniFontType ? `bismillah ${chapter === 2 ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
 		${commonClasses}
 	`;
 
@@ -47,7 +47,7 @@
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
 		<div class={chapterBismillahClasses}>
 			<!-- uthmani fonts -->
-			{#if isFontTypeUthmani}
+			{#if isUthmaniFontType}
 				<span class="{$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'} colored-bismillah">
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
