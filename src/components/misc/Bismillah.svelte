@@ -32,6 +32,10 @@
 		${commonClasses}
 	`;
 
+	$: chapterBismillahClassesInner = `
+		${isFirefox() && selectableThemes[$__websiteTheme].color === 'dark' ? 'bismillah-ff-dark hafs-palette-firefox-dark' : $__fontType === 3 ? 'theme-palette-tajweed colored-bismillah' : 'theme-palette-normal colored-bismillah'}
+	`;
+
 	// If tajweed fonts were select, apply tajweed palette
 	// But in Mocha Night & Dark Luxury themes, if non-tajweed fonts were selected, use custom palette to match theme
 	$: mushafBismillahClasses = `
@@ -51,7 +55,7 @@
 		<div class={chapterBismillahClasses}>
 			<!-- uthmani fonts -->
 			{#if isUthmaniFontType}
-				<span class="{$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'} colored-bismillah">
+				<span class={chapterBismillahClassesInner}>
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
 					{:else if [95, 97].includes(chapter)}
