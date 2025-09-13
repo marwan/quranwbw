@@ -183,7 +183,7 @@
 	{#await pageData}
 		<Spinner />
 	{:then}
-		<div class="space-y-2 mt-2.5">
+		<div class={`${page === 1 || page === 2 ? 'flex flex-col items-center justify-center fixed inset-0' : 'space-y-2 mt-2.5'}`}>
 			<!-- single page -->
 			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
 				{#each Array.from(Array(endingLine + 1).keys()).slice(startingLine) as line}
