@@ -7,6 +7,8 @@
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
 
+	$: isFontTypeUthmani = [1, 2, 3, 5, 7, 8].includes($__fontType) ? true : false;
+
 	const bismillahTypes = {
 		uthmaniType1: 'ﲚﲛﲞﲤ',
 		uthmaniType2: 'ﲪﲫﲮﲴ',
@@ -14,22 +16,22 @@
 		indopakType: '﷽'
 	};
 
-	const commonClasses = `
+	$: commonClasses = `
 		${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
 		${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
 	`;
 
-	const chapterBismillahClasses = `
+	$: chapterBismillahClasses = `
 		${window.theme('text')}
 		flex flex-col text-center flex-wrap block pb-2 
-		${chapter === 2 ? 'pt-8' : 'pt-12'}
-		${[1, 2, 3, 5, 7, 8].includes($__fontType) ? `bismillah ${chapter === 2 ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
+		${isFontTypeUthmani && chapter === 2 ? 'pt-8' : 'pt-12'}
+		${isFontTypeUthmani ? `bismillah ${chapter === 2 ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
 		${commonClasses}
-		`;
+	`;
 
 	// If tajweed fonts were select, apply tajweed palette
 	// But in Mocha Night & Dark Luxury themes, if non-tajweed fonts were selected, use custom palette to match theme
-	const mushafBismillahClasses = `
+	$: mushafBismillahClasses = `
 		bismillah flex flex-col text-center leading-normal flex-wrap space-y-4 block md:mt-6 text-[5vw] md:text-[32px] lg:text-[36px] 
 		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
 		${commonClasses}
@@ -42,7 +44,7 @@
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
 		<div class={chapterBismillahClasses}>
 			<!-- uthmani fonts -->
-			{#if [1, 2, 3, 5, 7, 8].includes($__fontType)}
+			{#if isFontTypeUthmani}
 				<span class="{$__fontType === 1 ? 'theme-palette-normal' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'} colored-bismillah">
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
@@ -54,7 +56,7 @@
 				</span>
 
 				<!-- indopak fonts -->
-			{:else if [4, 6].includes($__fontType)}
+			{:else}
 				{bismillahTypes.indopakType}
 			{/if}
 		</div>
