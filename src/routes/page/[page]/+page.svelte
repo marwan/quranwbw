@@ -191,7 +191,7 @@
 					{#if chapters.length > 0 && lines.includes(line) && verses[lines.indexOf(line)] === 1}
 						<div class="flex flex-col my-2">
 							<ChapterHeader chapter={chapters[lines.indexOf(line)]} />
-							<Bismillah {chapters} {lines} {line} />
+							<Bismillah {chapters} {lines} {line} {page} />
 						</div>
 					{/if}
 
