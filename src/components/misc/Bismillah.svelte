@@ -8,7 +8,7 @@
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
 
-	$: isUthmaniFontType = [1, 2, 3, 5, 7, 8].includes($__fontType) ? true : false;
+	$: isUthmaniFontType = [1, 2, 3, 5, 7, 8].includes($__fontType);
 
 	const bismillahTypes = {
 		uthmaniType1: 'ﲚﲛﲞﲤ',
