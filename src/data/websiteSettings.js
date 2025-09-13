@@ -12,4 +12,4 @@ export const wordsAudioURL = 'https://audios.quranwbw.com/words';
 
 export const mushafFontVersion = 10;
 
-export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4/COLRv1`;
+export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4`;

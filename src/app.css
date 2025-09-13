@@ -442,6 +442,13 @@ svg {
 .theme-5 .colored-bismillah { font-palette: --MochaNightBismillahColor; } /* Mocha Night */
 .theme-9 .colored-bismillah { font-palette: --MochaNightBismillahColor; } /* Dark Luxury */
 
+/* 
+* Firefox + Dark theme special case:
+* - Applies Base Palette 0 to fix incorrect font rendering in Firefox
+* - Triggered when font type is 2 or 3 with dark themes
+*/
+.hafs-palette-firefox-dark { font-palette: --palette0; }
+
 /* for lexicon modal because the data is fetched externally and it has it's own classes */
 #lexiconModal .entryFree {
   padding-bottom: 2rem;

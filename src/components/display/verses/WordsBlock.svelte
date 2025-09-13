@@ -7,13 +7,13 @@
 	import VerseOptionsDropdown from '$display/verses/VerseOptionsDropdown.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { goto } from '$app/navigation';
-	import { selectableDisplays, selectableWordTranslations } from '$data/options';
+	import { selectableDisplays, selectableWordTranslations, selectableThemes } from '$data/options';
 	import { supplicationsFromQuran } from '$data/quranMeta';
 	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick, __wordTranslation, __wordTranslationEnabled, __wordTransliterationEnabled, __wordTooltip, __hideNonDuaPart } from '$utils/stores';
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
+	import { getMushafWordFontLink, isFirefox } from '$utils/getMushafWordFontLink';
 
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	const chapter = key.split(':')[0];
@@ -103,15 +103,33 @@
 		${displayIsContinuous && 'inline-block'}
 	`;
 
-	// Classes for v4 hafs words
-	// If tajweed fonts were select, apply tajweed palette
-	// But in Mocha Night & Dark Luxury themes, if non-tajweed fonts were selected, use custom palette to match theme
+	// Classes for v4 Hafs words:
+	// 1. Special Firefox case:
+	//    - If the browser is Firefox
+	//    - AND the current theme color is dark
+	//    - AND the font type is 2 or 3
+	//    → Apply "hafs-palette-firefox-dark" (fixes Firefox-specific rendering issues).
+	//
+	// 2. Otherwise (non-Firefox or other cases):
+	//    - If font type is 3 → apply "theme-palette-tajweed" (tajweed font coloring).
+	//    - Else → apply "theme-palette-normal" (default palette).
+	//    - If font type is 2 and theme is 5 (Mocha Night) → add "mocha-night-font-color".
+	//    - If font type is 2 and theme is 9 (Dark Luxury) → add "dark-luxury-font-color".
+	//
+	// Summary: Firefox + dark + fontType(2|3) uses a special palette,
+	// otherwise font type and theme decide the palette and color overrides.
 	$: v4hafsClasses = `
 		invisible v4-words 
 		p${value.meta.page} 
-		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'} 
-		${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
-		${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
+		${
+			isFirefox() && selectableThemes[$__websiteTheme].color === 'dark' && [2, 3].includes($__fontType)
+				? 'hafs-palette-firefox-dark'
+				: `
+					${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
+					${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
+					${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
+				`
+		}
 	`;
 
 	// Classes for end icons
