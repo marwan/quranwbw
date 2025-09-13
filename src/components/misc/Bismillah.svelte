@@ -7,6 +7,8 @@
 	export let page = null;
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
+	import { selectableThemes } from '$data/options';
+	import { isFirefox } from '$utils/getMushafWordFontLink';
 
 	$: isUthmaniFontType = [1, 2, 3, 5, 7, 8].includes($__fontType);
 
@@ -33,10 +35,11 @@
 	// If tajweed fonts were select, apply tajweed palette
 	// But in Mocha Night & Dark Luxury themes, if non-tajweed fonts were selected, use custom palette to match theme
 	$: mushafBismillahClasses = `
-		bismillah flex flex-col text-center leading-normal flex-wrap space-y-4 block 
+		${isFirefox() && selectableThemes[$__websiteTheme].color === 'dark' ? 'bismillah-ff-dark' : 'bismillah'}
+		flex flex-col text-center leading-normal flex-wrap space-y-4 block 
 		${page === 1 || page === 2 ? 'md:mt-2' : 'md:mt-6'}
 		${page === 2 ? 'text-[5vw] md:text-[36px] lg:text-[36px]' : 'text-[5vw] md:text-[32px] lg:text-[36px]'} 
-		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
+		${isFirefox() && selectableThemes[$__websiteTheme].color === 'dark' ? 'hafs-palette-firefox-dark' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
 		${commonClasses}
 		colored-bismillah
 	`;

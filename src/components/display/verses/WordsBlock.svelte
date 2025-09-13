@@ -122,7 +122,7 @@
 		invisible v4-words 
 		p${value.meta.page} 
 		${
-			isFirefox() && selectableThemes[$__websiteTheme].color === 'dark' && [2, 3].includes($__fontType)
+			isFirefox() && selectableThemes[$__websiteTheme].color === 'dark'
 				? 'hafs-palette-firefox-dark'
 				: `
 					${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
