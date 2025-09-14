@@ -15,7 +15,7 @@ export function getMushafWordFontLink(page) {
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
 	} else if (isFirefoxDarkNonTajweed()) {
 		basePath = 'COLRv1-Dark-FF-Non-Colored';
-		fileName = `QCF4${paddedPage}X-Regular.woff2`;
+		fileName = `QCF4${paddedPage}_X-Regular.woff2`;
 	} else {
 		basePath = 'COLRv1';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
