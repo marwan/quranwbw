@@ -9,19 +9,23 @@ export function getMushafWordFontLink(page) {
 
 	let basePath;
 	let fileName;
+	let fontVersion;
 
 	if (isFirefoxDarkTajweed()) {
 		basePath = 'COLRv1-Dark-FF';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
+		fontVersion = 10;
 	} else if (isFirefoxDarkNonTajweed()) {
 		basePath = 'COLRv1-Dark-FF-Non-Colored';
 		fileName = `QCF4${paddedPage}_X-Regular.woff2`;
+		fontVersion = 10;
 	} else {
 		basePath = 'COLRv1';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
+		fontVersion = 10;
 	}
 
-	return `${mushafWordFontLink}/${basePath}/${fileName}?version=10`;
+	return `${mushafWordFontLink}/${basePath}/${fileName}?version=${fontVersion}`;
 }
 
 export function isFirefox() {
