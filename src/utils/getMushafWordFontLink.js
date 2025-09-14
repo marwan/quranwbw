@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { mushafWordFontLink, mushafFontVersion } from '$data/websiteSettings';
+import { mushafWordFontLink } from '$data/websiteSettings';
 import { selectableThemes } from '$data/options';
 import { __websiteTheme, __fontType } from '$utils/stores';
 
@@ -21,7 +21,7 @@ export function getMushafWordFontLink(page) {
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
 	}
 
-	return `${mushafWordFontLink}/${basePath}/${fileName}?version=${mushafFontVersion}`;
+	return `${mushafWordFontLink}/${basePath}/${fileName}?version=10`;
 }
 
 export function isFirefox() {

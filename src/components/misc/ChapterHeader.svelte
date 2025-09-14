@@ -2,12 +2,12 @@
 	export let chapter = 1;
 
 	import { chapterHeaderCodes } from '$data/quranMeta';
-	import { staticEndpoint, mushafFontVersion } from '$data/websiteSettings';
+	import { staticEndpoint } from '$data/websiteSettings';
 	import { loadFont } from '$utils/loadFont';
 	import { __currentPage } from '$utils/stores';
 
 	// Dynamically load header font
-	loadFont('chapter-headers', `${staticEndpoint}/fonts/Extras/chapter-headers/NeoHeader_COLOR-Regular.woff2?version=${mushafFontVersion}`).then(() => {
+	loadFont('chapter-headers', `${staticEndpoint}/fonts/Extras/chapter-headers/NeoHeader_COLOR-Regular.woff2?version=12`).then(() => {
 		document.querySelectorAll('.header').forEach((element) => element.classList.remove('invisible'));
 	});
 </script>
