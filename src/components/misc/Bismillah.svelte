@@ -7,8 +7,7 @@
 	export let page = null;
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
-	import { selectableThemes } from '$data/options';
-	import { isFirefox } from '$utils/getMushafWordFontLink';
+	import { isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 
 	$: isUthmaniFontType = [1, 2, 3, 5, 7, 8].includes($__fontType);
 
@@ -24,7 +23,7 @@
 		${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
 	`;
 
-	$: chapterBismillahClasses = `
+	$: chapterBismillahParentClasses = `
 		${window.theme('text')}
 		flex flex-col text-center flex-wrap block pb-2 
 		${isUthmaniFontType && chapter === 2 ? 'pt-8' : 'pt-12'}
@@ -32,18 +31,18 @@
 		${commonClasses}
 	`;
 
-	$: chapterBismillahClassesInner = `
-		${isFirefox() && selectableThemes[$__websiteTheme].color === 'dark' ? 'bismillah-ff-dark hafs-palette-firefox-dark' : $__fontType === 3 ? 'theme-palette-tajweed colored-bismillah' : 'theme-palette-normal colored-bismillah'}
+	$: chapterBismillahClasses = `
+		${isFirefoxDarkTajweed() ? 'bismillah-ff-dark' : isFirefoxDarkNonTajweed() ? 'bismillah-ff-dark-non-colored' : $__fontType === 3 ? 'theme-palette-tajweed colored-bismillah' : 'theme-palette-normal colored-bismillah'}
 	`;
 
 	// If tajweed fonts were select, apply tajweed palette
 	// But in Mocha Night & Dark Luxury themes, if non-tajweed fonts were selected, use custom palette to match theme
 	$: mushafBismillahClasses = `
-		${isFirefox() && selectableThemes[$__websiteTheme].color === 'dark' ? 'bismillah-ff-dark' : 'bismillah'}
-		flex flex-col text-center leading-normal flex-wrap space-y-4 block 
+		${isFirefoxDarkTajweed() ? 'bismillah-ff-dark hafs-palette-firefox-dark' : isFirefoxDarkNonTajweed() ? 'bismillah-ff-dark-non-colored' : 'bismillah'}
+		flex flex-col text-center leading-normal flex-wrap space-y-4 block
 		${page === 1 || page === 2 ? 'md:mt-2' : 'md:mt-6'}
-		${page === 2 ? 'text-[5vw] md:text-[36px] lg:text-[36px]' : 'text-[5vw] md:text-[32px] lg:text-[36px]'} 
-		${isFirefox() && selectableThemes[$__websiteTheme].color === 'dark' ? 'hafs-palette-firefox-dark' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
+		${page === 2 ? 'text-[5vw] md:text-[36px] lg:text-[36px]' : 'text-[5vw] md:text-[32px] lg:text-[36px]'}
+		${isFirefoxDarkTajweed() ? 'hafs-palette-firefox-dark' : isFirefoxDarkNonTajweed() ? '' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
 		${commonClasses}
 		colored-bismillah
 	`;
@@ -52,10 +51,10 @@
 <!-- chapter page -->
 {#if ['chapter', 'juz'].includes($__currentPage)}
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
-		<div class={chapterBismillahClasses}>
+		<div class={chapterBismillahParentClasses}>
 			<!-- uthmani fonts -->
 			{#if isUthmaniFontType}
-				<span class={chapterBismillahClassesInner}>
+				<span class={chapterBismillahClasses}>
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
 					{:else if [95, 97].includes(chapter)}
