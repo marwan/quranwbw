@@ -4,6 +4,9 @@ import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, _
 import { staticEndpoint } from '$data/websiteSettings';
 import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
+// Keep track of in-progress fetches globally
+const inFlightRequests = new Map();
+
 // Fetches and combines word-by-word data for a chapter including Arabic, translation, transliteration, and metadata
 export async function fetchChapterData(props) {
 	if (!props.preventStoreUpdate) __chapterData.set(null);
@@ -130,43 +133,59 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	const cacheKey = `${secondLastPart}/${lastPart}${parsedUrl.search}`;
 	const maxCacheAge = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-	// Wait for a random delay between 5 to 15 seconds
-	// await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 10001) + 5000));
-
-	// Try to load from cache
+	// 1. Try cache first
 	const cachedData = await manageCache(cacheKey, type);
 
 	if (cachedData) {
 		const hasValidTimestamp = typeof cachedData.timestamp === 'number' && !isNaN(cachedData.timestamp);
 		const age = hasValidTimestamp ? Date.now() - cachedData.timestamp : Infinity;
 
-		// If stale, update in background (non-blocking)
-		if (age > maxCacheAge) {
-			(async () => {
-				try {
-					const response = await fetch(url);
-					if (!response.ok) throw new Error('CDN response not ok');
-					const freshData = await response.json();
-					await manageCache(cacheKey, type, freshData);
-					console.log('Cache updated in background');
-				} catch (err) {
-					console.warn('Background cache update failed:', err?.message || err);
-				}
-			})();
+		// If stale → kick off background fetch (deduplicated)
+		if (age > maxCacheAge && !inFlightRequests.has(cacheKey)) {
+			inFlightRequests.set(
+				cacheKey,
+				(async () => {
+					try {
+						const response = await fetch(url);
+						if (!response.ok) throw new Error('CDN response not ok');
+						const freshData = await response.json();
+						await manageCache(cacheKey, type, freshData);
+						console.log(`[cache] background update done for ${cacheKey}`);
+						return freshData;
+					} catch (err) {
+						console.warn(`[cache] background update failed for ${cacheKey}:`, err);
+					} finally {
+						inFlightRequests.delete(cacheKey);
+					}
+				})()
+			);
 		}
 
-		// Return cached data (even if stale) immediately
+		// Always return stale (or fresh) cache immediately
 		return cachedData.data;
 	}
 
-	// No cache found, fetch from CDN
-	const response = await fetch(url);
-	if (!response.ok) throw new Error('Failed to fetch data from the CDN');
+	// 2. No cache → see if someone else is already fetching
+	if (inFlightRequests.has(cacheKey)) {
+		return inFlightRequests.get(cacheKey);
+	}
 
-	const data = await response.json();
-	await manageCache(cacheKey, type, data);
+	// 3. Otherwise start a new fetch and store the Promise
+	const fetchPromise = (async () => {
+		try {
+			const response = await fetch(url);
+			if (!response.ok) throw new Error('Failed to fetch data from the CDN');
+			const data = await response.json();
+			// await manageCache(cacheKey, type, data);
+			return data;
+		} finally {
+			inFlightRequests.delete(cacheKey);
+		}
+	})();
 
-	return data;
+	inFlightRequests.set(cacheKey, fetchPromise);
+
+	return fetchPromise;
 }
 
 // Unified cache utility for IndexedDB with version and freshness control
