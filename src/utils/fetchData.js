@@ -176,7 +176,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 			const response = await fetch(url);
 			if (!response.ok) throw new Error('Failed to fetch data from the CDN');
 			const data = await response.json();
-			// await manageCache(cacheKey, type, data);
+			await manageCache(cacheKey, type, data);
 			return data;
 		} finally {
 			inFlightRequests.delete(cacheKey);
