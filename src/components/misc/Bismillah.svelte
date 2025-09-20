@@ -65,7 +65,7 @@
 		${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
 	`;
 
-	$: chapterBismillahParentClasses = `
+	$: chapterBismillahClasses = `
 		${window.theme('text')}
 		flex flex-col text-center flex-wrap block pb-2 
 		${isUthmaniFontType && chapter === 2 ? 'pt-8' : 'pt-12'}
@@ -73,17 +73,10 @@
 		${commonClasses}
 	`;
 
-	$: chapterBismillahClasses = `
-		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
-	`;
-
-	// If tajweed fonts were select, apply tajweed palette
-	// But in Mocha Night & Dark Luxury themes, if non-tajweed fonts were selected, use custom palette to match theme
 	$: mushafBismillahClasses = `
 		flex flex-col text-center leading-normal flex-wrap space-y-4 block
 		${page === 1 || page === 2 ? 'md:mt-2' : 'md:mt-6'}
 		${page === 2 ? 'text-[5vw] md:text-[36px] lg:text-[36px]' : 'text-[5vw] md:text-[32px] lg:text-[36px]'}
-		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
 		${commonClasses}
 	`;
 </script>
@@ -91,7 +84,7 @@
 <!-- chapter page -->
 {#if ['chapter', 'juz'].includes($__currentPage)}
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
-		<div style="font-family: bismillah" class={chapterBismillahParentClasses}>
+		<div style="font-family: bismillah">
 			<!-- uthmani fonts -->
 			{#if isUthmaniFontType}
 				<span class={chapterBismillahClasses}>
