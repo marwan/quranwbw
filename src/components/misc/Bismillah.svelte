@@ -20,6 +20,8 @@
 		indopakType: '﷽'
 	};
 
+	$: customFontPalette = '';
+
 	function getBismillahFontName() {
 		const elements = document.querySelectorAll('.bismillah');
 		elements.forEach((el) => el.classList.add('invisible'));
@@ -37,16 +39,20 @@
 		};
 
 		// Default font
-		let { file: fileName, version: fontVersion } = { file: 'QCF_Bismillah_COLOR-Regular', version: 13 };
+		let { file: fileName, version: fontVersion } = {
+			file: 'QCF_Bismillah_COLOR-Regular',
+			version: 13
+		};
 
 		// Pick from map if available
 		if (fontMap[$__fontType]) {
 			({ file: fileName, version: fontVersion } = fontMap[$__fontType]);
 		}
 
-		// Special override: Uthmanic Mushaf Tajweed + Firefox Dark
-		if ($__fontType === 3 && isFirefoxDarkTajweed()) {
-			fileName = 'QCF_Bismillah_COLOR-Dark-FF-Regular';
+		// Special override: Uthmanic Mushaf Tajweed
+		if ($__fontType === 3) {
+			fileName = isFirefoxDarkTajweed() ? 'QCF_Bismillah_COLOR-Dark-FF-Regular' : 'QCF_Bismillah_COLOR-Regular';
+			customFontPalette = isFirefoxDarkTajweed() ? 'hafs-palette-firefox-dark' : 'theme-palette-tajweed';
 			fontVersion = 13;
 		}
 
@@ -63,6 +69,7 @@
 	$: commonClasses = `
 		${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
 		${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
+		${customFontPalette}
 	`;
 
 	$: chapterBismillahClasses = `
