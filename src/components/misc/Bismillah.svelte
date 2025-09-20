@@ -91,10 +91,10 @@
 <!-- chapter page -->
 {#if ['chapter', 'juz'].includes($__currentPage)}
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
-		<div style="font-family: bismillah">
+		<div style="font-family: bismillah" class={chapterBismillahClasses}>
 			<!-- uthmani fonts -->
 			{#if isUthmaniFontType}
-				<span class={chapterBismillahClasses}>
+				<span>
 					{#if chapter === 2}
 						{bismillahTypes.uthmaniType1}
 					{:else if [95, 97].includes(chapter)}
