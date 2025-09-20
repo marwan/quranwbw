@@ -7,7 +7,7 @@
 	export let page = null;
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
-	import { isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
+	import { isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { loadFont } from '$utils/loadFont';
 
@@ -29,9 +29,9 @@
 			1: { file: 'qcf-bismillah-normal', version: 13 }, // Uthmanic Digital Font
 			2: { file: 'qcf-bismillah-normal', version: 13 }, // Uthmanic Mushaf non-Tajweed
 			3: { file: 'QCF_Bismillah_COLOR-Regular', version: 13 }, // Uthmanic Mushaf Tajweed
-			// 4
+			4: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Madinah Edition)
 			5: { file: 'Qcf-nastaleeq-bismillah-normal', version: 13 }, // Uthman Taha Digital
-			// 6
+			6: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Madinah Edition)
 			7: { file: 'qcf-bismillah-bold', version: 13 }, // Uthmanic Digital Bold
 			8: { file: 'Qcf-nastaleeq-bismillah-bold', version: 13 } // Uthman Taha Digital Bold
 		};
