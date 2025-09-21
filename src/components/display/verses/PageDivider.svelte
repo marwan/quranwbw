@@ -16,17 +16,22 @@
 </script>
 
 <!-- if the current key is the start of a page or juz  -->
-{#if $__currentPage === 'chapter'}
-	{#if pageNumberKeys.includes(key) || juzNumberKeys.includes(key)}
+{#if ['chapter', 'juz'].includes($__currentPage)}
+	{@const isPage = pageNumberKeys.includes(key)}
+	{@const isJuz = juzNumberKeys.includes(key)}
+
+	{#if isPage || isJuz}
 		<div class={dividerClasses}>
-			{#if pageNumberKeys.includes(key)}
+			{#if isPage}
 				{@const pageIndex = pageNumberKeys.indexOf(key) + 1}
 				Page {pageIndex}
 			{/if}
-			{#if pageNumberKeys.includes(key) && juzNumberKeys.includes(key)}
+
+			{#if isPage && isJuz}
 				<span class="px-1 opacity-70">/</span>
 			{/if}
-			{#if juzNumberKeys.includes(key)}
+
+			{#if isJuz}
 				{@const juzIndex = juzNumberKeys.indexOf(key) + 1}
 				{term('juz')}
 				{juzIndex}
