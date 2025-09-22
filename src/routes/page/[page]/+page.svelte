@@ -30,6 +30,7 @@
 	let chapters = [];
 	let verses = [];
 	let lines = [];
+	let pageBlock;
 
 	// Set the page number
 	$: page = +data.page;
@@ -91,15 +92,6 @@
 
 			// Update the last read page
 			updateSettings({ type: 'lastRead', value: verseData[Object.keys(verseData)[0]].meta });
-
-			try {
-				// Event listeners for swipe gestures
-				const pageBlock = document.getElementById('page-block');
-				pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
-				pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
-			} catch (error) {
-				console.warn(error);
-			}
 
 			return verseData;
 		})();
@@ -175,6 +167,12 @@
 		}
 	}
 
+	// Event listeners for swipe gestures
+	$: if (pageBlock) {
+		pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
+		pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
+	}
+
 	// Only allow continuous normal mode, without saving the setting
 	$__displayType = 4;
 
@@ -186,7 +184,7 @@
 {#await pageData}
 	<Spinner />
 {:then}
-	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" in:fade={{ duration: 300 }}>
+	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" in:fade={{ duration: 300 }} bind:this={pageBlock}>
 		<div class="space-y-2 mt-2.5">
 			<!-- single page -->
 			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
