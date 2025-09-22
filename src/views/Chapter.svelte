@@ -1,5 +1,6 @@
 <script>
-	// Import necessary components and utilities
+	export let data, startVerse, endVerse;
+
 	import PageHead from '$misc/PageHead.svelte';
 	import Bismillah from '$misc/Bismillah.svelte';
 	import Chapter from '$display/verses/modes/Chapter.svelte';
@@ -14,9 +15,7 @@
 	import { goto } from '$app/navigation';
 	import { term } from '$utils/terminologies';
 	import { page } from '$app/stores';
-
-	// Export data and verse range variables
-	export let data, startVerse, endVerse;
+	import { fade } from 'svelte/transition';
 
 	let chapterData;
 
@@ -52,16 +51,15 @@
 		goto(`?startVerse=${+firstVerseOnPage - 1}`, { replaceState: false });
 	}
 
-	// Set the current page to 'chapter'
 	__currentPage.set('chapter');
 </script>
 
 <PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber})`} />
 
-<div id="chapter-block">
-	{#await chapterData}
-		<Spinner />
-	{:then}
+{#await chapterData}
+	<Spinner />
+{:then}
+	<div id="chapter-block" in:fade={{ duration: 300 }}>
 		<Bismillah {startVerse} />
 
 		<!-- need custom stylings if display type is 3 or 4 - continuous -->
@@ -76,7 +74,7 @@
 
 			<Chapter {startVerse} {endVerse} />
 		</div>
-	{:catch error}
-		<ErrorLoadingData {error} />
-	{/await}
-</div>
+	</div>
+{:catch error}
+	<ErrorLoadingData {error} />
+{/await}

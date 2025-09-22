@@ -8,7 +8,6 @@
 	// Restrict display types to 1 or 2
 	if (![1, 2].includes($__displayType)) $__displayType = 1;
 
-	// Set the current page to 'morphology'
 	__currentPage.set('morphology');
 </script>
 

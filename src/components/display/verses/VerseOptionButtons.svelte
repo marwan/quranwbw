@@ -59,7 +59,7 @@
 	// Function to toggle words block for display mode #7
 	function wordsBlockToggler(chapter, verse) {
 		const key = `${chapter}:${verse}`;
-		__verseWordBlocks.update(blocks => {
+		__verseWordBlocks.update((blocks) => {
 			blocks[key] = !blocks[key];
 			document.querySelector(`#verse-${chapter}-${verse}-words`).classList.toggle('hidden');
 			return blocks;

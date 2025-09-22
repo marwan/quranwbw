@@ -8,6 +8,7 @@
 	import { __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
+	import { fade } from 'svelte/transition';
 
 	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
 
@@ -192,7 +193,7 @@
 					</div>
 				{/if}
 
-				<div id="individual-verses-block">
+				<div id="individual-verses-block" in:fade={{ duration: 300 }}>
 					{#key resultKeys}
 						{#if resultKeys}
 							<FullVersesDisplay keys={resultKeys.toString()} />
