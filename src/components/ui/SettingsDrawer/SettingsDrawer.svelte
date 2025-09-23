@@ -111,11 +111,6 @@
 		totalVerseTransliterationsSelected = $__verseTranslations.filter((item) => selectableVerseTransliterations.includes(item)).length;
 	}
 
-	// Basic browser and platform detection
-	const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
-	const isMac = navigator.platform.toUpperCase().includes('MAC');
-	const isIOS = /(iPhone|iPod|iPad)/i.test(navigator.platform);
-
 	// Go back to main settings and restore scroll position
 	function goBackToMainSettings() {
 		showAllSettings = true;
@@ -320,13 +315,6 @@
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
-
-						<!-- note for Firefox users on Apple devices -->
-						{#if [2, 3].includes($__fontType)}
-							{#if (isIOS && isFirefox) || (isMac && isFirefox)}
-								<p class={settingsDescriptionClasses}><span class="font-semibold">Important Note: </span>The Mushaf fonts you have selected may not be fully compatible with Firefox on Apple devices. For the best experience, please use Safari or Chrome.</p>
-							{/if}
-						{/if}
 					</div>
 
 					<div class="border-b {window.theme('border')} {settingsDrawerOpacity}"></div>

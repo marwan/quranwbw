@@ -6,7 +6,6 @@
 	import { term } from '$utils/terminologies';
 	import { supplicationsFromQuran } from '$data/quranMeta';
 
-	// Set the current page to 'supplications'
 	__currentPage.set('supplications');
 </script>
 

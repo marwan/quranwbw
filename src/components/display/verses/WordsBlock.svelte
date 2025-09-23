@@ -13,7 +13,7 @@
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
+	import { getMushafWordFontLink, isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	const chapter = key.split(':')[0];
@@ -104,15 +104,35 @@
 		${$__fontType === 9 && 'pb-4'}
 	`;
 
-	// Classes for v4 hafs words
-	// If tajweed fonts were select, apply tajweed palette
-	// But in Mocha Night & Dark Luxury themes, if non-tajweed fonts were selected, use custom palette to match theme
+	// Classes for v4 Hafs words:
+	// 1. Special Firefox + Dark theme cases:
+	//    - If font type is 3 (Tajweed) → apply "hafs-palette-firefox-dark"
+	//      (fixes Firefox-specific rendering issues).
+	//    - If font type is 2 (Non-Tajweed) → no palette applied (leave empty).
+	//
+	// 2. Otherwise (all non-Firefox or other cases):
+	//    - If font type is 3 → apply "theme-palette-tajweed" (tajweed font coloring).
+	//    - Else → apply "theme-palette-normal" (default palette).
+	//    - If font type is 2 and theme is 5 (Mocha Night) → add "mocha-night-font-color".
+	//    - If font type is 2 and theme is 9 (Dark Luxury) → add "dark-luxury-font-color".
+	//
+	// Summary:
+	// - Firefox + dark theme overrides the palette logic (tajweed → special class, non-tajweed → none).
+	// - All other browsers/themes follow the normal font-type and theme-based palettes.
 	$: v4hafsClasses = `
 		invisible v4-words 
 		p${value.meta.page} 
-		${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'} 
-		${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
-		${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
+		${
+			isFirefoxDarkTajweed()
+				? 'hafs-palette-firefox-dark'
+				: isFirefoxDarkNonTajweed()
+					? ''
+					: `
+						${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
+						${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
+						${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
+					`
+		}
 	`;
 
 	// Classes for end icons

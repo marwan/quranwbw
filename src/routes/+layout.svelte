@@ -22,6 +22,8 @@
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { fade } from 'svelte/transition';
+	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
@@ -160,21 +162,23 @@
 </script>
 
 <div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
-	<Navbar />
-	<SettingsDrawer />
 	<QuranNavigationModal />
 	<AudioModal />
 	<TajweedRulesModal />
 	<NotesModal />
-	<!-- <DownloadModal /> -->
 	<TafsirModal />
 	<SiteNavigationModal />
 	<SettingsSelectorModal />
-	<!-- <LexiconModal /> -->
-	<!-- <ChangelogModal /> -->
 	<VerseTranslationModal />
 	<MorphologyModal />
 	<CopyShareVerseModal />
-	<BottomToolbar />
-	<slot />
+
+	{#key $page.url.pathname}
+		<div in:fade={{ duration: 300 }}>
+			<Navbar />
+			<SettingsDrawer />
+			<BottomToolbar />
+			<slot />
+		</div>
+	{/key}
 </div>
