@@ -38,7 +38,7 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 - Abdul Aziz Korejo and [Dr. Usama Nonnenmacher](https://drusaman.github.io/), his family and others for their contributions to Sindhi word-by-word Quran translation[4].
 - Ustadh Jahja Hondozi for the Albanian word-by-word translation.
 - [Kalimat](https://www.kalimat.dev/) for their AI powered semantic search API.
-- [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/) for the copyrighted Misbah Fonts[5].
+- [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/) for the copyrighted Isep Misbah Fonts[5].
 - M Zamroni Ahbab for the Arabic Sign Language font[6].
 
 All data used on this website belongs to their respective owners and authors. Permission must be obtained from them before copying any content.
@@ -53,6 +53,6 @@ All data used on this website belongs to their respective owners and authors. Pe
 
 [4] _Special thanks to Bro. Sulayman Jamali for lending the Sindhi translation of Quran by Abdul Maalik Mayman, Bro. Abdul Aziz Korejo for digitalization of Sindhi translation, [Brother Usama Nonnenmacher](https://drusaman.github.io/), his parents and father-in-law Umar Farooq Quddusi and his sister for their contributions as a team to Sindhi word-by-word Quran translation._
 
-[5] _The Misbah Fonts are copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for these fonts was prepared by [Ayman Siddiqui](https://zoopernet.com)._
+[5] _The Isep Misbah Fonts are copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for these fonts was prepared by [Ayman Siddiqui](https://zoopernet.com)._
 
 [6] _The Arabic Sign Language font was designed by M Zamroni Ahbab and is copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for this font was prepared by [Ayman Siddiqui](https://zoopernet.com)._
