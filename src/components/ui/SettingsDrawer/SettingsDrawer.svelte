@@ -49,6 +49,7 @@
 	import { fly } from 'svelte/transition';
 	import { term } from '$utils/terminologies';
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
+	import { importSettings, exportSettings } from '$utils/settingsManager';
 
 	// Components mapping for individual settings
 	const individualSettingsComponents = {
@@ -178,6 +179,20 @@
 			}
 		}
 		return null;
+	}
+
+	let fileInput;
+
+	function triggerImport() {
+		fileInput.click();
+	}
+
+	function handleFileChange(event) {
+		const file = event.target.files[0];
+		if (file) {
+			importSettings(file);
+			event.target.value = ''; // reset so the same file can be chosen again
+		}
 	}
 </script>
 
@@ -504,18 +519,34 @@
 
 					<div class="border-b {window.theme('border')}"></div>
 
+					<!-- import-export-settings -->
+					<div id="import-export-settings" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Import/Export Settings</span>
+
+							<div>
+								<button class="text-sm {buttonClasses}" on:click={triggerImport}>Import</button>
+								<button class="text-sm {buttonClasses}" on:click={exportSettings}>Export</button>
+								<input type="file" accept=".txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
+							</div>
+						</div>
+						<p class={settingsDescriptionClasses}>Import or export website settings.</p>
+					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
 					<!-- reset-setting-button -->
 					<div id="reset-setting-button" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Reset Settings</span>
 							<button
+								class="text-sm {buttonClasses}"
 								on:click={() => {
 									const userResponse = confirm('Are you sure you want to reset settings? This action cannot be reversed.');
 									if (userResponse) {
 										resetSettings();
 									}
 								}}
-								class="text-sm {buttonClasses}"
 							>
 								<ResetSettings />
 							</button>
