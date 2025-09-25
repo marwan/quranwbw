@@ -108,37 +108,43 @@
 
 	// Combined reactive statement handling all page-specific settings
 	$: {
-		// Update display and font type based on current page
+		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
+		const parsedUserSettings = JSON.parse($__userSettings);
+
+		// Step 1: Handle Mushaf page specific settings
 		if ($__currentPage === 'mushaf') {
+			// Mushaf page always uses display type 6
 			$__displayType = 6;
-			// We do not need Uthmani digital and Indopak fonts in mushaf page
+
+			// Mushaf page doesn't support Uthmani digital (2) and Indopak (3) fonts
+			// Force font type 2 if currently using unsupported fonts
 			if (![2, 3].includes($__fontType)) {
 				__fontType.set(2);
 			}
-		} else {
-			const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-			updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
 		}
+		// Step 2: Handle non-mushaf pages
+		else if ($__currentPage) {
+			// Step 2a: Restore user preferences when not in sign language mode
+			if (!$__signLanguageModeEnabled) {
+				// Restore user's preferred settings when leaving mushaf page
+				$__displayType = userSettings.displaySettings.displayType;
+				$__fontType = parsedUserSettings.displaySettings.fontType;
+				$__wordTranslation = parsedUserSettings.translations.word;
+				$__wordTransliterationEnabled = parsedUserSettings.displaySettings.wordTransliterationEnabled;
+			}
+			// Step 2b: Apply sign language mode overrides (non-mushaf pages only)
+			else {
+				// Sign language mode uses specific settings
+				$__wordTranslation = 22;
+				$__fontType = 9;
+				$__wordTransliterationEnabled = false;
 
-		// Restore the user's preferred font when navigating away from the Mushaf page, since the Mushaf page enforces a specific font (v4).
-		// This ensures the original fontType is re-applied on all other pages.
-		if ($__currentPage && $__currentPage !== 'mushaf' && !$__signLanguageModeEnabled) {
-			$__wordTranslation = JSON.parse($__userSettings).translations.word;
-			$__fontType = JSON.parse($__userSettings).displaySettings.fontType;
-			$__wordTransliterationEnabled = JSON.parse($__userSettings).displaySettings.wordTransliterationEnabled;
+				// Sign language mode only supports display types 1 and 3
+				if (![1, 3].includes($__displayType)) {
+					$__displayType = 1;
+				}
+			}
 		}
-
-		// Use custom settings for sign language mode
-		if ($__currentPage !== 'mushaf' && $__signLanguageModeEnabled) {
-			$__wordTranslation = 22;
-			$__fontType = 9;
-			$__wordTransliterationEnabled = false;
-		}
-
-		// // Update display and font type based on current page
-		// if ($__signLanguageModeEnabled && ![1, 3].includes($__displayType) && $__currentPage !== 'mushaf') {
-		// 	$__displayType = 1;
-		// }
 	}
 
 	// Function to check old bookmarks for v3 update
