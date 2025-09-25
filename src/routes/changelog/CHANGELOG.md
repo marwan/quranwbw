@@ -1,3 +1,46 @@
+### Sep 25, 2025
+
+- **Arabic Sign Language Mode:** We've introduced a brand-new **Arabic Sign Language** mode to make the Quran more accessible.
+- **New Font:** Added the elegant **Isep Misbah Digital** font for an even richer reading experience.
+
+---
+
+### Sep 22, 2025
+
+- **Smooth Transitions:** Navigating the website now feels smoother and more natural, thanks to new **page transitions** added throughout the site.
+
+---
+
+### Sep 21, 2025
+
+- **Font Fixes:** Resolved issues with **Mushaf fonts** in Firefox dark mode and fixed the **cropping problem**, ensuring the text displays perfectly.
+
+---
+
+### Sep 9, 2025
+
+- **Auto-Scroll During Playback:** While listening to recitation, the website now **auto-scrolls** to keep the **highlighted words in view**, making it easier to follow along.
+
+---
+
+### Sep 1, 2025
+
+- **Juz Page Enhancements:** Juz pages now include a **beautiful Surah header** (like in the Mushaf page) and show the **page number** for easier navigation.
+
+---
+
+### Aug 26, 2025
+
+- **Revelation Icons:** We've added **Makki and Madani icons** to the mini navigation bar so you can instantly know where each Surah was revealed.
+
+---
+
+### Aug 25, 2025
+
+- **New Duas Added:** Two more Duas are now available on the Duas page: **Surah 17:80** and **Surah 23:97**.
+
+---
+
 ### Aug 6, 2025
 
 - **Extra Wide Layout:** You can now make the website even wider! Perfect for big screens and easier reading.
