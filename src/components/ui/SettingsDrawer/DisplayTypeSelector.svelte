@@ -1,7 +1,7 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Check from '$svgs/Check.svelte';
-	import { __displayType, __currentPage, __settingsSelectorModal } from '$utils/stores';
+	import { __displayType, __currentPage, __fontType, __signLanguageModeEnabled, __settingsSelectorModal } from '$utils/stores';
 	import { selectableDisplays } from '$data/options';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { displayTypeChangeHandler } from '$utils/displayTypeChangeHandler';
@@ -9,7 +9,7 @@
 
 <div class="grid gap-3 w-full">
 	{#each Object.entries(selectableDisplays) as [_, displayOption]}
-		{#if !displayOption.disallowedIn.includes($__currentPage)}
+		{#if !((displayOption.disallowedInPages || []).includes($__currentPage) || ((displayOption.disallowedInFontTypes || []).includes($__fontType) && $__signLanguageModeEnabled))}
 			<Radio
 				name="displayType"
 				bind:group={$__displayType}

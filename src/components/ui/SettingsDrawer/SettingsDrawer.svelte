@@ -35,7 +35,8 @@
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
-		__wideWesbiteLayoutEnabled
+		__wideWesbiteLayoutEnabled,
+		__signLanguageModeEnabled
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -244,7 +245,7 @@
 					<div class="border-b {window.theme('border')}"></div>
 
 					<!-- word-transliteration-toggle-setting -->
-					<div id="word-transliteration-toggle-setting" class={settingsBlockClasses}>
+					<div id="word-transliteration-toggle-setting" class="{settingsBlockClasses} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Word Transliteration</span>
 							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
@@ -285,6 +286,20 @@
 						</div>
 						<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width). Best for larger screens.</p>
 					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- arabic-sign-language-setting -->
+					<div id="arabic-sign-language-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Arabic Sign Language</span>
+							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__signLanguageModeEnabled} on:click={(event) => updateSettings({ type: 'signLanguageModeEnabled', value: event.target.checked })} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Enable this to switch the Quran view to Arabic Sign Language mode. The Indonesian Isep Misbah Digital font will be used, and some options will be disabled.</p>
+					</div>
 				</div>
 			</div>
 
@@ -294,7 +309,7 @@
 
 				<div class="flex flex-col flex-wrap text-base">
 					<!-- quran-font-setting -->
-					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity}">
+					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Quran Font</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
@@ -319,7 +334,10 @@
 					<!-- word-translation-size-setting . -->
 					<div id="word-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
-							<span class="block">Word Translation/Transliteration Size ({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})</span>
+							<span class="block">
+								{$__signLanguageModeEnabled ? 'Sign Language Icon Size' : 'Word Translation/Transliteration Size'}
+								({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})
+							</span>
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('word-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranlationTransliterationSizeValue} class={rangeClasses} />
 							</div>
@@ -346,7 +364,7 @@
 
 				<div class="flex flex-col flex-wrap text-base">
 					<!-- word-translation-setting -->
-					<div id="word-translation-setting" class={settingsBlockClasses}>
+					<div id="word-translation-setting" class="{settingsBlockClasses} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Word Translation</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('word-translation')}>{selectableWordTranslations[$__wordTranslation].language}</button>

@@ -62,6 +62,7 @@ let __websiteOnline,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
+	__signLanguageModeEnabled,
 	__verseWordBlocks;
 
 if (browser) {
@@ -229,6 +230,9 @@ if (browser) {
 	// to store the website wide layout option
 	__wideWesbiteLayoutEnabled = writable(userSettings.displaySettings.wideWesbiteLayoutEnabled);
 
+	// to store the sign language mode option
+	__signLanguageModeEnabled = writable(userSettings.displaySettings.signLanguageModeEnabled);
+
 	// to store the visibility state of word blocks per verse
 	__verseWordBlocks = writable({});
 }
@@ -295,5 +299,6 @@ export {
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
+	__signLanguageModeEnabled,
 	__verseWordBlocks
 };

@@ -35,7 +35,8 @@
 			5: { file: 'Qcf-nastaleeq-bismillah-normal', version: 13 }, // Uthman Taha Digital
 			6: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Hanafi Edition)
 			7: { file: 'qcf-bismillah-bold', version: 13 }, // Uthmanic Digital Bold
-			8: { file: 'Qcf-nastaleeq-bismillah-bold', version: 13 } // Uthman Taha Digital Bold
+			8: { file: 'Qcf-nastaleeq-bismillah-bold', version: 13 }, // Uthman Taha Digital Bold
+			9: { file: 'MisbahBismillah-Arabic', version: 13 } // Indonesian Isep Misbah Digital Font
 		};
 
 		// Default font
