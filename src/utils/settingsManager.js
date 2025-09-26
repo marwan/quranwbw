@@ -21,7 +21,6 @@ function mergeWithDefaults(imported, defaults) {
 			result[key] = defaults[key];
 		}
 	}
-
 	return result;
 }
 
@@ -42,16 +41,34 @@ function decodeSettings(encoded) {
 	}
 }
 
-export function importSettings(file) {
-	const reader = new FileReader();
+// Normalize file name → force .qwbw extension
+function normalizeFilename(filename) {
+	if (filename.endsWith('.qwbw.txt')) {
+		return filename.replace(/\.qwbw\.txt$/, '.qwbw');
+	}
+	if (!filename.endsWith('.qwbw')) {
+		return filename + '.qwbw';
+	}
+	return filename;
+}
 
+export function importSettings(file) {
+	// Safeguard: basic checks
+	if (!file || !(file instanceof File)) {
+		alert('Invalid file.');
+		return;
+	}
+	if (!file.name.endsWith('.qwbw') && !file.name.endsWith('.qwbw.txt')) {
+		alert('Invalid file type. Please select a QuranWBW settings file.');
+		return;
+	}
+
+	const reader = new FileReader();
 	reader.onload = function (e) {
 		try {
 			// Ask before proceeding
 			const proceed = confirm('Are you sure you want to import settings? This will overwrite your current preferences.');
-			if (!proceed) {
-				return; // user cancelled
-			}
+			if (!proceed) return;
 
 			const imported = decodeSettings(e.target.result);
 
@@ -68,13 +85,12 @@ export function importSettings(file) {
 			console.error(error);
 		}
 	};
-
 	reader.readAsText(file);
 }
 
 export function exportSettings() {
 	const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
-	if (!settings) {
+	if (!settings || Object.keys(settings).length === 0) {
 		alert('No settings found.');
 		return;
 	}
@@ -86,7 +102,8 @@ export function exportSettings() {
 	const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
 	const time = `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`; // HH-MM-SS
 
-	const filename = `quranwbw-settings-${date}_${time}.qwbw`;
+	const rawFilename = `quranwbw-settings-${date}_${time}.qwbw`;
+	const filename = normalizeFilename(rawFilename);
 
 	const blob = new Blob([encoded], { type: 'text/plain' });
 	const url = URL.createObjectURL(blob);

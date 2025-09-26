@@ -534,7 +534,7 @@
 								<button class="text-sm {buttonClasses}" on:click={exportSettings}><Export /></button>
 								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Export</Tooltip>
 
-								<input type="file" accept=".qwbw" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
+								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 							</div>
 						</div>
 						<p class={settingsDescriptionClasses}>Export a copy of your website settings, or import settings you previously saved.</p>
