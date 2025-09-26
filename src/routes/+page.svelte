@@ -17,7 +17,7 @@
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled, __confirmationAlertModal } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -216,11 +216,12 @@
 									<!-- delete bookmark button -->
 									<button
 										on:click={() => {
-											const userResponse = confirm(`Are you sure you want to delete this bookmark (${bookmark})?`);
-											if (userResponse) {
+											$__confirmationAlertModal.visible = true;
+											$__confirmationAlertModal.message = `Are you sure you want to delete this bookmark (${bookmark})?`;
+											$__confirmationAlertModal.onConfirm = () => {
 												updateSettings({ type: 'userBookmarks', key: bookmark });
 												window.umami.track('Delete Bookmark Icon');
-											}
+											};
 										}}
 										class="pointer h-7 w-7 opacity-100"
 										style="margin-left: -20px; margin-top: -5px;"

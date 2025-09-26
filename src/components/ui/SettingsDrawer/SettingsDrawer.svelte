@@ -39,7 +39,8 @@
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
 		__wideWesbiteLayoutEnabled,
-		__signLanguageModeEnabled
+		__signLanguageModeEnabled,
+		__confirmationAlertModal
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -193,8 +194,13 @@
 	function handleFileChange(event) {
 		const file = event.target.files[0];
 		if (file) {
-			importSettings(file);
-			event.target.value = ''; // reset so the same file can be chosen again
+			$__confirmationAlertModal.visible = true;
+			$__confirmationAlertModal.message = 'Are you sure you want to import settings? This will overwrite your current preferences.';
+			$__confirmationAlertModal.initiatedBy = 'settings-drawer';
+			$__confirmationAlertModal.onConfirm = () => {
+				importSettings(file);
+				event.target.value = ''; // reset so the same file can be chosen again
+			};
 		}
 	}
 </script>
@@ -549,14 +555,17 @@
 							<button
 								class="text-sm {buttonClasses}"
 								on:click={() => {
-									const userResponse = confirm('Are you sure you want to reset settings? This action cannot be reversed.');
-									if (userResponse) {
+									$__confirmationAlertModal.visible = true;
+									$__confirmationAlertModal.message = 'Are you sure you want to reset settings? This action cannot be reversed.';
+									$__confirmationAlertModal.initiatedBy = 'settings-drawer';
+									$__confirmationAlertModal.onConfirm = () => {
 										resetSettings();
-									}
+									};
 								}}
 							>
 								<ResetSettings />
 							</button>
+
 							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>
 						<p class={settingsDescriptionClasses}>Reset all website settings to default without affecting your bookmarks or notes.</p>

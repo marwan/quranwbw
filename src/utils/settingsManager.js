@@ -66,10 +66,6 @@ export function importSettings(file) {
 	const reader = new FileReader();
 	reader.onload = function (e) {
 		try {
-			// Ask before proceeding
-			const proceed = confirm('Are you sure you want to import settings? This will overwrite your current preferences.');
-			if (!proceed) return;
-
 			const imported = decodeSettings(e.target.result);
 
 			// Merge with defaults (deep, with type checks)

@@ -2,7 +2,7 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __verseKey, __userNotes, __notesModalVisible } from '$utils/stores';
+	import { __verseKey, __userNotes, __notesModalVisible, __confirmationAlertModal } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { timeAgo } from '$utils/timeAgo';
 	import { updateSettings } from '$utils/updateSettings';
@@ -48,6 +48,7 @@
 
 	// Function to reset the note
 	function resetNote() {
+		console.log('resetNote');
 		verseNote = '';
 		updateSettings({
 			type: 'userNotes',
@@ -69,7 +70,17 @@
 
 	<div class="flex flex-row">
 		<button on:click={() => updateNote()} class="w-full mr-2 mt-6 {buttonClasses}">Update</button>
-		<button on:click={() => resetNote()} class="w-fit mt-6 {buttonClasses}">
+		<button
+			on:click={() => {
+				$__confirmationAlertModal.visible = true;
+				$__confirmationAlertModal.message = 'Are you sure you want to reset this note? This action cannot be undone.';
+				$__confirmationAlertModal.initiatedBy = 'notesModal';
+				$__confirmationAlertModal.onConfirm = () => {
+					resetNote();
+				};
+			}}
+			class="w-fit mt-6 {buttonClasses}"
+		>
 			<span><Trash size={5} /></span>
 		</button>
 	</div>
