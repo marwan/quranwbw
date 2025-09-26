@@ -25,24 +25,47 @@ function mergeWithDefaults(imported, defaults) {
 	return result;
 }
 
+// Encode JSON: stringify → reverse → Base64
+function encodeSettings(json) {
+	const str = JSON.stringify(json);
+	return btoa(str.split('').reverse().join(''));
+}
+
+// Decode JSON: Base64 → reverse → parse
+function decodeSettings(encoded) {
+	try {
+		const reversed = atob(encoded).split('').reverse().join('');
+		return JSON.parse(reversed);
+	} catch (error) {
+		console.error(error);
+		throw new Error('Invalid settings file');
+	}
+}
+
 export function importSettings(file) {
 	const reader = new FileReader();
 
 	reader.onload = function (e) {
 		try {
-			const imported = JSON.parse(e.target.result);
+			// Ask before proceeding
+			const proceed = confirm('Are you sure you want to import settings? This will overwrite your current preferences.');
+			if (!proceed) {
+				return; // user cancelled
+			}
+
+			const imported = decodeSettings(e.target.result);
 
 			// Merge with defaults (deep, with type checks)
 			const validated = mergeWithDefaults(imported, defaultSettings);
 
 			localStorage.setItem('userSettings', JSON.stringify(validated));
-			alert('Settings imported successfully!');
+			alert('Settings imported successfully. The page will now reload.');
 
-			// Reload the page
+			// Reload the page to apply settings
 			location.reload();
-		} catch (err) {
-			alert('Invalid settings file.');
-			console.error(err);
+		} catch (error) {
+			alert('Something went wrong while importing the file.');
+			console.error(error);
 		}
 	};
 
@@ -50,11 +73,13 @@ export function importSettings(file) {
 }
 
 export function exportSettings() {
-	const settings = localStorage.getItem('userSettings');
+	const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
 	if (!settings) {
 		alert('No settings found.');
 		return;
 	}
+
+	const encoded = encodeSettings(settings);
 
 	const now = new Date();
 	const pad = (n) => n.toString().padStart(2, '0');
@@ -63,7 +88,7 @@ export function exportSettings() {
 
 	const filename = `quranwbw-settings-${date}_${time}.qwbw`;
 
-	const blob = new Blob([settings], { type: 'text/plain' });
+	const blob = new Blob([encoded], { type: 'text/plain' });
 	const url = URL.createObjectURL(blob);
 
 	const a = document.createElement('a');
