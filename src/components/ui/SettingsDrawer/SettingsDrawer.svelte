@@ -12,8 +12,11 @@
 	import VersePlayButtonSelector from '$ui/SettingsDrawer/VersePlayButtonSelector.svelte';
 	import Drawer from '$ui/FlowbiteSvelte/drawer/Drawer.svelte';
 	import Range from '$ui/FlowbiteSvelte/forms/Range.svelte';
+	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import ResetSettings from '$svgs/ResetSettings.svelte';
+	import Import from '$svgs/Import.svelte';
+	import Export from '$svgs/Export.svelte';
 
 	import {
 		__currentPage,
@@ -525,12 +528,16 @@
 							<span class="block">Import/Export Settings</span>
 
 							<div>
-								<button class="text-sm {buttonClasses}" on:click={triggerImport}>Import</button>
-								<button class="text-sm {buttonClasses}" on:click={exportSettings}>Export</button>
+								<button class="text-sm {buttonClasses}" on:click={triggerImport}><Import /></button>
+								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Import</Tooltip>
+
+								<button class="text-sm {buttonClasses}" on:click={exportSettings}><Export /></button>
+								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Export</Tooltip>
+
 								<input type="file" accept=".qwbw" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 							</div>
 						</div>
-						<p class={settingsDescriptionClasses}>Import or export website settings.</p>
+						<p class={settingsDescriptionClasses}>Export a copy of your website settings, or import settings you previously saved.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -550,6 +557,7 @@
 							>
 								<ResetSettings />
 							</button>
+							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>
 						<p class={settingsDescriptionClasses}>Reset all website settings to default without affecting your bookmarks or notes.</p>
 					</div>

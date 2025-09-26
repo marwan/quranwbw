@@ -37,6 +37,9 @@ export function importSettings(file) {
 
 			localStorage.setItem('userSettings', JSON.stringify(validated));
 			alert('Settings imported successfully!');
+
+			// Reload the page
+			location.reload();
 		} catch (err) {
 			alert('Invalid settings file.');
 			console.error(err);
@@ -53,8 +56,12 @@ export function exportSettings() {
 		return;
 	}
 
-	const timestamp = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-	const filename = `quranwbw-settings-${timestamp}.qwbw`;
+	const now = new Date();
+	const pad = (n) => n.toString().padStart(2, '0');
+	const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
+	const time = `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`; // HH-MM-SS
+
+	const filename = `quranwbw-settings-${date}_${time}.qwbw`;
 
 	const blob = new Blob([settings], { type: 'text/plain' });
 	const url = URL.createObjectURL(blob);
