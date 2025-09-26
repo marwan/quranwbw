@@ -54,7 +54,7 @@ export function exportSettings() {
 	}
 
 	const timestamp = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-	const filename = `quranwbw-settings-${timestamp}.txt`;
+	const filename = `quranwbw-settings-${timestamp}.qwbw`;
 
 	const blob = new Blob([settings], { type: 'text/plain' });
 	const url = URL.createObjectURL(blob);
