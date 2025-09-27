@@ -42,7 +42,7 @@
 		none: ''
 	};
 	const borderColors = {
-		default: `border-b ${window.theme('border')}`,
+		default: ``,
 		dropdown: `${window.theme('border')}`,
 		navbar: `${window.theme('border')}`,
 		navbarUl: `${window.theme('border')}`,
@@ -50,7 +50,7 @@
 		none: ''
 	};
 	let divClass;
-	$: divClass = twMerge(bgColors[color], textColors[color], rounded && 'rounded-3xl', `border ${window.theme('border')}`, borderColors[color], shadow && 'shadow-md', $$props.class);
+	$: divClass = twMerge(bgColors[color], textColors[color], rounded && 'rounded-3xl', ``, borderColors[color], shadow && 'shadow-md', $$props.class);
 </script>
 
 {#if transition && open}
