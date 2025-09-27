@@ -531,7 +531,7 @@
 					<!-- import-export-settings -->
 					<div id="import-export-settings" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
-							<span class="block">Import/Export Settings</span>
+							<span class="block">Backup and Restore</span>
 
 							<div>
 								<button class="text-sm {buttonClasses}" on:click={triggerImport}><Import /></button>
@@ -543,7 +543,7 @@
 								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 							</div>
 						</div>
-						<p class={settingsDescriptionClasses}>Export a copy of your website settings, or import settings you previously saved.</p>
+						<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
