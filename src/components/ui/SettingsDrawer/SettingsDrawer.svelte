@@ -528,7 +528,7 @@
 					<!-- import-export-settings -->
 					<div id="import-export-settings" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
-							<span class="block">Backup And Restore</span>
+							<span class="block">Backup & Restore</span>
 
 							<div class="flex flex-row space-x-2">
 								<button class="text-sm space-x-2 {buttonClasses}" on:click={exportSettings}>
