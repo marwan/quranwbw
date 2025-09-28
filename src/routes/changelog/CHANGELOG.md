@@ -1,3 +1,9 @@
+### Sep 28, 2025
+
+- **Manual Backup & Restore:** You can now **save and download a copy of your website settings** (including bookmarks and notes) and **restore them anytime**. This way, you’ll never have to worry about losing your important data again.
+
+---
+
 ### Sep 25, 2025
 
 - **Arabic Sign Language Mode:** We've introduced a brand-new **Arabic Sign Language** mode to make the Quran more accessible.
