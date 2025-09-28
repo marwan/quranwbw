@@ -530,13 +530,18 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Backup and Restore</span>
 
-							<div>
-								<button class="text-sm {buttonClasses}" on:click={triggerImport}><Import /></button>
-								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Import</Tooltip>
+							<div class="flex flex-row space-x-2">
+								<button class="text-sm space-x-2 {buttonClasses}" on:click={exportSettings}>
+									<Export />
+									<span>Backup</span>
+								</button>
+								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Backup</Tooltip>
 
-								<button class="text-sm {buttonClasses}" on:click={exportSettings}><Export /></button>
-								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Export</Tooltip>
-
+								<button class="text-sm space-x-2 {buttonClasses}" on:click={triggerImport}>
+									<Import />
+									<span>Restore</span>
+								</button>
+								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Restore</Tooltip>
 								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 							</div>
 						</div>
@@ -549,8 +554,9 @@
 					<div id="reset-setting-button" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Reset Settings</span>
-							<button class="text-sm {buttonClasses}" on:click={() => showConfirm('Are you sure you want to reset settings? This action cannot be reversed.', 'settings-drawer', () => resetSettings())}>
+							<button class="text-sm space-x-2 {buttonClasses}" on:click={() => showConfirm('Are you sure you want to reset settings? This action cannot be reversed.', 'settings-drawer', () => resetSettings())}>
 								<ResetSettings />
+								<span>Reset</span>
 							</button>
 							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>

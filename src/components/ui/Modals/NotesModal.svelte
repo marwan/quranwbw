@@ -43,7 +43,7 @@
 			updateButtonText = 'Update';
 			showDeleteButton = true;
 		} else {
-			updateButtonText = 'Create';
+			updateButtonText = 'Save';
 			showDeleteButton = false;
 		}
 	}
@@ -72,15 +72,15 @@
 </script>
 
 <Modal id="notesModal" bind:open={$__notesModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
-	<h3 class="mb-8 text-xl font-medium">{quranMetaData[chapter].transliteration}, {$__verseKey}</h3>
+	<h3 class="mb-6 text-xl font-medium">{quranMetaData[chapter].transliteration}, {$__verseKey}</h3>
 	<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')}" placeholder="Write your thoughts here..."></textarea>
 
 	{#if noteModifiedAt !== null}
 		<div id="notes-last-modified" class="text-xs mt-4">Modified {noteModifiedAt}.</div>
 	{/if}
 
-	<div class="flex flex-row">
-		<button on:click={() => updateNote()} class="w-full mr-2 mt-6 {buttonClasses}">{updateButtonText}</button>
+	<div class="flex flex-row space-x-2">
+		<button on:click={() => updateNote()} class="w-full mt-6 {buttonClasses}">{updateButtonText}</button>
 
 		{#if showDeleteButton}
 			<button on:click={() => showConfirm('Are you sure you want to reset this note? This action cannot be undone.', 'notesModal', () => resetNote())} class="w-fit mt-6 {buttonClasses}">
