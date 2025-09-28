@@ -25,6 +25,7 @@
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
+	import { showConfirm } from '$utils/confirmationAlertHandler';
 
 	const svgData = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
@@ -215,13 +216,11 @@
 
 									<!-- delete bookmark button -->
 									<button
-										on:click={() => {
-											const userResponse = confirm(`Are you sure you want to delete this bookmark (${bookmark})?`);
-											if (userResponse) {
+										on:click={() =>
+											showConfirm(`Are you sure you want to delete this bookmark (${bookmark})?`, null, () => {
 												updateSettings({ type: 'userBookmarks', key: bookmark });
 												window.umami.track('Delete Bookmark Icon');
-											}
-										}}
+											})}
 										class="pointer h-7 w-7 opacity-100"
 										style="margin-left: -20px; margin-top: -5px;"
 										title="Delete bookmark"

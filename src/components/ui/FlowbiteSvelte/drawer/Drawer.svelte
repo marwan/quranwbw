@@ -48,9 +48,9 @@
 
 {#if !hidden}
 	{#if backdrop && activateClickOutside}
-		<div role="presentation" class={backdropDivClass} on:click={() => !hidden && handleDrawer()} />
+		<div id="presentation" role="presentation" class={backdropDivClass} on:click={() => !hidden && handleDrawer()} />
 	{:else if backdrop && !activateClickOutside}
-		<div role="presentation" class={backdropDivClass} />
+		<div id="presentation" role="presentation" class={backdropDivClass} />
 	{/if}
 
 	<div use:clickOutsideWrapper={handleClickOutside} {id} {...$$restProps} class={twMerge(divClass, width, position, placements[placement], $$props.class)} transition:multiple={transitionParams} tabindex="-1" aria-controls={id} aria-labelledby={id}>

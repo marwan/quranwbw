@@ -49,6 +49,7 @@ let __websiteOnline,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
 	__downloadModalVisible,
+	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
@@ -186,6 +187,13 @@ if (browser) {
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
 	__downloadModalVisible = writable(false);
+	__confirmationAlertModal = writable({
+		visible: false,
+		type: null,
+		message: '',
+		initiatedBy: null,
+		onConfirm: null
+	});
 
 	// wake lock settings
 	__wakeLockEnabled = writable(userSettings.displaySettings.wakeLockEnabled);
@@ -286,6 +294,7 @@ export {
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
 	__downloadModalVisible,
+	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,

@@ -61,9 +61,9 @@
 	title="{quranMetaData[chapter].transliteration}, {chapter}:{verse}"
 	id="tafsirModal"
 	class="!rounded-b-none md:!rounded-3xl"
-	bodyClass="p-6 space-y-4 flex-1 overflow-y-auto overscroll-contain border {window.theme('border')}"
+	bodyClass="p-6 space-y-4 flex-1 overflow-y-auto overscroll-contain !border-t-0"
 	headerClass="flex justify-between items-center p-6 rounded-t-3xl"
-	classFooter="rounded-b-3xl flex flex-row justify-between"
+	classFooter="rounded-b-3xl flex flex-row justify-between !border-t-0"
 	size="lg"
 	position="bottom"
 	center

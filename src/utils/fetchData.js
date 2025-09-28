@@ -152,8 +152,8 @@ export async function fetchAndCacheJson(url, type = 'other') {
 						await manageCache(cacheKey, type, freshData);
 						console.log(`[cache] background update done for ${cacheKey}`);
 						return freshData;
-					} catch (err) {
-						console.warn(`[cache] background update failed for ${cacheKey}:`, err);
+					} catch (error) {
+						console.warn(`[cache] background update failed for ${cacheKey}:`, error);
 					} finally {
 						inFlightRequests.delete(cacheKey);
 					}
