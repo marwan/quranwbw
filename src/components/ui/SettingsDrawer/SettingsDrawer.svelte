@@ -39,8 +39,7 @@
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
 		__wideWesbiteLayoutEnabled,
-		__signLanguageModeEnabled,
-		__confirmationAlertModal
+		__signLanguageModeEnabled
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -54,6 +53,7 @@
 	import { term } from '$utils/terminologies';
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
+	import { showConfirm } from '$utils/confirmationAlertHandler';
 
 	// Components mapping for individual settings
 	const individualSettingsComponents = {
@@ -194,13 +194,10 @@
 	function handleFileChange(event) {
 		const file = event.target.files[0];
 		if (file) {
-			$__confirmationAlertModal.visible = true;
-			$__confirmationAlertModal.message = 'Are you sure you want to import settings? This will overwrite your current preferences.';
-			$__confirmationAlertModal.initiatedBy = 'settings-drawer';
-			$__confirmationAlertModal.onConfirm = () => {
+			showConfirm('Are you sure you want to import settings? This will overwrite your current preferences.', 'settings-drawer', () => {
 				importSettings(file);
 				event.target.value = ''; // reset so the same file can be chosen again
-			};
+			});
 		}
 	}
 </script>
@@ -552,20 +549,9 @@
 					<div id="reset-setting-button" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Reset Settings</span>
-							<button
-								class="text-sm {buttonClasses}"
-								on:click={() => {
-									$__confirmationAlertModal.visible = true;
-									$__confirmationAlertModal.message = 'Are you sure you want to reset settings? This action cannot be reversed.';
-									$__confirmationAlertModal.initiatedBy = 'settings-drawer';
-									$__confirmationAlertModal.onConfirm = () => {
-										resetSettings();
-									};
-								}}
-							>
+							<button class="text-sm {buttonClasses}" on:click={() => showConfirm('Are you sure you want to reset settings? This action cannot be reversed.', 'settings-drawer', () => resetSettings())}>
 								<ResetSettings />
 							</button>
-
 							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>
 						<p class={settingsDescriptionClasses}>Reset all website settings to default without affecting your bookmarks or notes.</p>

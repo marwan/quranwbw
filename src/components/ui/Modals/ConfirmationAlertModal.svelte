@@ -3,6 +3,7 @@
 	import { __confirmationAlertModal } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { getModalTransition } from '$utils/getModalTransition';
+	import { resetConfirmationAlertModal } from '$utils/confirmationAlertHandler';
 
 	$: if ($__confirmationAlertModal) {
 		const initiatedByElement = document.getElementById($__confirmationAlertModal.initiatedBy);
@@ -15,41 +16,33 @@
 			if (initiatedByElement) initiatedByElement.classList.remove('invisible');
 			if (presentationOverlay) presentationOverlay.classList.remove('invisible');
 
-			// Reset modal properties
-			$__confirmationAlertModal.message = '';
-			$__confirmationAlertModal.onConfirm = null;
-			$__confirmationAlertModal.initiatedBy = null;
+			resetConfirmationAlertModal();
 		}
 	}
 </script>
 
 <Modal id="confirmationAlertModal" bind:open={$__confirmationAlertModal.visible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl z-[21]" bodyClass="p-6" position="bottom" center outsideclose>
-	<h3 class="mb-6 text-xl font-medium">Confirmation</h3>
+	<h3 class="mb-6 text-xl font-medium">
+		{$__confirmationAlertModal.type === 'confirm' ? 'Confirmation' : 'Alert'}
+	</h3>
 
-	<div class="flex flex-col space-between">
-		<div>{$__confirmationAlertModal.message}</div>
+	<div class="flex flex-col">
+		<p>{$__confirmationAlertModal.message}</p>
 
-		<div class="flex flex-row">
-			<button
-				class="w-full mr-2 mt-6 {buttonClasses}"
-				on:click={() => {
-					if ($__confirmationAlertModal.onConfirm) {
-						$__confirmationAlertModal.onConfirm();
-					}
-					$__confirmationAlertModal.visible = false;
-				}}
-			>
-				Confirm
-			</button>
+		<div class="flex flex-row gap-2 mt-6">
+			{#if $__confirmationAlertModal.type === 'confirm'}
+				<button
+					class="w-full {buttonClasses}"
+					on:click={() => {
+						$__confirmationAlertModal.onConfirm?.();
+						$__confirmationAlertModal.visible = false;
+					}}
+				>
+					Confirm
+				</button>
+			{/if}
 
-			<button
-				class="w-full mt-6 {buttonClasses}"
-				on:click={() => {
-					$__confirmationAlertModal.visible = false;
-				}}
-			>
-				Cancel
-			</button>
+			<button class="w-full {buttonClasses}" on:click={() => ($__confirmationAlertModal.visible = false)}> {$__confirmationAlertModal.type === 'confirm' ? 'Cancel' : 'Got it'} </button>
 		</div>
 	</div>
 </Modal>

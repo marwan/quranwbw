@@ -189,6 +189,7 @@ if (browser) {
 	__downloadModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
+		type: null,
 		message: '',
 		initiatedBy: null,
 		onConfirm: null

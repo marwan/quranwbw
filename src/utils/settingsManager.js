@@ -1,4 +1,5 @@
 import { defaultSettings } from '$src/hooks.client';
+import { showAlert } from '$utils/confirmationAlertHandler';
 
 // Helper: deep merge imported settings with defaults and type check
 function mergeWithDefaults(imported, defaults) {
@@ -55,11 +56,11 @@ function normalizeFilename(filename) {
 export function importSettings(file) {
 	// Safeguard: basic checks
 	if (!file || !(file instanceof File)) {
-		alert('Invalid file.');
+		showAlert('Invalid file.', 'settings-drawer');
 		return;
 	}
 	if (!file.name.endsWith('.qwbw') && !file.name.endsWith('.qwbw.txt')) {
-		alert('Invalid file type. Please select a QuranWBW settings file.');
+		showAlert('Invalid file type. Please select a QuranWBW settings file.', 'settings-drawer');
 		return;
 	}
 
@@ -72,12 +73,11 @@ export function importSettings(file) {
 			const validated = mergeWithDefaults(imported, defaultSettings);
 
 			localStorage.setItem('userSettings', JSON.stringify(validated));
-			alert('Settings imported successfully. The page will now reload.');
 
 			// Reload the page to apply settings
 			location.reload();
 		} catch (error) {
-			alert('Something went wrong while importing the file.');
+			showAlert('Something went wrong while importing the file.', 'settings-drawer');
 			console.error(error);
 		}
 	};
@@ -87,7 +87,7 @@ export function importSettings(file) {
 export function exportSettings() {
 	const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
 	if (!settings || Object.keys(settings).length === 0) {
-		alert('No settings found.');
+		showAlert('No settings found.', 'settings-drawer');
 		return;
 	}
 
