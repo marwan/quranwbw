@@ -11,18 +11,28 @@ export function getMushafWordFontLink(page) {
 	let fileName;
 	let fontVersion;
 
-	if (isFirefoxDarkTajweed()) {
-		basePath = 'COLRv1-Dark-FF';
-		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-		fontVersion = 11;
-	} else if (isFirefoxDarkNonTajweed()) {
-		basePath = 'COLRv1-Dark-FF-Non-Colored';
-		fileName = `QCF4${paddedPage}_X-Regular.woff2`;
-		fontVersion = 10;
-	} else {
-		basePath = 'COLRv1';
-		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-		fontVersion = 11;
+	// KFGQPC v4
+	if ([2, 3].includes(get(__fontType))) {
+		if (isFirefoxDarkTajweed()) {
+			basePath = 'KFGQPC-v4/COLRv1-Dark-FF';
+			fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
+			fontVersion = 11;
+		} else if (isFirefoxDarkNonTajweed()) {
+			basePath = 'KFGQPC-v4/COLRv1-Dark-FF-Non-Colored';
+			fileName = `QCF4${paddedPage}_X-Regular.woff2`;
+			fontVersion = 10;
+		} else {
+			basePath = 'KFGQPC-v4/COLRv1';
+			fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
+			fontVersion = 11;
+		}
+	}
+
+	// KFGQPC v1
+	else {
+		basePath = 'KFGQPC-v1';
+		fileName = `p${page}.woff2`;
+		fontVersion = 1;
 	}
 
 	return `${mushafWordFontLink}/${basePath}/${fileName}?version=${fontVersion}`;

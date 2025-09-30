@@ -119,7 +119,7 @@
 
 			// Mushaf page doesn't support Uthmani digital (2) and Indopak (3) fonts
 			// Force font type 2 if currently using unsupported fonts
-			if (![2, 3].includes($__fontType)) {
+			if (![2, 3, 10].includes($__fontType)) {
 				__fontType.set(2);
 			}
 		}

@@ -36,7 +36,7 @@
 	$: page = +data.page;
 
 	// Prefetch adjacent pages for better UX
-	$: if ([2, 3].includes($__fontType)) {
+	$: if ([2, 3, 10].includes($__fontType)) {
 		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
 			fetch(getMushafWordFontLink(thisPage));
 		}

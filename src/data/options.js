@@ -142,6 +142,14 @@ export const selectableFontTypes = {
 		displayOrder: 9,
 		disallowedInPages: ['mushaf'],
 		version: 2
+	},
+	10: {
+		id: 10,
+		type: 'Uthmanic',
+		font: 'Mushaf 1405H',
+		displayOrder: 10,
+		disallowedInPages: [],
+		version: 1
 	}
 };
 
