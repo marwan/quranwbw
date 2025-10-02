@@ -2,16 +2,15 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
-	import VerseReciterSelector from '$ui/SettingsDrawer/VerseReciterSelector.svelte';
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
 	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
 	import Input from '$ui/FlowbiteSvelte/forms/Input.svelte';
 	import Search from '$svgs/Search.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __settingsSelectorModal, __reciter, __translationReciter } from '$utils/stores';
+	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __reciter, __translationReciter } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
-	import { selectableReciters, selectableTranslationReciters, selectableAudioDelays, selectableRepeatTimes } from '$data/options';
+	import { selectableAudioDelays, selectableRepeatTimes } from '$data/options';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { updateSettings } from '$utils/updateSettings';
@@ -131,6 +130,10 @@
 			delete audioSettings.savedPlaySettings;
 		}
 
+		// Setting the reciters manually because the "remember settings" option resets these for some reason
+		$__audioSettings.reciter = $__reciter;
+		$__audioSettings.translationReciter = $__translationReciter;
+
 		updateSettings({ type: 'audioSettings', value: audioSettings });
 	}
 
@@ -208,25 +211,6 @@
 								<div class="w-full">Both</div>
 							</div>
 						</Radio>
-					</div>
-				</div>
-			</div>
-
-			<!-- reciter selectors -->
-			<div id="reciter-selecter-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
-				<span class="text-sm">Audio</span>
-				<div class="flex flex-row {$__audioSettings.language === 'both' && 'space-x-2'}">
-					<!-- verse reciter -->
-					<div class="flex items-center w-fit truncate {['arabic', 'both'].includes($__audioSettings.language) ? 'block' : 'hidden'}">
-						<button class="{radioClasses} {window.theme('borderDark')} truncate" on:click={() => __settingsSelectorModal.set({ component: VerseReciterSelector, visible: true, title: 'Reciter' })}>
-							<div class="text-sm font-semibold truncate">{selectableReciters[$__reciter].reciter}</div>
-						</button>
-					</div>
-					<!-- translation reciter -->
-					<div class="flex items-center w-fit truncate {['translation', 'both'].includes($__audioSettings.language) ? 'block' : 'hidden'}">
-						<button class="{radioClasses} {window.theme('borderDark')} truncate" on:click={() => __settingsSelectorModal.set({ component: VerseReciterSelector, visible: true, title: 'Reciter' })}>
-							<div class="text-sm font-semibold truncate">{selectableTranslationReciters[$__translationReciter].reciter}</div>
-						</button>
 					</div>
 				</div>
 			</div>
