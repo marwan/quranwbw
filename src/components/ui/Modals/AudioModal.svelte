@@ -114,9 +114,7 @@
 				language: source.language,
 				audioRange: source.audioRange,
 				timesToRepeat: source.timesToRepeat,
-				audioDelay: source.audioDelay,
-				reciter: source.reciter,
-				translationReciter: source.translationReciter
+				audioDelay: source.audioDelay
 			});
 		};
 
@@ -129,8 +127,6 @@
 			assignSettings(audioSettings, savedSettings);
 		} else if (action === 'default') {
 			assignSettings(defaultSettings.audioSettings, audioSettings);
-			$__audioSettings.reciter = $__reciter;
-			$__audioSettings.translationReciter = $__translationReciter;
 			delete audioSettings.savedPlaySettings;
 		}
 
