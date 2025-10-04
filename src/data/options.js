@@ -664,6 +664,7 @@ export const selectableWordTranslations = {
 		id: 2,
 		language: 'Urdu',
 		font: 'font-Urdu',
+		customClasses: 'direction-rtl font-Urdu text-xl',
 		version: 1
 	},
 	3: {
@@ -740,12 +741,14 @@ export const selectableWordTranslations = {
 		id: 19,
 		language: 'Persian',
 		font: 'font-Urdu',
+		customClasses: 'direction-rtl font-Urdu text-xl',
 		version: 1
 	},
 	20: {
 		id: 20,
 		language: 'Sindhi',
 		font: 'font-Sindhi',
+		customClasses: 'direction-rtl font-Sindhi text-xl',
 		version: 1
 	},
 	21: {
