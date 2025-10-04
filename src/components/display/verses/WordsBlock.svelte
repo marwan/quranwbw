@@ -206,7 +206,7 @@
 
 		<!-- word tooltip -->
 		{#if $__wordTooltip > 1}
-			<Tooltip arrow={false} type="light" class="z-30 hidden md:block text-center inline-flex font-sans font-normal">
+			<Tooltip arrow={false} type="light" class="z-[19] hidden md:block text-center inline-flex font-sans font-normal">
 				{#if $__wordTooltip === 2}
 					{@html transliterationWords[word]}
 				{:else if $__wordTooltip === 3}
@@ -239,7 +239,7 @@
 	{/if}
 
 	<!-- end icon tooltip -->
-	<Tooltip arrow={false} type="light" class="z-30 inline-flex font-sans font-normal">
+	<Tooltip arrow={false} type="light" class="z-[19] inline-flex font-sans font-normal">
 		End of {key}
 	</Tooltip>
 {/if}
