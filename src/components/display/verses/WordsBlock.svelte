@@ -210,9 +210,15 @@
 				{#if $__wordTooltip === 2}
 					{@html transliterationWords[word]}
 				{:else if $__wordTooltip === 3}
-					{@html translationWords[word]}
+					{@html `<span class="${selectableWordTranslations[$__wordTranslation].customClasses}">${translationWords[word]}</span>`}
 				{:else if $__wordTooltip === 4}
-					{@html `<div class="flex flex-col">${transliterationWords[word]} <div class="border-t"></div> ${translationWords[word]}</div>`}
+					{@html `
+						<div class="flex flex-col">
+							${transliterationWords[word]} 
+							<div class="border-t"></div> 
+							<span class="${selectableWordTranslations[$__wordTranslation].customClasses}">${translationWords[word]}</span>
+						</div>
+					`}
 				{/if}
 			</Tooltip>
 		{/if}
