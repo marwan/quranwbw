@@ -164,6 +164,37 @@
 		}
 	})();
 
+	// Function to track the website Git version in Umami analytics
+	(function trackWebsiteVersion() {
+		try {
+			const currentVersion = __APP_VERSION__.split(' ')[0];
+			const storageKey = 'websiteVersionData';
+
+			// Get existing data or initialize
+			const data = JSON.parse(localStorage.getItem(storageKey)) || {
+				latestVersion: null,
+				sentVersion: null
+			};
+
+			// Always update the latest version
+			data.latestVersion = currentVersion;
+
+			// Check if this version was already sent
+			if (data.sentVersion !== currentVersion) {
+				if (window.umami && typeof window.umami.track === 'function') {
+					window.umami.track('Website Version', { version: currentVersion });
+				}
+				// Mark as sent
+				data.sentVersion = currentVersion;
+			}
+
+			// Save back to localStorage
+			localStorage.setItem(storageKey, JSON.stringify(data));
+		} catch (error) {
+			console.error('Error tracking website version:', error);
+		}
+	})();
+
 	// Service Worker
 	// checkAndRegisterServiceWorker();
 </script>
