@@ -32,6 +32,22 @@
 	let lines = [];
 	let pageBlock;
 
+	// Unified configuration for Quran pages
+	const pageConfigs = {
+		2: {
+			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
+			keysFile: 'keysInPage-qpc-v4'
+		},
+		3: {
+			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
+			keysFile: 'keysInPage-qpc-v4'
+		},
+		10: {
+			fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
+			keysFile: 'keysInPage-qpc-v4'
+		}
+	};
+
 	// Set the page number
 	$: page = +data.page;
 
@@ -102,7 +118,7 @@
 
 	/**
 	 * This function retrieves and processes Quranic verses for a given page number.
-	 * It first fetches a JSON file (`keysInPage.json`) containing verse keys mapped to pages,
+	 * It first fetches a JSON file (keysInPage) containing verse keys mapped to pages,
 	 * then extracts the specific chapters and verses required for the given page.
 	 * After identifying the necessary chapters, it fetches their complete data
 	 * and filters out only the requested verses. The function then ensures that the verses
@@ -112,7 +128,7 @@
 	async function fetchVersesByPage(page) {
 		try {
 			// Fetch keys for the given page
-			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/keysInPage.json?version=2`, 'other');
+			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/${pageConfigs[$__fontType].keysFile}.json?version=2`, 'other');
 			const keysInPage = keysData[page];
 
 			// Parse keys into chapters and verses
@@ -187,7 +203,7 @@
 	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" in:fade={{ duration: 300 }} bind:this={pageBlock}>
 		<div class="space-y-2 mt-2.5">
 			<!-- single page -->
-			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
+			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto {pageConfigs[$__fontType].fontSize} {+page === 1 ? 'space-y-1' : 'space-y-2'}">
 				{#each Array.from(Array(endingLine + 1).keys()).slice(startingLine) as line}
 					<!-- show the chapter header if it's the first verse of that chapter -->
 					{#if chapters.length > 0 && lines.includes(line) && verses[lines.indexOf(line)] === 1}
