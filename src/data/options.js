@@ -149,7 +149,7 @@ export const selectableFontTypes = {
 		font: 'Mushaf 1405H',
 		displayOrder: 10,
 		disallowedInPages: [],
-		version: 1
+		version: 2
 	}
 };
 

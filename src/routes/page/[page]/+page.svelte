@@ -44,7 +44,7 @@
 		},
 		10: {
 			fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
-			keysFile: 'keysInPage-qpc-v4'
+			keysFile: 'keysInPage-qpc-v1'
 		}
 	};
 
@@ -128,7 +128,7 @@
 	async function fetchVersesByPage(page) {
 		try {
 			// Fetch keys for the given page
-			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/${pageConfigs[$__fontType].keysFile}.json?version=2`, 'other');
+			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/${pageConfigs[$__fontType].keysFile}.json?version=3`, 'other');
 			const keysInPage = keysData[page];
 
 			// Parse keys into chapters and verses
