@@ -64,6 +64,8 @@ export function importSettings(file) {
 		return;
 	}
 
+	window.umami.track('Import Settings');
+
 	const reader = new FileReader();
 	reader.onload = function (e) {
 		try {
@@ -112,4 +114,6 @@ export function exportSettings() {
 	document.body.removeChild(a);
 
 	URL.revokeObjectURL(url);
+
+	window.umami.track('Export Settings');
 }
