@@ -4,16 +4,12 @@ Copyright (c) 2025 Marwan Ansari. All Rights Reserved.
 
 This license applies to the source code of the [QuranWBW.com](https://quranwbw.com) project.
 
-## Permissions
-
 You are allowed to:
 
 - View, read, and study the code for personal or educational purposes.
 - Fork this repository on GitHub for learning, experimentation, or contributing back.
 - Submit contributions (e.g., pull requests) to this repository.
 - Discuss, suggest, and collaborate on improvements to the project.
-
-## Restrictions
 
 You are NOT allowed to:
 
@@ -23,10 +19,8 @@ You are NOT allowed to:
 - Use the code for commercial purposes, including but not limited to advertising,
   selling access, or offering paid services.
 
-## Disclaimer
-
 This project is provided "as is," without warranty of any kind, either express or implied.
 
-## Contact
-
 For questions or requests for special permissions, please contact: quranwbw@gmail.com.
+
+For usage guidelines related to Quranic data, translations, and other non-code resources, please see the [Usage Guidelines](./USAGE_GUIDELINES.md).
