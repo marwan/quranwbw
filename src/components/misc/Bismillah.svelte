@@ -175,11 +175,11 @@
 		${commonClasses}
 	`;
 
-	function getBismillahCode(ch) {
+	function getBismillahCode(chapter) {
 		const fontData = bismillahFontMap[$__fontType];
 		if (!fontData) return '';
 		const { bismillah } = fontData;
-		if (bismillah.chapters && bismillah.chapters[ch]) return bismillah.chapters[ch];
+		if (bismillah.chapters && bismillah.chapters[chapter]) return bismillah.chapters[chapter];
 		return bismillah.default;
 	}
 </script>
