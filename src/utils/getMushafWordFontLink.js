@@ -12,8 +12,22 @@ export function getMushafWordFontLink(page) {
 	let fileName;
 	let fontVersion;
 
-	// KFGQPC v4
-	if ([2, 3].includes(fontType)) {
+	// KFGQPC v1
+	if (fontType === 10) {
+		basePath = 'Hafs/KFGQPC-v1';
+		fileName = `p${page}.woff2`;
+		fontVersion = 1;
+	}
+
+	// KFGQPC v2
+	else if (fontType === 12) {
+		basePath = 'Hafs/KFGQPC-v2';
+		fileName = `p${page}.woff2`;
+		fontVersion = 1;
+	}
+
+	// KFGQPC v4 (normal and tajweed)
+	else if (fontType === 2 || fontType === 3) {
 		if (isFirefoxDarkTajweed()) {
 			basePath = 'Hafs/KFGQPC-v4/COLRv1-Dark-FF';
 			fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
@@ -27,13 +41,6 @@ export function getMushafWordFontLink(page) {
 			fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
 			fontVersion = 11;
 		}
-	}
-
-	// KFGQPC v1
-	else if (fontType === 10) {
-		basePath = 'Hafs/KFGQPC-v1';
-		fileName = `p${page}.woff2`;
-		fontVersion = 1;
 	}
 
 	// Indonesian Standard Mushaf

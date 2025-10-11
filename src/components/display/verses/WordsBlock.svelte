@@ -33,7 +33,7 @@
 
 	// Dynamically load the fonts if mushaf fonts are selected
 	// mushaf font words are hidden by default and shown only when the font is loaded...
-	if ([2, 3, 10, 11].includes($__fontType)) {
+	if ([2, 3, 10, 11, 12].includes($__fontType)) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			document.querySelectorAll(`.p${value.meta.page}`).forEach((element) => {
 				element.classList.remove('invisible');
@@ -91,7 +91,7 @@
 		hover:cursor-pointer
 		${window.theme('hover')}
 		${$__displayType === 1 ? 'text-center flex flex-col' : 'inline-flex flex-col'}
-		${selectableDisplays[$__displayType].layout === 'wbw' ? 'p-3' : [2, 3, 10, 11].includes($__fontType) ? ($__currentPage === 'mushaf' ? 'p-0' : 'px-0 py-1') : 'p-1'}
+		${selectableDisplays[$__displayType].layout === 'wbw' ? 'p-3' : [2, 3, 10, 11, 12].includes($__fontType) ? ($__currentPage === 'mushaf' ? 'p-0' : 'px-0 py-1') : 'p-1'}
 		${exampleVerse && '!p-0'}
 	`;
 
@@ -178,7 +178,7 @@
 		>
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 				<!-- Everything except Mushaf fonts -->
-				{#if ![2, 3, 10, 11].includes($__fontType)}
+				{#if ![2, 3, 10, 11, 12].includes($__fontType)}
 					{arabicWords[word]}
 					<!-- Mushaf fonts -->
 				{:else}
@@ -232,7 +232,7 @@
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 			<!-- Everything except Mushaf fonts -->
-			{#if ![2, 3, 10, 11].includes($__fontType)}
+			{#if ![2, 3, 10, 11, 12].includes($__fontType)}
 				<span class="colored-fonts">{value.words.end}</span>
 				<!-- Mushaf fonts -->
 			{:else}

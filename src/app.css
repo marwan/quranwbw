@@ -230,11 +230,12 @@ svg {
 .arabic-font-8,
 .arabic-font-9,
 .arabic-font-10,
-.arabic-font-11  {
+.arabic-font-11,
+.arabic-font-12  {
   direction: rtl;
 }
 
-.arabic-font-1, .arabic-font-2, .arabic-font-3, .arabic-font-10, .arabic-font-11 {
+.arabic-font-1, .arabic-font-2, .arabic-font-3, .arabic-font-10, .arabic-font-12 {
   font-family: "Uthmani-Hafs";
 }
 

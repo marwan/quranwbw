@@ -121,6 +121,18 @@
 					2: '$#"!'
 				}
 			}
+		},
+		12: {
+			file: 'QCF_Bismillah-Regular',
+			version: 1,
+			bismillah: {
+				default: 'ﲪﲫﲮﲴ',
+				chapters: {
+					2: 'ﲚﲛﲞﲤ',
+					95: 'ﭗﲫﲮﲴ',
+					97: 'ﭗﲫﲮﲴ'
+				}
+			}
 		}
 	};
 

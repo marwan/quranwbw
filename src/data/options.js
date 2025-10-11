@@ -82,16 +82,16 @@ export const selectableFontTypes = {
 	2: {
 		id: 2,
 		type: 'Uthmanic',
-		font: 'Mushaf 1441H',
-		displayOrder: 3,
+		font: 'New Madinah Mushaf 1441H',
+		displayOrder: 5,
 		disallowedInPages: [],
 		version: 5
 	},
 	3: {
 		id: 2,
 		type: 'Uthmanic',
-		font: 'Mushaf Tajweed 1441H',
-		displayOrder: 4,
+		font: 'New Madinah Mushaf 1441H (Tajweed)',
+		displayOrder: 6,
 		disallowedInPages: [],
 		version: 5
 	},
@@ -99,7 +99,7 @@ export const selectableFontTypes = {
 		id: 3,
 		type: 'Indopak / Nastaleeq',
 		font: 'Qalam Digital Font (Madinah Edition)',
-		displayOrder: 5,
+		displayOrder: 7,
 		disallowedInPages: ['mushaf'],
 		version: 6
 	},
@@ -107,7 +107,7 @@ export const selectableFontTypes = {
 		id: 5,
 		type: 'Indopak / Nastaleeq',
 		font: 'Uthman Taha Digital Font',
-		displayOrder: 7,
+		displayOrder: 9,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
@@ -115,7 +115,7 @@ export const selectableFontTypes = {
 		id: 6,
 		type: 'Indopak / Nastaleeq',
 		font: 'Qalam Digital Font (Hanafi Edition)',
-		displayOrder: 6,
+		displayOrder: 8,
 		disallowedInPages: ['mushaf'],
 		version: 6
 	},
@@ -131,7 +131,7 @@ export const selectableFontTypes = {
 		id: 5,
 		type: 'Indopak / Nastaleeq',
 		font: 'Uthman Taha Digital Bold Font',
-		displayOrder: 8,
+		displayOrder: 10,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
@@ -139,23 +139,31 @@ export const selectableFontTypes = {
 		id: 9,
 		type: 'Indopak / Nastaleeq',
 		font: 'Indonesian Isep Misbah Digital Font',
-		displayOrder: 9,
+		displayOrder: 11,
 		disallowedInPages: ['mushaf'],
 		version: 2
 	},
 	10: {
 		id: 10,
 		type: 'Uthmanic',
-		font: 'Mushaf 1405H',
-		displayOrder: 10,
+		font: 'Old Madinah Mushaf 1405H',
+		displayOrder: 3,
 		disallowedInPages: ['mushaf'],
 		version: 3
 	},
 	11: {
 		id: 11,
+		type: 'Indopak / Nastaleeq',
+		font: 'Indonesian Standar Mushaf',
+		displayOrder: 12,
+		disallowedInPages: ['mushaf'],
+		version: 1
+	},
+	12: {
+		id: 12,
 		type: 'Uthmanic',
-		font: 'Indonesian Standard Mushaf',
-		displayOrder: 11,
+		font: 'Madinah Mushaf 1421H',
+		displayOrder: 4,
 		disallowedInPages: ['mushaf'],
 		version: 1
 	}
