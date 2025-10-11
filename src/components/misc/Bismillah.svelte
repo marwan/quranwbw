@@ -118,7 +118,7 @@
 			bismillah: {
 				default: '4321',
 				chapters: {
-					2: '$#"!'
+					2: '!"#$'
 				}
 			}
 		},
