@@ -7,17 +7,121 @@
 	export let page = null;
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
+	import { selectableFontTypes } from '$data/options';
 	import { isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { loadFont } from '$utils/loadFont';
 
-	$: isUthmaniFontType = [1, 2, 3, 5, 7, 8].includes($__fontType);
+	$: isUthmaniFontType = selectableFontTypes[$__fontType].type === 'Uthmanic';
 
-	const bismillahTypes = {
-		uthmaniType1: 'ﲚﲛﲞﲤ',
-		uthmaniType2: 'ﲪﲫﲮﲴ',
-		uthmaniType3: 'ﭗﲫﲮﲴ',
-		indopakType: '﷽'
+	// Unified Bismillah Font Map
+	const bismillahFontMap = {
+		1: {
+			file: 'qcf-bismillah-normal',
+			version: 13,
+			bismillah: {
+				default: 'ﲪﲫﲮﲴ',
+				chapters: {
+					2: 'ﲚﲛﲞﲤ',
+					95: 'ﭗﲫﲮﲴ',
+					97: 'ﭗﲫﲮﲴ'
+				}
+			}
+		},
+		2: {
+			file: 'qcf-bismillah-normal',
+			version: 13,
+			bismillah: {
+				default: 'ﲪﲫﲮﲴ',
+				chapters: {
+					2: 'ﲚﲛﲞﲤ',
+					95: 'ﭗﲫﲮﲴ',
+					97: 'ﭗﲫﲮﲴ'
+				}
+			}
+		},
+		3: {
+			file: 'QCF_Bismillah_COLOR-Regular',
+			version: 13,
+			bismillah: {
+				default: 'ﲪﲫﲮﲴ',
+				chapters: {
+					2: 'ﲚﲛﲞﲤ',
+					95: 'ﭗﲫﲮﲴ',
+					97: 'ﭗﲫﲮﲴ'
+				}
+			}
+		},
+		4: {
+			file: 'IndopakBismillah-Arabic',
+			version: 13,
+			bismillah: {
+				default: '﷽'
+			}
+		},
+		5: {
+			file: 'Qcf-nastaleeq-bismillah-normal',
+			version: 13,
+			bismillah: {
+				default: 'ﲪﲫﲮﲴ',
+				chapters: {
+					2: 'ﲚﲛﲞﲤ'
+				}
+			}
+		},
+		6: {
+			file: 'IndopakBismillah-Arabic',
+			version: 13,
+			bismillah: {
+				default: '﷽'
+			}
+		},
+		7: {
+			file: 'qcf-bismillah-bold',
+			version: 13,
+			bismillah: {
+				default: 'ﲪﲫﲮﲴ',
+				chapters: {
+					2: 'ﲚﲛﲞﲤ'
+				}
+			}
+		},
+		8: {
+			file: 'Qcf-nastaleeq-bismillah-bold',
+			version: 13,
+			bismillah: {
+				default: 'ﲪﲫﲮﲴ'
+			}
+		},
+		9: {
+			file: 'MisbahBismillah-Arabic',
+			version: 13,
+			bismillah: {
+				default: '﷽'
+			}
+		},
+		10: {
+			file: 'QCF_BSML-Regular',
+			version: 1,
+			bismillah: {
+				default: 'ﭑﭒﭓﭐ',
+				chapters: {
+					2: 'ﭚﭛﭜﭝ',
+					95: 'ﭔﭕﭖ',
+					97: 'ﭔﭕﭖ'
+				}
+			}
+		},
+		11: {
+			file: 'MSI_BASMALAH-Regular',
+			version: 1,
+			bismillah: {
+				default: '4321',
+				chapters: {
+					2: '$#"!'
+				}
+			}
+		}
 	};
 
 	$: customFontPalette = '';
@@ -26,38 +130,21 @@
 		const elements = document.querySelectorAll('.bismillah');
 		elements.forEach((el) => el.classList.add('invisible'));
 
-		// FontType → { file, version }
-		const fontMap = {
-			1: { file: 'qcf-bismillah-normal', version: 13 }, // Uthmanic Digital Font
-			2: { file: 'qcf-bismillah-normal', version: 13 }, // Uthmanic Mushaf non-Tajweed
-			3: { file: 'QCF_Bismillah_COLOR-Regular', version: 13 }, // Uthmanic Mushaf Tajweed
-			4: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Madinah Edition)
-			5: { file: 'Qcf-nastaleeq-bismillah-normal', version: 13 }, // Uthman Taha Digital
-			6: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Hanafi Edition)
-			7: { file: 'qcf-bismillah-bold', version: 13 }, // Uthmanic Digital Bold
-			8: { file: 'Qcf-nastaleeq-bismillah-bold', version: 13 }, // Uthman Taha Digital Bold
-			9: { file: 'MisbahBismillah-Arabic', version: 13 } // Indonesian Isep Misbah Digital Font
-		};
-
-		// Default font
 		let { file: fileName, version: fontVersion } = {
 			file: 'QCF_Bismillah_COLOR-Regular',
 			version: 13
 		};
 
-		// Pick from map if available
-		if (fontMap[$__fontType]) {
-			({ file: fileName, version: fontVersion } = fontMap[$__fontType]);
+		if (bismillahFontMap[$__fontType]) {
+			({ file: fileName, version: fontVersion } = bismillahFontMap[$__fontType]);
 		}
 
-		// Special override: Uthmanic Mushaf Tajweed
 		if ($__fontType === 3) {
 			fileName = isFirefoxDarkTajweed() ? 'QCF_Bismillah_COLOR-Dark-FF-Regular' : 'QCF_Bismillah_COLOR-Regular';
 			customFontPalette = isFirefoxDarkTajweed() ? 'hafs-palette-firefox-dark' : 'theme-palette-tajweed';
 			fontVersion = 13;
 		}
 
-		// Load font
 		const url = `${staticEndpoint}/fonts/Extras/bismillah/${fileName}.woff2?version=${fontVersion}`;
 
 		loadFont('bismillah', url).then(() => {
@@ -87,40 +174,31 @@
 		${page === 2 ? 'text-[5vw] md:text-[36px] lg:text-[36px]' : 'text-[5vw] md:text-[32px] lg:text-[36px]'}
 		${commonClasses}
 	`;
+
+	function getBismillahCode(ch) {
+		const fontData = bismillahFontMap[$__fontType];
+		if (!fontData) return '';
+		const { bismillah } = fontData;
+		if (bismillah.chapters && bismillah.chapters[ch]) return bismillah.chapters[ch];
+		return bismillah.default;
+	}
 </script>
 
 <!-- chapter page -->
 {#if ['chapter', 'juz'].includes($__currentPage)}
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
 		<div style="font-family: bismillah" class={chapterBismillahClasses}>
-			<!-- uthmani fonts -->
-			{#if isUthmaniFontType}
-				<span>
-					{#if chapter === 2}
-						{bismillahTypes.uthmaniType1}
-					{:else if [95, 97].includes(chapter)}
-						{bismillahTypes.uthmaniType3}
-					{:else if ![1, 9, 2, 95, 97].includes(chapter) || (chapter === 1 && startVerse > 1)}
-						{bismillahTypes.uthmaniType2}
-					{/if}
-				</span>
-
-				<!-- indopak fonts -->
-			{:else}
-				{bismillahTypes.indopakType}
-			{/if}
+			<span>{getBismillahCode(chapter)}</span>
 		</div>
 	{/if}
 
 	<!-- mushaf page -->
 {:else if $__currentPage === 'mushaf'}
-	<div style="font-family: bismillah" class={mushafBismillahClasses}>
-		{#if chapters[lines.indexOf(line)] === 2}
-			{bismillahTypes.uthmaniType1}
-		{:else if [95, 97].includes(chapters[lines.indexOf(line)])}
-			{bismillahTypes.uthmaniType3}
-		{:else if ![1, 9, 2, 95, 97].includes(chapters[lines.indexOf(line)])}
-			{bismillahTypes.uthmaniType2}
+	{#if chapters && lines}
+		{#if ![1, 9].includes(chapters[lines.indexOf(line)])}
+			<div style="font-family: bismillah" class={mushafBismillahClasses}>
+				{getBismillahCode(chapters[lines.indexOf(line)])}
+			</div>
 		{/if}
-	</div>
+	{/if}
 {/if}
