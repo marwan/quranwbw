@@ -131,7 +131,7 @@
 			text: 'Copy',
 			handler: handleCopy,
 			analyticsEvent: 'Copy Verse Modal Button',
-			show: ![2, 3].includes($__fontType)
+			show: ![2, 3, 10, 11, 12].includes($__fontType)
 		}
 	];
 

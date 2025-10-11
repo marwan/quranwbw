@@ -117,7 +117,7 @@
 			// Mushaf page always uses display type 6
 			$__displayType = 6;
 
-			// Mushaf page doesn't support Uthmani digital (2) and Indopak (3) fonts
+			// Mushaf page only supports font types 2 (v4 normal) and 3 (v4 tajweed)
 			// Force font type 2 if currently using unsupported fonts
 			if (![2, 3].includes($__fontType)) {
 				__fontType.set(2);
