@@ -148,8 +148,16 @@ export const selectableFontTypes = {
 		type: 'Uthmanic',
 		font: 'Mushaf 1405H',
 		displayOrder: 10,
-		disallowedInPages: [],
-		version: 2
+		disallowedInPages: ['mushaf'],
+		version: 3
+	},
+	11: {
+		id: 11,
+		type: 'Uthmanic',
+		font: 'Indonesian Standard Mushaf',
+		displayOrder: 11,
+		disallowedInPages: ['mushaf'],
+		version: 1
 	}
 };
 

@@ -10,4 +10,4 @@ export const staticEndpoint = 'https://static.quranwbw.com/data/v4';
 
 export const wordsAudioURL = 'https://audios.quranwbw.com/words';
 
-export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs`;
+export const mushafWordFontLink = `${staticEndpoint}/fonts`;

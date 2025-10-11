@@ -6,32 +6,40 @@ import { __websiteTheme, __fontType } from '$utils/stores';
 // Return the Mushaf font URL for a given page
 export function getMushafWordFontLink(page) {
 	const paddedPage = String(page).padStart(3, '0');
+	const fontType = get(__fontType);
 
 	let basePath;
 	let fileName;
 	let fontVersion;
 
 	// KFGQPC v4
-	if ([2, 3].includes(get(__fontType))) {
+	if ([2, 3].includes(fontType)) {
 		if (isFirefoxDarkTajweed()) {
-			basePath = 'KFGQPC-v4/COLRv1-Dark-FF';
+			basePath = 'Hafs/KFGQPC-v4/COLRv1-Dark-FF';
 			fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
 			fontVersion = 11;
 		} else if (isFirefoxDarkNonTajweed()) {
-			basePath = 'KFGQPC-v4/COLRv1-Dark-FF-Non-Colored';
+			basePath = 'Hafs/KFGQPC-v4/COLRv1-Dark-FF-Non-Colored';
 			fileName = `QCF4${paddedPage}_X-Regular.woff2`;
 			fontVersion = 10;
 		} else {
-			basePath = 'KFGQPC-v4/COLRv1';
+			basePath = 'Hafs/KFGQPC-v4/COLRv1';
 			fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
 			fontVersion = 11;
 		}
 	}
 
 	// KFGQPC v1
-	else {
-		basePath = 'KFGQPC-v1';
+	else if (fontType === 10) {
+		basePath = 'Hafs/KFGQPC-v1';
 		fileName = `p${page}.woff2`;
+		fontVersion = 1;
+	}
+
+	// Indonesian Standard Mushaf
+	else if (fontType === 11) {
+		basePath = 'ISM/FONTS';
+		fileName = `MSI_Z${paddedPage}-Regular.woff2`;
 		fontVersion = 1;
 	}
 

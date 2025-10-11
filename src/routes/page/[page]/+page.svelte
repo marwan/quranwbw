@@ -41,18 +41,18 @@
 		3: {
 			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
 			keysFile: 'keysInPage-qpc-v4'
-		},
-		10: {
-			fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
-			keysFile: 'keysInPage-qpc-v1'
 		}
+		// 10: {
+		// 	fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
+		// 	keysFile: 'keysInPage-qpc-v1'
+		// }
 	};
 
 	// Set the page number
 	$: page = +data.page;
 
 	// Prefetch adjacent pages for better UX
-	$: if ([2, 3, 10].includes($__fontType)) {
+	$: if ([2, 3].includes($__fontType)) {
 		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
 			fetch(getMushafWordFontLink(thisPage));
 		}
