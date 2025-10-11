@@ -22,8 +22,6 @@
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 
-	// Constants
-	const mushafFontTypes = [2, 3];
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
 
 	// Component state
@@ -133,7 +131,7 @@
 			text: 'Copy',
 			handler: handleCopy,
 			analyticsEvent: 'Copy Verse Modal Button',
-			show: !mushafFontTypes.includes($__fontType)
+			show: ![2, 3, 10, 11, 12].includes($__fontType)
 		}
 	];
 

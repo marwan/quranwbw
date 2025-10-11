@@ -22,7 +22,7 @@
 	import '$utils/swiped-events.min.js';
 
 	// Lines to be centered instead of justified
-	const centeredPageLines = ['528:9', '545:6', '594:5', '602:5', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
+	const centeredPageLines = ['528:9', '534:6', '545:6', '586:1', '593:2', '594:5', '600:10', '602:5', '602:11', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
 	let pageData;
 	let startingLine;
@@ -32,12 +32,28 @@
 	let lines = [];
 	let pageBlock;
 
+	// Unified configuration for Quran pages
+	const pageConfigs = {
+		2: {
+			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
+			keysFile: 'keysInPage'
+		},
+		3: {
+			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
+			keysFile: 'keysInPage'
+		}
+		// 10: {
+		// 	fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
+		// 	keysFile: 'keysInPage-qpc-v1'
+		// }
+	};
+
 	// Set the page number
-	$: page = +data.page;
+	$: page = Number(data.page);
 
 	// Prefetch adjacent pages for better UX
 	$: if ([2, 3].includes($__fontType)) {
-		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
+		for (let thisPage = page - 2; thisPage <= page + 2; thisPage++) {
 			fetch(getMushafWordFontLink(thisPage));
 		}
 	}
@@ -102,7 +118,7 @@
 
 	/**
 	 * This function retrieves and processes Quranic verses for a given page number.
-	 * It first fetches a JSON file (`keysInPage.json`) containing verse keys mapped to pages,
+	 * It first fetches a JSON file (keysInPage) containing verse keys mapped to pages,
 	 * then extracts the specific chapters and verses required for the given page.
 	 * After identifying the necessary chapters, it fetches their complete data
 	 * and filters out only the requested verses. The function then ensures that the verses
@@ -112,7 +128,7 @@
 	async function fetchVersesByPage(page) {
 		try {
 			// Fetch keys for the given page
-			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/keysInPage.json?version=2`, 'other');
+			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/${pageConfigs[$__fontType].keysFile}.json?version=3`, 'other');
 			const keysInPage = keysData[page];
 
 			// Parse keys into chapters and verses
@@ -187,7 +203,7 @@
 	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" in:fade={{ duration: 300 }} bind:this={pageBlock}>
 		<div class="space-y-2 mt-2.5">
 			<!-- single page -->
-			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
+			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto {pageConfigs[$__fontType].fontSize} {page === 1 ? 'space-y-1' : 'space-y-2'}">
 				{#each Array.from(Array(endingLine + 1).keys()).slice(startingLine) as line}
 					<!-- show the chapter header if it's the first verse of that chapter -->
 					{#if chapters.length > 0 && lines.includes(line) && verses[lines.indexOf(line)] === 1}
@@ -197,7 +213,7 @@
 						</div>
 					{/if}
 
-					<div class="line {line} flex px-2 arabic-font-{$__fontType} {+page < 3 || centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : null} {+page > 2 && !centeredPageLines.includes(`${+page}:${line}`) ? 'justify-between' : null}">
+					<div class="line {line} flex px-2 arabic-font-{$__fontType} {page < 3 || centeredPageLines.includes(`${page}:${line}`) ? 'justify-center' : null} {page > 2 && !centeredPageLines.includes(`${page}:${line}`) ? 'justify-between' : null}">
 						{#each Object.entries(JSON.parse(localStorage.getItem('pageData'))) as [key, value]}
 							<WordsBlock {key} {value} {line} />
 						{/each}
