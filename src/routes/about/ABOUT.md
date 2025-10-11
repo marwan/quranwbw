@@ -38,8 +38,8 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 - Abdul Aziz Korejo and [Dr. Usama Nonnenmacher](https://drusaman.github.io/), his family and others for their contributions to Sindhi word-by-word Quran translation[4].
 - Ustadh Jahja Hondozi for the Albanian word-by-word translation.
 - [Kalimat](https://www.kalimat.dev/) for their AI powered semantic search API.
-- [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/) for the copyrighted Isep Misbah Fonts[5].
-- M Zamroni Ahbab for the Arabic Sign Language font[6].
+- [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/) for the copyrighted Isep Misbah Fonts[5] and Indonesian Standar Mushaf[6].
+- M Zamroni Ahbab for the Arabic Sign Language font[7].
 
 All data used on this website belongs to their respective owners and authors. Permission must be obtained from them before copying any content.
 
@@ -55,4 +55,6 @@ All data used on this website belongs to their respective owners and authors. Pe
 
 [5] _The Isep Misbah Fonts are copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for these fonts was prepared by [Ayman Siddiqui](https://zoopernet.com)._
 
-[6] _The Arabic Sign Language font was designed by M Zamroni Ahbab and is copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for this font was prepared by [Ayman Siddiqui](https://zoopernet.com)._
+[6] _The Indonesian Standar Mushaf is published by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). Edited by Drs. H. Muhammad Shohib & Zainal Arifin Madzkur and compiled in word by word by [Ayman Siddiqui](https://zoopernet.com)._
+
+[7] _The Arabic Sign Language font was designed by M Zamroni Ahbab and is copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for this font was prepared by [Ayman Siddiqui](https://zoopernet.com)._

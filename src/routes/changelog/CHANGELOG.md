@@ -1,3 +1,11 @@
+### Oct 11, 2025
+
+We’ve added **three** new font types — Old Madinah Mushaf 1405H **(KFGQPC v1)**, Madinah Mushaf 1421H **(KFGQPC v2)**, and **Indonesian Standar Mushaf** — joining the existing font family to provide greater variety and authenticity.
+
+These font types do not yet support the Mushaf layout, and this support will be enabled in future updates, In Sha Allah.
+
+---
+
 ### Sep 28, 2025
 
 - **Manual Backup & Restore:** You can now **save and download a copy of your website settings** (including bookmarks and notes) and **restore them anytime**. This way, you’ll never have to worry about losing your important data again.
