@@ -1,4 +1,4 @@
-### Oct 11, 2025
+### Oct 12, 2025
 
 We’ve added **three** new font types — Old Madinah Mushaf 1405H **(KFGQPC v1)**, Madinah Mushaf 1421H **(KFGQPC v2)**, and **Indonesian Standar Mushaf** — joining the existing font family to provide greater variety and authenticity.
 
