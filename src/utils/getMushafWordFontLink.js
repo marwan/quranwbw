@@ -13,20 +13,6 @@ export function getMushafWordFontLink(page) {
 	let fontVersion = 1;
 
 	switch (fontType) {
-		// KFGQPC v1
-		case 10:
-			basePath = 'Hafs/KFGQPC-v1';
-			fileName = `p${page}.woff2`;
-			fontVersion = 1;
-			break;
-
-		// KFGQPC v2
-		case 12:
-			basePath = 'Hafs/KFGQPC-v2';
-			fileName = `p${page}.woff2`;
-			fontVersion = 1;
-			break;
-
 		// KFGQPC v4
 		case 2: // normal
 		case 3: // tajweed
@@ -45,10 +31,24 @@ export function getMushafWordFontLink(page) {
 			}
 			break;
 
+		// KFGQPC v1
+		case 10:
+			basePath = 'Hafs/KFGQPC-v1';
+			fileName = `p${page}.woff2`;
+			fontVersion = 1;
+			break;
+
 		// Indonesian Standar Mushaf
 		case 11:
 			basePath = 'ISM/FONTS';
 			fileName = `MSI_Z${paddedPage}-Regular.woff2`;
+			fontVersion = 1;
+			break;
+
+		// KFGQPC v2
+		case 12:
+			basePath = 'Hafs/KFGQPC-v2';
+			fileName = `p${page}.woff2`;
 			fontVersion = 1;
 			break;
 
