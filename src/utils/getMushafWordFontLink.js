@@ -5,6 +5,9 @@ import { __websiteTheme, __fontType } from '$utils/stores';
 
 // Return the Mushaf font URL for a given page
 export function getMushafWordFontLink(page) {
+	// Validate page
+	if (isNaN(page) || page < 1 || page > 604) return '';
+
 	const paddedPage = String(page).padStart(3, '0');
 	const fontType = get(__fontType);
 
