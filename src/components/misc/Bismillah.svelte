@@ -207,10 +207,10 @@
 	<!-- mushaf page -->
 {:else if $__currentPage === 'mushaf'}
 	{#if chapters && lines}
-		{#if ![1, 9].includes(chapters[lines.indexOf(line)])}
-			<div style="font-family: bismillah" class={mushafBismillahClasses}>
+		<div style="font-family: bismillah" class={mushafBismillahClasses}>
+			{#if ![1, 9].includes(chapters[lines.indexOf(line)])}
 				{getBismillahCode(chapters[lines.indexOf(line)])}
-			</div>
-		{/if}
+			{/if}
+		</div>
 	{/if}
 {/if}
