@@ -45,7 +45,7 @@ export function getMushafWordFontLink(page) {
 			}
 			break;
 
-		// Indonesian Standard Mushaf
+		// Indonesian Standar Mushaf
 		case 11:
 			basePath = 'ISM/FONTS';
 			fileName = `MSI_Z${paddedPage}-Regular.woff2`;
