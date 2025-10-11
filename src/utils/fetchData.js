@@ -225,7 +225,7 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		{ url: `${staticEndpoint}/words-data/arabic/${fontID}.json?version=${arabicVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=${translationVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=${transliterationVersion}`, type: 'word' },
-		{ url: `${staticEndpoint}/meta/verseKeyData-qpc-v1.json?version=2`, type: 'other' }
+		{ url: `${staticEndpoint}/meta/verseKeyData.json?version=2`, type: 'other' }
 	];
 
 	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));

@@ -36,11 +36,11 @@
 	const pageConfigs = {
 		2: {
 			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
-			keysFile: 'keysInPage-qpc-v4'
+			keysFile: 'keysInPage'
 		},
 		3: {
 			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
-			keysFile: 'keysInPage-qpc-v4'
+			keysFile: 'keysInPage'
 		}
 		// 10: {
 		// 	fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
