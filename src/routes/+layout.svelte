@@ -107,44 +107,42 @@
 		__websiteOnline.set(false);
 	});
 
-	// Combined reactive statement handling all page-specific settings
-	$: {
+	// Mushaf Page Handling
+	$: if ($__currentPage === 'mushaf') {
+		// Mushaf page always uses display type 6
+		$__displayType = 6;
+
+		// Mushaf page only supports font type 2
+		if (![2, 3].includes($__fontType)) {
+			__fontType.set(2);
+		}
+	}
+
+	// Non-Mushaf Page Base Handling
+	$: if ($__currentPage && $__currentPage !== 'mushaf') {
 		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
 		const parsedUserSettings = JSON.parse($__userSettings);
 
-		// Step 1: Handle Mushaf page specific settings
-		if ($__currentPage === 'mushaf') {
-			// Mushaf page always uses display type 6
-			$__displayType = 6;
-
-			// Mushaf page doesn't support Uthmani digital (2) and Indopak (3) fonts
-			// Force font type 2 if currently using unsupported fonts
-			if (![2, 3].includes($__fontType)) {
-				__fontType.set(2);
-			}
-		}
-		// Step 2: Handle non-mushaf pages
-		else if ($__currentPage) {
-			// Step 2a: Restore user preferences when not in sign language mode
-			if (!$__signLanguageModeEnabled) {
-				// Restore user's preferred settings when leaving mushaf page
+		// Only restore user settings if sign language mode is OFF
+		if (!$__signLanguageModeEnabled) {
+			if (userSettings.displaySettings && parsedUserSettings.displaySettings) {
 				$__displayType = userSettings.displaySettings.displayType;
 				$__fontType = parsedUserSettings.displaySettings.fontType;
-				$__wordTranslation = parsedUserSettings.translations.word;
+				$__wordTranslation = parsedUserSettings.translations?.word;
 				$__wordTransliterationEnabled = parsedUserSettings.displaySettings.wordTransliterationEnabled;
 			}
-			// Step 2b: Apply sign language mode overrides (non-mushaf pages only)
-			else {
-				// Sign language mode uses specific settings
-				$__wordTranslation = 22;
-				$__fontType = 9;
-				$__wordTransliterationEnabled = false;
+		}
+	}
 
-				// Sign language mode only supports display types 1 and 3
-				if (![1, 3].includes($__displayType)) {
-					$__displayType = 1;
-				}
-			}
+	// Sign Language Mode Handling (Non-Mushaf only)
+	$: if ($__currentPage && $__currentPage !== 'mushaf' && $__signLanguageModeEnabled) {
+		$__wordTranslation = 22;
+		$__fontType = 9;
+		$__wordTransliterationEnabled = false;
+
+		// Restrict to display type 1 or 3
+		if (![1, 3].includes($__displayType)) {
+			$__displayType = 1;
 		}
 	}
 
