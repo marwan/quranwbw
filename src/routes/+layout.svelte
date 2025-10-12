@@ -26,6 +26,7 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+	import { selectableFontTypes } from '$data/options';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
@@ -119,7 +120,7 @@
 
 			// Mushaf page only supports font types 2 (v4 normal) and 3 (v4 tajweed)
 			// Force font type 2 if currently using unsupported fonts
-			if (![2, 3].includes($__fontType)) {
+			if (['mushaf'].includes(selectableFontTypes[$__fontType].disallowedInPages)) {
 				__fontType.set(2);
 			}
 		}

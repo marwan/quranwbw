@@ -26,7 +26,7 @@ export async function fetchChapterData(props) {
 	for (const verseStr in arabicVerses) {
 		const verseKey = `${chapter}:${verseStr}`;
 
-		const [arabicWords = [], lineNumbers = [], endIcons = []] = arabicVerses[verseStr];
+		const [arabicWords = [], lineNumbers = [], endIcons = [], endIconLine = []] = arabicVerses[verseStr];
 		const translations = (translationVerses[verseStr] && translationVerses[verseStr][0]) || [];
 		const transliterations = (transliterationVerses[verseStr] && transliterationVerses[verseStr][0]) || [];
 		const meta = metaVerseData[verseKey] || {
@@ -50,7 +50,8 @@ export async function fetchChapterData(props) {
 				translation: translations,
 				transliteration: transliterations,
 				line: lineNumbers,
-				end: endIcons[0] || ''
+				end: endIcons[0] || '',
+				end_line: endIconLine[0] || ''
 			}
 		};
 	}

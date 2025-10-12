@@ -226,20 +226,19 @@
 {/each}
 
 <!-- end icon -->
-{#if $__currentPage !== 'mushaf' || ($__currentPage === 'mushaf' && value.words.line[value.words.line.length - 1] === line)}
+{#if $__currentPage !== 'mushaf' || ($__currentPage === 'mushaf' && value.words.end_line === line)}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
-			<!-- Everything except Mushaf fonts -->
 			{#if ![2, 3, 10, 11, 12].includes($__fontType)}
 				<span class="colored-fonts">{value.words.end}</span>
-				<!-- Mushaf fonts -->
 			{:else}
 				<span style="font-family: p{value.meta.page}" class="{v4hafsClasses} custom-ayah-icon-color">{value.words.end}</span>
 			{/if}
 		</span>
 	</div>
+
 	{#if displayIsContinuous && !$__morphologyModalVisible}
 		<VerseOptionsDropdown page={value.meta.page} />
 	{/if}

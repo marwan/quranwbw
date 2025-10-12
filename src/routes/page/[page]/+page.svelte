@@ -36,23 +36,31 @@
 	const pageConfigs = {
 		2: {
 			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
-			keysFile: 'keysInPage'
+			keysFile: 'keysInPageV2'
 		},
 		3: {
 			fontSize: 'text-[5.4vw] md:text-[36px] lg:text-[36px]',
-			keysFile: 'keysInPage'
+			keysFile: 'keysInPageV2'
+		},
+		10: {
+			fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
+			keysFile: 'keysInPageV2'
+		},
+		11: {
+			fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
+			keysFile: 'keysInPageV2'
+		},
+		12: {
+			fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
+			keysFile: 'keysInPageV2'
 		}
-		// 10: {
-		// 	fontSize: 'text-[5.8vw] md:text-[42px] lg:text-[42px]',
-		// 	keysFile: 'keysInPage-qpc-v1'
-		// }
 	};
 
 	// Set the page number
 	$: page = Number(data.page);
 
 	// Prefetch adjacent pages for better UX
-	$: if ([2, 3].includes($__fontType)) {
+	$: if (!['mushaf'].includes(selectableFontTypes[$__fontType].disallowedInPages)) {
 		for (let thisPage = page - 2; thisPage <= page + 2; thisPage++) {
 			fetch(getMushafWordFontLink(thisPage));
 		}
@@ -128,8 +136,8 @@
 	async function fetchVersesByPage(page) {
 		try {
 			// Fetch keys for the given page
-			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/${pageConfigs[$__fontType].keysFile}.json?version=3`, 'other');
-			const keysInPage = keysData[page];
+			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/${pageConfigs[$__fontType].keysFile}.json?version=4`, 'other');
+			const keysInPage = getVerseKeysByPage(page, keysData);
 
 			// Parse keys into chapters and verses
 			const chaptersWithVerses = {};
@@ -181,6 +189,41 @@
 			console.warn('Error fetching data:', error);
 			return { verses: {} };
 		}
+	}
+
+	// Get all verse keys for a given font ID and page number
+	export function getVerseKeysByPage(pageNumber, keysInPageData) {
+		const fontData = keysInPageData[$__fontType];
+		if (!fontData || !fontData[pageNumber]) return '';
+
+		const [startKey, endKey] = fontData[pageNumber];
+		if (!startKey || !endKey) return '';
+
+		const [startSurah, startVerse] = startKey.split(':').map(Number);
+		const [endSurah, endVerse] = endKey.split(':').map(Number);
+
+		const result = [];
+
+		// Iterate through all surahs between start and end
+		for (let surah = startSurah; surah <= endSurah; surah++) {
+			const totalVerses = quranMetaData[surah]?.verses;
+			if (!totalVerses) continue;
+
+			let verseStart = 1;
+			let verseEnd = totalVerses;
+
+			// If it's the first surah, start from its starting verse
+			if (surah === startSurah) verseStart = startVerse;
+
+			// If it's the last surah, end at its ending verse
+			if (surah === endSurah) verseEnd = endVerse;
+
+			for (let verse = verseStart; verse <= verseEnd; verse++) {
+				result.push(`${surah}:${verse}`);
+			}
+		}
+
+		return result.join(',');
 	}
 
 	// Event listeners for swipe gestures
