@@ -148,7 +148,7 @@ export const selectableFontTypes = {
 		type: 'Uthmanic',
 		font: 'Old Madinah Mushaf 1405H',
 		displayOrder: 3,
-		disallowedInPages: [],
+		disallowedInPages: ['mushaf'],
 		version: 3
 	},
 	11: {
@@ -156,7 +156,7 @@ export const selectableFontTypes = {
 		type: 'Indopak / Nastaleeq',
 		font: 'Indonesian Standar Mushaf',
 		displayOrder: 12,
-		disallowedInPages: [],
+		disallowedInPages: ['mushaf'],
 		version: 1
 	},
 	12: {
@@ -164,7 +164,7 @@ export const selectableFontTypes = {
 		type: 'Uthmanic',
 		font: 'Madinah Mushaf 1421H',
 		displayOrder: 4,
-		disallowedInPages: [],
+		disallowedInPages: ['mushaf'],
 		version: 2
 	}
 };
