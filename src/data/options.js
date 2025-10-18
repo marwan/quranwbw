@@ -157,7 +157,7 @@ export const selectableFontTypes = {
 		font: 'Indonesian Standar Mushaf',
 		displayOrder: 12,
 		disallowedInPages: ['mushaf'],
-		version: 1
+		version: 2
 	},
 	12: {
 		id: 12,

@@ -45,7 +45,7 @@ export function getMushafWordFontLink(page) {
 		case 11:
 			basePath = 'ISM/FONTS';
 			fileName = `MSI_Z${paddedPage}-Regular.woff2`;
-			fontVersion = 1;
+			fontVersion = 2;
 			break;
 
 		// KFGQPC v2
