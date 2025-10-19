@@ -159,6 +159,19 @@
 	function getWordKey(wordIndex) {
 		return `${chapter}:${verse}:${wordIndex + 1}`;
 	}
+
+	let hoveredWordKey = null;
+
+	function handleMouseEnter(wordKey) {
+		console.log(wordKey);
+		hoveredWordKey = wordKey;
+	}
+
+	function handleMouseLeave() {
+		hoveredWordKey = null;
+	}
+
+	let wordRevealModeEnabled = false;
 </script>
 
 <!-- words -->
@@ -173,10 +186,21 @@
 				word rounded-lg ${wordAndEndIconCommonClasses} text-center print:break-inside-avoid
 				${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? window.theme('bgSecondaryDark') : ''}
 				${$__currentPage === 'supplications' && word + 1 < (supplicationsFromQuran[key] || 0) ? ($__hideNonDuaPart ? 'hidden' : 'opacity-30') : ''}
+				${wordRevealModeEnabled && window.theme('bgSecondaryLight')}
+				${wordRevealModeEnabled && 'mx-1 my-1'}
+				transition-opacity duration-150
 			`.trim()}
+			on:mouseenter={() => handleMouseEnter(wordKey)}
+			on:mouseleave={handleMouseLeave}
 			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}
 		>
-			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
+			<span
+				class={`
+				${wordSpanClasses}
+				${wordRevealModeEnabled ? (hoveredWordKey === wordKey ? 'opacity-100' : 'opacity-0') : 'opacity-100'}
+			`}
+				data-fontSize={fontSizes.arabicText}
+			>
 				<!-- Everything except Mushaf fonts -->
 				{#if ![2, 3].includes($__fontType)}
 					{arabicWords[word]}
@@ -195,7 +219,13 @@
 
 			<!-- word translation and transliteration, only for wbw modes -->
 			{#if [1, 3, 7].includes($__displayType)}
-				<div class={wordTranslationClasses} data-fontSize={fontSizes.wordTranslationText}>
+				<div
+					class={`
+					${wordTranslationClasses}
+					${wordRevealModeEnabled ? (hoveredWordKey === wordKey ? 'opacity-100' : 'opacity-0') : 'opacity-100'}
+				`}
+					data-fontSize={fontSizes.wordTranslationText}
+				>
 					<span class="leading-normal {$__wordTransliterationEnabled ? 'block' : 'hidden'}">{transliterationWords[word]}</span>
 					<span class="leading-normal {selectableWordTranslations[$__wordTranslation].font} {$__wordTranslationEnabled ? 'block' : 'hidden'}">
 						<span class={$__signLanguageModeEnabled && 'font-Arabic-Sign-Language'}>{translationWords[word]}</span>
