@@ -113,8 +113,8 @@
 		// Mushaf page always uses display type 6
 		$__displayType = 6;
 
-		// Mushaf page only supports font type 2
-		if (![2, 3].includes($__fontType)) {
+		// Disallow Non-Mushaf Fonts
+		if (![$__currentPage].includes(selectableFontTypes[$__fontType].disallowedInPages)) {
 			__fontType.set(2);
 		}
 	}
