@@ -26,7 +26,6 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
-	import { selectableFontTypes } from '$data/options';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
@@ -107,17 +106,6 @@
 	window.addEventListener('offline', () => {
 		__websiteOnline.set(false);
 	});
-
-	// Mushaf Page Handling
-	$: if ($__currentPage === 'mushaf') {
-		// Mushaf page always uses display type 6
-		$__displayType = 6;
-
-		// Disallow Non-Mushaf Fonts
-		if (![$__currentPage].includes(selectableFontTypes[$__fontType].disallowedInPages)) {
-			__fontType.set(2);
-		}
-	}
 
 	// Non-Mushaf Page Base Handling
 	$: if ($__currentPage && $__currentPage !== 'mushaf') {

@@ -21,6 +21,8 @@
 	import { fade } from 'svelte/transition';
 	import '$utils/swiped-events.min.js';
 
+	const allowedMushafFontTypes = [2, 3];
+
 	// Lines to be centered instead of justified
 	const centeredPageLines = ['528:9', '534:6', '545:6', '586:1', '593:2', '594:5', '600:10', '602:5', '602:11', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
@@ -56,11 +58,18 @@
 		}
 	};
 
+	// Mushaf page always uses display type 6
+	$__displayType = 6;
+
+	if (!allowedMushafFontTypes.includes($__fontType)) {
+		$__fontType = 2;
+	}
+
 	// Set the page number
 	$: page = Number(data.page);
 
 	// Prefetch adjacent pages for better UX
-	$: if (!['mushaf'].includes(selectableFontTypes[$__fontType].disallowedInPages)) {
+	$: if (!allowedMushafFontTypes.includes($__fontType)) {
 		for (let thisPage = page - 2; thisPage <= page + 2; thisPage++) {
 			fetch(getMushafWordFontLink(thisPage));
 		}
@@ -196,7 +205,10 @@
 		const fontData = keysInPageData[pageNumber];
 		if (!fontData) return '';
 
-		const [startKey, endKey] = fontData[$__fontType];
+		// Use id 2 for font type 3
+		const fontType = $__fontType === 3 ? 2 : $__fontType;
+
+		const [startKey, endKey] = fontData[fontType];
 		if (!startKey || !endKey) return '';
 
 		const [startSurah, startVerse] = startKey.split(':').map(Number);
@@ -231,9 +243,6 @@
 		pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
 		pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
 	}
-
-	// Only allow continuous normal mode, without saving the setting
-	$__displayType = 4;
 
 	__currentPage.set('mushaf');
 </script>
