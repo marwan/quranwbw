@@ -136,7 +136,7 @@
 	async function fetchVersesByPage(page) {
 		try {
 			// Fetch keys for the given page
-			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/${pageConfigs[$__fontType].keysFile}.json?version=4`, 'other');
+			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/${pageConfigs[$__fontType].keysFile}.json?version=5`, 'other');
 			const keysInPage = getVerseKeysByPage(page, keysData);
 
 			// Parse keys into chapters and verses
@@ -193,10 +193,10 @@
 
 	// Get all verse keys for a given font ID and page number
 	export function getVerseKeysByPage(pageNumber, keysInPageData) {
-		const fontData = keysInPageData[$__fontType];
-		if (!fontData || !fontData[pageNumber]) return '';
+		const fontData = keysInPageData[pageNumber];
+		if (!fontData) return '';
 
-		const [startKey, endKey] = fontData[pageNumber];
+		const [startKey, endKey] = fontData[$__fontType];
 		if (!startKey || !endKey) return '';
 
 		const [startSurah, startVerse] = startKey.split(':').map(Number);
