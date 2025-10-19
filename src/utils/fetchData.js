@@ -37,11 +37,15 @@ export async function fetchChapterData(props) {
 			words: arabicWords.length
 		};
 
+		// Use the custom page number for this font type if available,
+		// otherwise fall back to the page number from font type 2.
+		const pageNumber = meta.page[fontType] ?? meta.page[2] ?? null;
+
 		result[verseKey] = {
 			meta: {
 				chapter: chapter,
 				verse: parseInt(verseStr, 10),
-				page: meta.page,
+				page: pageNumber,
 				juz: meta.juz,
 				words: meta.words
 			},
@@ -226,7 +230,7 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		{ url: `${staticEndpoint}/words-data/arabic/${fontID}.json?version=${arabicVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=${translationVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=${transliterationVersion}`, type: 'word' },
-		{ url: `${staticEndpoint}/meta/verseKeyData.json?version=2`, type: 'other' }
+		{ url: `${staticEndpoint}/meta/verseKeyDataV2.json?version=1`, type: 'other' }
 	];
 
 	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
