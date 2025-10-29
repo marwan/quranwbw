@@ -122,7 +122,7 @@
 
 						<!-- show translaton author name only if more than 1 was selected -->
 						{#if $__verseTranslations.length > 1}
-							<span class="opacity-70 {isTranslationRTL(verseTranslationID) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslationID].resource_name}</span>
+							<span class="opacity-70 text-sm {isTranslationRTL(verseTranslationID) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslationID].resource_name}</span>
 						{/if}
 					</div>
 				{/if}
