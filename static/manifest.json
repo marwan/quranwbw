@@ -4,8 +4,8 @@
 	"description": "Quran Word By Word Translation, Transliteration And Morphology",
 	"start_url": "/",
 	"display": "fullscreen",
-	"background_color": "rgba(0,0,0,0)",
-	"theme_color": "rgba(0,0,0,0)",
+	"background_color": "#B1901F",
+	"theme_color": "#B1901F",
 	"icons": [
 		{ "src": "/images/icon-192.png?v=2", "type": "image/png", "sizes": "192x192" },
 		{ "src": "/images/icon-512.png?v=2", "type": "image/png", "sizes": "512x512" },
