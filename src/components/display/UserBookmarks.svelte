@@ -10,6 +10,9 @@
 	export let cardGridClasses;
 	export let cardInnerClasses;
 
+	const MAX_HEIGHT = 250; // Around 2 cards and a half
+	const FADE_HEIGHT = 50; // Fade effect height
+
 	let fullQuranTextData = null;
 	let openMenuBookmark = null;
 	let isLoading = false;
@@ -69,16 +72,21 @@
 			</span>
 		</div>
 	{:else}
-		<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
-			{#each $__userBookmarks as bookmark (bookmark)}
-				<BookmarkCard 
-					{bookmark}
-					{fullQuranTextData}
-					{cardInnerClasses}
-					isMenuOpen={openMenuBookmark === bookmark}
-					on:toggleMenu={handleMenuToggle}
-				/>
-			{/each}
+		<div 
+			class="overflow-y-auto no-scrollbar-scroll-container"
+			style="max-height: {MAX_HEIGHT}px; mask-image: linear-gradient(to bottom, black calc(100% - {FADE_HEIGHT}px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black calc(100% - {FADE_HEIGHT}px), transparent 100%);"
+		>
+			<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
+				{#each $__userBookmarks as bookmark (bookmark)}
+					<BookmarkCard 
+						{bookmark}
+						{fullQuranTextData}
+						{cardInnerClasses}
+						isMenuOpen={openMenuBookmark === bookmark}
+						on:toggleMenu={handleMenuToggle}
+					/>
+				{/each}
+			</div>
 		</div>
 	{/if}
 </div>
