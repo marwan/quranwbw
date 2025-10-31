@@ -3,7 +3,6 @@
 	import Quran from '$svgs/Quran.svelte';
 	import Mecca from '$svgs/Mecca.svelte';
 	import Madinah from '$svgs/Madinah.svelte';
-	import CrossSolid from '$svgs/CrossSolid.svelte';
 	import SortAscending from '$svgs/SortAscending.svelte';
 	import SortDescending from '$svgs/SortDescending.svelte';
 	import Eye from '$svgs/Eye.svelte';
@@ -16,16 +15,14 @@
 	import MorphologyBold from '$svgs/MorphologyBold.svelte';
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
+	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
 	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
-	import { staticEndpoint } from '$data/websiteSettings';
 	import { disabledClasses } from '$data/commonClasses';
-	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
-	import { showConfirm } from '$utils/confirmationAlertHandler';
 
 	const svgData = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
@@ -43,24 +40,12 @@
 	let divisionsSortIsAscending = true;
 	let chapterListOrder = [...quranMetaData];
 	let juzListOrder = [...juzMeta];
-	let fullQuranTextData;
 
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
-
-	// Fetch full Quran data (uthmani) for bookmarked verses
-	$: if (extrasActiveTab === 1 && totalBookmarks > 0) {
-		fullQuranTextData = (async () => {
-			try {
-				return await fetchAndCacheJson(`${staticEndpoint}/full-quran/uthmani.json?version=1`, 'other');
-			} catch (error) {
-				console.warn(error);
-			}
-		})();
-	}
 
 	function sortDivisions() {
 		divisionsSortIsAscending = !divisionsSortIsAscending;
@@ -189,49 +174,7 @@
 		<div id="extras-panel" class="mb-4 pt-1 {$__homepageExtrasPanelVisible ? 'block' : 'hidden'}">
 			<!-- bookmarks tab -->
 			<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
-				<div id="bookmark-cards" class="flex flex-col space-y-4">
-					{#if totalBookmarks === 0}
-						<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
-							<span>You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you. </span>
-						</div>
-					{:else}
-						<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
-							{#each $__userBookmarks as bookmark}
-								{@const [bookmarkChapter, bookmarkVerse] = bookmark.split(':').map(Number)}
-
-								<div class="flex flex-row space-x-2">
-									<a href="{bookmarkChapter}?startVerse={bookmarkVerse}" class="!justify-start {cardInnerClasses} w-full flex-col">
-										<div class="text-sm truncate max-w-[28vw] md:max-w-[115px]">{quranMetaData[bookmarkChapter].transliteration} ({bookmark})</div>
-
-										{#if extrasActiveTab === 1 && totalBookmarks > 0}
-											<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70">
-												{#await fullQuranTextData then data}
-													<div class="truncate max-w-[28vw] md:max-w-[115px]">{data.data[`${bookmarkChapter}:${bookmarkVerse}`]}</div>
-												{:catch _}
-													<p></p>
-												{/await}
-											</div>
-										{/if}
-									</a>
-
-									<!-- delete bookmark button -->
-									<button
-										on:click={() =>
-											showConfirm(`Are you sure you want to delete this bookmark (${bookmark})?`, null, () => {
-												updateSettings({ type: 'userBookmarks', key: bookmark });
-												window.umami.track('Delete Bookmark Icon');
-											})}
-										class="pointer h-7 w-7 opacity-100"
-										style="margin-left: -20px; margin-top: -5px;"
-										title="Delete bookmark"
-									>
-										<CrossSolid size={7} />
-									</button>
-								</div>
-							{/each}
-						</div>
-					{/if}
-				</div>
+				<UserBookmarks {cardGridClasses} {cardInnerClasses} />
 			</div>
 
 			<!-- notes tab -->
