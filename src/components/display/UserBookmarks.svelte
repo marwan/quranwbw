@@ -13,7 +13,7 @@
 	let fullQuranTextData = null;
 	let openMenuBookmark = null;
 	let isLoading = false;
-	let error = null;
+	let _error = null;
 
 	$: hasBookmarks = $__userBookmarks.length > 0;
 
@@ -31,7 +31,7 @@
 
 	async function loadQuranData() {
 		isLoading = true;
-		error = null;
+		_error = null;
 		
 		try {
 			fullQuranTextData = await fetchAndCacheJson(
@@ -39,7 +39,7 @@
 				'other'
 			);
 		} catch (err) {
-			error = err;
+			_error = err;
 			console.error('Failed to load Quran data:', err);
 		} finally {
 			isLoading = false;

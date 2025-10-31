@@ -59,7 +59,7 @@
 					<div class="truncate {maxTextLength}" lang="ar">
 						{verseText}
 					</div>
-				{:catch error}
+				{:catch _error}
 					<span class="text-xs opacity-50" role="alert">Failed to load verse</span>
 				{/await}
 			</div>

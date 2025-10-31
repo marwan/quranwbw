@@ -7,7 +7,6 @@
 	import SortDescending from '$svgs/SortDescending.svelte';
 	import Eye from '$svgs/Eye.svelte';
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
-	import Bookmark from '$svgs/Bookmark.svelte';
 	import Notes from '$svgs/Notes.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import Menu from '$svgs/Menu.svelte';
