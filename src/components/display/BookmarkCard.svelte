@@ -74,7 +74,7 @@
 		aria-expanded={isMenuOpen}
 		aria-haspopup="true"
 	>
-		<DotsHorizontal size={4} />
+		<DotsHorizontal size={5} />
 	</button>
 
 	<!-- Dropdown menu -->

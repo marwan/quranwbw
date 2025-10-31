@@ -7,7 +7,6 @@
 	import SortDescending from '$svgs/SortDescending.svelte';
 	import Eye from '$svgs/Eye.svelte';
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
-	import Notes from '$svgs/Notes.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import Menu from '$svgs/Menu.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
@@ -15,6 +14,7 @@
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
+	import UserNotes from '$display/UserNotes.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
 	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
@@ -178,22 +178,7 @@
 
 			<!-- notes tab -->
 			<div class="notes-tab-panels space-y-12 {extrasActiveTab === 2 ? 'block' : 'hidden'}" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab">
-				<div id="notes-cards" class="flex flex-col space-y-4">
-					{#if totalNotes === 0}
-						<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
-							<span>You haven't saved any notes yet! Start jotting down your thoughts by clicking the <Notes classes="inline mt-[-4px]" /> icon. It's like creating your own personal treasure chest of wisdom. </span>
-						</div>
-					{:else}
-						<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
-							{#each Object.entries($__userNotes) as [verse, note]}
-								<a href="{verse.split(':')[0]}?startVerse={verse.split(':')[1]}" class="!justify-start {cardInnerClasses} w-full flex-col">
-									<div class="text-sm truncate max-w-[30vw] md:max-w-[115px]">{quranMetaData[verse.split(':')[0]].transliteration} ({verse})</div>
-									<span class="text-xs truncate opacity-70">{note.note}</span>
-								</a>
-							{/each}
-						</div>
-					{/if}
-				</div>
+				<UserNotes {cardGridClasses} {cardInnerClasses} />
 			</div>
 
 			<!-- suggestions tab -->
