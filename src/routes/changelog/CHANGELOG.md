@@ -1,3 +1,16 @@
+### Oct 31, 2025
+
+- **Improved Bookmarks & Notes Management:** Refactored both bookmarks and notes sections with a new 3-dot menu design for easier access to options. Bookmarks now have a delete option, while notes have both edit and delete options accessible directly from the homepage. Enhanced accessibility with proper ARIA labels, roles, and keyboard navigation support for screen readers.
+- **Enhanced Repeat Options:** You can now repeat verses from **1 to 10 times individually** (1, 2, 3... up to 10), giving you more precise control for memorization. Previously, the minimum step was 5.
+
+---
+
+### Oct 29, 2025
+
+- **Translation Display Fix:** Adjusted the font size for translation author names to ensure they display more clearly and consistently, especially when multiple translations are selected.
+
+---
+
 ### Sep 28, 2025
 
 - **Manual Backup & Restore:** You can now **save and download a copy of your website settings** (including bookmarks and notes) and **restore them anytime**. This way, you’ll never have to worry about losing your important data again.

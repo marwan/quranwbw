@@ -626,3 +626,13 @@ svg {
     text-shadow: 0 0 1em transparent;
   }
 }
+
+/* Hide scrollbar while keeping scroll functionality */
+.no-scrollbar-scroll-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.no-scrollbar-scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
