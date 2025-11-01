@@ -13,7 +13,7 @@
 	let fullQuranTextData = null;
 	let isLoading = false;
 	let bookmarkContainer;
-	let showFade = false; // 👈 fade visibility state
+	let showFade = false; // fade visibility state
 
 	$: hasBookmarks = $__userBookmarks.length > 0;
 
@@ -52,7 +52,7 @@
 		const { scrollTop, scrollHeight, clientHeight } = bookmarkContainer;
 		const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
 
-		showFade = !isAtBottom; // 👈 toggle fade
+		showFade = !isAtBottom;
 	}
 </script>
 
