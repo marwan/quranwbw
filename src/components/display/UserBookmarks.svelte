@@ -10,16 +10,26 @@
 	export let cardGridClasses;
 	export let cardInnerClasses;
 
-	const MAX_HEIGHT = 250; // Around 2 cards and a half
-	const FADE_HEIGHT = 50; // Fade effect height
-
 	let fullQuranTextData = null;
 	let isLoading = false;
+	let bookmarkContainer;
+	let showFade = false; // 👈 fade visibility state
 
 	$: hasBookmarks = $__userBookmarks.length > 0;
 
 	onMount(() => {
 		if (hasBookmarks) loadQuranData();
+
+		if (bookmarkContainer) {
+			handleScroll(); // initialize fade state
+			bookmarkContainer.addEventListener('scroll', handleScroll);
+		}
+
+		return () => {
+			if (bookmarkContainer) {
+				bookmarkContainer.removeEventListener('scroll', handleScroll);
+			}
+		};
 	});
 
 	$: if (hasBookmarks && !fullQuranTextData && !isLoading) {
@@ -36,23 +46,52 @@
 			isLoading = false;
 		}
 	}
+
+	function handleScroll() {
+		if (!bookmarkContainer) return;
+		const { scrollTop, scrollHeight, clientHeight } = bookmarkContainer;
+		const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
+
+		showFade = !isAtBottom; // 👈 toggle fade
+	}
 </script>
 
-<div id="bookmark-cards" class="flex flex-col space-y-4">
-	{#if !hasBookmarks}
-		<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
-			<span>
-				You haven't bookmarked any {term('verse')} yet! Start by clicking on the
-				<Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you.
-			</span>
-		</div>
-	{:else}
-		<div class="overflow-y-auto no-scrollbar-scroll-container" style="max-height: {MAX_HEIGHT}px; mask-image: linear-gradient(to bottom, black calc(100% - {FADE_HEIGHT}px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black calc(100% - {FADE_HEIGHT}px), transparent 100%);">
-			<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
-				{#each $__userBookmarks as bookmark (bookmark)}
-					<BookmarkCard {bookmark} {fullQuranTextData} {cardInnerClasses} />
-				{/each}
+<div class="relative">
+	<!-- Scrollable container -->
+	<div id="bookmark-cards" bind:this={bookmarkContainer} class="flex flex-col space-y-4 max-h-64 overflow-y-scroll">
+		{#if !hasBookmarks}
+			<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
+				<span>
+					You haven't bookmarked any {term('verse')} yet! Start by clicking on the
+					<Bookmark classes="inline mt-[-4px]" /> icon for an {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you.
+				</span>
 			</div>
-		</div>
+		{:else}
+			<div>
+				<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
+					{#each $__userBookmarks as bookmark (bookmark)}
+						<BookmarkCard {bookmark} {fullQuranTextData} {cardInnerClasses} />
+					{/each}
+				</div>
+			</div>
+		{/if}
+	</div>
+
+	<!-- Fade overlay -->
+	{#if showFade}
+		<div class="fade-bottom"></div>
 	{/if}
 </div>
+
+<style>
+	.fade-bottom {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 40px;
+		pointer-events: none;
+		background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.15));
+		transition: opacity 0.3s ease;
+	}
+</style>
