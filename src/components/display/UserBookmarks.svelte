@@ -13,7 +13,7 @@
 	let fullQuranTextData = null;
 	let isLoading = false;
 	let bookmarkContainer;
-	let showFade = false; // fade visibility state
+	let showFade = false;
 
 	$: hasBookmarks = $__userBookmarks.length > 0;
 
