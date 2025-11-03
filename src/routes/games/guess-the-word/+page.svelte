@@ -7,19 +7,35 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
-	import { buttonClasses, buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
+	import { buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
 	import { updateSettings } from '$utils/updateSettings';
 	import { playWordAudio } from '$utils/audioController';
 	import { fetchWordData } from '$utils/fetchData';
-	import { fade } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 
-	let randomID = 1;
 	let selection = null;
 	let answerChecked = false;
 	let isAnswerCorrect = null;
-	let randomWord = Math.floor(Math.random() * 3);
+	let randomWord = 0;
+	let autoProgressTimeout = null;
+	let sessionCorrect = 0;
+	let sessionWrong = 0;
+	let sessionTotal = 0;
+	let currentWordSet = [];
+	let allFetchedWords = []; // Store the 5 words we fetched
+	let currentWordIndex = 0;
+	let wordSetKey = 0;
 
-	$: randomWordsData = fetchRandomWords(randomID);
+	// Load initial words
+	let randomWordsData = fetchRandomWords();
+
+	$: sessionAccuracy = sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
+
+	// Automatically check answer when selection is made
+	$: if (selection !== null && !answerChecked) {
+		checkAnswer();
+	}
 
 	// Fetches all word data and returns 4 random words with their Arabic, transliteration, and translation
 	async function fetchRandomWords() {
@@ -45,9 +61,9 @@
 			}
 		}
 
-		// Shuffle and pick 4 random unique words
+		// Shuffle and pick 5 random unique words for efficiency
 		const shuffled = allWordEntries.sort(() => 0.5 - Math.random());
-		const selected = shuffled.slice(0, 4);
+		const selected = shuffled.slice(0, 5);
 
 		return selected;
 	}
@@ -56,8 +72,10 @@
 	function checkAnswer() {
 		answerChecked = true;
 		isAnswerCorrect = selection === randomWord;
+		sessionTotal++;
 
 		if (isAnswerCorrect) {
+			sessionCorrect++;
 			// Show confetti for correct answer
 			party.confetti(document.body, {
 				count: 80,
@@ -68,15 +86,40 @@
 			// Update correct answers count
 			updateSettings({ type: 'quizCorrectAnswers', value: $__quizCorrectAnswers + 1 });
 		} else {
+			sessionWrong++;
 			// Update wrong answers count
 			updateSettings({ type: 'quizWrongAnswers', value: $__quizWrongAnswers + 1 });
 		}
+
+		// Auto-progress to next word after showing result briefly
+		clearTimeout(autoProgressTimeout);
+		autoProgressTimeout = setTimeout(() => {
+			setRandomWord();
+		}, isAnswerCorrect ? 600 : 1500); // 600ms for correct, 1500ms for wrong answers
 	}
 
 	// Set new random word and reset selections
-	function setRandomWord() {
-		randomID = Math.floor(Math.random() * 9999999) + 1;
-		randomWord = Math.floor(Math.random() * 3);
+	async function setRandomWord() {
+		clearTimeout(autoProgressTimeout);
+		
+		// Move to next word, fetch new batch if we've used all 5
+		currentWordIndex++;
+		if (currentWordIndex >= allFetchedWords.length) {
+			allFetchedWords = await fetchRandomWords();
+			currentWordIndex = 0;
+		}
+		
+		// Pick 4 random words from our pool for options, ensuring one is the correct answer
+		const correctWord = allFetchedWords[currentWordIndex];
+		const otherWords = allFetchedWords.filter((_, idx) => idx !== currentWordIndex);
+		const shuffledOthers = otherWords.sort(() => 0.5 - Math.random()).slice(0, 3);
+		
+		// Combine and shuffle
+		currentWordSet = [correctWord, ...shuffledOthers].sort(() => 0.5 - Math.random());
+		randomWord = currentWordSet.findIndex(word => word.word_key === correctWord.word_key);
+		
+		wordSetKey++; // Trigger transition
+		
 		selection = null;
 		isAnswerCorrect = null;
 		answerChecked = false;
@@ -90,66 +133,91 @@
 <div class="space-y-12">
 	{#await randomWordsData}
 		<Spinner />
-	{:then data}
-		<div class="flex flex-col space-y-8 my-6 md:my-8 justify-center" in:fade={{ duration: 300 }}>
-			<!-- word -->
-			<button class="flex flex-col space-y-4 mx-auto items-center" on:click={() => playWordAudio({ key: data[randomWord].word_key })}>
-				<span class="text-5xl md:text-7xl arabic-font-1">{data[randomWord].word_arabic}</span>
-				<span class="text-xs">{data[randomWord].word_transliteration}</span>
-			</button>
+	{:then initialData}
+		{#if allFetchedWords.length === 0}
+			{@const _ = (() => {
+				allFetchedWords = initialData;
+				const correctWord = allFetchedWords[0];
+				const otherWords = allFetchedWords.slice(1, 4);
+				currentWordSet = [correctWord, ...otherWords].sort(() => 0.5 - Math.random());
+				randomWord = currentWordSet.findIndex(word => word.word_key === correctWord.word_key);
+			})()}
+		{/if}
+		
+		{#if currentWordSet.length > 0}
+			<div class="flex flex-col my-6 md:my-8 justify-center">
+				<div class="relative overflow-visible" style="min-height: 450px;">
+					{#key wordSetKey}
+						<div class="absolute inset-0 overflow-visible" in:fly={{ x: 200, duration: 500, easing: quintOut }} out:fly={{ x: -200, duration: 300, easing: quintOut }}>
+							<!-- word -->
+							<button class="flex flex-col space-y-4 mx-auto items-center mb-8 pt-4" on:click={() => playWordAudio({ key: currentWordSet[randomWord].word_key })}>
+								<span class="text-5xl md:text-7xl arabic-font-1">{currentWordSet[randomWord].word_arabic}</span>
+								<span class="text-xs">{currentWordSet[randomWord].word_transliteration}</span>
+							</button>
 
-			<!-- options -->
-			<div id="options" class="pt-8">
-				<p class="mb-5 text-sm">Guess the correct translation:</p>
-				<div class="grid gap-4 md:gap-6 w-full md:grid-cols-2">
-					{#each Object.entries(data) as [key, _]}
-						<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
-							<div class="{individualRadioClasses} {selection === +key ? `${window.theme('border')}` : null}">
-								<div class="flex flex-row mr-auto ml-2">{data[key].word_english}</div>
+							<!-- options -->
+							<div id="options" class="pt-8">
+								<p class="mb-5 text-sm">Guess the correct translation:</p>
+								<div class="grid gap-4 md:gap-6 w-full md:grid-cols-2">
+									{#each Object.entries(currentWordSet) as [key, _]}
+										<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
+											<div class="{individualRadioClasses} {selection === +key ? `${window.theme('border')}` : null}">
+												<div class="flex flex-row mr-auto ml-2">{currentWordSet[key].word_english}</div>
 
-								<!-- check / cross icon -->
-								{#if answerChecked === true && selection === +key}
-									<div class="justify-end">
-										<svelte:component this={selection === randomWord ? Check : Cross} size={5} />
-									</div>
-								{/if}
+												<!-- check / cross icon -->
+												{#if answerChecked === true && selection === +key}
+													<div class="justify-end">
+														<svelte:component this={selection === randomWord ? Check : Cross} size={5} />
+													</div>
+												{/if}
+											</div>
+										</Radio>
+									{/each}
+								</div>
 							</div>
-						</Radio>
-					{/each}
+						</div>
+					{/key}
 				</div>
-			</div>
-
-			<!-- answer-results -->
-			{#if answerChecked === true && isAnswerCorrect !== null}
-				<div id="answer-results" class="flex justify-center text-center font-medium text-md">
-					<span>
-						{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${data[randomWord].word_english}" 😟`}
-					</span>
-				</div>
-			{/if}
-
-			<!-- buttons -->
-			<div id="buttons" class="flex flex-row space-x-4 justify-center w-full">
-				<!-- confirm-button -->
-				{#if !answerChecked}
-					<div id="confirm-button" class="{selection === null || answerChecked === true ? disabledClasses : null} w-full">
-						<button class="{buttonClasses} w-full" on:click={() => checkAnswer()}>Confirm</button>
+				
+				<!-- answer-results / skip-word-button with consistent height -->
+				<div class="min-h-[4rem] flex items-center justify-center mt-4">
+				{#if answerChecked === true && isAnswerCorrect !== null}
+					<div id="answer-results" class="flex justify-center text-center font-medium text-md px-4">
+						<span>
+							{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${currentWordSet[randomWord].word_english}" 😟`}
+						</span>
 					</div>
-				{/if}
-
-				<!-- skip-word-button -->
-				<div id="skip-word-button" class="w-full">
-					<button class="{buttonOutlineClasses} w-full" on:click={() => setRandomWord()}>{answerChecked ? 'Next' : 'Skip'} {@html '&#x2192;'}</button>
+				{:else}
+					<div id="buttons" class="flex flex-row space-x-4 justify-center w-full">
+						<div id="skip-word-button" class="w-full">
+							<button class="{buttonOutlineClasses} w-full" on:click={() => setRandomWord()}>Skip {@html '&#x2192;'}</button>
+						</div>
+					</div>
+					{/if}
 				</div>
-			</div>
 
-			<!-- correct / wrong answers so far -->
-			<div id="quiz-stats" class="flex flex-row space-x-4 justify-center text-xs">
-				<span>Correct: {$__quizCorrectAnswers}</span>
-				<span>|</span>
-				<span>Wrong: {$__quizWrongAnswers}</span>
+				<!-- correct / wrong answers so far -->
+				<div id="quiz-stats" class="flex flex-col space-y-3 items-center">
+				<!-- Session Score -->
+				<div class="flex flex-col items-center space-y-1 p-4 rounded-lg border-2 {window.theme('borderSecondary')}">
+					<span class="text-sm font-semibold">This Session</span>
+					<div class="flex flex-row space-x-4 text-md">
+						<span class="text-green-600 dark:text-green-400">✓ {sessionCorrect}</span>
+						<span>|</span>
+						<span class="text-red-600 dark:text-red-400">✗ {sessionWrong}</span>
+						{#if sessionTotal > 0}
+							<span>|</span>
+							<span class="font-bold">{sessionAccuracy}%</span>
+						{/if}
+					</div>
+				</div>
+				<!-- All-Time Score -->
+				<div class="flex flex-row space-x-4 text-xs opacity-70">
+					<span>All-Time: Correct {$__quizCorrectAnswers} | Wrong {$__quizWrongAnswers}</span>
+				</div>
 			</div>
 		</div>
+		{/if}
 	{:catch error}
 		<ErrorLoadingData {error} />
 	{/await}
