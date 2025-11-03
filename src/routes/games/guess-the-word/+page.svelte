@@ -130,12 +130,12 @@
 
 <PageHead title={'Guess The Word'} />
 
-<div class="space-y-12">
+<div class="space-y-6 md:space-y-12 max-w-3xl mx-auto w-full px-3 sm:px-0">
 	{#await randomWordsData}
 		<Spinner />
 	{:then initialData}
 		{#if allFetchedWords.length === 0}
-			{@const _ = (() => {
+			{(() => {
 				allFetchedWords = initialData;
 				const correctWord = allFetchedWords[0];
 				const otherWords = allFetchedWords.slice(1, 4);
@@ -145,24 +145,31 @@
 		{/if}
 		
 		{#if currentWordSet.length > 0}
-			<div class="flex flex-col my-6 md:my-8 justify-center">
-				<div class="relative overflow-visible" style="min-height: 450px;">
+			<div class="flex flex-col my-2 md:my-6 lg:my-8 justify-center">
+				<div class="relative overflow-visible min-h-[24rem] sm:min-h-[26rem] md:min-h-[28rem]">
 					{#key wordSetKey}
-						<div class="absolute inset-0 overflow-visible" in:fly={{ x: 200, duration: 500, easing: quintOut }} out:fly={{ x: -200, duration: 300, easing: quintOut }}>
+						<div
+							class="absolute inset-0 overflow-visible flex flex-col"
+							in:fly={{ x: 280, duration: 500, easing: quintOut }}
+							out:fly={{ x: -280, duration: 320, easing: quintOut }}
+						>
 							<!-- word -->
-							<button class="flex flex-col space-y-4 mx-auto items-center mb-8 pt-4" on:click={() => playWordAudio({ key: currentWordSet[randomWord].word_key })}>
-								<span class="text-5xl md:text-7xl arabic-font-1">{currentWordSet[randomWord].word_arabic}</span>
-								<span class="text-xs">{currentWordSet[randomWord].word_transliteration}</span>
+							<button
+								class="flex flex-col space-y-1 sm:space-y-2 md:space-y-4 mx-auto items-center mb-3 md:mb-8 pt-1 md:pt-4"
+								on:click={() => playWordAudio({ key: currentWordSet[randomWord].word_key })}
+							>
+								<span class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl arabic-font-1">{currentWordSet[randomWord].word_arabic}</span>
+								<span class="text-sm md:text-base">{currentWordSet[randomWord].word_transliteration}</span>
 							</button>
 
 							<!-- options -->
-							<div id="options" class="pt-8">
-								<p class="mb-5 text-sm">Guess the correct translation:</p>
-								<div class="grid gap-4 md:gap-6 w-full md:grid-cols-2">
+							<div id="options" class="pt-2 md:pt-8">
+								<p class="mb-2 md:mb-5 text-xs md:text-sm">Guess the correct translation:</p>
+								<div class="grid gap-2 md:gap-4 lg:gap-6 w-full md:grid-cols-2">
 									{#each Object.entries(currentWordSet) as [key, _]}
 										<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
 											<div class="{individualRadioClasses} {selection === +key ? `${window.theme('border')}` : null}">
-												<div class="flex flex-row mr-auto ml-2">{currentWordSet[key].word_english}</div>
+												<div class="flex flex-row mr-auto ml-2 text-sm md:text-base">{currentWordSet[key].word_english}</div>
 
 												<!-- check / cross icon -->
 												{#if answerChecked === true && selection === +key}
@@ -178,37 +185,34 @@
 						</div>
 					{/key}
 				</div>
-				
+			</div>
+			
 				<!-- answer-results / skip-word-button with consistent height -->
-				<div class="min-h-[4rem] flex items-center justify-center mt-4">
+				<div class="min-h-[2.5rem] md:min-h-[4rem] flex items-center justify-center mt-1 md:mt-4">
 				{#if answerChecked === true && isAnswerCorrect !== null}
-					<div id="answer-results" class="flex justify-center text-center font-medium text-md px-4">
+					<div id="answer-results" class="flex justify-center text-center font-medium text-xs md:text-md px-2 md:px-4">
 						<span>
 							{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${currentWordSet[randomWord].word_english}" 😟`}
 						</span>
 					</div>
 				{:else}
-					<div id="buttons" class="flex flex-row space-x-4 justify-center w-full">
+					<div id="buttons" class="flex flex-row space-x-4 justify-center w-full px-2 md:px-0">
 						<div id="skip-word-button" class="w-full">
-							<button class="{buttonOutlineClasses} w-full" on:click={() => setRandomWord()}>Skip {@html '&#x2192;'}</button>
-						</div>
-					</div>
-					{/if}
+							<button class="{buttonOutlineClasses} w-full text-sm md:text-base py-2 md:py-2.5" on:click={() => setRandomWord()}>Skip {@html '&#x2192;'}</button>
+				</div>
+			</div>
+			{/if}
 				</div>
 
 				<!-- correct / wrong answers so far -->
-				<div id="quiz-stats" class="flex flex-col space-y-3 items-center">
+				<div id="quiz-stats" class="flex flex-col space-y-2 md:space-y-3 items-center mt-2 md:mt-6">
 				<!-- Session Score -->
-				<div class="flex flex-col items-center space-y-1 p-4 rounded-lg border-2 {window.theme('borderSecondary')}">
-					<span class="text-sm font-semibold">This Session</span>
-					<div class="flex flex-row space-x-4 text-md">
+				<div class="flex flex-col items-center space-y-1 p-2 md:p-4 rounded-lg border-2 {window.theme('borderSecondary')}">
+					<span class="text-xs md:text-sm font-semibold">This Session</span>
+					<div class="flex flex-row space-x-2 md:space-x-4 text-sm md:text-md">
 						<span class="text-green-600 dark:text-green-400">✓ {sessionCorrect}</span>
 						<span>|</span>
 						<span class="text-red-600 dark:text-red-400">✗ {sessionWrong}</span>
-						{#if sessionTotal > 0}
-							<span>|</span>
-							<span class="font-bold">{sessionAccuracy}%</span>
-						{/if}
 					</div>
 				</div>
 				<!-- All-Time Score -->
@@ -216,7 +220,6 @@
 					<span>All-Time: Correct {$__quizCorrectAnswers} | Wrong {$__quizWrongAnswers}</span>
 				</div>
 			</div>
-		</div>
 		{/if}
 	{:catch error}
 		<ErrorLoadingData {error} />
