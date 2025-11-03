@@ -10,31 +10,33 @@
 	export let cardGridClasses;
 	export let cardInnerClasses;
 
+	const MAX_HEIGHT = 250;
+	const FADE_HEIGHT = 50;
+
 	let fullQuranTextData = null;
 	let isLoading = false;
 	let bookmarkContainer;
-	let showFade = false; // fade visibility state
+	let fadePixels = FADE_HEIGHT;
 
 	$: hasBookmarks = $__userBookmarks.length > 0;
-
-	onMount(() => {
-		if (hasBookmarks) loadQuranData();
-
-		if (bookmarkContainer) {
-			handleScroll(); // initialize fade state
-			bookmarkContainer.addEventListener('scroll', handleScroll);
-		}
-
-		return () => {
-			if (bookmarkContainer) {
-				bookmarkContainer.removeEventListener('scroll', handleScroll);
-			}
-		};
-	});
 
 	$: if (hasBookmarks && !fullQuranTextData && !isLoading) {
 		loadQuranData();
 	}
+
+	onMount(() => {
+		if (!bookmarkContainer) return;
+
+		const resizeObserver = new ResizeObserver(() => {
+			handleFade();
+		});
+
+		resizeObserver.observe(bookmarkContainer);
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	});
 
 	async function loadQuranData() {
 		isLoading = true;
@@ -47,18 +49,34 @@
 		}
 	}
 
-	function handleScroll() {
+	function handleFade() {
 		if (!bookmarkContainer) return;
+		
 		const { scrollTop, scrollHeight, clientHeight } = bookmarkContainer;
-		const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
-
-		showFade = !isAtBottom;
+		const maxScroll = scrollHeight - clientHeight;
+		
+		if (maxScroll <= 0) {
+			// No scrollable overflow: no fade needed
+			fadePixels = 0;
+			return;
+		}
+		
+		// Calculate how close we are to the bottom (0 = top, 1 = bottom)
+		const scrollProgress = scrollTop / maxScroll;
+		
+		// Fade should be full (FADE_HEIGHT) at top and go to 0 at bottom
+		fadePixels = Math.max(0, Math.min(FADE_HEIGHT, FADE_HEIGHT * (1 - scrollProgress)));
 	}
 </script>
 
 <div class="relative">
-	<!-- Scrollable container -->
-	<div id="bookmark-cards" bind:this={bookmarkContainer} class="flex flex-col space-y-4 max-h-64 overflow-y-scroll">
+	<div 
+		id="bookmark-cards" 
+		bind:this={bookmarkContainer} 
+		on:scroll={handleFade}
+		class="flex flex-col space-y-4 overflow-y-scroll no-scrollbar-scroll-container"
+		style="max-height: {MAX_HEIGHT}px; mask-image: linear-gradient(to bottom, black 0, black calc(100% - {fadePixels}px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 0, black calc(100% - {fadePixels}px), transparent 100%);"
+	>
 		{#if !hasBookmarks}
 			<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
 				<span>
@@ -76,22 +94,4 @@
 			</div>
 		{/if}
 	</div>
-
-	<!-- Fade overlay -->
-	{#if showFade}
-		<div class="fade-bottom"></div>
-	{/if}
 </div>
-
-<style>
-	.fade-bottom {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		height: 40px;
-		pointer-events: none;
-		background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.15));
-		transition: opacity 0.3s ease;
-	}
-</style>
