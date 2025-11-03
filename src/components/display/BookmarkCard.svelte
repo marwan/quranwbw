@@ -29,7 +29,7 @@
 	}
 </script>
 
-<div class="relative bookmark-menu-container {cardInnerClasses} !p-0 overflow-visible" role="article" aria-label="Bookmark for {chapterMeta.transliteration} verse {bookmarkVerse}">
+<div class="relative bookmark-menu-container {cardInnerClasses} !p-0 overflow-visible {dropdownOpen ? '!border-transparent' : ''}" role="article" aria-label="Bookmark for {chapterMeta.transliteration} verse {bookmarkVerse}">
 	<a href="{bookmarkChapter}?startVerse={bookmarkVerse}" class="!justify-start flex flex-col w-full p-5 {dropdownOpen ? 'pointer-events-none' : ''}" aria-label="Go to {chapterMeta.transliteration} verse {bookmarkVerse}">
 		<div class="text-sm truncate {maxTextLength}">
 			{chapterMeta.transliteration} ({bookmark})
@@ -50,11 +50,11 @@
 	</a>
 
 	<!-- Options menu button -->
-	<button on:click={dropdownOpen} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
+	<button class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-none" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
 		<DotsHorizontal size={5} />
 	</button>
 
-	<Dropdown bind:open={dropdownOpen} class="px-2 my-2 w-max text-left font-sans direction-ltr">
+	<Dropdown bind:open={dropdownOpen} containerClass="divide-y z-[19] border {window.theme('borderDark')} focus-within:border-2" class="px-2 my-2 w-max text-left font-sans direction-ltr">
 		<DropdownItem class={dropdownItemClasses} on:click={handleDeleteBookmark}>
 			<Trash size={4} aria-hidden="true" />
 			<span>Delete</span>
