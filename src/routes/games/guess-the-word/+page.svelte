@@ -91,11 +91,13 @@
 			updateSettings({ type: 'quizWrongAnswers', value: $__quizWrongAnswers + 1 });
 		}
 
-		// Auto-progress to next word after showing result briefly
+		// Auto-progress only for correct answers; for wrong answers, require Next click
 		clearTimeout(autoProgressTimeout);
-		autoProgressTimeout = setTimeout(() => {
-			setRandomWord();
-		}, isAnswerCorrect ? 600 : 1500); // 600ms for correct, 1500ms for wrong answers
+		if (isAnswerCorrect) {
+			autoProgressTimeout = setTimeout(() => {
+				setRandomWord();
+			}, 600);
+		}
 	}
 
 	// Set new random word and reset selections
@@ -167,8 +169,21 @@
 								<p class="mb-2 md:mb-5 text-xs md:text-sm">Guess the correct translation:</p>
 								<div class="grid gap-2 md:gap-4 lg:gap-6 w-full md:grid-cols-2">
 									{#each Object.entries(currentWordSet) as [key, _]}
-										<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
-											<div class="{individualRadioClasses} {selection === +key ? `${window.theme('border')}` : null}">
+										<Radio
+											name="bordered"
+											bind:group={selection}
+											value={+key}
+											disabled={answerChecked}
+											class={answerChecked ? 'pointer-events-none cursor-not-allowed select-none' : null}
+											custom
+										>
+											<div
+												class="{individualRadioClasses}
+													{selection === +key ? `${window.theme('border')}` : null}
+													{answerChecked && isAnswerCorrect && selection === +key ? ' !border-green-500 ring-2 !ring-green-500' : ''}
+													{answerChecked && !isAnswerCorrect && selection === +key ? ' !border-red-500 ring-2 !ring-red-500' : ''}
+													{answerChecked && !isAnswerCorrect && +key === randomWord ? ' !border-green-500 ring-2 !ring-green-500' : ''}"
+											>
 												<div class="flex flex-row mr-auto ml-2 text-sm md:text-base">{currentWordSet[key].word_english}</div>
 
 												<!-- check / cross icon -->
@@ -187,22 +202,27 @@
 				</div>
 			</div>
 			
-				<!-- answer-results / skip-word-button with consistent height -->
-				<div class="min-h-[2.5rem] md:min-h-[4rem] flex items-center justify-center mt-1 md:mt-4">
-				{#if answerChecked === true && isAnswerCorrect !== null}
-					<div id="answer-results" class="flex justify-center text-center font-medium text-xs md:text-md px-2 md:px-4">
-						<span>
-							{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${currentWordSet[randomWord].word_english}" 😟`}
-						</span>
-					</div>
-				{:else}
-					<div id="buttons" class="flex flex-row space-x-4 justify-center w-full px-2 md:px-0">
-						<div id="skip-word-button" class="w-full">
-							<button class="{buttonOutlineClasses} w-full text-sm md:text-base py-2 md:py-2.5" on:click={() => setRandomWord()}>Skip {@html '&#x2192;'}</button>
-				</div>
-			</div>
-			{/if}
-				</div>
+						<!-- answer-results / skip-word-button with consistent height -->
+						<div class="min-h-[2.5rem] md:min-h-[4rem] flex items-center justify-center mt-1 md:mt-4 w-full">
+							{#if answerChecked === true && isAnswerCorrect !== null}
+								<!-- Show combined message inside the Next button area when wrong -->
+								{#if !isAnswerCorrect}
+									<div id="skip-word-button" class="w-full">
+										<button class="{buttonOutlineClasses} w-full text-sm md:text-base py-2 md:py-2.5" on:click={() => setRandomWord()}>
+											Sorry, the correct answer was "{currentWordSet[randomWord].word_english}". Next {@html '&#x2192;'}
+										</button>
+									</div>
+								{:else}
+									<div class="text-center font-medium text-xs md:text-md px-2 md:px-4">Your answer was correct 😀</div>
+								{/if}
+							{:else}
+								<div id="buttons" class="flex flex-row space-x-4 justify-center w-full px-2 md:px-0">
+									<div id="skip-word-button" class="w-full">
+										<button class="{buttonOutlineClasses} w-full text-sm md:text-base py-2 md:py-2.5" on:click={() => setRandomWord()}>Skip {@html '&#x2192;'}</button>
+									</div>
+								</div>
+							{/if}
+						</div>
 
 				<!-- correct / wrong answers so far -->
 				<div id="quiz-stats" class="flex flex-col space-y-2 md:space-y-3 items-center mt-2 md:mt-6">
