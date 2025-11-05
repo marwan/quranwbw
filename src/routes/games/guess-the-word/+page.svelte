@@ -205,15 +205,15 @@
 						<!-- answer-results / skip-word-button with consistent height -->
 						<div class="min-h-[2.5rem] md:min-h-[4rem] flex items-center justify-center mt-1 md:mt-4 w-full">
 							{#if answerChecked === true && isAnswerCorrect !== null}
-								<!-- Show combined message inside the Next button area when wrong -->
-								{#if !isAnswerCorrect}
+								{#if isAnswerCorrect}
+									<div class="text-center font-medium text-xs md:text-md px-2 md:px-4">Your answer was correct 😀</div>
+								{:else}
+									<!-- Show Next button for incorrect answers -->
 									<div id="skip-word-button" class="w-full">
 										<button class="{buttonOutlineClasses} w-full text-sm md:text-base py-2 md:py-2.5" on:click={() => setRandomWord()}>
-											Sorry, the correct answer was "{currentWordSet[randomWord].word_english}". Next {@html '&#x2192;'}
+											Next {@html '&#x2192;'}
 										</button>
 									</div>
-								{:else}
-									<div class="text-center font-medium text-xs md:text-md px-2 md:px-4">Your answer was correct 😀</div>
 								{/if}
 							{:else}
 								<div id="buttons" class="flex flex-row space-x-4 justify-center w-full px-2 md:px-0">
@@ -228,7 +228,7 @@
 				<div id="quiz-stats" class="flex flex-col space-y-2 md:space-y-3 items-center mt-2 md:mt-6">
 				<!-- Session Score -->
 				<div class="flex flex-col items-center space-y-1 p-2 md:p-4 rounded-lg border-2 {window.theme('borderSecondary')}">
-					<span class="text-xs md:text-sm font-semibold">This Session</span>
+					<span class="text-xs md:text-sm font-semibold">Current Score</span>
 					<div class="flex flex-row space-x-2 md:space-x-4 text-sm md:text-md">
 						<span class="text-green-600 dark:text-green-400">✓ {sessionCorrect}</span>
 						<span>|</span>
