@@ -124,10 +124,10 @@
 		
 		{#if currentWordSet.length > 0}
 			<div class="flex flex-col my-2 md:my-6 lg:my-8 justify-center">
-				<div class="relative overflow-visible min-h-[24rem] sm:min-h-[26rem] md:min-h-[28rem]">
+				<div class="relative overflow-hidden min-h-[28rem] sm:min-h-[30rem] md:min-h-[30rem] py-4">
 					{#key wordSetKey}
 						<div
-							class="absolute inset-0 overflow-visible flex flex-col"
+							class="absolute inset-0 flex flex-col py-4"
 							in:fly={{ x: 280, duration: 500, easing: quintOut }}
 							out:fly={{ x: -280, duration: 320, easing: quintOut }}
 						>
