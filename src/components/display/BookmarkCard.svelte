@@ -1,4 +1,5 @@
 <script>
+	import Portal from 'svelte-portal';
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
 	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
 	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
@@ -12,6 +13,7 @@
 	export let cardInnerClasses;
 
 	let dropdownOpen = false;
+	let buttonElement;
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
 
 	// Parse bookmark reference
@@ -50,14 +52,18 @@
 	</a>
 
 	<!-- Options menu button -->
-	<button class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-none" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
+	<button id="bookmark-menu-{bookmark.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={() => dropdownOpen = !dropdownOpen} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-none" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
 		<DotsHorizontal size={5} />
 	</button>
-
-	<Dropdown bind:open={dropdownOpen} containerClass="divide-y z-[19]" class="px-2 my-2 w-max text-left font-sans direction-ltr">
-		<DropdownItem class={dropdownItemClasses} on:click={handleDeleteBookmark}>
-			<Trash size={4} aria-hidden="true" />
-			<span>Delete</span>
-		</DropdownItem>
-	</Dropdown>
 </div>
+
+{#if buttonElement}
+	<Portal target="body">
+		<Dropdown bind:open={dropdownOpen} triggeredBy="#bookmark-menu-{bookmark.replace(':', '-')}" strategy="fixed" containerClass="divide-y z-[1000]" class="px-2 my-2 w-max text-left font-sans direction-ltr">
+			<DropdownItem class={dropdownItemClasses} on:click={handleDeleteBookmark}>
+				<Trash size={4} aria-hidden="true" />
+				<span>Delete</span>
+			</DropdownItem>
+		</Dropdown>
+	</Portal>
+{/if}

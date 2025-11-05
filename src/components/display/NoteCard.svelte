@@ -1,4 +1,5 @@
 <script>
+	import Portal from 'svelte-portal';
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
 	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
 	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
@@ -14,6 +15,7 @@
 	export let cardInnerClasses;
 
 	let dropdownOpen = false;
+	let buttonElement;
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
 
 	// Parse verse reference
@@ -63,19 +65,23 @@
 	</a>
 
 	<!-- Options menu button -->
-	<button on:click={dropdownOpen} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
+	<button id="note-menu-{verse.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={() => dropdownOpen = !dropdownOpen} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
 		<DotsHorizontal size={5} />
 	</button>
-
-	<Dropdown bind:open={dropdownOpen} containerClass="divide-y z-[1000]" class="px-2 my-2 w-max text-left font-sans direction-ltr">
-		<DropdownItem class={dropdownItemClasses} on:click={handleEditNote}>
-			<EditIcon size={4} aria-hidden="true" />
-			<span>Edit</span>
-		</DropdownItem>
-
-		<DropdownItem class={dropdownItemClasses} on:click={handleDeleteNote}>
-			<Trash size={4} aria-hidden="true" />
-			<span>Delete</span>
-		</DropdownItem>
-	</Dropdown>
 </div>
+
+{#if buttonElement}
+	<Portal target="body">
+		<Dropdown bind:open={dropdownOpen} triggeredBy="#note-menu-{verse.replace(':', '-')}" strategy="fixed" containerClass="divide-y z-[1000]" class="px-2 my-2 w-max text-left font-sans direction-ltr">
+			<DropdownItem class={dropdownItemClasses} on:click={handleEditNote}>
+				<EditIcon size={4} aria-hidden="true" />
+				<span>Edit</span>
+			</DropdownItem>
+
+			<DropdownItem class={dropdownItemClasses} on:click={handleDeleteNote}>
+				<Trash size={4} aria-hidden="true" />
+				<span>Delete</span>
+			</DropdownItem>
+		</Dropdown>
+	</Portal>
+{/if}
