@@ -54,7 +54,7 @@
 		<DotsHorizontal size={5} />
 	</button>
 
-	<Dropdown bind:open={dropdownOpen} containerClass="divide-y z-[19] border {window.theme('borderDark')} focus-within:border-2" class="px-2 my-2 w-max text-left font-sans direction-ltr">
+	<Dropdown bind:open={dropdownOpen} containerClass="divide-y z-[19]" class="px-2 my-2 w-max text-left font-sans direction-ltr">
 		<DropdownItem class={dropdownItemClasses} on:click={handleDeleteBookmark}>
 			<Trash size={4} aria-hidden="true" />
 			<span>Delete</span>

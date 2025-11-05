@@ -51,7 +51,7 @@
 	}
 </script>
 
-<div class="relative note-menu-container {cardInnerClasses} !p-0 overflow-visible" role="article" aria-label="Note for {chapterMeta.transliteration} verse {verseNumber}">
+<div class="relative note-menu-container {cardInnerClasses} !p-0 overflow-visible {dropdownOpen ? '!border-transparent' : ''}" role="article" aria-label="Note for {chapterMeta.transliteration} verse {verseNumber}">
 	<a href="{chapter}?startVerse={verseNumber}" class="!justify-start flex flex-col w-full p-5 {dropdownOpen ? 'pointer-events-none' : ''}" aria-label="Go to {chapterMeta.transliteration} verse {verseNumber}" on:click={handleCardClick}>
 		<div class="text-sm truncate {maxTextLength}">
 			{chapterMeta.transliteration} ({verse})
@@ -67,7 +67,7 @@
 		<DotsHorizontal size={5} />
 	</button>
 
-	<Dropdown bind:open={dropdownOpen} class="px-2 my-2 w-max text-left font-sans direction-ltr">
+	<Dropdown bind:open={dropdownOpen} containerClass="divide-y z-[1000]" class="px-2 my-2 w-max text-left font-sans direction-ltr">
 		<DropdownItem class={dropdownItemClasses} on:click={handleEditNote}>
 			<EditIcon size={4} aria-hidden="true" />
 			<span>Edit</span>
