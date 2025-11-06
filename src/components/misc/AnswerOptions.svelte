@@ -25,17 +25,21 @@
 			>
 				<div
 					class="{individualRadioClasses}
-						{selection === +key ? `${window.theme('border')}` : null}
-						{answerChecked && isAnswerCorrect && selection === +key ? ' !border-green-500 border-2' : ''}
-						{answerChecked && !isAnswerCorrect && selection === +key ? ' !border-red-500 border-2' : ''}
-						{answerChecked && !isAnswerCorrect && +key === correctAnswerIndex ? ' !border-green-500 border-2' : ''}"
+						{selection === +key && !answerChecked ? `${window.theme('border')}` : ''}
+						{answerChecked && +key === correctAnswerIndex ? ' !border-green-500 border-2' : ''}
+						{answerChecked && selection === +key && !isAnswerCorrect ? ' opacity-60 border-gray-500' : ''}
+						{answerChecked && +key !== correctAnswerIndex && (selection !== +key || isAnswerCorrect) ? ' opacity-30' : ''}"
 				>
 					<div class="flex flex-row mr-auto ml-2 text-sm md:text-base">{word.word_english}</div>
 
 					<!-- check / cross icon -->
-					{#if answerChecked === true && selection === +key}
+					{#if answerChecked}
 						<div class="justify-end">
-							<svelte:component this={selection === correctAnswerIndex ? Check : Cross} size={5} />
+							{#if +key === correctAnswerIndex}
+								<Check size={5} />
+							{:else if selection === +key && !isAnswerCorrect}
+								<Cross size={5} />
+							{/if}
 						</div>
 					{/if}
 				</div>
