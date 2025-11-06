@@ -1,5 +1,6 @@
 <script>
 	import Portal from 'svelte-portal';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
 	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
 	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
@@ -13,15 +14,43 @@
 	export let verse;
 	export let note;
 	export let cardInnerClasses;
+	export let forceClose = 0;
+
+	const dispatch = createEventDispatcher();
 
 	let dropdownOpen = false;
 	let buttonElement;
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
+	let hasMounted = false;
+	let previousOpen = dropdownOpen;
+	let previousForceClose = forceClose;
 
 	// Parse verse reference
 	const [chapter, verseNumber] = verse.split(':').map(Number);
 	const chapterMeta = quranMetaData[chapter];
 	const maxTextLength = 'max-w-[30vw] md:max-w-[115px]';
+
+	onMount(() => {
+		hasMounted = true;
+		previousOpen = dropdownOpen;
+	});
+
+	$: if (hasMounted && dropdownOpen !== previousOpen) {
+		previousOpen = dropdownOpen;
+		dispatch('toggle', { verse, open: dropdownOpen });
+	}
+
+	$: if (forceClose !== previousForceClose) {
+		previousForceClose = forceClose;
+		if (dropdownOpen) {
+			dropdownOpen = false;
+			buttonElement?.blur(); // Clear focus so Flowbite stays closed
+		}
+	}
+
+	function toggleDropdown() {
+		dropdownOpen = !dropdownOpen;
+	}
 
 	function handleEditNote(event) {
 		event.preventDefault();
@@ -65,7 +94,7 @@
 	</a>
 
 	<!-- Options menu button -->
-	<button id="note-menu-{verse.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={() => dropdownOpen = !dropdownOpen} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
+	<button id="note-menu-{verse.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={toggleDropdown} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
 		<DotsHorizontal size={5} />
 	</button>
 </div>

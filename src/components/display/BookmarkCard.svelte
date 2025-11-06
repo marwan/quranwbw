@@ -1,5 +1,6 @@
 <script>
 	import Portal from 'svelte-portal';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
 	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
 	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
@@ -11,15 +12,44 @@
 	export let bookmark;
 	export let fullQuranTextData = null;
 	export let cardInnerClasses;
+	export let forceClose = 0; // Reactive prop to force close dropdown
+
+	const dispatch = createEventDispatcher();
 
 	let dropdownOpen = false;
 	let buttonElement;
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
+	let hasMounted = false;
+	let previousOpen = dropdownOpen;
+	let previousForceClose = forceClose;
 
 	// Parse bookmark reference
 	const [bookmarkChapter, bookmarkVerse] = bookmark.split(':').map(Number);
 	const chapterMeta = quranMetaData[bookmarkChapter];
 	const maxTextLength = 'max-w-[28vw] md:max-w-[115px]';
+
+	// Watch forceClose to close dropdown when parent scrolls
+	onMount(() => {
+		hasMounted = true;
+		previousOpen = dropdownOpen;
+	});
+
+	$: if (hasMounted && dropdownOpen !== previousOpen) {
+		previousOpen = dropdownOpen;
+		dispatch('toggle', { bookmark, open: dropdownOpen });
+	}
+
+	$: if (forceClose !== previousForceClose) {
+		previousForceClose = forceClose;
+		if (dropdownOpen) {
+			dropdownOpen = false;
+			buttonElement?.blur(); // Clear focus so Flowbite stays closed
+		}
+	}
+
+	function toggleDropdown() {
+		dropdownOpen = !dropdownOpen;
+	}
 
 	function handleDeleteBookmark(event) {
 		event.stopPropagation();
@@ -52,7 +82,7 @@
 	</a>
 
 	<!-- Options menu button -->
-	<button id="bookmark-menu-{bookmark.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={() => dropdownOpen = !dropdownOpen} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-none" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
+	<button id="bookmark-menu-{bookmark.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={toggleDropdown} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-none" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
 		<DotsHorizontal size={5} />
 	</button>
 </div>

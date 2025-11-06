@@ -17,6 +17,7 @@
 	let isLoading = false;
 	let bookmarkContainer;
 	let fadePixels = FADE_HEIGHT;
+	let forceCloseDropdowns = 0;
 
 	$: hasBookmarks = $__userBookmarks.length > 0;
 
@@ -28,10 +29,11 @@
 		if (!bookmarkContainer) return;
 
 		const resizeObserver = new ResizeObserver(() => {
-			handleFade();
+			updateFade();
 		});
 
 		resizeObserver.observe(bookmarkContainer);
+		updateFade();
 
 		return () => {
 			resizeObserver.disconnect();
@@ -49,7 +51,7 @@
 		}
 	}
 
-	function handleFade() {
+	function updateFade({ closeDropdowns = false } = {}) {
 		if (!bookmarkContainer) return;
 		
 		const { scrollTop, scrollHeight, clientHeight } = bookmarkContainer;
@@ -64,8 +66,15 @@
 		// Calculate how close we are to the bottom (0 = top, 1 = bottom)
 		const scrollProgress = scrollTop / maxScroll;
 		
-		// Fade should be full (FADE_HEIGHT) at top and go to 0 at bottom
 		fadePixels = Math.max(0, Math.min(FADE_HEIGHT, FADE_HEIGHT * (1 - scrollProgress)));
+
+		if (closeDropdowns) {
+			forceCloseDropdowns += 1;
+		}
+	}
+
+	function handleScroll() {
+		updateFade({ closeDropdowns: true });
 	}
 </script>
 
@@ -73,7 +82,7 @@
 	<div 
 		id="bookmark-cards" 
 		bind:this={bookmarkContainer} 
-		on:scroll={handleFade}
+		on:scroll={handleScroll}
 		class="flex flex-col space-y-4 overflow-y-scroll no-scrollbar-scroll-container"
 		style="max-height: {MAX_HEIGHT}px; mask-image: linear-gradient(to bottom, black 0, black calc(100% - {fadePixels}px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 0, black calc(100% - {fadePixels}px), transparent 100%);"
 	>
@@ -88,7 +97,7 @@
 			<div>
 				<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
 					{#each $__userBookmarks as bookmark (bookmark)}
-						<BookmarkCard {bookmark} {fullQuranTextData} {cardInnerClasses} />
+						<BookmarkCard {bookmark} {fullQuranTextData} {cardInnerClasses} forceClose={forceCloseDropdowns} />
 					{/each}
 				</div>
 			</div>

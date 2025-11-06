@@ -12,6 +12,7 @@
 
 	let noteContainer;
 	let fadePixels = FADE_HEIGHT;
+	let forceCloseDropdowns = 0;
 
 	$: hasNotes = Object.keys($__userNotes).length > 0;
 	$: noteEntries = Object.entries($__userNotes);
@@ -20,17 +21,18 @@
 		if (!noteContainer) return;
 
 		const resizeObserver = new ResizeObserver(() => {
-			handleFade();
+			updateFade();
 		});
 
 		resizeObserver.observe(noteContainer);
+		updateFade();
 
 		return () => {
 			resizeObserver.disconnect();
 		};
 	});
 
-	function handleFade() {
+	function updateFade({ closeDropdowns = false } = {}) {
 		if (!noteContainer) return;
 		
 		const { scrollTop, scrollHeight, clientHeight } = noteContainer;
@@ -47,6 +49,14 @@
 		
 		// Fade should be full (FADE_HEIGHT) at top and go to 0 at bottom
 		fadePixels = Math.max(0, Math.min(FADE_HEIGHT, FADE_HEIGHT * (1 - scrollProgress)));
+
+		if (closeDropdowns) {
+			forceCloseDropdowns += 1;
+		}
+	}
+
+	function handleScroll() {
+		updateFade({ closeDropdowns: true });
 	}
 </script>
 
@@ -54,7 +64,7 @@
 	<div 
 		id="note-cards" 
 		bind:this={noteContainer} 
-		on:scroll={handleFade}
+		on:scroll={handleScroll}
 		class="flex flex-col space-y-4 overflow-y-scroll no-scrollbar-scroll-container"
 		style="max-height: {MAX_HEIGHT}px; mask-image: linear-gradient(to bottom, black 0, black calc(100% - {fadePixels}px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 0, black calc(100% - {fadePixels}px), transparent 100%);"
 	>
@@ -69,7 +79,7 @@
 			<div>
 				<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
 					{#each noteEntries as [verse, note] (verse)}
-						<NoteCard {verse} {note} {cardInnerClasses} />
+						<NoteCard {verse} {note} {cardInnerClasses} forceClose={forceCloseDropdowns} />
 					{/each}
 				</div>
 			</div>
