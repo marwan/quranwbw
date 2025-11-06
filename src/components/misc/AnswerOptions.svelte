@@ -11,7 +11,7 @@
 	export let correctAnswerIndex = 0;
 </script>
 
-<div id="options" class="pt-2 md:pt-8">
+<div id="options" class="pt-2 md:pt-8 px-2 sm:px-3 md:px-4">
 	<p class="mb-2 md:mb-5 text-xs md:text-sm">Guess the correct translation:</p>
 	<div class="grid gap-2 md:gap-4 lg:gap-6 w-full md:grid-cols-2">
 		{#each Object.entries(wordSet) as [key, word]}
@@ -26,9 +26,9 @@
 				<div
 					class="{individualRadioClasses}
 						{selection === +key ? `${window.theme('border')}` : null}
-						{answerChecked && isAnswerCorrect && selection === +key ? ' !border-green-500 ring-2 !ring-green-500' : ''}
-						{answerChecked && !isAnswerCorrect && selection === +key ? ' !border-red-500 ring-2 !ring-red-500' : ''}
-						{answerChecked && !isAnswerCorrect && +key === correctAnswerIndex ? ' !border-green-500 ring-2 !ring-green-500' : ''}"
+						{answerChecked && isAnswerCorrect && selection === +key ? ' !border-green-500 border-2' : ''}
+						{answerChecked && !isAnswerCorrect && selection === +key ? ' !border-red-500 border-2' : ''}
+						{answerChecked && !isAnswerCorrect && +key === correctAnswerIndex ? ' !border-green-500 border-2' : ''}"
 				>
 					<div class="flex flex-row mr-auto ml-2 text-sm md:text-base">{word.word_english}</div>
 
