@@ -101,7 +101,13 @@
 
 {#if buttonElement}
 	<Portal target="body">
-		<Dropdown bind:open={dropdownOpen} triggeredBy="#note-menu-{verse.replace(':', '-')}" strategy="fixed" containerClass="divide-y z-[1000]" class="px-2 my-2 w-max text-left font-sans direction-ltr">
+		<Dropdown
+			bind:open={dropdownOpen}
+			triggeredBy="#note-menu-{verse.replace(':', '-')}"
+			strategy="fixed"
+			containerClass={`divide-y z-[1000] shadow-md border ${window.theme('border')}`}
+			class="px-2 my-2 w-max text-left font-sans direction-ltr"
+		>
 			<DropdownItem class={dropdownItemClasses} on:click={handleEditNote}>
 				<EditIcon size={4} aria-hidden="true" />
 				<span>Edit</span>
