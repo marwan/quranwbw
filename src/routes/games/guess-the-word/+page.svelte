@@ -128,8 +128,8 @@
 					{#key wordSetKey}
 						<div
 							class="absolute inset-0 flex flex-col py-4"
-							in:fly={{ x: 280, duration: 500, easing: quintOut }}
-							out:fly={{ x: -280, duration: 320, easing: quintOut }}
+							in:fly={{ x: 280, duration: 300, easing: quintOut }}
+							out:fly={{ x: -280, duration: 200, easing: quintOut }}
 						>
 							<WordDisplay 
 								word={currentWordSet[correctAnswerIndex]} 
