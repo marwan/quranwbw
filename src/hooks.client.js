@@ -1,3 +1,5 @@
+import { getPreferredLocaleTranslationId } from '$utils/localeVerseTranslations';
+
 /* eslint-disable no-prototype-builtins */
 export const defaultSettings = {
 	displaySettings: {
@@ -66,8 +68,9 @@ export const defaultSettings = {
 // This approach allows for seamless additions to the settings structure over time without overwriting current data.
 export function setUserSettings(defaultSettings) {
 	// Get existing settings from localStorage or initialize an empty object
-	let existingSettings = localStorage.getItem('userSettings');
-	existingSettings = existingSettings ? JSON.parse(existingSettings) : {};
+	const storedSettings = localStorage.getItem('userSettings');
+	const hasExistingSettings = Boolean(storedSettings);
+	let existingSettings = storedSettings ? JSON.parse(storedSettings) : {};
 
 	// Recursive function to add only new settings
 	function addNewSettings(existing, incoming) {
@@ -89,6 +92,16 @@ export function setUserSettings(defaultSettings) {
 
 	// Add only new settings to the existing settings
 	existingSettings = addNewSettings(existingSettings, defaultSettings);
+
+	// When the user has no saved settings yet, add a locale-aware verse translation alongside the defaults
+	if (!hasExistingSettings) {
+		const localeTranslationId = getPreferredLocaleTranslationId();
+		const verseTranslations = existingSettings?.translations?.verse_v1;
+
+		if (localeTranslationId && Array.isArray(verseTranslations) && !verseTranslations.includes(localeTranslationId)) {
+			existingSettings.translations.verse_v1 = [...verseTranslations, localeTranslationId];
+		}
+	}
 
 	// Save the updated settings back to localStorage
 	localStorage.setItem('userSettings', JSON.stringify(existingSettings));
