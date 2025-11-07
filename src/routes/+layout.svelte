@@ -26,6 +26,8 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+	import { initI18n } from '$lib/i18n';
+	import { preserveLangParam } from '$utils/preserveLangParam';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
@@ -37,6 +39,8 @@
 	let paddingBottom = 0;
 	let paddingX = 0;
 
+	initI18n();
+	preserveLangParam();
 	setDefaultPaddings();
 
 	// Update body scroll based on settings drawer visibility
