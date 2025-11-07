@@ -43,6 +43,7 @@
 		"dotenv": "^17.2.1",
 		"marked": "^15.0.6",
 		"party-js": "^2.2.0",
+		"svelte-i18n": "^4.0.1",
 		"svelte-inview": "^4.0.2"
 	}
 }
