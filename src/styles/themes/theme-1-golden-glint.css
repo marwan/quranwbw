@@ -1,0 +1,58 @@
+/* Theme 1 - Golden Glint */
+/* Minimal theme mappings for icon palettes only */
+
+
+/* Provide a browser chrome color derived from theme */
+[data-theme="golden-glint"] {
+	--color-accent-primary: 177, 144, 31;      /* #b1901f */
+	--color-accent-secondary: 177, 144, 31;    /* #b1901f */
+	--color-text-primary: 0, 0, 0;             /* #000000 */
+	--color-text-secondary: 177, 144, 31;      /* #b1901f */
+	--theme-chrome: #ffffff;                   /* URL/status bar color */
+}
+
+/* Font Palettes - Support both old and new selectors */
+.theme-1 .colored-fonts,
+[data-theme="golden-glint"] .colored-fonts { 
+	font-palette: --palette4; 
+}
+.theme-1 .theme-palette-normal,
+[data-theme="golden-glint"] .theme-palette-normal { 
+	font-palette: --palette3; 
+}
+.theme-1 .theme-palette-tajweed,
+[data-theme="golden-glint"] .theme-palette-tajweed { 
+	font-palette: --palette0; 
+}
+.theme-1 .header,
+[data-theme="golden-glint"] .header { 
+	font-palette: --palette7; 
+}
+
+/* Custom Colors */
+.theme-1 .custom-ayah-icon-color,
+[data-theme="golden-glint"] .custom-ayah-icon-color { 
+	font-palette: --AyahIconGoldTheme !important; 
+}
+.theme-1 .custom-header-color,
+[data-theme="golden-glint"] .custom-header-color { 
+	font-palette: --GoldenGlintHeaderColor !important; 
+}
+
+/* Scrollbar color */
+html.theme-1,
+[data-theme="golden-glint"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent;}
+
+/* Markdown component colors */
+.theme-1 .markdown hr,
+[data-theme="golden-glint"] .markdown hr { 
+	border-color: rgba(var(--color-accent-secondary), 0.2);
+}
+.theme-1 .markdown a,
+[data-theme="golden-glint"] .markdown a { 
+	color: rgb(var(--color-accent-secondary));
+}
+.theme-1 .markdown h3,
+[data-theme="golden-glint"] .markdown h3 { 
+	color: rgb(var(--color-accent-secondary));
+}

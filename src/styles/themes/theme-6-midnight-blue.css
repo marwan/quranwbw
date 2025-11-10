@@ -1,0 +1,48 @@
+/* Theme 6 - Midnight Blue */
+/* Minimal theme mappings for icon palettes only */
+
+
+/* Provide a browser chrome color derived from theme */
+[data-theme="midnight-blue"] {
+	--color-accent-primary: 194, 194, 194;     /* #c2c2c2 */
+	--color-accent-secondary: 194, 194, 194;   /* #c2c2c2 */
+	--color-text-primary: 194, 194, 194;       /* #c2c2c2 */
+	--color-text-secondary: 194, 194, 194;     /* #c2c2c2 */
+	--theme-chrome: #02021b;                   /* URL/status bar color */
+}
+
+/* Font Palettes - Support both old and new selectors */
+.theme-6 .colored-fonts,
+[data-theme="midnight-blue"] .colored-fonts { 
+	font-palette: --palette1; 
+}
+.theme-6 .theme-palette-normal,
+[data-theme="midnight-blue"] .theme-palette-normal { 
+	font-palette: --palette4; 
+}
+.theme-6 .theme-palette-tajweed,
+[data-theme="midnight-blue"] .theme-palette-tajweed { 
+	font-palette: --palette1; 
+}
+.theme-6 .header,
+[data-theme="midnight-blue"] .header { 
+	font-palette: --palette3; 
+}
+
+/* Scrollbar color */
+html.theme-6,
+[data-theme="midnight-blue"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent;   }
+
+/* Markdown component colors */
+.theme-6 .markdown hr,
+[data-theme="midnight-blue"] .markdown hr { 
+	border-color: rgba(var(--color-accent-secondary), 0.2);
+}
+.theme-6 .markdown a,
+[data-theme="midnight-blue"] .markdown a { 
+	color: rgb(var(--color-accent-secondary));
+}
+.theme-6 .markdown h3,
+[data-theme="midnight-blue"] .markdown h3 { 
+	color: rgb(var(--color-accent-secondary));
+}

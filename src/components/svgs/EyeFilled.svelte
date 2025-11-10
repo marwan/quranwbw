@@ -2,7 +2,7 @@
 	export let size = 4;
 </script>
 
-<svg class="w-{size} h-{size}" fill={window.theme('icon')} xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512.19 512.19" style="enable-background:new 0 0 512.19 512.19;" xml:space="preserve" width="512" height="512">
+<svg class="w-{size} h-{size} fill-accent-primary" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512.19 512.19" style="enable-background:new 0 0 512.19 512.19;" xml:space="preserve" width="512" height="512">
 	<g>
 		<circle cx="256.095" cy="256.095" r="85.333" />
 		<path
