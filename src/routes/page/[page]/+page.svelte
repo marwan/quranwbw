@@ -15,14 +15,12 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
+	import { centeredPageLines } from '$data/centeredPageLines';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
 	import { fade } from 'svelte/transition';
 	import '$utils/swiped-events.min.js';
-
-	// Lines to be centered instead of justified
-	const centeredPageLines = ['528:9', '545:6', '594:5', '602:5', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
 	let pageData;
 	let startingLine;
@@ -196,8 +194,12 @@
 							<Bismillah {chapters} {lines} {line} {page} />
 						</div>
 					{/if}
-
-					<div class="line {line} flex px-2 arabic-font-{$__fontType} {+page < 3 || centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : null} {+page > 2 && !centeredPageLines.includes(`${+page}:${line}`) ? 'justify-between' : null}">
+					{@html (() => {
+						console.log(centeredPageLines);
+						console.log(`${+page}:${line}`);
+						return ''; // Must return something to render, even an empty string
+					})()}
+					<div class="line {line} flex px-2 arabic-font-{$__fontType} {centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : 'justify-between'}">
 						{#each Object.entries(JSON.parse(localStorage.getItem('pageData'))) as [key, value]}
 							<WordsBlock {key} {value} {line} />
 						{/each}
