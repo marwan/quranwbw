@@ -1,3 +1,15 @@
+### Nov 10, 2025
+
+- **Improved Homepage Bookmarks & Notes Management:** The homepage bookmarks and notes sections have been redesigned with a new 3-dot menu for easier control. Previously, items could only be deleted using an “X” icon. Now, bookmarks include a “Delete” option, while notes offer both “Edit” and “Delete” — all accessible directly from the homepage.
+
+---
+
+### Oct 31, 2025
+
+- **Enhanced Repeat Options:** You can now repeat verses from **1 to 10 times individually** (1, 2, 3... up to 10), giving you more precise control for memorization. Previously, the minimum step was 5.
+
+---
+
 ### Sep 28, 2025
 
 - **Manual Backup & Restore:** You can now **save and download a copy of your website settings** (including bookmarks and notes) and **restore them anytime**. This way, you’ll never have to worry about losing your important data again.

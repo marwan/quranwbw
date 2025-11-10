@@ -43,6 +43,7 @@
 		"dotenv": "^17.2.1",
 		"marked": "^15.0.6",
 		"party-js": "^2.2.0",
-		"svelte-inview": "^4.0.2"
+		"svelte-inview": "^4.0.2",
+		"svelte-portal": "^2.2.1"
 	}
 }
