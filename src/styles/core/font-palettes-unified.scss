@@ -30,7 +30,7 @@ $complete-font-list: list.join($base-quran-fonts, $page-fonts, comma);
 }
 
 // Generate base palettes 0-5
-@for $i from 0 through 5 {
+@for $i from 0 through 9 {
   @include font-palette(--palette#{$i}, $i);
 }
 
@@ -82,27 +82,6 @@ $complete-font-list: list.join($base-quran-fonts, $page-fonts, comma);
     13 #dca54c,
     14 #dca54c,
     15 #dca54c;
-}
-
-// Golden Glint Header Color (specific to theme 1)
-@include font-palette(--GoldenGlintHeaderColor, 2, list.join("bismillah", $page-fonts, comma)) {
-  override-colors:
-    0 #b1901f,
-    1 #b1901f,
-    2 #b1901f,
-    3 #b1901f,
-    4 #b1901f,
-    5 #b1901f,
-    6 #b1901f,
-    7 #b1901f,
-    8 #b1901f,
-    9 #b1901f,
-    10 #b1901f,
-    11 #b1901f,
-    12 #b1901f,
-    13 #b1901f,
-    14 #b1901f,
-    15 #b1901f;
 }
 
 // Custom Bismillah color used in Mocha Night and Dark Luxury themes (from original)
