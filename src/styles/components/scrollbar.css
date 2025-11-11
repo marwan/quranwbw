@@ -16,11 +16,19 @@
 
 /* Hide scrollbar while keeping scroll functionality */
 .no-scrollbar-scroll-container {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .no-scrollbar-scroll-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
 }
 
+/* Firefox-specific theme scrollbar colors */
+@-moz-document url-prefix() {
+  html {
+    scrollbar-color: rgb(var(--color-accent-secondary)) transparent;
+    scrollbar-width: auto;
+    scrollbar-gutter: stable overlay;
+  }
+}

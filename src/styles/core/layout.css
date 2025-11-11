@@ -1,11 +1,5 @@
 /* Layout and Base Styles */
 
-html {
-  scrollbar-width: auto;
-  scrollbar-gutter: stable overlay;
-}
-
-
 /* Homepage background image utility */
 .homepage-background-image {
   position: relative;

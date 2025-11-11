@@ -29,10 +29,6 @@
 	font-palette: --palette5; 
 }
 
-/* Scrollbar color */
-html.theme-4,
-[data-theme="vintage-sepia"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent;   }
-
 /* Markdown component colors */
 .theme-4 .markdown hr,
 [data-theme="vintage-sepia"] .markdown hr { 

@@ -34,10 +34,6 @@
 	font-palette: --MochaNightBismillahColor; 
 }
 
-/* Scrollbar color */
-html.theme-5,
-[data-theme="mocha-night"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent;   }
-
 /* Markdown component colors */
 .theme-5 .markdown hr,
 [data-theme="mocha-night"] .markdown hr { 

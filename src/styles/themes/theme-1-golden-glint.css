@@ -39,10 +39,6 @@
 	font-palette: --GoldenGlintHeaderColor !important; 
 }
 
-/* Scrollbar color */
-html.theme-1,
-[data-theme="golden-glint"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent;}
-
 /* Markdown component colors */
 .theme-1 .markdown hr,
 [data-theme="golden-glint"] .markdown hr { 

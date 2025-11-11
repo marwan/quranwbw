@@ -29,10 +29,6 @@
 	font-palette: --palette4; 
 }
 
-/* Scrollbar color */
-html.theme-8,
-[data-theme="oled-black"] { scrollbar-color: rgb(var(--color-accent-secondary)) transparent;   }
-
 /* Markdown component colors */
 .theme-8 .markdown hr,
 [data-theme="oled-black"] .markdown hr { 
