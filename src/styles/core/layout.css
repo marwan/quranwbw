@@ -2,6 +2,7 @@
 
 html {
   scrollbar-width: auto;
+  scrollbar-gutter: stable overlay;
 }
 
 
