@@ -194,11 +194,7 @@
 							<Bismillah {chapters} {lines} {line} {page} />
 						</div>
 					{/if}
-					{@html (() => {
-						console.log(centeredPageLines);
-						console.log(`${+page}:${line}`);
-						return ''; // Must return something to render, even an empty string
-					})()}
+
 					<div class="line {line} flex px-2 arabic-font-{$__fontType} {centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : 'justify-between'}">
 						{#each Object.entries(JSON.parse(localStorage.getItem('pageData'))) as [key, value]}
 							<WordsBlock {key} {value} {line} />
