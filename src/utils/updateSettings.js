@@ -1,6 +1,7 @@
 /* eslint-disable no-case-declarations */
 import { get } from 'svelte/store';
 import { selectableThemes } from '$data/options';
+import { updateCheckboxCheckmarkIcon } from '$utils/updateCheckboxCheckmarkIcon';
 import {
 	__currentPage,
 	__userSettings,
@@ -94,6 +95,8 @@ export function updateSettings(props) {
 			} catch (_) {
 				/* no-op */
 			}
+
+			updateCheckboxCheckmarkIcon();
 			location.reload();
 			break;
 

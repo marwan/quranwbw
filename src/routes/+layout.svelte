@@ -23,6 +23,7 @@
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { updateCheckboxCheckmarkIcon } from '$utils/updateCheckboxCheckmarkIcon';
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
@@ -38,6 +39,8 @@
 	let paddingX = 0;
 
 	setDefaultPaddings();
+
+	updateCheckboxCheckmarkIcon();
 
 	// Update body scroll based on settings drawer visibility
 	$: document.body.classList.toggle('overflow-y-hidden', !$__settingsDrawerHidden);
