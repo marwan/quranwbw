@@ -1,0 +1,34 @@
+/* Safari/Chrome (WebKit) scrollbar styling and theme colors */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-accent-primary));
+  height: 70px;
+  border-radius: 15px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Hide scrollbar while keeping scroll functionality */
+.no-scrollbar-scroll-container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox-specific theme scrollbar colors */
+@-moz-document url-prefix() {
+  html {
+    scrollbar-color: rgb(var(--color-accent-secondary)) transparent;
+    scrollbar-width: auto;
+    scrollbar-gutter: stable overlay;
+  }
+}

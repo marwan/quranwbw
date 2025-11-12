@@ -1,0 +1,44 @@
+/* Theme 3 - Silver Lining */
+/* Minimal theme mappings for icon palettes only */
+
+
+/* Provide a browser chrome color derived from theme */
+[data-theme="silver-lining"] {
+	--color-accent-primary: 0, 0, 0;           /* #000000 */
+	--color-accent-secondary: 0, 0, 0;         /* #000000 */
+	--color-text-primary: 0, 0, 0;             /* #000000 */
+	--color-text-secondary: 0, 0, 0;           /* #000000 */
+	--theme-chrome: #e1e1e1;                   /* URL/status bar color */
+}
+
+/* Font Palettes - Support both old and new selectors */
+.theme-3 .colored-fonts,
+[data-theme="silver-lining"] .colored-fonts { 
+	font-palette: --palette3; 
+}
+.theme-3 .theme-palette-normal,
+[data-theme="silver-lining"] .theme-palette-normal { 
+	font-palette: --palette5; 
+}
+.theme-3 .theme-palette-tajweed,
+[data-theme="silver-lining"] .theme-palette-tajweed { 
+	font-palette: --palette2; 
+}
+.theme-3 .header,
+[data-theme="silver-lining"] .header { 
+	font-palette: --palette8; 
+}
+
+/* Markdown component colors */
+.theme-3 .markdown hr,
+[data-theme="silver-lining"] .markdown hr { 
+	border-color: rgba(var(--color-accent-secondary), 0.2);
+}
+.theme-3 .markdown a,
+[data-theme="silver-lining"] .markdown a { 
+	color: rgb(var(--color-accent-secondary));
+}
+.theme-3 .markdown h3,
+[data-theme="silver-lining"] .markdown h3 { 
+	color: rgb(var(--color-accent-secondary));
+}

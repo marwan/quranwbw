@@ -396,7 +396,7 @@
 			</div>
 		{/if}
 
-		<Checkbox checked={$__audioSettings.rememberSettings} on:click={() => toggleRememberSettings()} class="space-x-2 pb-6 font-normal {window.theme('bgMain')}">
+		<Checkbox checked={$__audioSettings.rememberSettings} on:click={() => toggleRememberSettings()} class="space-x-2 pb-6 font-normal">
 			<span>Remember Settings</span>
 		</Checkbox>
 	</div>

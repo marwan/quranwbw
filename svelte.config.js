@@ -18,7 +18,8 @@ const config = {
 			$ui: path.resolve('./src/components/ui'),
 			$svgs: path.resolve('./src/components/svgs'),
 			$display: path.resolve('./src/components/display'),
-			$misc: path.resolve('./src/components/misc')
+			$misc: path.resolve('./src/components/misc'),
+			$css: path.resolve('./src/styles'),
 		},
 		output: {
 			bundleStrategy: 'single'

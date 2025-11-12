@@ -1,0 +1,44 @@
+/* Theme 7 - Forest Green */
+/* Minimal theme mappings for icon palettes only */
+
+
+/* Provide a browser chrome color derived from theme */
+[data-theme="forest-green"] {
+	--color-accent-primary: 221, 221, 221;     /* #dddddd */
+	--color-accent-secondary: 221, 221, 221;   /* #dddddd */
+	--color-text-primary: 221, 221, 221;       /* #dddddd */
+	--color-text-secondary: 221, 221, 221;     /* #dddddd */
+	--theme-chrome: #001617;                   /* URL/status bar color */
+}
+
+/* Font Palettes - Support both old and new selectors */
+.theme-7 .colored-fonts,
+[data-theme="forest-green"] .colored-fonts { 
+	font-palette: --palette1; 
+}
+.theme-7 .theme-palette-normal,
+[data-theme="forest-green"] .theme-palette-normal { 
+	font-palette: --palette4; 
+}
+.theme-7 .theme-palette-tajweed,
+[data-theme="forest-green"] .theme-palette-tajweed { 
+	font-palette: --palette1; 
+}
+.theme-7 .header,
+[data-theme="forest-green"] .header { 
+	font-palette: --palette1; 
+}
+
+/* Markdown component colors */
+.theme-7 .markdown hr,
+[data-theme="forest-green"] .markdown hr { 
+	border-color: rgba(var(--color-accent-secondary), 0.2);
+}
+.theme-7 .markdown a,
+[data-theme="forest-green"] .markdown a { 
+	color: rgb(var(--color-accent-secondary));
+}
+.theme-7 .markdown h3,
+[data-theme="forest-green"] .markdown h3 { 
+	color: rgb(var(--color-accent-secondary));
+}

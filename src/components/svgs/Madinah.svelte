@@ -1,5 +1,5 @@
 <!-- Mosque by NAPISAH from <a href="https://thenounproject.com/browse/icons/term/mosque/" target="_blank" title="Mosque Icons">Noun Project</a> (CC BY 3.0) -->
-<svg class="w-4 h-4" style="margin-top: -2px;" fill={window.theme('icon')} version="1.1" viewBox="-5.0 -10.0 110.0 110.0">
+<svg class="w-4 h-4 fill-accent-primary" style="margin-top: -2px;" version="1.1" viewBox="-5.0 -10.0 110.0 110.0">
 	<path
 		d="m80.699 69.102c0-14.699-22.898-30.699-29.199-34.699v-5.6992-0.10156c3.6016-0.39844 6.5-2.8008 7.8008-6-1.1016 0.39844-2.3008 0.69922-3.6016 0.69922-5.3008 0-9.6992-4.3984-9.6992-9.6992 0-1.3008 0.19922-2.5 0.69922-3.6016-3.6016 1.3984-6.1016 4.8984-6.1016 9 0 4.6992 3.3984 8.6016 7.8984 9.5v0.19922 5.6992c-6.1992 4.1016-29.199 20.102-29.199 34.699 0 3.8008 0.69922 7.5 2 10.898h-8.6016l0.003907 10.004h74.602v-10.102h-8.6016c1.3008-3.2969 2-7 2-10.797z"
 	/>
