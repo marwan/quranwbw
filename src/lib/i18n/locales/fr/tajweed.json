@@ -1,0 +1,170 @@
+{
+	"tajweed": {
+		"rules": {
+			"1": {
+				"title": "Texte normal",
+				"description": null
+			},
+			"2": {
+				"title": "Alif Hamzat Wasl",
+				"description": "L'Alif Hamzatul-Wasl est représenté par un petit (ص) au-dessus. Il se prononce lorsque le verset commence par lui. Cependant, s'il apparaît au milieu d'un verset ou d'un mot, il reste muet. Mais s'il vient après un signe de Waqf (pause) et que l'on s'arrête dessus, alors il se prononce."
+			},
+			"3": {
+				"title": "Idghaam / Muet (action : fusionner)",
+				"description": "Représente les lettres qui ne sont pas prononcées. Par exemple, le « L » muet dans « اَلشَّمْس » (ash-shams) n'est jamais prononcé. De même, le « Noon » dans « كَأَن لَّمْ » (ka'an lamma) se prononce comme « كَأَلَّمْ » (ka'allam)."
+			},
+			"4": {
+				"title": "Lam Ash-Shamsiyyah - (اللام الشمسية)",
+				"description": "La lettre Laam muette à l'intérieur d'un mot."
+			},
+			"5": {
+				"title": "Alif Tafriq (Groupé) - (الألف المحذوفة (الخنجرية))",
+				"description": "Le Alif muet, généralement à la fin du mot ou parfois au milieu."
+			},
+			"6": {
+				"title": "Hamzat Al Wasl à l'intérieur des mots - (همزة الوصل داخل الكلمة)",
+				"description": "On rend le Alif silencieux lorsqu'il porte un petit (ص) au-dessus à l'intérieur des mots."
+			},
+			"7": {
+				"title": "Marsum Khilaf Al Lafz - (المرسوم خلاف اللفظ)",
+				"description": "Mots écrits différemment de la manière dont ils se prononcent, comportant des voyelles ou diacritiques particuliers."
+			},
+			"8": {
+				"title": "Idghaam kaamil (sans Ghunnah) - (الإدغام الكامل (بلاغنّه))",
+				"description": "Lettres totalement muettes et sans Ghunnah (nasalisation). Certaines lettres ne comportent aucune nasalisation. S'applique au Noon Sakinah ou au Tanween. C'est aussi appelé la règle d'Idgham sans Ghunnah."
+			},
+			"9": {
+				"title": "Idghaam Mutajaanis - (والإدغام المتجانس)",
+				"description": "L'Idghaam homogène. Le Mutajaanis est lorsque deux lettres se fusionnent bien qu'elles aient des points d'articulation différents, sans proximité directe. Exemples : Taa & Daal, Taa & Taa emphatique."
+			},
+			"10": {
+				"title": "Idghaam Mutaqaarib - (والإدغام المتقارب)",
+				"description": "L'Idghaam convergent. Mutaqaarib est lorsque deux lettres se rapprochent en articulation bien qu'elles aient des caractéristiques différentes. Exemples : Laam & Raa, Qaaf & Khaaf."
+			},
+			"11": {
+				"title": "Indique un allongement obligatoire (Madd)",
+				"description": "Lorsque vous voyez des lettres rouges, cela indique qu'il faut prolonger la voyelle. Il existe trois variations de cet allongement."
+			},
+			"12": {
+				"title": "Madd Lazim (6 Harakah) (Mots lourds)",
+				"description": "Allongement obligatoire (six voyelles), soit environ une demi-seconde, comme dans « الْحَآجّ » (al-haajj)."
+			},
+			"13": {
+				"title": "Madd Lazim (Mots lourds) – (المدّ اللازم (الكلمي المثقل))",
+				"description": "Allongement obligatoire (six voyelles) lorsque la lettre suivante porte un Tashdid."
+			},
+			"14": {
+				"title": "Madd Lazim (Littéral) – (المدّ اللازم (الحرفي))",
+				"description": "Allongement obligatoire (six voyelles) pour les lettres isolées, comme dans « الم » (Alif Laam Meem)."
+			},
+			"15": {
+				"title": "Madd Farq (Fusionné) – (المدّ اللازم (الحرفي))",
+				"description": "Allongement obligatoire (six voyelles) lorsque le Hamza au début du mot provoque un effet d'allongement continu, souvent imperceptible."
+			},
+			"16": {
+				"title": "Madd Wajib (4-5 Harakah)",
+				"description": "Allongement obligatoire (quatre ou cinq voyelles), comme dans « أَوْلِيَآء » (awliyaa)."
+			},
+			"17": {
+				"title": "Madd Wajib (Muttasil) – (المدّ الواجب (المتصل))",
+				"description": "Allongement obligatoire (quatre ou cinq voyelles) à l'intérieur d'un mot."
+			},
+			"18": {
+				"title": "Madd Wajib (Munfasil) – (المدّ الواجب (المنفصل))",
+				"description": "Allongement obligatoire (quatre ou cinq voyelles) à la fin d'un mot."
+			},
+			"19": {
+				"title": "Madd (Silah Kubra) – المدّ (الصلة الكبرى)",
+				"description": "Allongement obligatoire (quatre ou cinq voyelles) lorsqu'on relie le mot suivant."
+			},
+			"20": {
+				"title": "Madd 'Arid Lis-sukoon (2-4 ou 6 Harakah)",
+				"description": "Allongement permis (deux, quatre ou six voyelles)."
+			},
+			"21": {
+				"title": "Madd 'Arid Lis-sukoon – (المدّ العارض للسكون)",
+				"description": "Prolongement de la fin du mot avant de s'arrêter, soit à la fin de l'Ayah ou à un signe de pause (Waqf). (2, 4 ou 6 voyelles)."
+			},
+			"22": {
+				"title": "Madd Linn – (مدّ اللين)",
+				"description": "Allongement doux de la fin du mot avant un arrêt, à la fin de l'Ayah ou à un signe de pause avec Sukoon. (2, 4 ou 6 voyelles)."
+			},
+			"23": {
+				"title": "Madd (2 Harakah)",
+				"description": "Allongement normal (deux voyelles)."
+			},
+			"24": {
+				"title": "Alif Khanjariyyah – (الألف الخنجرية)",
+				"description": "Le Alif en forme de poignard ou Fatha verticale indiquant un allongement général (deux voyelles)."
+			},
+			"25": {
+				"title": "Madd Silah Sughra – (مدّ الصِّلَة الصغرى)",
+				"description": "Prolonger la connexion mineure avec un allongement normal (deux voyelles)."
+			},
+			"26": {
+				"title": "Ghunnah",
+				"description": "Indique la nasalisation. Le son sort du nez et dure environ deux voyelles."
+			},
+			"27": {
+				"title": "Ghunnah Ikhfa'a (cacher) – (غنّة الإخفاء)",
+				"description": "Nasalisation accompagnée de silence. Elle se produit sur le Noon Sakinah ou le Tanween sans Shaddah. Elle se situe entre l'Izhar et l'Idghaam."
+			},
+			"28": {
+				"title": "Ghunnah Ikhfa'a Shafawy (cacher) – (إخفاء شفوي)",
+				"description": "Nasalisation avec silence verbal (étirement du son de la dernière lettre). Si un [ب] suit un Meem Sakinah, on applique une Ghunnah tout en dissimulant le Meem avant de continuer vers le [ب]."
+			},
+			"29": {
+				"title": "Ghunnah Noon Tashdid – (النون المشددة - (غنة مع الشدة))",
+				"description": "Nasalisation sur la lettre Noon portant un Tashdid."
+			},
+			"30": {
+				"title": "Ghunnah Meem Tashdid – (الميم المشددة - (غنة مع الشدة))",
+				"description": "Nasalisation sur la lettre Meem portant un Tashdid."
+			},
+			"31": {
+				"title": "Iqlab (convertir) – (الإقلاب)",
+				"description": "Ghunnah (nasalisation) sur un petit Meem. Elle transforme le Sakinah ou le Tanween en Meem à cause de la nasalisation, suivie d'un Baa. Le Meem se prononce en fermant les lèvres et en maintenant le son pendant la durée de la Ghunnah."
+			},
+			"32": {
+				"title": "Idgham Bi-Ghunnah – (الإدغام بغنّة)",
+				"description": "Ghunnah (nasalisation) après la lettre d'Idghaam muette (grise) du mot précédent."
+			},
+			"33": {
+				"title": "Idgham Mutasil – (الإدغام المتماثل)",
+				"description": "Lettre avec Tashdid lorsque la dernière lettre du mot précédent est identique."
+			},
+			"34": {
+				"title": "Tafkhim (Épaississement) – (التفخيم)",
+				"description": "Utilisé pour les lettres nécessitant une prononciation emphatique. Lorsque les lettres sont en bleu foncé, accentuez leur son. Exemple : « الحرام » (al-haraam)."
+			},
+			"35": {
+				"title": "Qalqalah (Écho) – (القلقلة)",
+				"description": "Indique le son de Qalqalah (réverbération). Lorsqu'on les prononce, ces lettres produisent un léger écho. Exemple : « لقد » (laqad)."
+			},
+			"36": {
+				"title": "Madd I'wadh – (مدّ العِوَض)",
+				"description": "Allongement normal (deux voyelles). Allongement compensatoire, qui se produit uniquement à la fin d'un mot ayant un Tanween Fatha."
+			},
+			"37": {
+				"title": "At-Tarqiq (Affinement) – (الترقيق)",
+				"description": "Prononciation fine tandis que les voyelles restent noires."
+			},
+			"38": {
+				"title": "Izhar (clarification) – (الإظهار)",
+				"description": "(Le Noon et le Tanween restent noirs.) Cette règle consiste à prononcer clairement le Sakinah ou le Tanween sans ajouter de Ghunnah supplémentaire. On prononce avec une courte nasalisation normale."
+			},
+			"39": {
+				"title": "Signe de Waqf avec contour",
+				"description": "Indique la fin d'un mot ou d'une diacritique à ignorer ou à ne pas prononcer lorsqu'on s'arrête à un signe de Waqf (pour faciliter la compréhension du sens)."
+			},
+			"40": {
+				"title": "Icône d'Ayah normale avec numéro",
+				"description": "Indique la fin d'une Ayah. (ex : 1:1)"
+			},
+			"41": {
+				"title": "Icône d'Ayah spéciale avec numéro",
+				"description": "Indique la continuation recommandée sans pause (ex : 110:1) ainsi que la continuité du sens avec l'Ayah précédente."
+			}
+		}
+	}
+}

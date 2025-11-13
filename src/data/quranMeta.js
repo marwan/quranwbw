@@ -1,121 +1,175 @@
 /* eslint-disable no-irregular-whitespace */
+import { get } from 'svelte/store';
+import { t } from 'svelte-i18n';
+
+// Non-translatable chapter metadata (common across all locales)
 export const quranMetaData = [
 	{ id: 0 },
-	{ id: 1, arabic: 'الفاتحة', translation: 'The Opening', transliteration: 'Al Faatiha', verses: 7, revelation: 1, icon: '04', alternateNames: ['fatihah', 'fatiha'] },
-	{ id: 2, arabic: 'البقرة', translation: 'The Cow', transliteration: 'Al Baqara', verses: 286, revelation: 2, icon: '05', alternateNames: ['baqarah'] },
-	{ id: 3, arabic: 'آل عمران', translation: 'The Family of Imraan', transliteration: 'Aal i Imraan', verses: 200, revelation: 2, icon: '06', alternateNames: ['imran'] },
-	{ id: 4, arabic: 'النساء', translation: 'The Women', transliteration: 'An Nisaa', verses: 176, revelation: 2, icon: '07' },
-	{ id: 5, arabic: 'المائدة', translation: 'The Table', transliteration: 'Al Maaida', verses: 120, revelation: 2, icon: '08' },
-	{ id: 6, arabic: 'الأنعام', translation: 'The Cattle', transliteration: "Al An'aam", verses: 165, revelation: 1, icon: '0B' },
-	{ id: 7, arabic: 'الأعراف', translation: 'The Heights', transliteration: "Al A'raaf", verses: 206, revelation: 1, icon: '0C' },
-	{ id: 8, arabic: 'الأنفال', translation: 'The Spoils of War', transliteration: 'Al Anfaal', verses: 75, revelation: 2, icon: '0D' },
-	{ id: 9, arabic: 'التوبة', translation: 'The Repentance', transliteration: 'At Tawba', verses: 129, revelation: 2, icon: '0E' },
-	{ id: 10, arabic: 'يونس', translation: 'Jonas', transliteration: 'Yunus', verses: 109, revelation: 1, icon: '0F' },
-	{ id: 11, arabic: 'هود', translation: 'Hud', transliteration: 'Hud', verses: 123, revelation: 1, icon: '10' },
-	{ id: 12, arabic: 'يوسف', translation: 'Joseph', transliteration: 'Yusuf', verses: 111, revelation: 1, icon: '11' },
-	{ id: 13, arabic: 'الرعد', translation: 'The Thunder', transliteration: "Ar Ra'd", verses: 43, revelation: 2, icon: '12' },
-	{ id: 14, arabic: 'ابراهيم', translation: 'Abraham', transliteration: 'Ibrahim', verses: 52, revelation: 1, icon: '13' },
-	{ id: 15, arabic: 'الحجر', translation: 'The Rock', transliteration: 'Al Hijr', verses: 99, revelation: 1, icon: '14' },
-	{ id: 16, arabic: 'النحل', translation: 'The Bee', transliteration: 'An Nahl', verses: 128, revelation: 1, icon: '15' },
-	{ id: 17, arabic: 'الإسراء', translation: 'The Night Journey', transliteration: 'Al Israa', verses: 111, revelation: 1, icon: '16' },
-	{ id: 18, arabic: 'الكهف', translation: 'The Cave', transliteration: 'Al Kahf', verses: 110, revelation: 1, icon: '17' },
-	{ id: 19, arabic: 'مريم', translation: 'Mary', transliteration: 'Maryam', verses: 98, revelation: 1, icon: '18' },
-	{ id: 20, arabic: 'طه', translation: 'Taa Haa', transliteration: 'Taa Haa', verses: 135, revelation: 1, icon: '19', alternateNames: ['taha'] },
-	{ id: 21, arabic: 'الأنبياء', translation: 'The Prophets', transliteration: 'Al Anbiyaa', verses: 112, revelation: 1, icon: '1A' },
-	{ id: 22, arabic: 'الحج', translation: 'The Pilgrimage', transliteration: 'Al Hajj', verses: 78, revelation: 2, icon: '1B' },
-	{ id: 23, arabic: 'المؤمنون', translation: 'The Believers', transliteration: 'Al Muminoon', verses: 118, revelation: 1, icon: '1C' },
-	{ id: 24, arabic: 'النور', translation: 'The Light', transliteration: 'An Noor', verses: 64, revelation: 2, icon: '1D' },
-	{ id: 25, arabic: 'الفرقان', translation: 'The Criterion', transliteration: 'Al Furqaan', verses: 77, revelation: 1, icon: '1E' },
-	{ id: 26, arabic: 'الشعراء', translation: 'The Poets', transliteration: "Ash Shu'araa", verses: 227, revelation: 1, icon: '1F' },
-	{ id: 27, arabic: 'النمل', translation: 'The Ant', transliteration: 'An Naml', verses: 93, revelation: 1, icon: '20' },
-	{ id: 28, arabic: 'القصص', translation: 'The Stories', transliteration: 'Al Qasas', verses: 88, revelation: 1, icon: '21' },
-	{ id: 29, arabic: 'العنكبوت', translation: 'The Spider', transliteration: 'Al Ankaboot', verses: 69, revelation: 1, icon: '22' },
-	{ id: 30, arabic: 'الروم', translation: 'The Romans', transliteration: 'Ar Room', verses: 60, revelation: 1, icon: '23' },
-	{ id: 31, arabic: 'لقمان', translation: 'Luqman', transliteration: 'Luqman', verses: 34, revelation: 1, icon: '24' },
-	{ id: 32, arabic: 'السجدة', translation: 'The Prostration', transliteration: 'As Sajda', verses: 30, revelation: 1, icon: '25' },
-	{ id: 33, arabic: 'الأحزاب', translation: 'The Clans', transliteration: 'Al Ahzaab', verses: 73, revelation: 2, icon: '26' },
-	{ id: 34, arabic: 'سبإ', translation: 'Sheba', transliteration: 'Saba', verses: 54, revelation: 1, icon: '2E' },
-	{ id: 35, arabic: 'فاطر', translation: 'The Originator', transliteration: 'Faatir', verses: 45, revelation: 1, icon: '2F' },
-	{ id: 36, arabic: 'يس', translation: 'Yaseen', transliteration: 'Yaseen', verses: 83, revelation: 1, icon: '30', alternateNames: ['yasin'] },
-	{ id: 37, arabic: 'الصافات', translation: 'Those drawn up in Ranks', transliteration: 'As Saaffaat', verses: 182, revelation: 1, icon: '31' },
-	{ id: 38, arabic: 'ص', translation: 'The letter Saad', transliteration: 'Saad', verses: 88, revelation: 1, icon: '09' },
-	{ id: 39, arabic: 'الزمر', translation: 'The Groups', transliteration: 'Az Zumar', verses: 75, revelation: 1, icon: '0A' },
-	{ id: 40, arabic: 'غافر', translation: 'The Forgiver', transliteration: 'Al Ghaafir', verses: 85, revelation: 1, icon: '27' },
-	{ id: 41, arabic: 'فصلت', translation: 'Explained in detail', transliteration: 'Fussilat', verses: 54, revelation: 1, icon: '28' },
-	{ id: 42, arabic: 'الشورى', translation: 'Consultation', transliteration: 'Ash Shura', verses: 53, revelation: 1, icon: '29' },
-	{ id: 43, arabic: 'الزخرف', translation: 'Ornaments of gold', transliteration: 'Az Zukhruf', verses: 89, revelation: 1, icon: '2A' },
-	{ id: 44, arabic: 'الدخان', translation: 'The Smoke', transliteration: 'Ad Dukhaan', verses: 59, revelation: 1, icon: '2B' },
-	{ id: 45, arabic: 'الجاثية', translation: 'Crouching', transliteration: 'Al Jaathiya', verses: 37, revelation: 1, icon: '2C' },
-	{ id: 46, arabic: 'الأحقاف', translation: 'The Dunes', transliteration: 'Al Ahqaf', verses: 35, revelation: 1, icon: '2D' },
-	{ id: 47, arabic: 'محمد', translation: 'Muhammad', transliteration: 'Muhammad', verses: 38, revelation: 2, icon: '32' },
-	{ id: 48, arabic: 'الفتح', translation: 'The Victory', transliteration: 'Al Fath', verses: 29, revelation: 2, icon: '02' },
-	{ id: 49, arabic: 'الحجرات', translation: 'The Inner Apartments', transliteration: 'Al Hujuraat', verses: 18, revelation: 2, icon: '33' },
-	{ id: 50, arabic: 'ق', translation: 'The letter Qaaf', transliteration: 'Qaaf', verses: 45, revelation: 1, icon: '34' },
-	{ id: 51, arabic: 'الذاريات', translation: 'The Winnowing Winds', transliteration: 'Adh Dhaariyat', verses: 60, revelation: 1, icon: '35' },
-	{ id: 52, arabic: 'الطور', translation: 'The Mount', transliteration: 'At Tur', verses: 49, revelation: 1, icon: '36' },
-	{ id: 53, arabic: 'النجم', translation: 'The Star', transliteration: 'An Najm', verses: 62, revelation: 1, icon: '37' },
-	{ id: 54, arabic: 'القمر', translation: 'The Moon', transliteration: 'Al Qamar', verses: 55, revelation: 1, icon: '38' },
-	{ id: 55, arabic: 'الرحمن', translation: 'The Beneficent', transliteration: 'Ar Rahmaan', verses: 78, revelation: 2, icon: '39' },
-	{ id: 56, arabic: 'الواقعة', translation: 'The Inevitable', transliteration: 'Al Waaqia', verses: 96, revelation: 1, icon: '3A' },
-	{ id: 57, arabic: 'الحديد', translation: 'The Iron', transliteration: 'Al Hadid', verses: 29, revelation: 2, icon: '3B' },
-	{ id: 58, arabic: 'المجادلة', translation: 'The Pleading Woman', transliteration: 'Al Mujaadila', verses: 22, revelation: 2, icon: '3C' },
-	{ id: 59, arabic: 'الحشر', translation: 'The Exile', transliteration: 'Al Hashr', verses: 24, revelation: 2, icon: '00' },
-	{ id: 60, arabic: 'الممتحنة', translation: 'She Who Is Examined', transliteration: 'Al Mumtahana', verses: 13, revelation: 2, icon: '01' },
-	{ id: 61, arabic: 'الصف', translation: 'The Ranks', transliteration: 'As Saff', verses: 14, revelation: 2, icon: '41' },
-	{ id: 62, arabic: 'الجمعة', translation: 'Friday', transliteration: "Al Jumu'a", verses: 11, revelation: 2, icon: '42' },
-	{ id: 63, arabic: 'المنافقون', translation: 'The Hypocrites', transliteration: 'Al Munaafiqoon', verses: 11, revelation: 2, icon: '43' },
-	{ id: 64, arabic: 'التغابن', translation: 'Mutual Disillusion', transliteration: 'At Taghaabun', verses: 18, revelation: 2, icon: '44' },
-	{ id: 65, arabic: 'الطلاق', translation: 'Divorce', transliteration: 'At Talaaq', verses: 12, revelation: 2, icon: '45' },
-	{ id: 66, arabic: 'التحريم', translation: 'The Prohibition', transliteration: 'At Tahrim', verses: 12, revelation: 2, icon: '46' },
-	{ id: 67, arabic: 'الملك', translation: 'The Sovereignty', transliteration: 'Al Mulk', verses: 30, revelation: 1, icon: '47' },
-	{ id: 68, arabic: 'القلم', translation: 'The Pen', transliteration: 'Al Qalam', verses: 52, revelation: 1, icon: '48' },
-	{ id: 69, arabic: 'الحاقة', translation: 'The Reality', transliteration: 'Al Haaqqa', verses: 52, revelation: 1, icon: '49' },
-	{ id: 70, arabic: 'المعارج', translation: 'The Ascending Stairways', transliteration: "Al Ma'aarij", verses: 44, revelation: 1, icon: '4A', alternateNames: ['marij', 'maarij'] },
-	{ id: 71, arabic: 'نوح', translation: 'Noah', transliteration: 'Nooh', verses: 28, revelation: 1, icon: '4B', alternateNames: ['nuh'] },
-	{ id: 72, arabic: 'الجن', translation: 'The Jinn', transliteration: 'Al Jinn', verses: 28, revelation: 1, icon: '4C' },
-	{ id: 73, arabic: 'المزمل', translation: 'The Enshrouded One', transliteration: 'Al Muzzammil', verses: 20, revelation: 1, icon: '4D' },
-	{ id: 74, arabic: 'المدثر', translation: 'The Cloaked One', transliteration: 'Al Muddaththir', verses: 56, revelation: 1, icon: '4E' },
-	{ id: 75, arabic: 'القيامة', translation: 'The Resurrection', transliteration: 'Al Qiyaama', verses: 40, revelation: 1, icon: '4F' },
-	{ id: 76, arabic: 'الانسان', translation: 'Man', transliteration: 'Al Insaan', verses: 31, revelation: 2, icon: '50' },
-	{ id: 77, arabic: 'المرسلات', translation: 'The Emissaries', transliteration: 'Al Mursalaat', verses: 50, revelation: 1, icon: '51' },
-	{ id: 78, arabic: 'النبإ', translation: 'The Announcement', transliteration: 'An Naba', verses: 40, revelation: 1, icon: '52' },
-	{ id: 79, arabic: 'النازعات', translation: 'Those who drag forth', transliteration: "An Naazi'aat", verses: 46, revelation: 1, icon: '3D' },
-	{ id: 80, arabic: 'عبس', translation: 'He frowned', transliteration: 'Abasa', verses: 42, revelation: 1, icon: '3E' },
-	{ id: 81, arabic: 'التكوير', translation: 'The Overthrowing', transliteration: 'At Takwir', verses: 29, revelation: 1, icon: '3F' },
-	{ id: 82, arabic: 'الإنفطار', translation: 'The Cleaving', transliteration: 'Al Infitaar', verses: 19, revelation: 1, icon: '40' },
-	{ id: 83, arabic: 'المطففين', translation: 'Defrauding', transliteration: 'Al Mutaffifin', verses: 36, revelation: 1, icon: '53' },
-	{ id: 84, arabic: 'الإنشقاق', translation: 'The Splitting Open', transliteration: 'Al Inshiqaaq', verses: 25, revelation: 1, icon: '54' },
-	{ id: 85, arabic: 'البروج', translation: 'The Constellations', transliteration: 'Al Burooj', verses: 22, revelation: 1, icon: '55' },
-	{ id: 86, arabic: 'الطارق', translation: 'The Morning Star', transliteration: 'At Taariq', verses: 17, revelation: 1, icon: '56' },
-	{ id: 87, arabic: 'الأعلى', translation: 'The Most High', transliteration: "Al A'laa", verses: 19, revelation: 1, icon: '57' },
-	{ id: 88, arabic: 'الغاشية', translation: 'The Overwhelming', transliteration: 'Al Ghaashiya', verses: 26, revelation: 1, icon: '58' },
-	{ id: 89, arabic: 'الفجر', translation: 'The Dawn', transliteration: 'Al Fajr', verses: 30, revelation: 1, icon: '59' },
-	{ id: 90, arabic: 'البلد', translation: 'The City', transliteration: 'Al Balad', verses: 20, revelation: 1, icon: '5A' },
-	{ id: 91, arabic: 'الشمس', translation: 'The Sun', transliteration: 'Ash Shams', verses: 15, revelation: 1, icon: '5B' },
-	{ id: 92, arabic: 'الليل', translation: 'The Night', transliteration: 'Al Lail', verses: 21, revelation: 1, icon: '5C' },
-	{ id: 93, arabic: 'الضحى', translation: 'The Morning Hours', transliteration: 'Ad Dhuhaa', verses: 11, revelation: 1, icon: '5D' },
-	{ id: 94, arabic: 'الشرح', translation: 'The Consolation', transliteration: 'Ash Sharh', verses: 8, revelation: 1, icon: '5E' },
-	{ id: 95, arabic: 'التين', translation: 'The Fig', transliteration: 'At Tin', verses: 8, revelation: 1, icon: '5F' },
-	{ id: 96, arabic: 'العلق', translation: 'The Clot', transliteration: 'Al Alaq', verses: 19, revelation: 1, icon: '60' },
-	{ id: 97, arabic: 'القدر', translation: 'The Power, Fate', transliteration: 'Al Qadr', verses: 5, revelation: 1, icon: '61' },
-	{ id: 98, arabic: 'البينة', translation: 'The Evidence', transliteration: 'Al Bayyina', verses: 8, revelation: 2, icon: '62' },
-	{ id: 99, arabic: 'الزلزلة', translation: 'The Earthquake', transliteration: 'Az Zalzala', verses: 8, revelation: 2, icon: '63' },
-	{ id: 100, arabic: 'العاديات', translation: 'The Chargers', transliteration: 'Al Aadiyaat', verses: 11, revelation: 1, icon: '64' },
-	{ id: 101, arabic: 'القارعة', translation: 'The Calamity', transliteration: "Al Qaari'a", verses: 11, revelation: 1, icon: '65' },
-	{ id: 102, arabic: 'التكاثر', translation: 'Competition', transliteration: 'At Takaathur', verses: 8, revelation: 1, icon: '66' },
-	{ id: 103, arabic: 'العصر', translation: 'The Declining Day', transliteration: 'Al Asr', verses: 3, revelation: 1, icon: '67' },
-	{ id: 104, arabic: 'الهمزة', translation: 'The Traducer', transliteration: 'Al Humaza', verses: 9, revelation: 1, icon: '68' },
-	{ id: 105, arabic: 'الفيل', translation: 'The Elephant', transliteration: 'Al Fil', verses: 5, revelation: 1, icon: '69' },
-	{ id: 106, arabic: 'قريش', translation: 'Quraysh', transliteration: 'Quraish', verses: 4, revelation: 1, icon: '6A' },
-	{ id: 107, arabic: 'الماعون', translation: 'Almsgiving', transliteration: "Al Maa'un", verses: 7, revelation: 1, icon: '6B' },
-	{ id: 108, arabic: 'الكوثر', translation: 'Abundance', transliteration: 'Al Kawthar', verses: 3, revelation: 1, icon: '6C' },
-	{ id: 109, arabic: 'الكافرون', translation: 'The Disbelievers', transliteration: 'Al Kaafiroon', verses: 6, revelation: 1, icon: '6D' },
-	{ id: 110, arabic: 'النصر', translation: 'Divine Support', transliteration: 'An Nasr', verses: 3, revelation: 2, icon: '6E' },
-	{ id: 111, arabic: 'المسد', translation: 'The Palm Fibre', transliteration: 'Al Masad', verses: 5, revelation: 1, icon: '6F' },
-	{ id: 112, arabic: 'الإخلاص', translation: 'Sincerity', transliteration: 'Al Ikhlaas', verses: 4, revelation: 1, icon: '70' },
-	{ id: 113, arabic: 'الفلق', translation: 'The Dawn', transliteration: 'Al Falaq', verses: 5, revelation: 1, icon: '71' },
-	{ id: 114, arabic: 'الناس', translation: 'Mankind', transliteration: 'An Naas', verses: 6, revelation: 1, icon: '72' }
+	{ id: 1, arabic: 'الفاتحة', verses: 7, revelation: 1, icon: '04', alternateNames: ['fatihah', 'fatiha'] },
+	{ id: 2, arabic: 'البقرة', verses: 286, revelation: 2, icon: '05', alternateNames: ['baqarah'] },
+	{ id: 3, arabic: 'آل عمران', verses: 200, revelation: 2, icon: '06', alternateNames: ['imran'] },
+	{ id: 4, arabic: 'النساء', verses: 176, revelation: 2, icon: '07' },
+	{ id: 5, arabic: 'المائدة', verses: 120, revelation: 2, icon: '08' },
+	{ id: 6, arabic: 'الأنعام', verses: 165, revelation: 1, icon: '0B' },
+	{ id: 7, arabic: 'الأعراف', verses: 206, revelation: 1, icon: '0C' },
+	{ id: 8, arabic: 'الأنفال', verses: 75, revelation: 2, icon: '0D' },
+	{ id: 9, arabic: 'التوبة', verses: 129, revelation: 2, icon: '0E' },
+	{ id: 10, arabic: 'يونس', verses: 109, revelation: 1, icon: '0F' },
+	{ id: 11, arabic: 'هود', verses: 123, revelation: 1, icon: '10' },
+	{ id: 12, arabic: 'يوسف', verses: 111, revelation: 1, icon: '11' },
+	{ id: 13, arabic: 'الرعد', verses: 43, revelation: 2, icon: '12' },
+	{ id: 14, arabic: 'ابراهيم', verses: 52, revelation: 1, icon: '13' },
+	{ id: 15, arabic: 'الحجر', verses: 99, revelation: 1, icon: '14' },
+	{ id: 16, arabic: 'النحل', verses: 128, revelation: 1, icon: '15' },
+	{ id: 17, arabic: 'الإسراء', verses: 111, revelation: 1, icon: '16' },
+	{ id: 18, arabic: 'الكهف', verses: 110, revelation: 1, icon: '17' },
+	{ id: 19, arabic: 'مريم', verses: 98, revelation: 1, icon: '18' },
+	{ id: 20, arabic: 'طه', verses: 135, revelation: 1, icon: '19', alternateNames: ['taha'] },
+	{ id: 21, arabic: 'الأنبياء', verses: 112, revelation: 1, icon: '1A' },
+	{ id: 22, arabic: 'الحج', verses: 78, revelation: 2, icon: '1B' },
+	{ id: 23, arabic: 'المؤمنون', verses: 118, revelation: 1, icon: '1C' },
+	{ id: 24, arabic: 'النور', verses: 64, revelation: 2, icon: '1D' },
+	{ id: 25, arabic: 'الفرقان', verses: 77, revelation: 1, icon: '1E' },
+	{ id: 26, arabic: 'الشعراء', verses: 227, revelation: 1, icon: '1F' },
+	{ id: 27, arabic: 'النمل', verses: 93, revelation: 1, icon: '20' },
+	{ id: 28, arabic: 'القصص', verses: 88, revelation: 1, icon: '21' },
+	{ id: 29, arabic: 'العنكبوت', verses: 69, revelation: 1, icon: '22' },
+	{ id: 30, arabic: 'الروم', verses: 60, revelation: 1, icon: '23' },
+	{ id: 31, arabic: 'لقمان', verses: 34, revelation: 1, icon: '24' },
+	{ id: 32, arabic: 'السجدة', verses: 30, revelation: 1, icon: '25' },
+	{ id: 33, arabic: 'الأحزاب', verses: 73, revelation: 2, icon: '26' },
+	{ id: 34, arabic: 'سبإ', verses: 54, revelation: 1, icon: '2E' },
+	{ id: 35, arabic: 'فاطر', verses: 45, revelation: 1, icon: '2F' },
+	{ id: 36, arabic: 'يس', verses: 83, revelation: 1, icon: '30', alternateNames: ['yasin'] },
+	{ id: 37, arabic: 'الصافات', verses: 182, revelation: 1, icon: '31' },
+	{ id: 38, arabic: 'ص', verses: 88, revelation: 1, icon: '09' },
+	{ id: 39, arabic: 'الزمر', verses: 75, revelation: 1, icon: '0A' },
+	{ id: 40, arabic: 'غافر', verses: 85, revelation: 1, icon: '27' },
+	{ id: 41, arabic: 'فصلت', verses: 54, revelation: 1, icon: '28' },
+	{ id: 42, arabic: 'الشورى', verses: 53, revelation: 1, icon: '29' },
+	{ id: 43, arabic: 'الزخرف', verses: 89, revelation: 1, icon: '2A' },
+	{ id: 44, arabic: 'الدخان', verses: 59, revelation: 1, icon: '2B' },
+	{ id: 45, arabic: 'الجاثية', verses: 37, revelation: 1, icon: '2C' },
+	{ id: 46, arabic: 'الأحقاف', verses: 35, revelation: 1, icon: '2D' },
+	{ id: 47, arabic: 'محمد', verses: 38, revelation: 2, icon: '32' },
+	{ id: 48, arabic: 'الفتح', verses: 29, revelation: 2, icon: '02' },
+	{ id: 49, arabic: 'الحجرات', verses: 18, revelation: 2, icon: '33' },
+	{ id: 50, arabic: 'ق', verses: 45, revelation: 1, icon: '34' },
+	{ id: 51, arabic: 'الذاريات', verses: 60, revelation: 1, icon: '35' },
+	{ id: 52, arabic: 'الطور', verses: 49, revelation: 1, icon: '36' },
+	{ id: 53, arabic: 'النجم', verses: 62, revelation: 1, icon: '37' },
+	{ id: 54, arabic: 'القمر', verses: 55, revelation: 1, icon: '38' },
+	{ id: 55, arabic: 'الرحمن', verses: 78, revelation: 2, icon: '39' },
+	{ id: 56, arabic: 'الواقعة', verses: 96, revelation: 1, icon: '3A' },
+	{ id: 57, arabic: 'الحديد', verses: 29, revelation: 2, icon: '3B' },
+	{ id: 58, arabic: 'المجادلة', verses: 22, revelation: 2, icon: '3C' },
+	{ id: 59, arabic: 'الحشر', verses: 24, revelation: 2, icon: '00' },
+	{ id: 60, arabic: 'الممتحنة', verses: 13, revelation: 2, icon: '01' },
+	{ id: 61, arabic: 'الصف', verses: 14, revelation: 2, icon: '41' },
+	{ id: 62, arabic: 'الجمعة', verses: 11, revelation: 2, icon: '42' },
+	{ id: 63, arabic: 'المنافقون', verses: 11, revelation: 2, icon: '43' },
+	{ id: 64, arabic: 'التغابن', verses: 18, revelation: 2, icon: '44' },
+	{ id: 65, arabic: 'الطلاق', verses: 12, revelation: 2, icon: '45' },
+	{ id: 66, arabic: 'التحريم', verses: 12, revelation: 2, icon: '46' },
+	{ id: 67, arabic: 'الملك', verses: 30, revelation: 1, icon: '47' },
+	{ id: 68, arabic: 'القلم', verses: 52, revelation: 1, icon: '48' },
+	{ id: 69, arabic: 'الحاقة', verses: 52, revelation: 1, icon: '49' },
+	{ id: 70, arabic: 'المعارج', verses: 44, revelation: 1, icon: '4A', alternateNames: ['marij', 'maarij'] },
+	{ id: 71, arabic: 'نوح', verses: 28, revelation: 1, icon: '4B', alternateNames: ['nuh'] },
+	{ id: 72, arabic: 'الجن', verses: 28, revelation: 1, icon: '4C' },
+	{ id: 73, arabic: 'المزمل', verses: 20, revelation: 1, icon: '4D' },
+	{ id: 74, arabic: 'المدثر', verses: 56, revelation: 1, icon: '4E' },
+	{ id: 75, arabic: 'القيامة', verses: 40, revelation: 1, icon: '4F' },
+	{ id: 76, arabic: 'الانسان', verses: 31, revelation: 2, icon: '50' },
+	{ id: 77, arabic: 'المرسلات', verses: 50, revelation: 1, icon: '51' },
+	{ id: 78, arabic: 'النبإ', verses: 40, revelation: 1, icon: '52' },
+	{ id: 79, arabic: 'النازعات', verses: 46, revelation: 1, icon: '3D' },
+	{ id: 80, arabic: 'عبس', verses: 42, revelation: 1, icon: '3E' },
+	{ id: 81, arabic: 'التكوير', verses: 29, revelation: 1, icon: '3F' },
+	{ id: 82, arabic: 'الإنفطار', verses: 19, revelation: 1, icon: '40' },
+	{ id: 83, arabic: 'المطففين', verses: 36, revelation: 1, icon: '53' },
+	{ id: 84, arabic: 'الإنشقاق', verses: 25, revelation: 1, icon: '54' },
+	{ id: 85, arabic: 'البروج', verses: 22, revelation: 1, icon: '55' },
+	{ id: 86, arabic: 'الطارق', verses: 17, revelation: 1, icon: '56' },
+	{ id: 87, arabic: 'الأعلى', verses: 19, revelation: 1, icon: '57' },
+	{ id: 88, arabic: 'الغاشية', verses: 26, revelation: 1, icon: '58' },
+	{ id: 89, arabic: 'الفجر', verses: 30, revelation: 1, icon: '59' },
+	{ id: 90, arabic: 'البلد', verses: 20, revelation: 1, icon: '5A' },
+	{ id: 91, arabic: 'الشمس', verses: 15, revelation: 1, icon: '5B' },
+	{ id: 92, arabic: 'الليل', verses: 21, revelation: 1, icon: '5C' },
+	{ id: 93, arabic: 'الضحى', verses: 11, revelation: 1, icon: '5D' },
+	{ id: 94, arabic: 'الشرح', verses: 8, revelation: 1, icon: '5E' },
+	{ id: 95, arabic: 'التين', verses: 8, revelation: 1, icon: '5F' },
+	{ id: 96, arabic: 'العلق', verses: 19, revelation: 1, icon: '60' },
+	{ id: 97, arabic: 'القدر', verses: 5, revelation: 1, icon: '61' },
+	{ id: 98, arabic: 'البينة', verses: 8, revelation: 2, icon: '62' },
+	{ id: 99, arabic: 'الزلزلة', verses: 8, revelation: 2, icon: '63' },
+	{ id: 100, arabic: 'العاديات', verses: 11, revelation: 1, icon: '64' },
+	{ id: 101, arabic: 'القارعة', verses: 11, revelation: 1, icon: '65' },
+	{ id: 102, arabic: 'التكاثر', verses: 8, revelation: 1, icon: '66' },
+	{ id: 103, arabic: 'العصر', verses: 3, revelation: 1, icon: '67' },
+	{ id: 104, arabic: 'الهمزة', verses: 9, revelation: 1, icon: '68' },
+	{ id: 105, arabic: 'الفيل', verses: 5, revelation: 1, icon: '69' },
+	{ id: 106, arabic: 'قريش', verses: 4, revelation: 1, icon: '6A' },
+	{ id: 107, arabic: 'الماعون', verses: 7, revelation: 1, icon: '6B' },
+	{ id: 108, arabic: 'الكوثر', verses: 3, revelation: 1, icon: '6C' },
+	{ id: 109, arabic: 'الكافرون', verses: 6, revelation: 1, icon: '6D' },
+	{ id: 110, arabic: 'النصر', verses: 3, revelation: 2, icon: '6E' },
+	{ id: 111, arabic: 'المسد', verses: 5, revelation: 1, icon: '6F' },
+	{ id: 112, arabic: 'الإخلاص', verses: 4, revelation: 1, icon: '70' },
+	{ id: 113, arabic: 'الفلق', verses: 5, revelation: 1, icon: '71' },
+	{ id: 114, arabic: 'الناس', verses: 6, revelation: 1, icon: '72' }
 ];
+
+/**
+ * Get chapter metadata with translations from i18n
+ * @param {number} chapterId - Chapter ID (1-114)
+ * @returns {Object} Chapter metadata with translation and transliteration
+ */
+export function getChapterData(chapterId) {
+	const baseData = quranMetaData[chapterId];
+	if (!baseData || chapterId === 0) return baseData;
+
+	const translation = get(t)(`chapters.${chapterId}.translation`);
+	const transliteration = get(t)(`chapters.${chapterId}.transliteration`);
+
+	return {
+		...baseData,
+		translation,
+		transliteration
+	};
+}
+
+// Non-translatable mostRead metadata (chapter, verse range, url)
+export const mostRead = [
+	{ id: 1, chapter: 2, verses: '255', url: '/2?startVerse=255' },
+	{ id: 2, chapter: 2, verses: '285-286', url: '/2?startVerse=285' },
+	{ id: 3, chapter: 18, verses: '1-10', url: '/18/1-10' },
+	{ id: 4, chapter: 36, verses: '1-83', url: '/36' },
+	{ id: 5, chapter: 55, verses: '1-78', url: '/55' },
+	{ id: 6, chapter: 56, verses: '1-96', url: '/56' },
+	{ id: 7, chapter: 67, verses: '1-30', url: '/67' }
+];
+
+/**
+ * Get mostRead item with translation from i18n
+ * @param {number} itemId - MostRead item ID (1-7)
+ * @returns {Object} MostRead item with title from i18n
+ */
+export function getMostReadData(itemId) {
+	const baseData = mostRead.find(item => item.id === itemId);
+	if (!baseData) return null;
+
+	const title = get(t)(`mostRead.${itemId - 1}.title`);
+	const verseWord = baseData.verses.includes('-') ? get(t)('common.verses') : get(t)('common.verse');
+	const versesDisplay = `${verseWord} ${baseData.verses}`;
+
+	return {
+		...baseData,
+		title,
+		versesDisplay
+	};
+}
 
 export const supplicationsFromQuran = {
 	// "chapter:verse", startingWord
@@ -1040,16 +1094,6 @@ export const juzMeta = [
 		name: "Amma Yatasa'aloon",
 		icon: ''
 	}
-];
-
-export const mostRead = [
-	{ id: 1, chapter: 2, verses: 'Verse 255', title: "Whoever recites the 'verse of the Throne' after every prescribed prayer, there will be nothing standing between him and entry into Paradise but his death.", url: '/2?startVerse=255' },
-	{ id: 2, chapter: 2, verses: 'Verses 285-286', title: 'If anyone recited two verses from the last of Surah al-Baqarah at night, they will be sufficient for him.', url: '/2?startVerse=285' },
-	{ id: 3, chapter: 18, verses: 'Verses 1-10', title: 'Whoever memorizes ten verses from the beginning of Surat al-Kahf will be immune to the False Messiah.', url: '/18/1-10' },
-	{ id: 4, chapter: 36, verses: 'Verses 1-83', title: 'Everything has a heart, and the heart of the Quran is Yaseen; whoever reads it, it is as if he has read the Quran ten times.', url: '/36' },
-	{ id: 5, chapter: 55, verses: 'Verses 1-78', title: 'Everything has an adornment, and the adornment of Quran is Surah Ar Rahman.', url: '/55' },
-	{ id: 6, chapter: 56, verses: 'Verses 1-96', title: 'Whoever recites Surah al-Waqiah every night, he will never be afflicted by poverty.', url: '/56' },
-	{ id: 7, chapter: 67, verses: 'Verses 1-30', title: 'Whoever reads Surah al-Mulk every night, Allah will protect him from the torment of the grave.', url: '/67' }
 ];
 
 export const chapterHeaderCodes = [

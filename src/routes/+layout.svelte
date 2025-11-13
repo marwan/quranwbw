@@ -28,6 +28,7 @@
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	import { initI18n } from '$lib/i18n';
 	import { preserveLangParam } from '$utils/preserveLangParam';
+	import { isLoading } from 'svelte-i18n';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
@@ -39,7 +40,9 @@
 	let paddingBottom = 0;
 	let paddingX = 0;
 
+	// Initialize i18n asynchronously (top-level, no await)
 	initI18n();
+	
 	preserveLangParam();
 	setDefaultPaddings();
 
@@ -201,18 +204,19 @@
 	// checkAndRegisterServiceWorker();
 </script>
 
-<div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
-	<QuranNavigationModal />
-	<AudioModal />
-	<TajweedRulesModal />
-	<NotesModal />
-	<TafsirModal />
-	<SiteNavigationModal />
-	<SettingsSelectorModal />
-	<VerseTranslationModal />
-	<MorphologyModal />
-	<CopyShareVerseModal />
-	<ConfirmationAlertModal />
+{#if !$isLoading}
+	<div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
+		<QuranNavigationModal />
+		<AudioModal />
+		<TajweedRulesModal />
+		<NotesModal />
+		<TafsirModal />
+		<SiteNavigationModal />
+		<SettingsSelectorModal />
+		<VerseTranslationModal />
+		<MorphologyModal />
+		<CopyShareVerseModal />
+		<ConfirmationAlertModal />
 
 	{#key $page.url.pathname}
 		<div in:fade={{ duration: 300 }}>
@@ -222,4 +226,5 @@
 			<slot />
 		</div>
 	{/key}
-</div>
+	</div>
+{/if}

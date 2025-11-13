@@ -2,12 +2,13 @@
 	import Menu from '$svgs/Menu.svelte';
 	import Home from '$svgs/Home.svelte';
 	import ChevronDown from '$svgs/ChevronDown.svelte';
-	import { quranMetaData } from '$data/quranMeta';
+	import { quranMetaData, getChapterData } from '$data/quranMeta';
 	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	import Mecca from '$svgs/Mecca.svelte';
 	import Madinah from '$svgs/Madinah.svelte';
+	import { t } from 'svelte-i18n';
 
 	let lastReadPage;
 	let lastReadJuz;
@@ -47,11 +48,13 @@
 
 	// Get the chapter name for the navbar
 	$: {
-		navbarChapterName = quranMetaData[$__chapterNumber].transliteration;
+		navbarChapterName = $t(`chapters.${$__chapterNumber}.transliteration`);
 
 		// Only show the translation if it's different from the transliteration
-		if (quranMetaData[$__chapterNumber].transliteration !== quranMetaData[$__chapterNumber].translation) {
-			navbarChapterName += `<span class="hidden md:inline-block">&nbsp;(${quranMetaData[$__chapterNumber].translation})</span>`;
+		const translation = $t(`chapters.${$__chapterNumber}.translation`);
+		const transliteration = $t(`chapters.${$__chapterNumber}.transliteration`);
+		if (transliteration !== translation) {
+			navbarChapterName += `<span class="hidden md:inline-block">&nbsp;(${translation})</span>`;
 		}
 	}
 
@@ -59,9 +62,9 @@
 	$: {
 		try {
 			mushafJuz = `${term('juz')} ${$__mushafPageDivisions.juz}`;
-			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => quranMetaData[value].transliteration);
+			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => $t(`chapters.${value}.transliteration`));
 			mushafChapterInfo = Object.values($__mushafPageDivisions.chapters).map((chapter) => ({
-				name: quranMetaData[chapter].transliteration,
+				name: $t(`chapters.${chapter}.transliteration`),
 				Icon: quranMetaData[chapter].revelation === 1 ? Mecca : Madinah
 			}));
 		} catch (error) {

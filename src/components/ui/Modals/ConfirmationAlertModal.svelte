@@ -4,6 +4,7 @@
 	import { buttonClasses } from '$data/commonClasses';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { resetConfirmationAlertModal } from '$utils/confirmationAlertHandler';
+	import { t } from 'svelte-i18n';
 
 	$: if ($__confirmationAlertModal) {
 		const initiatedByElement = document.getElementById($__confirmationAlertModal.initiatedBy);
@@ -23,7 +24,7 @@
 
 <Modal id="confirmationAlertModal" bind:open={$__confirmationAlertModal.visible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl z-[21]" bodyClass="p-6" position="bottom" center outsideclose>
 	<h3 class="mb-6 text-xl font-medium">
-		{$__confirmationAlertModal.type === 'confirm' ? 'Confirmation' : 'Alert'}
+		{$__confirmationAlertModal.type === 'confirm' ? $t('common.confirmation') : $t('common.alert')}
 	</h3>
 
 	<div class="flex flex-col">
@@ -38,11 +39,11 @@
 						$__confirmationAlertModal.visible = false;
 					}}
 				>
-					Confirm
+					{$t('common.confirm')}
 				</button>
 			{/if}
 
-			<button class="w-full {buttonClasses}" on:click={() => ($__confirmationAlertModal.visible = false)}> {$__confirmationAlertModal.type === 'confirm' ? 'Cancel' : 'Got it'} </button>
+			<button class="w-full {buttonClasses}" on:click={() => ($__confirmationAlertModal.visible = false)}> {$__confirmationAlertModal.type === 'confirm' ? $t('common.cancel') : $t('common.gotIt')} </button>
 		</div>
 	</div>
 </Modal>

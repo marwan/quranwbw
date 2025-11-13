@@ -16,6 +16,7 @@
 	import { term } from '$utils/terminologies';
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
+	import { t } from 'svelte-i18n';
 
 	let chapterData;
 
@@ -54,7 +55,7 @@
 	__currentPage.set('chapter');
 </script>
 
-<PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber})`} />
+<PageHead title={`${$t(`chapters.${$__chapterNumber}.transliteration`)} (${$__chapterNumber})`} />
 
 {#await chapterData}
 	<Spinner />

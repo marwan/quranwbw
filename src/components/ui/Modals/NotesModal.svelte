@@ -8,6 +8,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { t } from 'svelte-i18n';
 
 	let verseNote,
 		noteModifiedAt,
@@ -72,7 +73,7 @@
 </script>
 
 <Modal id="notesModal" bind:open={$__notesModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
-	<h3 class="mb-6 text-xl font-medium">{quranMetaData[chapter].transliteration}, {$__verseKey}</h3>
+	<h3 class="mb-6 text-xl font-medium">{$t(`chapters.${chapter}.transliteration`)}, {$__verseKey}</h3>
 	<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')}" placeholder="Write your thoughts here..."></textarea>
 
 	{#if noteModifiedAt !== null}

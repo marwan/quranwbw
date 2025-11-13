@@ -15,6 +15,7 @@
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { updateSettings } from '$utils/updateSettings';
 	import { defaultSettings } from '$src/hooks.client';
+	import { t } from 'svelte-i18n';
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
@@ -151,7 +152,7 @@
 
 <Modal id="audioModal" bind:open={$__audioModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl !theme" bodyClass="p-6" placement="center" position="bottom" outsideclose>
 	<!-- Modal content -->
-	<h3 id="modal-title" class="mb-2 text-xl font-medium">{quranMetaData[$__audioSettings.playingChapter || 1].transliteration}, {$__audioSettings.playingKey}</h3>
+	<h3 id="modal-title" class="mb-2 text-xl font-medium">{$t(`chapters.${$__audioSettings.playingChapter || 1}.transliteration`)}, {$__audioSettings.playingKey}</h3>
 
 	<div class="max-h-[70vh] overflow-y-scroll w-full pr-2">
 		<div class="flex flex-col">

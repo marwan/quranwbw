@@ -1,0 +1,170 @@
+{
+	"tajweed": {
+		"rules": {
+			"1": {
+				"title": "Normal Text",
+				"description": null
+			},
+			"2": {
+				"title": "Alif Hamzat Wasl",
+				"description": "Alif Hamzatul-wasl is represented by small (ص) on top of it and it is read when the verse is started by it. However, if it comes in the middle of verse or word, then it is silent. But, if it comes after a Waqf (Pause) sign and you stop at it, then it is read."
+			},
+			"3": {
+				"title": "Idghaam / Silent (action: to merge)",
+				"description": "Represents letters that are not pronounced. For instance, the silent \"L\" in \"اَلشَّمْس\" (ash-shams) is never pronounced. Similarly, the Noon in \"كَأَن لَّمْ\" (ka'an lamma) is pronounced like \"كَأَلَّمْ\" (ka'allam)."
+			},
+			"4": {
+				"title": "Lam Ash-Shamsiyyah - (اللام الشمسية)",
+				"description": "Silent Laam within a word."
+			},
+			"5": {
+				"title": "Alif Tafriq (Grouped) - (الألف المحذوفة (الخنجرية))",
+				"description": "The silent Alif, usually at the end of the word or sometimes in the middle."
+			},
+			"6": {
+				"title": "Hamzat Al Wasl within words - (همزة الوصل داخل الكلمة)",
+				"description": "Silencing the Alif with a small (ص)  on top of it found within the words."
+			},
+			"7": {
+				"title": "Marsum Khilaf Al Lafz - (المرسوم خلاف اللفظ)",
+				"description": "Words which are drawn not like how they are pronounced having vowel/diacritic."
+			},
+			"8": {
+				"title": "Idghaam kaamil (without Ghunna) - (الإدغام الكامل (بلاغنّه))",
+				"description": "Letters complete silent and without Ghunna (Nazalization). Some letters with no nasalization exist. With Noon Sakinah or Tanween. The Idgham rule of joining words apply to those. It is also called the Idgham Rule without Ghunnah."
+			},
+			"9": {
+				"title": "Idghaam Mutajaanis - (والإدغام المتجانس)",
+				"description": "The homogeneous Idghaam. Mutajaanis is when letters merge two Makhaarij of different characteristics without closeness in proximity. E.g. Taa & Daa, Taa & Toa"
+			},
+			"10": {
+				"title": "Idghaam Mutaqaarib - (والإدغام المتقارب)",
+				"description": "The convergent Idghaam. Mutaqaarib is when letters merge two Makhaarij with different characteristics. E.g. Laam & Raa, Qaaf & Khaaf"
+			},
+			"11": {
+				"title": "Indicates compulsory lengthening (Madd)",
+				"description": "When you encounter red letters, it signifies that you should elongate the pronunciation of the vowel. There are three variations:"
+			},
+			"12": {
+				"title": "Madd Lazim (6 Harakah) (Heavy Words)",
+				"description": "Necessary prolongation (six vowels), which is about half a second, as seen in \"الْحَآجّ\" (al-haajj)."
+			},
+			"13": {
+				"title": "Madd Lazim (Heavy Words) – (المدّ اللازم (الكلمي المثقل))",
+				"description": "Necessary prolongation (six vowels) when the next letter has a Tashdid."
+			},
+			"14": {
+				"title": "Madd Lazim (Literal) – (المدّ اللازم (الحرفي))",
+				"description": "Necessary prolongation (six vowels) for the Separate letter words (e.g. Alif Laam Meem)."
+			},
+			"15": {
+				"title": "Madd Farq (Merged) – (المدّ اللازم (الحرفي))",
+				"description": "Necessary prolongation (six vowels) is in continuation of Hamza at the beginning of the word causing the prolongation effect unnoticeable."
+			},
+			"16": {
+				"title": "Madd Wajib (4-5 Harakah)",
+				"description": "Obligatory prolongation (four or five vowels), such as in words like \"أَوْلِيَآء\" (awliyaa)."
+			},
+			"17": {
+				"title": "Madd Wajib (Muttasil) – (المدّ الواجب (المتصل))",
+				"description": "Obligatory prolongation (four or five vowels) in between the words."
+			},
+			"18": {
+				"title": "Madd Wajib (Munfasil) – (المدّ الواجب (المنفصل))",
+				"description": "Obligatory prolongation (four or five vowels) at the end of the words."
+			},
+			"19": {
+				"title": "Madd (Silah Kubra) – المدّ (الصلة الكبرى)))",
+				"description": "Obligatory prolongation (four or five vowels) while connecting next word ."
+			},
+			"20": {
+				"title": "Madd Arid Lis-sukoon (2-4 or 6 Harakah)",
+				"description": "Permissible prolongation (two, four, or six vowels)."
+			},
+			"21": {
+				"title": "Madd Arid Lis-sukoon – (المدّ العارض للسكون)",
+				"description": "Prolonging the last word's ending before stop either at the end of the Ayah or a Waqf (Pause) Sign. (2-4 or 6 vowels)"
+			},
+			"22": {
+				"title": "Madd Linn – (مدّ اللين)",
+				"description": "Prolonging the last word's ending softly before stop either at the end of the Ayah or a Waqf (Pause) Sign having Sukoon. (2-4 or 6 vowels)"
+			},
+			"23": {
+				"title": "Madd (2 Harakah)",
+				"description": "Normal prolongation (two vowels)."
+			},
+			"24": {
+				"title": "Alif Khanjariyyah – (الألف الخنجرية)",
+				"description": "The dagger Alif or standing Fatha denoting general prolongation. (2 vowels)"
+			},
+			"25": {
+				"title": "Madd Silah Sughra – (مدّ الصِّلَة الصغرى)",
+				"description": "Extend the minor connection with general prolongation. (2 vowels)"
+			},
+			"26": {
+				"title": "Ghunnah",
+				"description": "Denotes nasalization. The sound comes from the nose and continues as long as two vowels."
+			},
+			"27": {
+				"title": "Ghunnah Ikhfa'a (to hide) – (غنّة الإخفاء)",
+				"description": "Nasalization with silence. It pronounces through noon as Sakinah or the tanween that is apart from the Shaddah. Its characterization lies between the Izhar and Idgham."
+			},
+			"28": {
+				"title": "Ghunnah Ikhfa'a Shafawy (to hide) – (إخفاء شفوي)",
+				"description": "Nasalization with Verbal silence (stretching sound of the end letter). If a [ب] is followed after a meem sakinah, then apply a ghunnah while hiding the meem sakin before continuing to the [ب]."
+			},
+			"29": {
+				"title": "Ghunnah Noon Tashdid – (النون المشددة - (غنة مع الشدة))",
+				"description": "Nasalization on Noon with Tashdid."
+			},
+			"30": {
+				"title": "Ghunnah Meem Tashdid – (الميم المشددة - (غنة مع الشدة))",
+				"description": "Nasalization on Meem with Tashdid."
+			},
+			"31": {
+				"title": "Iqlab (to convert) – (الإقلاب)",
+				"description": "Ghunna / Nasalization over small Meem. It changes the shekinah or tanween into the Meem due to Ghunnah on meem. It follows through Baa. Meem recites through closing the lips and holding it for the length of Ghunnah."
+			},
+			"32": {
+				"title": "ldgham Bi-Ghunnah – (الإدغام بغنّة)",
+				"description": "Ghunnah / Nasalization after the idgham (silent - gray) letter in previous word."
+			},
+			"33": {
+				"title": "ldgham Mutasil – (الإدغام المتماثل)",
+				"description": "Letter with Tashdid having previous word's ending letter same as that letter."
+			},
+			"34": {
+				"title": "Tafkhim (Thickening) – (التفخيم)",
+				"description": "Used for letters that require emphatic pronunciation. When you encounter dark blue letters, emphasize their sound. For example, \"الحرام\" (al-haraam)."
+			},
+			"35": {
+				"title": "Qalqalah (Echoing) – (القلقلة)",
+				"description": "Indicates the sound of Qalqalah (a echoing sound). When pronounced, these letters appear to have an echoing quality. For instance, \"لقد\" (laqad)."
+			},
+			"36": {
+				"title": "Madd I'wadh – (مدّ العِوَض)",
+				"description": "Normal prolongation (two vowels). Compensated prolongation, occurs only at the end of a word that has Tanween fatha."
+			},
+			"37": {
+				"title": "At-Tarqiq (Thinning) – (الترقيق)",
+				"description": "Thinning pronunciation while the vowels remain black."
+			},
+			"38": {
+				"title": "Izhar (to make clear) – (الإظهار)",
+				"description": "(Noon and Tanween remain black.) The rule pronounces the Sakinah or Tanween clearly without the addition of extra Ghunnah. We pronounce Sakinah or tanween through normal short Ghunnah."
+			},
+			"39": {
+				"title": "Waqf Mark with Shapes Outline",
+				"description": "Indicating end diacritic to be silenced/ignored when stopping at the Waqf Sign (its purpose is to understand the meaning)."
+			},
+			"40": {
+				"title": "Normal Ayah Icon with number",
+				"description": "Indicating the end of the Ayah. (e.g. 1:1)"
+			},
+			"41": {
+				"title": "Special Ayah Icon with number",
+				"description": "Indicating preferred continuation without stopping (e.g. 110:1) and also continuation of meaning from previous Ayah."
+			}
+		}
+	}
+}

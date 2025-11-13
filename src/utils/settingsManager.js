@@ -1,5 +1,13 @@
 import { defaultSettings } from '$src/hooks.client';
 import { showAlert } from '$utils/confirmationAlertHandler';
+import { get } from 'svelte/store';
+import { t } from 'svelte-i18n';
+
+function getTranslatedMessage(key) {
+	const translate = get(t);
+	const fullKey = `common.${key}`;
+	return translate ? translate(fullKey) : fullKey;
+}
 
 // Helper: deep merge imported settings with defaults and type check
 function mergeWithDefaults(imported, defaults) {
@@ -56,11 +64,11 @@ function normalizeFilename(filename) {
 export function importSettings(file) {
 	// Safeguard: basic checks
 	if (!file || !(file instanceof File)) {
-		showAlert('Invalid file.', 'settings-drawer');
+		showAlert(getTranslatedMessage('invalidFile'), 'settings-drawer');
 		return;
 	}
 	if (!file.name.endsWith('.qwbw') && !file.name.endsWith('.qwbw.txt')) {
-		showAlert('Invalid file type. Please select a QuranWBW settings file.', 'settings-drawer');
+		showAlert(getTranslatedMessage('invalidFileType'), 'settings-drawer');
 		return;
 	}
 
@@ -79,7 +87,7 @@ export function importSettings(file) {
 			// Reload the page to apply settings
 			location.reload();
 		} catch (error) {
-			showAlert('Something went wrong while importing the file.', 'settings-drawer');
+			showAlert(getTranslatedMessage('importError'), 'settings-drawer');
 			console.error(error);
 		}
 	};
@@ -89,7 +97,7 @@ export function importSettings(file) {
 export function exportSettings() {
 	const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
 	if (!settings || Object.keys(settings).length === 0) {
-		showAlert('No settings found.', 'settings-drawer');
+		showAlert(getTranslatedMessage('noSettingsFound'), 'settings-drawer');
 		return;
 	}
 

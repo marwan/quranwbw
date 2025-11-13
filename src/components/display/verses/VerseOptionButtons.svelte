@@ -15,6 +15,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
+	import { t } from 'svelte-i18n';
 
 	const chapter = parseInt(key.split(':')[0], 10);
 	const verse = parseInt(key.split(':')[1], 10);
@@ -75,7 +76,7 @@
 				{#if $__currentPage === 'chapter'}
 					<div class="text-xs">{key}</div>
 				{:else}
-					<div class="text-xs">{quranMetaData[chapter].transliteration}, {key}</div>
+					<div class="text-xs">{$t(`chapters.${chapter}.transliteration`)}, {key}</div>
 				{/if}
 			</a>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{term('verse')} {key}</Tooltip>

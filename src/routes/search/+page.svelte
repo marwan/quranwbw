@@ -9,6 +9,7 @@
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
 	import { fade } from 'svelte/transition';
+	import { t } from 'svelte-i18n';
 
 	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
 
@@ -147,7 +148,7 @@
 	function getNavigationLink(item) {
 		const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 		const linkMap = {
-			quran_chapter: [`${term('chapter')} ${quranMetaData[item.processedId]?.transliteration} (${item.processedId})`, `${baseUrl}/${item.processedId}`],
+			quran_chapter: [`${term('chapter')} ${$t(`chapters.${item.processedId}.transliteration`)} (${item.processedId})`, `${baseUrl}/${item.processedId}`],
 			quran_page: [`Page ${item.processedId}`, `${baseUrl}/page/${item.processedId}`],
 			quran_juz: [`Juz ${item.processedId}`, `${baseUrl}/juz/${item.processedId}`],
 			quran_range: [`${item.processedId}`, `${baseUrl}/${item.processedId}`]

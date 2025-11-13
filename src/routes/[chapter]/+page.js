@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { goto } from '$app/navigation';
 import { isValidVerseKey } from '$utils/validateKey';
-import { quranMetaData } from '$data/quranMeta';
+import { quranMetaData, getChapterData } from '$data/quranMeta';
 
 export async function load({ params }) {
 	// if a colon/dash/period exists and the param is a valid key
@@ -48,7 +48,8 @@ function getIdByKeyword(keyword) {
 
 	for (let item of quranMetaData) {
 		if (item.id > 0) {
-			const transliteration = item.transliteration.replace(/[^a-zA-Z]/g, '').toLowerCase();
+			const chapterData = getChapterData(item.id);
+			const transliteration = chapterData.transliteration.replace(/[^a-zA-Z]/g, '').toLowerCase();
 
 			// Alternate names check
 			if (item.alternateNames !== undefined && item.alternateNames.includes(keyword)) {
@@ -61,12 +62,12 @@ function getIdByKeyword(keyword) {
 			}
 
 			// Other names check
-			if (item.arabic.toLowerCase().includes(keyword) || item.translation.toLowerCase().includes(keyword) || transliteration.includes(keyword)) {
+			if (item.arabic.toLowerCase().includes(keyword) || chapterData.translation.toLowerCase().includes(keyword) || transliteration.includes(keyword)) {
 				return item.id;
 			}
 
 			// Reverse other names check
-			if (keyword.includes(item.arabic.toLowerCase()) || keyword.includes(item.translation.toLowerCase()) || keyword.includes(transliteration)) {
+			if (keyword.includes(item.arabic.toLowerCase()) || keyword.includes(chapterData.translation.toLowerCase()) || keyword.includes(transliteration)) {
 				return item.id;
 			}
 		}

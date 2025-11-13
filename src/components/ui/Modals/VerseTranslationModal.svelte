@@ -4,6 +4,7 @@
 	import ArabicVerseWords from '$display/verses/ArabicVerseWords.svelte';
 	import { __currentPage, __verseTranslationModalVisible, __chapterData, __verseKey } from '$utils/stores';
 	import { quranMetaData } from '$data/quranMeta';
+	import { t } from 'svelte-i18n';
 
 	let chapterData;
 	$: chapter = +$__verseKey.split(':')[0];
@@ -13,7 +14,7 @@
 
 <Modal
 	bind:open={$__verseTranslationModalVisible}
-	title="{quranMetaData[chapter].transliteration}, {chapter}:{verse}"
+	title="{$t(`chapters.${chapter}.transliteration`)}, {chapter}:{verse}"
 	id="verseTranslationModal"
 	class="!rounded-b-none md:!rounded-3xl"
 	bodyClass="p-6 space-y-4 flex-1 overflow-y-auto overscroll-contain !border-t-0"

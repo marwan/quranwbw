@@ -6,7 +6,7 @@ export function loadFont(name, url) {
 			.load()
 			.then(() => {
 				document.fonts.add(myFont);
-				const el = document.createElement('DIV');
+				const el = document.createElement('div');
 				el.style.fontFamily = name;
 				resolve();
 			})

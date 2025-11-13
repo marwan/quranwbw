@@ -1,0 +1,15 @@
+{
+	"common": {
+		"verse": "verse",
+		"verses": "verses",
+		"invalidFile": "Invalid file.",
+		"invalidFileType": "Invalid file type. Please select a QuranWBW settings file.",
+		"importError": "Something went wrong while importing the file.",
+		"noSettingsFound": "No settings found.",
+		"confirmation": "Confirmation",
+		"alert": "Alert",
+		"confirm": "Confirm",
+		"cancel": "Cancel",
+		"gotIt": "Got it"
+	}
+}

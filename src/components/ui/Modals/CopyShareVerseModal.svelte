@@ -8,6 +8,7 @@
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { selectableVerseTranslations } from '$data/options';
+	import { t } from 'svelte-i18n';
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
@@ -105,7 +106,7 @@
 
 		// Add verse key on top
 		if (includeKey) {
-			results += `${quranMetaData[chapter].transliteration}, ${key}\n\n`;
+			results += `${$t(`chapters.${chapter}.transliteration`)}, ${key}\n\n`;
 		}
 
 		// Get Arabic and/or translation text
@@ -157,7 +158,7 @@
 
 <Modal id="copyShareVerseModal" bind:open={$__copyShareVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme" bodyClass="p-6" placement="center" position="bottom" outsideclose>
 	<!-- Modal content -->
-	<h3 id="modal-title" class="mb-2 text-xl font-medium">{quranMetaData[chapter || 1].transliteration}, {$__verseKey}</h3>
+	<h3 id="modal-title" class="mb-2 text-xl font-medium">{$t(`chapters.${chapter || 1}.transliteration`)}, {$__verseKey}</h3>
 
 	<div class="max-h-[70vh] overflow-y-scroll w-full pr-2">
 		<!-- Copy Type -->

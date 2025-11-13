@@ -19,9 +19,10 @@
 	import { websiteTagline } from '$data/websiteSettings';
 	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
-	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
+	import { quranMetaData, juzMeta, mostRead, getChapterData, getMostReadData } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
 	import { staticEndpoint } from '$data/websiteSettings';
+	import { t } from 'svelte-i18n';
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
@@ -201,7 +202,7 @@
 
 								<div class="flex flex-row space-x-2">
 									<a href="{bookmarkChapter}?startVerse={bookmarkVerse}" class="!justify-start {cardInnerClasses} w-full flex-col">
-										<div class="text-sm truncate max-w-[28vw] md:max-w-[115px]">{quranMetaData[bookmarkChapter].transliteration} ({bookmark})</div>
+										<div class="text-sm truncate max-w-[28vw] md:max-w-[115px]">{$t(`chapters.${bookmarkChapter}.transliteration`)} ({bookmark})</div>
 
 										{#if extrasActiveTab === 1 && totalBookmarks > 0}
 											<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70">
@@ -245,7 +246,7 @@
 						<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
 							{#each Object.entries($__userNotes) as [verse, note]}
 								<a href="{verse.split(':')[0]}?startVerse={verse.split(':')[1]}" class="!justify-start {cardInnerClasses} w-full flex-col">
-									<div class="text-sm truncate max-w-[30vw] md:max-w-[115px]">{quranMetaData[verse.split(':')[0]].transliteration} ({verse})</div>
+									<div class="text-sm truncate max-w-[30vw] md:max-w-[115px]">{$t(`chapters.${verse.split(':')[0]}.transliteration`)} ({verse})</div>
 									<span class="text-xs truncate opacity-70">{note.note}</span>
 								</a>
 							{/each}
@@ -259,9 +260,10 @@
 				<div id="suggestions-chapters" class="flex flex-col space-y-4">
 					<div class="{cardGridClasses} grid-cols-1">
 						{#each Object.entries(mostRead) as [_, item]}
+							{@const mostReadData = getMostReadData(item.id)}
 							<a href={item.url} class="!justify-start {cardInnerClasses} flex-col">
-								<span class="text-sm">{quranMetaData[item.chapter].transliteration} ({item.verses})</span>
-								<div class="block text-xs opacity-70">{item.title}</div>
+								<span class="text-sm">{$t(`chapters.${item.chapter}.transliteration`)} ({item.verses})</span>
+								<div class="block text-xs opacity-70">{mostReadData.title}</div>
 							</a>
 						{/each}
 					</div>
@@ -303,7 +305,7 @@
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span class="truncate">
 								Continue Reading:
-								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
+								{$t(`chapters.${lastReadChapter}.transliteration`)}, {lastReadChapter}:{lastReadVerse}
 							</span>
 						</a>
 					{/if}
@@ -322,20 +324,18 @@
 												</svg>
 											</div>
 
-											<div class="text-left">
-												<!-- chapter name and icon -->
-												<div class="flex flex-row items-center space-x-1 justify-start truncate">
-													<div>{quranMetaData[id].transliteration}</div>
-													<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
-													<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
-												</div>
+										<div class="text-left">
+											<!-- chapter name and icon -->
+											<div class="flex flex-row items-center space-x-1 justify-start truncate">
+												<div>{$t(`chapters.${id}.transliteration`)}</div>
+												<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
+												<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
+											</div>
 
-												<!-- chapter translation -->
-												<div class="block text-xs truncate opacity-70">
-													{quranMetaData[id].translation}
-												</div>
-
-												<!-- chapter verses -->
+											<!-- chapter translation -->
+											<div class="block text-xs truncate opacity-70">
+												{$t(`chapters.${id}.translation`)}
+											</div>												<!-- chapter verses -->
 												<div class="block text-xs opacity-70">
 													{quranMetaData[id].verses}
 													{term('verses')}

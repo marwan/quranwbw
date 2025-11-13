@@ -1,0 +1,15 @@
+{
+	"common": {
+		"verse": "verset",
+		"verses": "versets",
+		"invalidFile": "Fichier invalide.",
+		"invalidFileType": "Type de fichier invalide. Veuillez sélectionner un fichier de paramètres QuranWBW.",
+		"importError": "Une erreur s'est produite lors de l'importation du fichier.",
+		"noSettingsFound": "Aucun paramètre trouvé.",
+		"confirmation": "Confirmation",
+		"alert": "Alerte",
+		"confirm": "Confirmer",
+		"cancel": "Annuler",
+		"gotIt": "Compris"
+	}
+}
