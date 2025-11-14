@@ -1,63 +1,62 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import party from 'party-js';
-	import Check from '$svgs/Check.svelte';
-	import Cross from '$svgs/Cross.svelte';
-	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
+	import WordDisplay from '$misc/WordDisplay.svelte';
+	import AnswerOptions from '$misc/AnswerOptions.svelte';
+	import QuizControls from '$misc/QuizControls.svelte';
+	import QuizStats from '$misc/QuizStats.svelte';
+	import party from 'party-js';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
-	import { buttonClasses, buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
 	import { updateSettings } from '$utils/updateSettings';
-	import { playWordAudio } from '$utils/audioController';
-	import { fetchWordData } from '$utils/fetchData';
-	import { fade } from 'svelte/transition';
+	import { fetchRandomWords, generateNextWordSet } from '$utils/guessTheWordGame';
+	import { fly } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 
-	let randomID = 1;
+	// Quiz state
 	let selection = null;
 	let answerChecked = false;
 	let isAnswerCorrect = null;
-	let randomWord = Math.floor(Math.random() * 3);
+	let autoProgressTimeout = null;
+	
+	// Session tracking
+	let sessionCorrect = 0;
+	let sessionWrong = 0;
+	
+	// Word management
+	let currentWordSet = [];
+	let correctAnswerIndex = 0;
+	let allFetchedWords = [];
+	let currentWordIndex = -1;
+	let previousWordKeys = [];
+	let wordSetKey = 0;
+	let isGeneratingWordSet = false;
+	let needsInitialWordSet = false;
 
-	$: randomWordsData = fetchRandomWords(randomID);
+	// Load initial words
+	let randomWordsData = fetchRandomWords();
 
-	// Fetches all word data and returns 4 random words with their Arabic, transliteration, and translation
-	async function fetchRandomWords() {
-		const { arabicWordData, translationWordData, transliterationWordData } = await fetchWordData(1, 1, 1);
-
-		const allWordEntries = [];
-
-		for (const chapter in arabicWordData) {
-			const verses = arabicWordData[chapter];
-			for (const verse in verses) {
-				const [arabicWords = []] = verses[verse];
-				const translations = translationWordData[chapter]?.[verse]?.[0] || [];
-				const transliterations = transliterationWordData[chapter]?.[verse]?.[0] || [];
-
-				for (let i = 0; i < arabicWords.length; i++) {
-					allWordEntries.push({
-						word_key: `${chapter}:${verse}:${i + 1}`,
-						word_arabic: arabicWords[i],
-						word_transliteration: transliterations[i] || '',
-						word_english: translations[i] || ''
-					});
-				}
-			}
-		}
-
-		// Shuffle and pick 4 random unique words
-		const shuffled = allWordEntries.sort(() => 0.5 - Math.random());
-		const selected = shuffled.slice(0, 4);
-
-		return selected;
+	// Reactive statements
+	$: if (needsInitialWordSet && allFetchedWords.length > 0 && !isGeneratingWordSet) {
+		needsInitialWordSet = false;
+		loadNextWord();
 	}
 
-	// Check if the selected answer is correct
+	$: if (selection !== null && !answerChecked) {
+		checkAnswer();
+	}
+
+	/**
+	 * Check if the selected answer is correct
+	 */
 	function checkAnswer() {
 		answerChecked = true;
-		isAnswerCorrect = selection === randomWord;
+		isAnswerCorrect = selection === correctAnswerIndex;
 
 		if (isAnswerCorrect) {
+			sessionCorrect++;
+			updateSettings({ type: 'quizCorrectAnswers', value: $__quizCorrectAnswers + 1 });
+			
 			// Show confetti for correct answer
 			party.confetti(document.body, {
 				count: 80,
@@ -65,21 +64,46 @@
 				size: 2
 			});
 
-			// Update correct answers count
-			updateSettings({ type: 'quizCorrectAnswers', value: $__quizCorrectAnswers + 1 });
+			// Auto-progress for correct answers
+			clearTimeout(autoProgressTimeout);
+			autoProgressTimeout = setTimeout(() => {
+				loadNextWord();
+			}, 600);
 		} else {
-			// Update wrong answers count
+			sessionWrong++;
 			updateSettings({ type: 'quizWrongAnswers', value: $__quizWrongAnswers + 1 });
 		}
 	}
 
-	// Set new random word and reset selections
-	function setRandomWord() {
-		randomID = Math.floor(Math.random() * 9999999) + 1;
-		randomWord = Math.floor(Math.random() * 3);
+	/**
+	 * Load the next word set
+	 */
+	async function loadNextWord() {
+		if (isGeneratingWordSet) {
+			return;
+		}
+
+		isGeneratingWordSet = true;
+
+		// Reset state
 		selection = null;
-		isAnswerCorrect = null;
 		answerChecked = false;
+		isAnswerCorrect = null;
+		clearTimeout(autoProgressTimeout);
+
+		try {
+			const result = await generateNextWordSet(allFetchedWords, currentWordIndex, previousWordKeys);
+			
+			currentWordSet = result.wordSet;
+			correctAnswerIndex = result.correctAnswerIndex;
+			allFetchedWords = result.allFetchedWords;
+			currentWordIndex = result.currentWordIndex;
+			previousWordKeys = result.previousWordKeys;
+			
+			wordSetKey++; // Trigger transition
+		} finally {
+			isGeneratingWordSet = false;
+		}
 	}
 
 	__currentPage.set('Guess The Word');
@@ -87,69 +111,57 @@
 
 <PageHead title={'Guess The Word'} />
 
-<div class="space-y-12">
+<div class="space-y-6 md:space-y-12 max-w-3xl mx-auto w-full px-3 sm:px-0">
 	{#await randomWordsData}
 		<Spinner />
-	{:then data}
-		<div class="flex flex-col space-y-8 my-6 md:my-8 justify-center" in:fade={{ duration: 300 }}>
-			<!-- word -->
-			<button class="flex flex-col space-y-4 mx-auto items-center" on:click={() => playWordAudio({ key: data[randomWord].word_key })}>
-				<span class="text-5xl md:text-7xl arabic-font-1">{data[randomWord].word_arabic}</span>
-				<span class="text-xs">{data[randomWord].word_transliteration}</span>
-			</button>
+	{:then initialData}
+		{#if allFetchedWords.length === 0}
+			{(() => {
+				allFetchedWords = initialData;
+				needsInitialWordSet = true;
+			})()}
+		{/if}
+		
+		{#if currentWordSet.length > 0}
+			<div class="flex flex-col my-2 md:my-6 lg:my-8 justify-center">
+				<div class="relative overflow-hidden min-h-[28rem] sm:min-h-[30rem] md:min-h-[30rem] py-4">
+					{#key wordSetKey}
+						<div
+							class="absolute inset-0 flex flex-col py-4"
+							in:fly={{ x: 280, duration: 300, easing: quintOut }}
+							out:fly={{ x: -280, duration: 200, easing: quintOut }}
+						>
+							<WordDisplay 
+								word={currentWordSet[correctAnswerIndex]} 
+								wordKey={currentWordSet[correctAnswerIndex].word_key}
+							/>
 
-			<!-- options -->
-			<div id="options" class="pt-8">
-				<p class="mb-5 text-sm">Guess the correct translation:</p>
-				<div class="grid gap-4 md:gap-6 w-full md:grid-cols-2">
-					{#each Object.entries(data) as [key, _]}
-						<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
-							<div class="{individualRadioClasses} {selection === +key ? `${window.theme('border')}` : null}">
-								<div class="flex flex-row mr-auto ml-2">{data[key].word_english}</div>
-
-								<!-- check / cross icon -->
-								{#if answerChecked === true && selection === +key}
-									<div class="justify-end">
-										<svelte:component this={selection === randomWord ? Check : Cross} size={5} />
-									</div>
-								{/if}
-							</div>
-						</Radio>
-					{/each}
+							<AnswerOptions 
+								wordSet={currentWordSet}
+								bind:selection
+								{answerChecked}
+								{isAnswerCorrect}
+								{correctAnswerIndex}
+							/>
+						</div>
+					{/key}
 				</div>
 			</div>
+			
+			<QuizControls 
+				{answerChecked}
+				{isAnswerCorrect}
+				on:next={loadNextWord}
+				on:skip={loadNextWord}
+			/>
 
-			<!-- answer-results -->
-			{#if answerChecked === true && isAnswerCorrect !== null}
-				<div id="answer-results" class="flex justify-center text-center font-medium text-md">
-					<span>
-						{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${data[randomWord].word_english}" 😟`}
-					</span>
-				</div>
-			{/if}
-
-			<!-- buttons -->
-			<div id="buttons" class="flex flex-row space-x-4 justify-center w-full">
-				<!-- confirm-button -->
-				{#if !answerChecked}
-					<div id="confirm-button" class="{selection === null || answerChecked === true ? disabledClasses : null} w-full">
-						<button class="{buttonClasses} w-full" on:click={() => checkAnswer()}>Confirm</button>
-					</div>
-				{/if}
-
-				<!-- skip-word-button -->
-				<div id="skip-word-button" class="w-full">
-					<button class="{buttonOutlineClasses} w-full" on:click={() => setRandomWord()}>{answerChecked ? 'Next' : 'Skip'} {@html '&#x2192;'}</button>
-				</div>
-			</div>
-
-			<!-- correct / wrong answers so far -->
-			<div id="quiz-stats" class="flex flex-row space-x-4 justify-center text-xs">
-				<span>Correct: {$__quizCorrectAnswers}</span>
-				<span>|</span>
-				<span>Wrong: {$__quizWrongAnswers}</span>
-			</div>
-		</div>
+			<QuizStats 
+				{sessionCorrect}
+				{sessionWrong}
+				allTimeCorrect={$__quizCorrectAnswers}
+				allTimeWrong={$__quizWrongAnswers}
+			/>
+		{/if}
 	{:catch error}
 		<ErrorLoadingData {error} />
 	{/await}
