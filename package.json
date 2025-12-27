@@ -7,7 +7,7 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify",
-		"lint:unused": "eslint . --ext .js,.ts,.svelte --max-warnings=0"
+		"lint:unused": "eslint . --ext .js,.svelte --max-warnings=0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
