@@ -6,7 +6,7 @@
 	import Search from '$svgs/Search.svelte';
 	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
-	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey } from '$utils/stores';
+	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { inview } from 'svelte-inview';
 	import { validateKey } from '$utils/validateKey';
 	import { staticEndpoint } from '$data/websiteSettings';
@@ -14,6 +14,7 @@
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 
 	// CSS classes
 	const linkClasses = 'flex flex-row space-x-2 items-center';
@@ -91,7 +92,7 @@
 </script>
 
 <Modal id="quranNavigationModal" bind:open={$__quranNavigationModalVisible} transitionParams={getModalTransition('top')} title="Navigate" size="md" class="!rounded-t-none md:!rounded-3xl" bodyClass="md:p-2 !border-t-0" headerClass="hidden" placement="center" position="top" outsideclose>
-	<div class="flex flex-col space-y-2 justify-between max-w-screen-lg px-4 py-5 mx-auto">
+	<div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-col space-y-2 justify-between px-4 py-5 mx-auto`}>
 		<!-- search block -->
 		<div id="search-block" class="mx-2">
 			<div id="navigation-inputs" class="flex flex-col justify-start">

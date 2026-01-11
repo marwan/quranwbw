@@ -1,8 +1,11 @@
-import { db } from '$utils/db';
+import { cacheTableMap } from '$utils/dexie';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 import { staticEndpoint } from '$data/websiteSettings';
 import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
+
+// Keep track of in-progress fetches globally
+const inFlightRequests = new Map();
 
 // Fetches and combines word-by-word data for a chapter including Arabic, translation, transliteration, and metadata
 export async function fetchChapterData(props) {
@@ -73,10 +76,7 @@ export async function fetchVerseTranslationData(props) {
 
 	for (const id of translations) {
 		const version = selectableVerseTranslations[id].version;
-
-		// Try to load from cache first
-		const cacheKey = `translation_${id}_${version}`;
-		const cached = await useCache(cacheKey, 'translation');
+		const cached = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
 
 		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
 			updatedData[id] = cached;
@@ -96,14 +96,11 @@ export async function fetchVerseTranslationData(props) {
 	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
 		const version = selectableVerseTranslations[id].version;
-		const url = `${staticEndpoint}/translations/data/translation_${id}.json?v=${version}`;
 		try {
-			const res = await fetch(url);
+			const res = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+
 			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
 			const data = await res.json();
-
-			// Save to cache
-			await useCache(`translation_${id}_${version}`, 'translation', data);
 
 			return { id, data };
 		} catch (error) {
@@ -127,64 +124,75 @@ export async function fetchVerseTranslationData(props) {
 	return updatedData;
 }
 
-// Generic fetch and cache utility
+// Generic fetch and cache utility with safe 7-day expiry logic
 export async function fetchAndCacheJson(url, type = 'other') {
-	// Generate a unique key for the data
 	const parsedUrl = new URL(url);
-	const pathParts = parsedUrl.pathname.split('/').filter(Boolean); // removes empty strings
+	const pathParts = parsedUrl.pathname.split('/').filter(Boolean);
 	const lastPart = pathParts[pathParts.length - 1] || '';
-	const secondLastPart = pathParts[pathParts.length - 2] || 'root'; // fallback if not present
+	const secondLastPart = pathParts[pathParts.length - 2] || 'root';
 	const cacheKey = `${secondLastPart}/${lastPart}${parsedUrl.search}`;
+	const maxCacheAge = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-	// Wait for a random delay between 5 to 15 seconds
-	// await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 10001) + 5000));
+	// 1. Try cache first
+	const cachedData = await manageCache(cacheKey, type);
 
-	// Try to load from cache
-	const cachedData = await useCache(cacheKey, type);
 	if (cachedData) {
-		return cachedData;
+		const hasValidTimestamp = typeof cachedData.timestamp === 'number' && !isNaN(cachedData.timestamp);
+		const age = hasValidTimestamp ? Date.now() - cachedData.timestamp : Infinity;
+
+		// If stale → kick off background fetch (deduplicated)
+		if (age > maxCacheAge && !inFlightRequests.has(cacheKey)) {
+			inFlightRequests.set(
+				cacheKey,
+				(async () => {
+					try {
+						const response = await fetch(url);
+						if (!response.ok) throw new Error('CDN response not ok');
+						const freshData = await response.json();
+						await manageCache(cacheKey, type, freshData);
+						console.log(`[cache] background update done for ${cacheKey}`);
+						return freshData;
+					} catch (error) {
+						console.warn(`[cache] background update failed for ${cacheKey}:`, error);
+					} finally {
+						inFlightRequests.delete(cacheKey);
+					}
+				})()
+			);
+		}
+
+		// Always return stale (or fresh) cache immediately
+		return cachedData.data;
 	}
 
-	// Fetch from CDN
-	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error('Failed to fetch data from the CDN');
+	// 2. No cache → see if someone else is already fetching
+	if (inFlightRequests.has(cacheKey)) {
+		return inFlightRequests.get(cacheKey);
 	}
-	const data = await response.json();
 
-	// Save to cache
-	await useCache(cacheKey, type, data);
+	// 3. Otherwise start a new fetch and store the Promise
+	const fetchPromise = (async () => {
+		try {
+			const response = await fetch(url);
+			if (!response.ok) throw new Error('Failed to fetch data from the CDN');
+			const data = await response.json();
+			await manageCache(cacheKey, type, data);
+			return data;
+		} finally {
+			inFlightRequests.delete(cacheKey);
+		}
+	})();
 
-	return data;
+	inFlightRequests.set(cacheKey, fetchPromise);
+
+	return fetchPromise;
 }
 
 // Unified cache utility for IndexedDB with version and freshness control
-async function useCache(key, type, dataToSet = undefined) {
+async function manageCache(key, type, dataToSet = undefined) {
 	try {
-		// Select the appropriate table based on the type
-		let table;
-
-		switch (type) {
-			case 'word':
-				table = db.word_data;
-				break;
-			case 'translation':
-				table = db.translation_data;
-				break;
-			case 'morphology':
-				table = db.morphology_data;
-				break;
-			case 'tafsir':
-				table = db.tafsir_data;
-				break;
-			case 'other':
-				table = db.other_data;
-				break;
-			default:
-				throw new Error(`Invalid table for type: ${type}`);
-		}
-
-		if (!table) throw new Error(`Table not found for type: ${type}`);
+		const table = cacheTableMap[type];
+		if (!table) throw new Error(`Invalid table for type: ${type}`);
 
 		if (dataToSet !== undefined) {
 			// Set data in the cache with current timestamp
@@ -198,7 +206,7 @@ async function useCache(key, type, dataToSet = undefined) {
 			// Attempt to retrieve cached data
 			const record = await table.get(key);
 			if (!record) return null;
-			return record.data;
+			return record;
 		}
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback

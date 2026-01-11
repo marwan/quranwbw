@@ -16,12 +16,16 @@
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
+	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
 
-	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType } from '$utils/stores';
+	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { fade } from 'svelte/transition';
+	import { page } from '$app/stores';
+	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
@@ -75,18 +79,6 @@
 		}
 	})();
 
-	// Update display and font type based on current page
-	$: if ($__currentPage === 'mushaf') {
-		$__displayType = 6;
-		// We do not need Uthmani digital and Indopak fonts in mushaf page
-		if (![2, 3].includes($__fontType)) {
-			__fontType.set(2);
-		}
-	} else {
-		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-		updateSettings({ type: 'displayType', value: userSettings.displaySettings.displayType, skipTrackEvent: true });
-	}
-
 	// If wbw language was set to Russian or Ingush, switch back to English
 	$: if ([9, 10].includes($__wordTranslation)) {
 		updateSettings({ type: 'wordTranslation', value: 1 });
@@ -115,11 +107,43 @@
 		__websiteOnline.set(false);
 	});
 
-	// Restore the user's preferred font when navigating away from the Mushaf page,
-	// since the Mushaf page enforces a specific font (v4).
-	// This ensures the original fontType is re-applied on all other pages.
+	// Mushaf Page Handling
+	$: if ($__currentPage === 'mushaf') {
+		// Mushaf page always uses display type 6
+		$__displayType = 6;
+
+		// Mushaf page only supports font type 2
+		if (![2, 3].includes($__fontType)) {
+			__fontType.set(2);
+		}
+	}
+
+	// Non-Mushaf Page Base Handling
 	$: if ($__currentPage && $__currentPage !== 'mushaf') {
-		$__fontType = JSON.parse($__userSettings).displaySettings.fontType;
+		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
+		const parsedUserSettings = JSON.parse($__userSettings);
+
+		// Only restore user settings if sign language mode is OFF
+		if (!$__signLanguageModeEnabled) {
+			if (userSettings.displaySettings && parsedUserSettings.displaySettings) {
+				$__displayType = userSettings.displaySettings.displayType;
+				$__fontType = parsedUserSettings.displaySettings.fontType;
+				$__wordTranslation = parsedUserSettings.translations?.word;
+				$__wordTransliterationEnabled = parsedUserSettings.displaySettings.wordTransliterationEnabled;
+			}
+		}
+	}
+
+	// Sign Language Mode Handling (Non-Mushaf only)
+	$: if ($__currentPage && $__currentPage !== 'mushaf' && $__signLanguageModeEnabled) {
+		$__wordTranslation = 22;
+		$__fontType = 9;
+		$__wordTransliterationEnabled = false;
+
+		// Restrict to display type 1 or 3
+		if (![1, 3].includes($__displayType)) {
+			$__displayType = 1;
+		}
 	}
 
 	// Function to check old bookmarks for v3 update
@@ -138,26 +162,60 @@
 		}
 	})();
 
+	// Function to track the website Git version in Umami analytics
+	(function trackWebsiteVersion() {
+		try {
+			const currentVersion = __APP_VERSION__.split(' ')[0];
+			const storageKey = 'websiteVersionData';
+
+			// Get existing data or initialize
+			const data = JSON.parse(localStorage.getItem(storageKey)) || {
+				latestVersion: null,
+				sentVersion: null
+			};
+
+			// Always update the latest version
+			data.latestVersion = currentVersion;
+
+			// Check if this version was already sent
+			if (data.sentVersion !== currentVersion) {
+				if (window.umami && typeof window.umami.track === 'function') {
+					window.umami.track('Website Version', { version: currentVersion });
+				}
+				// Mark as sent
+				data.sentVersion = currentVersion;
+			}
+
+			// Save back to localStorage
+			localStorage.setItem(storageKey, JSON.stringify(data));
+		} catch (error) {
+			console.error('Error tracking website version:', error);
+		}
+	})();
+
 	// Service Worker
 	// checkAndRegisterServiceWorker();
 </script>
 
-<div class="max-w-screen-lg mx-auto {paddingTop} {paddingBottom} {paddingX}">
-	<Navbar />
-	<SettingsDrawer />
+<div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
 	<QuranNavigationModal />
 	<AudioModal />
 	<TajweedRulesModal />
 	<NotesModal />
-	<!-- <DownloadModal /> -->
 	<TafsirModal />
 	<SiteNavigationModal />
 	<SettingsSelectorModal />
-	<!-- <LexiconModal /> -->
-	<!-- <ChangelogModal /> -->
 	<VerseTranslationModal />
 	<MorphologyModal />
 	<CopyShareVerseModal />
-	<BottomToolbar />
-	<slot />
+	<ConfirmationAlertModal />
+
+	{#key $page.url.pathname}
+		<div in:fade={{ duration: 300 }}>
+			<Navbar />
+			<SettingsDrawer />
+			<BottomToolbar />
+			<slot />
+		</div>
+	{/key}
 </div>

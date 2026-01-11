@@ -102,7 +102,7 @@
 					{@const translationFootnoteClasses = `hidden my-2 footnote-block px-2 py-2 border-2 ${window.theme('border')} rounded-2xl footnote-${value.meta.chapter}-${value.meta.verse}-${verseTranslationID}`}
 
 					<div class="flex flex-col print:break-inside-avoid">
-						<span class="{isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font}">
+						<span class="{isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font} break-words">
 							{@html verseTextModifier(verseTranslation, verseTranslationID)}
 						</span>
 
@@ -122,7 +122,7 @@
 
 						<!-- show translaton author name only if more than 1 was selected -->
 						{#if $__verseTranslations.length > 1}
-							<span class="opacity-70 {isTranslationRTL(verseTranslationID) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslationID].resource_name}</span>
+							<span class="opacity-70 text-sm {isTranslationRTL(verseTranslationID) && 'direction-rtl'}">&mdash; {selectableVerseTranslations[verseTranslationID].resource_name}</span>
 						{/if}
 					</div>
 				{/if}

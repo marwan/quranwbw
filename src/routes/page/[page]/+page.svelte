@@ -15,13 +15,12 @@
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
+	import { centeredPageLines } from '$data/centeredPageLines';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
+	import { fade } from 'svelte/transition';
 	import '$utils/swiped-events.min.js';
-
-	// Lines to be centered instead of justified
-	const centeredPageLines = ['528:9', '545:6', '594:5', '602:5', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
 	let pageData;
 	let startingLine;
@@ -29,6 +28,7 @@
 	let chapters = [];
 	let verses = [];
 	let lines = [];
+	let pageBlock;
 
 	// Set the page number
 	$: page = +data.page;
@@ -90,11 +90,6 @@
 
 			// Update the last read page
 			updateSettings({ type: 'lastRead', value: verseData[Object.keys(verseData)[0]].meta });
-
-			// Event listeners for swipe gestures
-			const pageBlock = document.getElementById('page-block');
-			pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
-			pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
 
 			return verseData;
 		})();
@@ -170,19 +165,24 @@
 		}
 	}
 
+	// Event listeners for swipe gestures
+	$: if (pageBlock) {
+		pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
+		pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
+	}
+
 	// Only allow continuous normal mode, without saving the setting
 	$__displayType = 4;
 
-	// Set the current page to 'mushaf'
 	__currentPage.set('mushaf');
 </script>
 
 <PageHead title={`Page ${page}`} />
 
-<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden">
-	{#await pageData}
-		<Spinner />
-	{:then}
+{#await pageData}
+	<Spinner />
+{:then}
+	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" in:fade={{ duration: 300 }} bind:this={pageBlock}>
 		<div class="space-y-2 mt-2.5">
 			<!-- single page -->
 			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
@@ -191,11 +191,11 @@
 					{#if chapters.length > 0 && lines.includes(line) && verses[lines.indexOf(line)] === 1}
 						<div class="flex flex-col my-2">
 							<ChapterHeader chapter={chapters[lines.indexOf(line)]} />
-							<Bismillah {chapters} {lines} {line} />
+							<Bismillah {chapters} {lines} {line} {page} />
 						</div>
 					{/if}
 
-					<div class="line {line} flex px-2 arabic-font-{$__fontType} {+page < 3 || centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : null} {+page > 2 && !centeredPageLines.includes(`${+page}:${line}`) ? 'justify-between' : null}">
+					<div class="line {line} flex px-2 arabic-font-{$__fontType} {centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : 'justify-between'}">
 						{#each Object.entries(JSON.parse(localStorage.getItem('pageData'))) as [key, value]}
 							<WordsBlock {key} {value} {line} />
 						{/each}
@@ -212,10 +212,10 @@
 				</div>
 			</div>
 		</div>
-	{:catch error}
-		<ErrorLoadingData {error} />
-	{/await}
-</div>
+	</div>
+{:catch error}
+	<ErrorLoadingData {error} />
+{/await}
 
 <!-- only show the minimize minimal mode button when it is enabled -->
 {#if $__mushafMinimalModeEnabled}

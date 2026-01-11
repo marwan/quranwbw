@@ -17,7 +17,9 @@ export const defaultSettings = {
 			arabicText: window.matchMedia('(min-width: 1280px)').matches || window.matchMedia('(min-width: 1024px)').matches || window.matchMedia('(min-width: 768px)').matches ? 'text-4xl' : 'text-2xl',
 			wordTranslationText: 'text-sm',
 			verseTranslationText: 'text-sm'
-		}
+		},
+		wideWesbiteLayoutEnabled: false,
+		signLanguageModeEnabled: false
 	},
 	translations: {
 		word: 1,

@@ -11,7 +11,7 @@
 	import Eye from '$svgs/Eye.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { playVerseAudio, resetAudioSettings, showAudioModal, playButtonHandler, prepareVersesToPlay } from '$utils/audioController';
-	import { __currentPage, __userSettings, __audioSettings, __verseKey, __userNotes, __notesModalVisible, __playButtonsFunctionality, __displayType } from '$utils/stores';
+	import { __currentPage, __userSettings, __audioSettings, __verseKey, __userNotes, __notesModalVisible, __playButtonsFunctionality, __displayType, __verseWordBlocks } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
@@ -58,7 +58,12 @@
 
 	// Function to toggle words block for display mode #7
 	function wordsBlockToggler(chapter, verse) {
-		document.querySelector(`#verse-${chapter}-${verse}-words`).classList.toggle('hidden');
+		const key = `${chapter}:${verse}`;
+		__verseWordBlocks.update((blocks) => {
+			blocks[key] = !blocks[key];
+			document.querySelector(`#verse-${chapter}-${verse}-words`).classList.toggle('hidden');
+			return blocks;
+		});
 	}
 </script>
 
@@ -66,7 +71,7 @@
 	<div class="flex flex-row w-full space-x-2">
 		<!-- verse key -->
 		<div class="flex flex-row space-x-2">
-			<a href={$__currentPage === 'chapter' ? `#${key}` : `/${chapter}?startVerse=${verse}`} class={verseKeyClasses}>
+			<a href={`/${chapter}?startVerse=${verse}`} class={verseKeyClasses}>
 				{#if $__currentPage === 'chapter'}
 					<div class="text-xs">{key}</div>
 				{:else}

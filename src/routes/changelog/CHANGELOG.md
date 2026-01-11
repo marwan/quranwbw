@@ -1,3 +1,90 @@
+### Nov 10, 2025
+
+- **Improved Homepage Bookmarks & Notes Management:** The homepage bookmarks and notes sections have been redesigned with a new 3-dot menu for easier control. Previously, items could only be deleted using an “X” icon. Now, bookmarks include a “Delete” option, while notes offer both “Edit” and “Delete” — all accessible directly from the homepage.
+
+---
+
+### Oct 31, 2025
+
+- **Enhanced Repeat Options:** You can now repeat verses from **1 to 10 times individually** (1, 2, 3... up to 10), giving you more precise control for memorization. Previously, the minimum step was 5.
+
+---
+
+### Sep 28, 2025
+
+- **Manual Backup & Restore:** You can now **save and download a copy of your website settings** (including bookmarks and notes) and **restore them anytime**. This way, you’ll never have to worry about losing your important data again.
+
+---
+
+### Sep 25, 2025
+
+- **Arabic Sign Language Mode:** We've introduced a brand-new **Arabic Sign Language** mode to make the Quran more accessible.
+- **New Font:** Added the elegant **Isep Misbah Digital** font for an even richer reading experience.
+
+---
+
+### Sep 22, 2025
+
+- **Smooth Transitions:** Navigating the website now feels smoother and more natural, thanks to new **page transitions** added throughout the site.
+
+---
+
+### Sep 21, 2025
+
+- **Font Fixes:** Resolved issues with **Mushaf fonts** in Firefox dark mode and fixed the **cropping problem**, ensuring the text displays perfectly.
+
+---
+
+### Sep 9, 2025
+
+- **Auto-Scroll During Playback:** While listening to recitation, the website now **auto-scrolls** to keep the **highlighted words in view**, making it easier to follow along.
+
+---
+
+### Sep 1, 2025
+
+- **Juz Page Enhancements:** Juz pages now include a **beautiful Surah header** (like in the Mushaf page) and show the **page number** for easier navigation.
+
+---
+
+### Aug 26, 2025
+
+- **Revelation Icons:** We've added **Makki and Madani icons** to the mini navigation bar so you can instantly know where each Surah was revealed.
+
+---
+
+### Aug 25, 2025
+
+- **New Duas Added:** Two more Duas are now available on the Duas page: **Surah 17:80** and **Surah 23:97**.
+
+---
+
+### Aug 6, 2025
+
+- **Extra Wide Layout:** You can now make the website even wider! Perfect for big screens and easier reading.
+
+---
+
+### Jul 28, 2025
+
+- **Faster & More Reliable Quran Loading:** The website is now quicker and more stable because Quran data is loaded directly from our own built-in files instead of relying on external servers. This means fewer delays, fewer errors, and a smoother experience every time you use the site.
+
+---
+
+### Jul 15, 2025
+
+- **Audio Repeat Range Increased:** You can now repeat verses up to 50 times (in steps of 5), great for deep memorization.
+
+---
+
+### Jun 25, 2025
+
+- **Smarter Caching:** We've upgraded how the website stores data using **IndexedDB**, making pages load faster and feel smoother — especially when you return.
+- **Instant Footnotes:** Verse translations now come from **static files with footnotes built in**, so footnotes appear instantly without waiting for extra loading.
+- **New Transliteration Option:** We've added a **normal verse transliteration**, joining Tajweed and Syllables — giving you more ways to follow and recite accurately.
+
+---
+
 ### Mar 15, 2025
 
 - **New Font:** Added **Nastaleeq Hafs Bold**, a bold version of the standard **Nastaleeq Hafs** font for enhanced readability.

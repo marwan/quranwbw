@@ -8,6 +8,7 @@
 	import { __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
+	import { fade } from 'svelte/transition';
 
 	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
 
@@ -117,7 +118,7 @@
 			resultsFound = verseKeys.length > 0 || navigationItems.length > 0;
 
 			// Set verse keys for the Individual component
-			resultKeys = verseKeys.length > 0 ? verseKeys : null;
+			resultKeys = verseKeys.length > 0 ? sortVerseKeys(verseKeys) : null;
 		} else {
 			navigationResults = [];
 			totalResults = 0;
@@ -126,6 +127,20 @@
 		}
 
 		fetchingNewData = false;
+	}
+
+	// Utility function to sort an array of verse keys in ascending chapter and verse order
+	function sortVerseKeys(verseKeys) {
+		return verseKeys.sort((a, b) => {
+			const [chapterA, verseA] = a.split(':').map(Number);
+			const [chapterB, verseB] = b.split(':').map(Number);
+
+			// First compare chapter, then verse
+			if (chapterA === chapterB) {
+				return verseA - verseB;
+			}
+			return chapterA - chapterB;
+		});
 	}
 
 	// Function to generate the correct link based on result type
@@ -192,7 +207,7 @@
 					</div>
 				{/if}
 
-				<div id="individual-verses-block">
+				<div id="individual-verses-block" in:fade={{ duration: 300 }}>
 					{#key resultKeys}
 						{#if resultKeys}
 							<FullVersesDisplay keys={resultKeys.toString()} />

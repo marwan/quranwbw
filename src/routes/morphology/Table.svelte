@@ -3,6 +3,8 @@
 	export let tableType;
 	export let wordData;
 
+	import { selectableWordTranslations } from '$data/options';
+	import { __wordTranslation } from '$utils/stores';
 	import { buttonClasses, linkClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 
@@ -55,7 +57,7 @@
 							<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
 								<td class="px-6 py-4">{i + 1}</td>
 								<td class="px-6 py-4 text-xl md:text-2xl arabic-font-1">{arabic}</td>
-								<td class="px-6 py-4">{translation}</td>
+								<td class={`px-6 py-4 ${selectableWordTranslations[$__wordTranslation].customClasses}`}>{translation}</td>
 								<td class="px-6 py-4">{transliteration}</td>
 								<td class="px-6 py-4">
 									<a class={linkClasses} href="/{chapter}?startVerse={verse}">{chapter}:{verse}</a>

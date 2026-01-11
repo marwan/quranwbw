@@ -29,7 +29,9 @@ import {
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__downloadedDataInfo
+	__downloadedDataInfo,
+	__wideWesbiteLayoutEnabled,
+	__signLanguageModeEnabled
 } from '$utils/stores';
 
 // function to update website settings
@@ -278,6 +280,18 @@ export function updateSettings(props) {
 		case 'downloadedDataInfo':
 			__downloadedDataInfo.set(props.value);
 			userSettings.downloadedDataInfo = props.value;
+			break;
+
+		// for toggling website wide layout
+		case 'wideWesbiteLayoutEnabled':
+			__wideWesbiteLayoutEnabled.set(props.value);
+			userSettings.displaySettings.wideWesbiteLayoutEnabled = props.value;
+			break;
+
+		// for toggling sign language mode
+		case 'signLanguageModeEnabled':
+			__signLanguageModeEnabled.set(props.value);
+			userSettings.displaySettings.signLanguageModeEnabled = props.value;
 			break;
 
 		// for increasing/decreasing font sizes

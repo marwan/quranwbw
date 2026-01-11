@@ -12,8 +12,11 @@
 	import VersePlayButtonSelector from '$ui/SettingsDrawer/VersePlayButtonSelector.svelte';
 	import Drawer from '$ui/FlowbiteSvelte/drawer/Drawer.svelte';
 	import Range from '$ui/FlowbiteSvelte/forms/Range.svelte';
+	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import ResetSettings from '$svgs/ResetSettings.svelte';
+	import Import from '$svgs/Import.svelte';
+	import Export from '$svgs/Export.svelte';
 
 	import {
 		__currentPage,
@@ -34,7 +37,9 @@
 		__englishTerminology,
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
-		__wordMorphologyOnClick
+		__wordMorphologyOnClick,
+		__wideWesbiteLayoutEnabled,
+		__signLanguageModeEnabled
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -47,6 +52,8 @@
 	import { fly } from 'svelte/transition';
 	import { term } from '$utils/terminologies';
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
+	import { importSettings, exportSettings } from '$utils/settingsManager';
+	import { showConfirm } from '$utils/confirmationAlertHandler';
 
 	// Components mapping for individual settings
 	const individualSettingsComponents = {
@@ -108,11 +115,6 @@
 	$: {
 		totalVerseTransliterationsSelected = $__verseTranslations.filter((item) => selectableVerseTransliterations.includes(item)).length;
 	}
-
-	// Basic browser and platform detection
-	const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
-	const isMac = navigator.platform.toUpperCase().includes('MAC');
-	const isIOS = /(iPhone|iPod|iPad)/i.test(navigator.platform);
 
 	// Go back to main settings and restore scroll position
 	function goBackToMainSettings() {
@@ -182,6 +184,22 @@
 		}
 		return null;
 	}
+
+	let fileInput;
+
+	function triggerImport() {
+		fileInput.click();
+	}
+
+	function handleFileChange(event) {
+		const file = event.target.files[0];
+		if (file) {
+			showConfirm('Are you sure you want to import settings? This will overwrite your current preferences.', 'settings-drawer', () => {
+				importSettings(file);
+				event.target.value = ''; // reset so the same file can be chosen again
+			});
+		}
+	}
 </script>
 
 <!-- settings drawer -->
@@ -248,7 +266,7 @@
 					<div class="border-b {window.theme('border')}"></div>
 
 					<!-- word-transliteration-toggle-setting -->
-					<div id="word-transliteration-toggle-setting" class={settingsBlockClasses}>
+					<div id="word-transliteration-toggle-setting" class="{settingsBlockClasses} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Word Transliteration</span>
 							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
@@ -275,6 +293,34 @@
 							<p class={settingsDescriptionClasses}>Enabling this option will prevent your screen from dimming or sleeping. Please note that you will need to manually enable this option for each session.</p>
 						</div>
 					{/if}
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- wide-website-layout-setting -->
+					<div id="wide-website-layout-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Wide Website Layout</span>
+							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWesbiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWesbiteLayoutEnabled', value: event.target.checked })} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width). Best for larger screens.</p>
+					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- arabic-sign-language-setting -->
+					<div id="arabic-sign-language-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Arabic Sign Language</span>
+							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__signLanguageModeEnabled} on:click={(event) => updateSettings({ type: 'signLanguageModeEnabled', value: event.target.checked })} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Enable this to switch the Quran view to Arabic Sign Language mode. The Indonesian Isep Misbah Digital font will be used, and some options will be disabled.</p>
+					</div>
 				</div>
 			</div>
 
@@ -284,19 +330,12 @@
 
 				<div class="flex flex-col flex-wrap text-base">
 					<!-- quran-font-setting -->
-					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity}">
+					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Quran Font</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
-
-						<!-- note for Firefox users on Apple devices -->
-						{#if [2, 3].includes($__fontType)}
-							{#if (isIOS && isFirefox) || (isMac && isFirefox)}
-								<p class={settingsDescriptionClasses}><span class="font-semibold">Important Note: </span>The Mushaf fonts you have selected may not be fully compatible with Firefox on Apple devices. For the best experience, please use Safari or Chrome.</p>
-							{/if}
-						{/if}
 					</div>
 
 					<div class="border-b {window.theme('border')} {settingsDrawerOpacity}"></div>
@@ -316,7 +355,10 @@
 					<!-- word-translation-size-setting . -->
 					<div id="word-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
-							<span class="block">Word Translation/Transliteration Size ({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})</span>
+							<span class="block">
+								{$__signLanguageModeEnabled ? 'Sign Language Icon Size' : 'Word Translation/Transliteration Size'}
+								({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})
+							</span>
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('word-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranlationTransliterationSizeValue} class={rangeClasses} />
 							</div>
@@ -343,7 +385,7 @@
 
 				<div class="flex flex-col flex-wrap text-base">
 					<!-- word-translation-setting -->
-					<div id="word-translation-setting" class={settingsBlockClasses}>
+					<div id="word-translation-setting" class="{settingsBlockClasses} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Word Translation</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('word-translation')}>{selectableWordTranslations[$__wordTranslation].language}</button>
@@ -483,21 +525,40 @@
 
 					<div class="border-b {window.theme('border')}"></div>
 
+					<!-- import-export-settings -->
+					<div id="import-export-settings" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Backup & Restore</span>
+
+							<div class="flex flex-row space-x-2">
+								<button class="text-sm space-x-2 {buttonClasses}" on:click={exportSettings}>
+									<Export />
+									<span>Backup</span>
+								</button>
+								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Backup</Tooltip>
+
+								<button class="text-sm space-x-2 {buttonClasses}" on:click={triggerImport}>
+									<Import />
+									<span>Restore</span>
+								</button>
+								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Restore</Tooltip>
+								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
+							</div>
+						</div>
+						<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>
+					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
 					<!-- reset-setting-button -->
 					<div id="reset-setting-button" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Reset Settings</span>
-							<button
-								on:click={() => {
-									const userResponse = confirm('Are you sure you want to reset settings? This action cannot be reversed.');
-									if (userResponse) {
-										resetSettings();
-									}
-								}}
-								class="text-sm {buttonClasses}"
-							>
+							<button class="text-sm space-x-2 {buttonClasses}" on:click={() => showConfirm('Are you sure you want to reset settings? This action cannot be reversed.', 'settings-drawer', () => resetSettings())}>
 								<ResetSettings />
+								<span>Reset</span>
 							</button>
+							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>
 						<p class={settingsDescriptionClasses}>Reset all website settings to default without affecting your bookmarks or notes.</p>
 					</div>

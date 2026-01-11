@@ -11,6 +11,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { playWordAudio } from '$utils/audioController';
 	import { fetchWordData } from '$utils/fetchData';
+	import { fade } from 'svelte/transition';
 
 	let randomID = 1;
 	let selection = null;
@@ -81,7 +82,6 @@
 		answerChecked = false;
 	}
 
-	// Set the current page
 	__currentPage.set('Guess The Word');
 </script>
 
@@ -91,7 +91,7 @@
 	{#await randomWordsData}
 		<Spinner />
 	{:then data}
-		<div class="flex flex-col space-y-8 my-6 md:my-8 justify-center">
+		<div class="flex flex-col space-y-8 my-6 md:my-8 justify-center" in:fade={{ duration: 300 }}>
 			<!-- word -->
 			<button class="flex flex-col space-y-4 mx-auto items-center" on:click={() => playWordAudio({ key: data[randomWord].word_key })}>
 				<span class="text-5xl md:text-7xl arabic-font-1">{data[randomWord].word_arabic}</span>

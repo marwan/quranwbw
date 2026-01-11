@@ -49,6 +49,7 @@ let __websiteOnline,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
 	__downloadModalVisible,
+	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
@@ -60,7 +61,10 @@ let __websiteOnline,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible;
+	__homepageExtrasPanelVisible,
+	__wideWesbiteLayoutEnabled,
+	__signLanguageModeEnabled,
+	__verseWordBlocks;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -183,6 +187,13 @@ if (browser) {
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
 	__downloadModalVisible = writable(false);
+	__confirmationAlertModal = writable({
+		visible: false,
+		type: null,
+		message: '',
+		initiatedBy: null,
+		onConfirm: null
+	});
 
 	// wake lock settings
 	__wakeLockEnabled = writable(userSettings.displaySettings.wakeLockEnabled);
@@ -223,6 +234,15 @@ if (browser) {
 
 	// visibiliy of the extras panel on homepage (bookmarks, notes, etc...)
 	__homepageExtrasPanelVisible = writable(userSettings.displaySettings.homepageExtrasPanelVisible);
+
+	// to store the website wide layout option
+	__wideWesbiteLayoutEnabled = writable(userSettings.displaySettings.wideWesbiteLayoutEnabled);
+
+	// to store the sign language mode option
+	__signLanguageModeEnabled = writable(userSettings.displaySettings.signLanguageModeEnabled);
+
+	// to store the visibility state of word blocks per verse
+	__verseWordBlocks = writable({});
 }
 
 export {
@@ -274,6 +294,7 @@ export {
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
 	__downloadModalVisible,
+	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
@@ -285,5 +306,8 @@ export {
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible
+	__homepageExtrasPanelVisible,
+	__wideWesbiteLayoutEnabled,
+	__signLanguageModeEnabled,
+	__verseWordBlocks
 };

@@ -48,14 +48,15 @@
 				const fontType = Number(userSettings1?.displaySettings?.fontType ?? '1');
 
 				const fontMap = {
-					1: `${baseFontUrl}/Uthmanic_NeoCOLOR-Regular.woff2`,
-					2: `${baseFontUrl}/Uthmanic_NeoCOLOR-Regular.woff2`,
-					3: `${baseFontUrl}/Uthmanic_NeoCOLOR-Regular.woff2`,
+					1: `${baseFontUrl}/qcf-uthmanic-digital.woff2`,
+					2: `${baseFontUrl}/qcf-uthmanic-digital.woff2`,
+					3: `${baseFontUrl}/qcf-uthmanic-digital.woff2`,
 					4: `${baseFontUrl}/AlQuranNeov5x1.woff2`,
 					5: `${baseFontUrl}/Nastaleeq_COLOR-Regular.woff2`,
 					6: `${baseFontUrl}/AlQuranNeov5x1.woff2`,
-					7: `${baseFontUrl}/Uthmanic_NeoBCOLOR-VF.woff2`,
-					8: `${baseFontUrl}/NastaleeqB_COLOR-Regular.woff2`
+					7: `${baseFontUrl}/qcf-uthmanic-digital-Bold.woff2`,
+					8: `${baseFontUrl}/NastaleeqB_COLOR-Regular.woff2`,
+					9: `${baseFontUrl}/LPMQIsepMisbah-Regular.woff2`
 				};
 
 				const fontUrl = fontMap[fontType];
@@ -63,7 +64,7 @@
 
 				// Preload Bismillah for all types except 4 and 6 (IndoPak)
 				if (![4, 6].includes(fontType)) {
-					preloadFont(`${baseFontUrl}/QCF_Bismillah_COLOR-Regular.woff2`);
+					preloadFont(`${baseFontUrl}/QCF_Bismillah_COLOR-Regular-v2.woff2`);
 				}
 			}
 		</script>
@@ -73,7 +74,7 @@
 		<link crossorigin="anonymous" rel="manifest" href="%sveltekit.assets%/manifest.json?v=2" />
 		<link crossorigin="anonymous" rel="icon" type="image/png" href="%sveltekit.assets%/images/favicon.png?v=2" />
 		<link crossorigin="anonymous" href="%sveltekit.assets%/images/apple-touch-icon.png?v=2" rel="apple-touch-icon" />
-		<link crossorigin="anonymous" rel="stylesheet" href="%sveltekit.assets%/css/global.css?version=63" />
+		<link crossorigin="anonymous" rel="stylesheet" href="%sveltekit.assets%/css/global.css?version=85" />
 
 		<!-- 
 		If the user's browser do not support Optional chaining (?.), redirect to old v3 website
@@ -124,7 +125,7 @@
 							icon: '#b1901f',
 							input: 'focus:border-[#b1901f] focus:ring-[#b1901f]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#b1901f] peer-checked:border-[#b1901f]',
-							toggle: 'bg-[#b1901f]/5 after:bg-[#FFFFFF] after:border-[#FFFFFF] peer-checked:bg-[#b1901f]',
+							toggle: 'bg-[#b1901f]/15 after:bg-[#FFFFFF] after:border-[#FFFFFF] peer-checked:bg-[#b1901f]',
 							slider: 'bg-[#b1901f]/10 [&::-webkit-slider-thumb]:!bg-[#b1901f]',
 							hover: 'hover:bg-[#b1901f]/5',
 							hoverBorder: 'border border-transparent hover:border-[#b1901f]',
@@ -145,7 +146,7 @@
 							icon: '#000000',
 							input: 'focus:border-[#000000] focus:ring-[#000000]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#000000] peer-checked:border-[#000000]',
-							toggle: 'bg-[#000000]/5 after:bg-[#FFFFFF] after:border-[#FFFFFF] peer-checked:bg-[#000000]',
+							toggle: 'bg-[#000000]/15 after:bg-[#FFFFFF] after:border-[#FFFFFF] peer-checked:bg-[#000000]',
 							slider: 'bg-[#000000]/10 [&::-webkit-slider-thumb]:!bg-[#000000]',
 							hover: 'hover:bg-[#000000]/5',
 							hoverBorder: 'border border-transparent hover:border-[#000000]',
@@ -166,7 +167,7 @@
 							icon: '#000000',
 							input: 'focus:border-[#000000] focus:ring-[#000000]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#000000] peer-checked:border-[#000000]',
-							toggle: 'bg-[#000000]/5 after:bg-[#e1e1e1] after:border-[#e1e1e1] peer-checked:bg-[#000000]',
+							toggle: 'bg-[#000000]/15 after:bg-[#e1e1e1] after:border-[#e1e1e1] peer-checked:bg-[#000000]',
 							slider: 'bg-[#000000]/10 [&::-webkit-slider-thumb]:!bg-[#000000]',
 							hover: 'hover:bg-[#000000]/5',
 							hoverBorder: 'border border-transparent hover:border-[#000000]',
@@ -187,7 +188,7 @@
 							icon: '#553c0f',
 							input: 'focus:border-[#553c0f] focus:ring-[#553c0f]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#553c0f] peer-checked:border-[#553c0f]',
-							toggle: 'bg-[#553c0f]/5 after:bg-[#e9e3d7] after:border-[#e9e3d7] peer-checked:bg-[#553c0f]',
+							toggle: 'bg-[#553c0f]/15 after:bg-[#e9e3d7] after:border-[#e9e3d7] peer-checked:bg-[#553c0f]',
 							slider: 'bg-[#553c0f]/10 [&::-webkit-slider-thumb]:!bg-[#553c0f]',
 							hover: 'hover:bg-[#553c0f]/5',
 							hoverBorder: 'border border-transparent hover:border-[#553c0f]',
@@ -208,7 +209,7 @@
 							icon: '#dca54c',
 							input: 'focus:border-[#dca54c] focus:ring-[#dca54c]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#dca54c] peer-checked:border-[#dca54c]',
-							toggle: 'bg-[#dca54c]/5 after:bg-[#20161f] after:border-[#20161f] peer-checked:bg-[#dca54c]',
+							toggle: 'bg-[#dca54c]/15 after:bg-[#20161f] after:border-[#20161f] peer-checked:bg-[#dca54c]',
 							slider: 'bg-[#dca54c]/10 [&::-webkit-slider-thumb]:!bg-[#dca54c]',
 							hover: 'hover:bg-[#dca54c]/5',
 							hoverBorder: 'border border-transparent hover:border-[#dca54c]',
@@ -229,7 +230,7 @@
 							icon: '#c2c2c2',
 							input: 'focus:border-[#c2c2c2] focus:ring-[#c2c2c2]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#c2c2c2] peer-checked:border-[#c2c2c2]',
-							toggle: 'bg-[#c2c2c2]/5 after:bg-[#02021b] after:border-[#02021b] peer-checked:bg-[#c2c2c2]',
+							toggle: 'bg-[#c2c2c2]/15 after:bg-[#02021b] after:border-[#02021b] peer-checked:bg-[#c2c2c2]',
 							slider: 'bg-[#c2c2c2]/10 [&::-webkit-slider-thumb]:!bg-[#c2c2c2]',
 							hover: 'hover:bg-[#c2c2c2]/5',
 							hoverBorder: 'border border-transparent hover:border-[#c2c2c2]',
@@ -250,7 +251,7 @@
 							icon: '#dddddd',
 							input: 'focus:border-[#dddddd] focus:ring-[#dddddd]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#dddddd] peer-checked:border-[#dddddd]',
-							toggle: 'bg-[#dddddd]/5 after:bg-[#001617] after:border-[#001617] peer-checked:bg-[#dddddd]',
+							toggle: 'bg-[#dddddd]/15 after:bg-[#001617] after:border-[#001617] peer-checked:bg-[#dddddd]',
 							slider: 'bg-[#dddddd]/10 [&::-webkit-slider-thumb]:!bg-[#dddddd]',
 							hover: 'hover:bg-[#dddddd]/5',
 							hoverBorder: 'border border-transparent hover:border-[#dddddd]',
@@ -271,7 +272,7 @@
 							icon: '#dddddd',
 							input: 'focus:border-[#dddddd] focus:ring-[#dddddd]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#dddddd] peer-checked:border-[#dddddd]',
-							toggle: 'bg-[#dddddd]/5 after:bg-[#000000] after:border-[#000000] peer-checked:bg-[#dddddd]',
+							toggle: 'bg-[#dddddd]/15 after:bg-[#000000] after:border-[#000000] peer-checked:bg-[#dddddd]',
 							slider: 'bg-[#dddddd]/10 [&::-webkit-slider-thumb]:!bg-[#dddddd]',
 							hover: 'hover:bg-[#dddddd]/5',
 							hoverBorder: 'border border-transparent hover:border-[#dddddd]',
@@ -292,7 +293,7 @@
 							icon: '#dca54c',
 							input: 'focus:border-[#dca54c] focus:ring-[#dca54c]',
 							checked: 'peer-checked:border-2 peer-checked:border-[#dca54c] peer-checked:border-[#dca54c]',
-							toggle: 'bg-[#dca54c]/5 after:bg-[#09090b] after:border-[#09090b] peer-checked:bg-[#dca54c]',
+							toggle: 'bg-[#dca54c]/15 after:bg-[#09090b] after:border-[#09090b] peer-checked:bg-[#dca54c]',
 							slider: 'bg-[#dca54c]/10 [&::-webkit-slider-thumb]:!bg-[#dca54c]',
 							hover: 'hover:bg-[#dca54c]/5',
 							hoverBorder: 'border border-transparent hover:border-[#dca54c]',
