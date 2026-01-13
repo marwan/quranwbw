@@ -1,1 +1,1 @@
-<svg class="w-2.5 h-2.5 ml-2" aria-hidden="true" fill="none" viewBox="0 0 10 6"><path stroke={window.theme('icon')} stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="m1 1 4 4 4-4" /></svg>
+<svg class="w-2.5 h-2.5 ml-2" aria-hidden="true" fill="none" viewBox="0 0 10 6"><path class="stroke-accent-primary" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="m1 1 4 4 4-4" /></svg>

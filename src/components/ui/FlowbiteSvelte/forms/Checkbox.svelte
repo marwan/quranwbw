@@ -1,7 +1,24 @@
-<script>
-	import { getContext } from 'svelte';
-	import { labelClass, inputClass } from './Radio.svelte';
+﻿<script>
+	import { twMerge } from 'tailwind-merge';
 	import Label from './Label.svelte';
+
+	const colorClasses = {
+		primary: `border-accent-primary focus:ring-accent-primary`
+	};
+
+	const labelClass = (inline, extraClass) =>
+		twMerge(inline ? 'inline-flex' : 'flex', 'items-center', extraClass);
+
+	const inputClass = (custom, color, rounded, spacing, extraClass) =>
+		twMerge(
+			`w-4 h-4 bg-transparent border-2 border-accent-primary focus:ring-2 focus:ring-accent-primary/20 focus:outline-none hover:border-accent-secondary cursor-pointer`,
+			spacing,
+			custom && 'sr-only peer',
+			rounded && 'rounded',
+			colorClasses[color],
+			extraClass
+		);
+
 	// properties forwarding
 	export let color = 'primary';
 	export let custom = false;
@@ -10,8 +27,7 @@
 	export let value = 'on';
 	export let checked = undefined;
 	export let spacing = $$slots.default ? 'me-2' : '';
-	// tinted if put in component having its own background
-	let background = getContext('background');
+
 	// react on external group changes
 	function init(_, _group) {
 		if (checked === undefined) checked = _group.includes(value);
@@ -22,6 +38,7 @@
 			}
 		};
 	}
+
 	function onChange() {
 		// There's a bug in Svelte and bind:group is not working with wrapped checkbox
 		// This workaround is taken from:
@@ -43,7 +60,27 @@
 </script>
 
 <Label class={labelClass(inline, $$props.class)} show={$$slots.default}>
-	<input use:init={group} type="checkbox" bind:checked on:keyup on:keydown on:keypress on:focus on:blur on:click on:mouseover on:mouseenter on:mouseleave on:paste on:change={onChange} on:change {value} {...$$restProps} class={inputClass(custom, color, true, background, spacing, $$slots.default || $$props.class)} />
+	<input
+		use:init={group}
+		type="checkbox"
+		bind:checked
+		on:keyup
+		on:keydown
+		on:keypress
+		on:focus
+		on:blur
+		on:click
+		on:mouseover
+		on:mouseenter
+		on:mouseleave
+		on:paste
+		on:change={onChange}
+		on:change
+		{value}
+		{...$$restProps}
+		class={inputClass(custom, color, true, spacing, $$slots.default || $$props.class)}
+		class:theme-checkbox={true}
+	/>
 	<slot />
 </Label>
 

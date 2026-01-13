@@ -1,5 +1,7 @@
 /* eslint-disable no-case-declarations */
 import { get } from 'svelte/store';
+import { selectableThemes } from '$data/options';
+import { updateCheckboxCheckmarkIcon } from '$utils/updateCheckboxCheckmarkIcon';
 import {
 	__currentPage,
 	__userSettings,
@@ -83,6 +85,18 @@ export function updateSettings(props) {
 			__websiteTheme.set(props.value);
 			userSettings.displaySettings.websiteTheme = props.value;
 			trackEvent = true;
+
+			// Update html[data-theme] immediately to reflect theme-specific CSS variables
+			try {
+				const toSlug = (s) => s?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+				const themeName = selectableThemes?.[props.value]?.name;
+				const slug = toSlug(themeName);
+				if (slug) document.documentElement.setAttribute('data-theme', slug);
+			} catch (_) {
+				/* no-op */
+			}
+
+			updateCheckboxCheckmarkIcon();
 			location.reload();
 			break;
 

@@ -38,6 +38,15 @@ export default defineConfig({
 	define: {
 		__APP_VERSION__: JSON.stringify(getVersion())
 	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				// Use modern Sass API to avoid Dart Sass legacy JS API deprecation warnings
+				// Prefer the embedded compiler when available for performance and future compatibility
+				api: 'modern-compiler'
+			}
+		}
+	},
 	build: {
 		sourcemap: false
 	}
