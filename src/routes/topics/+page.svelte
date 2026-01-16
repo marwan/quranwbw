@@ -1,6 +1,8 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
+	import Search2 from '$svgs/Search2.svelte';
+	import Cross from '$svgs/Cross.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { onMount } from 'svelte';
 	import { debounce } from '$utils/debounce';
@@ -13,6 +15,7 @@
 	let searchQuery = '';
 	let debouncedSearch = '';
 	let isSearching = false;
+	let selectedLetter = '';
 
 	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 
@@ -41,15 +44,29 @@
 	// Run this whenever searchQuery changes
 	$: searchQuery, updateDebouncedSearch();
 
-	// Filter topics on debouncedSearch or selectedLetter
+	// Filter topics on debouncedSearch and selectedLetter
 	$: filteredTopics = allTopics
 		.filter(([topic]) => {
-			if (debouncedSearch) {
-				return topic.toLowerCase().includes(debouncedSearch);
-			}
-			return true;
+			const matchesSearch = debouncedSearch ? topic.toLowerCase().includes(debouncedSearch) : true;
+			const matchesLetter = selectedLetter ? topic[0].toUpperCase() === selectedLetter : true;
+			return matchesSearch && matchesLetter;
 		})
 		.sort((a, b) => a[0].localeCompare(b[0]));
+
+	function selectLetter(letter) {
+		// selectedLetter = selectedLetter === letter ? '' : letter;
+		searchQuery = letter;
+	}
+
+	function clearSearch() {
+		searchQuery = '';
+		selectedLetter = '';
+	}
+
+	function updateSearchQuery(value) {
+		searchQuery = value;
+		selectedLetter = '';
+	}
 
 	onMount(async () => {
 		topics = await fetchAndCacheJson(`${staticEndpoint}/others/quran-topics.json?version=1`, 'other');
@@ -61,45 +78,82 @@
 
 <PageHead title="Topics" />
 
-<div class="mx-auto px-4">
+<div class="mx-auto px-4 max-w-6xl">
 	<!-- Search Input -->
-	<!-- <div class="relative flex max-w-xl mx-auto mb-4">
-		<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-3xl w-full text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search topics..." required />
-	</div> -->
+	<div class="pt-4 pb-2">
+		<form on:submit|preventDefault={() => updateSearchQuery(document.getElementById('search-input').value)} class="flex items-center w-full max-w-xl mx-auto mb-4">
+			<div class="relative w-full">
+				<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search topics..." />
+			</div>
+			<button type={searchQuery ? 'button' : 'submit'} on:click={searchQuery ? clearSearch : null} title={searchQuery ? 'Clear' : 'Search'} class="py-4 px-5 rounded-r-3xl items-center border {window.theme('border')} {window.theme('bgSecondaryLight')}">
+				{#if searchQuery}
+					<Cross size={5} />
+				{:else}
+					<Search2 size={5} />
+				{/if}
+			</button>
+		</form>
 
-	<!-- Search Count -->
-	<!-- <div id="search-results-information" class="text-center text-xs">
-		{#if filteredTopicsCount > 0}
-			{#if searchQueryLength > 0}
-				<span>Showing {filteredTopicsCount} results related to "{searchQuery}".</span>
-			{:else}
-				<span>Showing {filteredTopicsCount} results starting with the alphabet "{selectedLetter}".</span>
-			{/if}
+		<!-- Alphabet Selector -->
+		<!-- <div class="flex flex-wrap gap-2 justify-center mb-4 px-2">
+			{#each alphabet as letter}
+				<button on:click={() => selectLetter(letter)} class="min-w-[2.5rem] h-10 px-3 rounded-md text-sm font-medium transition-colors">
+					{letter}
+				</button>
+			{/each}
+		</div> -->
+
+		<!-- Results Count -->
+		{#if filteredTopics.length > 0}
+			<div class="flex flex-col text-center text-xs space-y-2 max-w-2xl mx-auto">
+				{filteredTopics.length} topic{filteredTopics.length !== 1 ? 's' : ''}
+				{#if searchQuery}
+					matching "{searchQuery}"
+				{:else if selectedLetter}
+					starting with "{selectedLetter}"
+				{/if}
+			</div>
 		{/if}
-	</div> -->
+	</div>
 
 	<!-- Loading Message -->
 	{#if isSearching}
-		<Spinner />
+		<div class="flex justify-center py-8">
+			<Spinner />
+		</div>
 	{/if}
 
-	<!-- Grouped Topics by Alphabet -->
+	<!-- Topics Display -->
 	{#if !isSearching}
-		{#each alphabet as letter}
-			<div class="py-8 border-b {window.theme('border')}">
-				<h2 class="text-2xl font-bold mb-2 {window.theme('textSecondary')}">{letter}</h2>
+		{#if filteredTopics.length > 0}
+			{#each alphabet as letter}
 				{#if groupedTopics[letter] && groupedTopics[letter].length > 0}
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-1 gap-x-4">
-						{#each groupedTopics[letter] as [topic, verses]}
-							<a href={`verses?keys=${verses.join(',')}`} class="hover:underline" target="_blank" rel="noopener">
-								{topic} ({verses.length})
-							</a>
-						{/each}
+					<div class="py-6 border-b {window.theme('border')}">
+						<h2 class="text-xl font-bold mb-4 {window.theme('textSecondary')}">
+							{letter}
+						</h2>
+						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+							{#each groupedTopics[letter] as [topic, verses]}
+								<a href={`verses?keys=${verses.join(',')}`} class="block py-2 rounded-md hover:underline" target="_blank" rel="noopener">
+									{topic}
+									<span class={window.theme('textSecondary')}>({verses.length})</span>
+								</a>
+							{/each}
+						</div>
 					</div>
-				{:else}
-					<p class="text-sm text-gray-500 italic">No topics under this letter.</p>
 				{/if}
+			{/each}
+		{:else}
+			<div class="text-center py-12">
+				<p class="text-sm {window.theme('textSecondary')}">
+					No topics found
+					{#if searchQuery}
+						matching "{searchQuery}"
+					{:else if selectedLetter}
+						starting with "{selectedLetter}"
+					{/if}
+				</p>
 			</div>
-		{/each}
+		{/if}
 	{/if}
 </div>
