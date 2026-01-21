@@ -5,6 +5,7 @@
 	import '$utils/generateThemes';
 	import Navbar from '$ui/Navbar.svelte';
 	import SettingsDrawer from '$ui/SettingsDrawer/SettingsDrawer.svelte';
+	import MenuDrawer from '$ui/MenuDrawer.svelte';
 	import BottomToolbar from '$ui/BottomToolbar/BottomToolbar.svelte';
 	import AudioModal from '$ui/Modals/AudioModal.svelte';
 	import TajweedRulesModal from '$ui/Modals/TajweedRulesModal.svelte';
@@ -214,6 +215,7 @@
 		<div in:fade={{ duration: 300 }}>
 			<Navbar />
 			<SettingsDrawer />
+			<MenuDrawer />
 			<BottomToolbar />
 			<slot />
 		</div>

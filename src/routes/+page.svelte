@@ -16,7 +16,7 @@
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled, __menuDrawerHidden } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -79,7 +79,7 @@
 				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page/${$__lastRead.page}` : '/page/1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
 				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
 			</div>
-			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
+			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __menuDrawerHidden.set(false)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
 		</div>
 	</div>
 

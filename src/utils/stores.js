@@ -27,6 +27,7 @@ let __websiteOnline,
 	__favouriteChapters,
 	__pageURL,
 	__settingsDrawerHidden,
+	__menuDrawerHidden,
 	__topNavbarVisible,
 	__bottomToolbarVisible,
 	__mushafPageDivisions,
@@ -144,6 +145,9 @@ if (browser) {
 
 	// to store the toggle boolean settings drawer
 	__settingsDrawerHidden = writable(true);
+
+	// to store the toggle boolean menu drawer
+	__menuDrawerHidden = writable(true);
 
 	// to store the toggle boolean for top navbar,
 	__topNavbarVisible = writable(true);
@@ -272,6 +276,7 @@ export {
 	__favouriteChapters,
 	__pageURL,
 	__settingsDrawerHidden,
+	__menuDrawerHidden,
 	__topNavbarVisible,
 	__bottomToolbarVisible,
 	__mushafPageDivisions,
