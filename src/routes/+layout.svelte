@@ -17,6 +17,7 @@
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
+	import Toast from '$ui/Toast.svelte';
 
 	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
@@ -26,7 +27,7 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
-	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
+	import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
@@ -194,7 +195,7 @@
 	})();
 
 	// Service Worker
-	// checkAndRegisterServiceWorker();
+	checkAndRegisterServiceWorker();
 </script>
 
 <div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
@@ -209,6 +210,7 @@
 	<MorphologyModal />
 	<CopyShareVerseModal />
 	<ConfirmationAlertModal />
+	<Toast />
 
 	{#key $page.url.pathname}
 		<div in:fade={{ duration: 300 }}>

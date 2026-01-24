@@ -19,6 +19,7 @@
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
+	const selectableWordCountSizes = Array.from({ length: 10 }, (_, i) => i + 1);
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;
@@ -26,6 +27,8 @@
 	let endVerseDropdownOpen = false;
 	let timesToRepeatDropdownOpen = false;
 	let audioDelayDropdownOpen = false;
+	let wordCountSizeDropdownOpen = false;
+	let wordCountDelayDropdownOpen = false;
 	let startVerseSearch = ''; // Holds search input for start verse
 	let endVerseSearch = ''; // Holds search input for end verse
 	$: versesInChapter = quranMetaData[$__chapterNumber].verses;
@@ -70,6 +73,23 @@
 		$__audioSettings.audioDelay = 1;
 	}
 
+	// Defaults for word count mode
+	if ($__audioSettings.wordCountSize === undefined) {
+		$__audioSettings.wordCountSize = 5;
+	}
+	if ($__audioSettings.wordCountSize < 1) {
+		$__audioSettings.wordCountSize = 1;
+	}
+	if ($__audioSettings.wordCountSize > 10) {
+		$__audioSettings.wordCountSize = 10;
+	}
+	if ($__audioSettings.wordCountDelay === undefined) {
+		$__audioSettings.wordCountDelay = 4;
+	}
+	if (!selectableAudioDelays[$__audioSettings.wordCountDelay]) {
+		$__audioSettings.wordCountDelay = 1;
+	}
+
 	// Default to repeat 1 time
 	if ($__audioSettings.timesToRepeat === undefined || !selectableRepeatTimes.includes($__audioSettings.timesToRepeat)) {
 		$__audioSettings.timesToRepeat = 1;
@@ -78,6 +98,12 @@
 	// For any page other than chapter page, default to verse repeat
 	$: if ($__currentPage !== 'chapter') {
 		$__audioSettings.repeatType = 'repeatVerse';
+	}
+
+	// Word count mode relies on Arabic audio verse playback
+	$: if ($__audioSettings.audioRange === 'wordCount') {
+		$__audioSettings.audioType = 'verse';
+		$__audioSettings.language = 'arabic';
 	}
 
 	// If the audio settings had to be remembered, set them in localStorage whenever the a change is made
@@ -91,7 +117,7 @@
 	}
 
 	// Update the end verse whenever the audio modal opens
-	$: if ($__audioModalVisible) {
+	$: if ($__audioModalVisible && $__audioSettings.audioRange === 'playRange') {
 		$__audioSettings.endVerse = versesInChapter;
 	}
 
@@ -113,6 +139,8 @@
 				audioType: source.audioType,
 				language: source.language,
 				audioRange: source.audioRange,
+				wordCountSize: source.wordCountSize,
+				wordCountDelay: source.wordCountDelay,
 				timesToRepeat: source.timesToRepeat,
 				audioDelay: source.audioDelay
 			});
@@ -243,8 +271,68 @@
 							</div>
 						</Radio>
 					</div>
+					<!-- play using word count -->
+					<div class="flex items-center min-w-fit">
+						<Radio bind:group={$__audioSettings.audioRange} value="wordCount" custom>
+							<div class="{radioClasses} {$__audioSettings.audioRange === 'wordCount' && selectedRadioOrCheckboxClasses}">
+								<div class="w-full">Word Count</div>
+							</div>
+						</Radio>
+					</div>
 				</div>
 			</div>
+
+			<!-- word count options -->
+			{#if $__audioSettings.audioRange === 'wordCount' && $__audioSettings.audioType === 'verse'}
+				<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
+					<span class="text-sm">Word Count</span>
+					<div class="flex flex-row space-x-4">
+						<!-- number of words -->
+						<div class="flex flex-row space-x-2">
+							<span class="m-auto text-sm">Words</span>
+
+							<button class="{buttonClasses} text-sm">
+								<div>{$__audioSettings.wordCountSize} {$__audioSettings.wordCountSize > 1 ? 'words' : 'word'}</div>
+							</button>
+							<Dropdown bind:open={wordCountSizeDropdownOpen} class="max-h-52 overflow-y-auto my-2 px-2">
+								{#each selectableWordCountSizes as size}
+									<DropdownItem
+										class={dropdownItemClasses}
+										on:click={() => {
+											$__audioSettings.wordCountSize = size;
+											wordCountSizeDropdownOpen = !wordCountSizeDropdownOpen;
+										}}
+									>
+										{size}
+										{size > 1 ? 'words' : 'word'}
+									</DropdownItem>
+								{/each}
+							</Dropdown>
+						</div>
+
+						<!-- delay between word sets -->
+						<div class="flex flex-row space-x-2">
+							<span class="m-auto text-sm">Pause</span>
+
+							<button class="{buttonClasses} text-sm">
+								<div>{selectableAudioDelays[$__audioSettings.wordCountDelay].name}</div>
+							</button>
+							<Dropdown bind:open={wordCountDelayDropdownOpen} class="max-h-52 overflow-y-auto my-2 px-2">
+								{#each Object.values(selectableAudioDelays) as delay}
+									<DropdownItem
+										class={dropdownItemClasses}
+										on:click={() => {
+											$__audioSettings.wordCountDelay = delay.id;
+											wordCountDelayDropdownOpen = !wordCountDelayDropdownOpen;
+										}}>{delay.name}</DropdownItem
+									>
+								{/each}
+							</Dropdown>
+						</div>
+					</div>
+					<span class="text-xs opacity-70">Play each {term('verse')} in chunks and pause after the selected number of words.</span>
+				</div>
+			{/if}
 
 			<!-- repeat type options -->
 			{#if $__audioSettings.audioRange === 'playRange'}
@@ -274,7 +362,7 @@
 
 		<!-- from/till verse options -->
 		{#if $__currentPage === 'chapter' && $__audioSettings.audioType === 'verse'}
-			<div id="audio-range-options" class={$__audioSettings.audioRange === 'playRange' ? 'block' : 'hidden'}>
+			<div id="audio-range-options" class={['playRange', 'wordCount'].includes($__audioSettings.audioRange) ? 'block' : 'hidden'}>
 				<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
 					<div class="flex flex-row space-x-4">
 						<!-- Start Verse Dropdown -->

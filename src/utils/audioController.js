@@ -13,8 +13,10 @@ let lastPlayedKey = null;
 export async function playVerseAudio(props) {
 	const audioSettings = get(__audioSettings);
 	const [playChapter, playVerse] = props.key.split(':').map(Number);
+	const { startTime, startingWordKey } = props;
 	let playBoth = false;
 
+	if (audio === null) audio = document.querySelector('#player');
 	resetAudioSettings();
 
 	// Default language to Arabic
@@ -42,9 +44,26 @@ export async function playVerseAudio(props) {
 	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
 	audio.play();
 
+	if (startTime !== undefined && startTime !== null) {
+		const seekToStartTime = () => {
+			try {
+				audio.currentTime = startTime;
+			} catch (error) {
+				console.warn('Unable to seek to start time:', error);
+			}
+		};
+
+		if (audio.readyState >= 1) {
+			seekToStartTime();
+		} else {
+			audio.addEventListener('loadedmetadata', seekToStartTime, { once: true });
+		}
+	}
+
 	audioSettings.isPlaying = true;
 	audioSettings.playingKey = props.key;
 	audioSettings.audioType = 'verse';
+	audioSettings.playingWordKey = startingWordKey || null;
 
 	// Attach word highlighting function for supported reciters
 	if (props.language === 'arabic' && reciter.wbw) {
@@ -207,14 +226,258 @@ export async function wordAudioController(props) {
 	const reciter = selectableReciters[get(__reciter)];
 
 	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && reciter.wbw) {
-		const timestampData = await fetchTimestampData();
-		const verseTimestamp = timestampData.data[props.chapter][props.verse][reciter.id];
-		const wordTimestamp = verseTimestamp.split('|')[props.key.split(':')[2]];
+		const wordIndex = Number(props.key.split(':')[2]);
+		const wordTimestamp = await getWordTimestamp(props.chapter, props.verse, wordIndex, reciter.id);
 
-		return (audio.currentTime = wordTimestamp);
+		if (wordTimestamp !== null && wordTimestamp !== undefined) {
+			if (audio === null) audio = document.querySelector('#player');
+			if (audio) {
+				audio.currentTime = wordTimestamp;
+			}
+			return;
+		}
 	}
 
 	props.type === 'end' ? showAudioModal(`${props.chapter}:${props.verse}`) : playWordAudio({ key: props.key });
+}
+
+async function getWordTimestamp(chapter, verse, word, reciterId) {
+	try {
+		if (reciterId === undefined || reciterId === null || word === undefined) return null;
+
+		const timestampData = await fetchTimestampData();
+		const verseTimestamp = timestampData?.data?.[chapter]?.[verse]?.[reciterId];
+		if (!verseTimestamp) return null;
+
+		// word keys are 1-indexed, timestamp data is 0-indexed
+		const index = Math.max(0, Number(word) - 1);
+		const timestamp = parseFloat(verseTimestamp.split('|')[index]);
+		return Number.isNaN(timestamp) ? null : timestamp;
+	} catch (error) {
+		console.warn('getWordTimestamp error:', error);
+		return null;
+	}
+}
+
+export async function playVerseFromWord(wordKey) {
+	try {
+		if (!wordKey) return;
+
+		const [chapter, verse, word] = wordKey.split(':').map(Number);
+		if (!Number.isFinite(chapter) || !Number.isFinite(verse) || !Number.isFinite(word)) return;
+
+		const audioSettings = get(__audioSettings);
+		const reciter = selectableReciters[get(__reciter)];
+		const reciterId = reciter?.id;
+		const hasTimestampSupport = Boolean(reciter?.wbw);
+
+		if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && hasTimestampSupport) {
+			const wordTimestamp = await getWordTimestamp(chapter, verse, word, reciterId);
+			if (wordTimestamp !== null && wordTimestamp !== undefined) {
+				if (audio === null) audio = document.querySelector('#player');
+				if (audio) {
+					audio.currentTime = wordTimestamp;
+				}
+				return;
+			}
+		}
+
+		const wordTimestamp = hasTimestampSupport ? await getWordTimestamp(chapter, verse, word, reciterId) : null;
+		const canSeekToWord = hasTimestampSupport && wordTimestamp !== null && wordTimestamp !== undefined;
+
+		window.versesToPlayArray = [`${chapter}:${verse}`];
+
+		return playVerseAudio({
+			key: `${chapter}:${verse}`,
+			timesToRepeat: audioSettings.timesToRepeat || 1,
+			language: 'arabic',
+			startTime: canSeekToWord ? wordTimestamp : undefined,
+			startingWordKey: canSeekToWord ? `${chapter}:${verse}:${word}` : null
+		});
+	} catch (error) {
+		console.warn('playVerseFromWord error:', error);
+	}
+}
+
+// Play verses in word-count chunks with pauses
+export async function playWordCountVerses() {
+	try {
+		const audioSettings = get(__audioSettings);
+		if (!window.versesToPlayArray || window.versesToPlayArray.length === 0) return;
+
+		const reciter = selectableReciters[get(__reciter)];
+		const wordsPerPause = clampWordCountSize(audioSettings.wordCountSize);
+		const pauseDelaySetting = audioSettings.wordCountDelay ?? 1;
+		const pauseDelay = selectableAudioDelays[pauseDelaySetting]?.milliseconds || 0;
+
+		audioSettings.wordCountSize = wordsPerPause;
+		audioSettings.wordCountDelay = pauseDelaySetting;
+		audioSettings.language = 'arabic';
+		__audioSettings.set(audioSettings);
+
+		// Fall back to normal playback if timestamps are unavailable
+		if (!reciter?.wbw) {
+			console.warn('Word Count mode requires a reciter with word timestamps. Falling back to normal playback.');
+			return playVerseAudio({
+				key: `${window.versesToPlayArray[0]}`,
+				timesToRepeat: audioSettings.timesToRepeat || 1,
+				language: 'arabic'
+			});
+		}
+
+		resetAudioSettings();
+		if (audio === null) audio = document.querySelector('#player');
+		audio.onended = null;
+
+		while (window.versesToPlayArray.length > 0) {
+			const currentKey = window.versesToPlayArray[0];
+			const played = await playVerseInChunks({
+				key: currentKey,
+				reciter,
+				wordsPerPause,
+				pauseDelay
+			});
+			window.versesToPlayArray.shift();
+
+			if (!played) break;
+
+			const verseDelay = calculateDelay(audioSettings.audioDelay, audio?.duration || 0);
+			if (verseDelay > 0 && window.versesToPlayArray.length > 0) {
+				await new Promise((resolve) => setTimeout(resolve, verseDelay));
+			}
+		}
+	} catch (error) {
+		console.warn('playWordCountVerses error:', error);
+	} finally {
+		resetAudioSettings({ location: 'end' });
+	}
+}
+
+// Chunk a single verse using word timestamps
+async function playVerseInChunks({ key, reciter, wordsPerPause, pauseDelay }) {
+	try {
+		if (!key || !reciter) return false;
+
+		const [chapter, verse] = key.split(':').map(Number);
+		const timestampData = await fetchTimestampData();
+		const verseTimestamp = timestampData?.data?.[chapter]?.[verse]?.[reciter.id];
+		if (!verseTimestamp) return false;
+
+		const wordTimestamps = verseTimestamp
+			.split('|')
+			.map((timestamp) => parseFloat(timestamp))
+			.filter((timestamp) => !Number.isNaN(timestamp));
+		if (wordTimestamps.length === 0) return false;
+
+		const chunkBoundaries = [];
+		for (let i = 0; i < wordTimestamps.length; i += wordsPerPause) {
+			const startTime = i === 0 ? 0 : wordTimestamps[i];
+			const nextStartTime = wordTimestamps[i + wordsPerPause] ?? null;
+			chunkBoundaries.push({
+				startTime,
+				nextStartTime,
+				startWordIndex: i + 1
+			});
+		}
+
+		resetAudioSettings();
+		if (audio === null) audio = document.querySelector('#player');
+		audio.onended = null;
+
+		const audioSettings = get(__audioSettings);
+		audioSettings.playingKey = key;
+		audioSettings.playingChapter = chapter;
+		audioSettings.playingVerse = verse;
+		audioSettings.audioType = 'verse';
+		audioSettings.isPlaying = true;
+		audioSettings.playingWordKey = `${chapter}:${verse}:${chunkBoundaries[0].startWordIndex}`;
+		__audioSettings.set(audioSettings);
+
+		const reciterAudioUrl = reciter.url;
+		const currentVerseFileName = `${String(chapter).padStart(3, '0')}${String(verse).padStart(3, '0')}.mp3`;
+		audio.src = `${reciterAudioUrl}/${currentVerseFileName}`;
+		audio.currentTime = chunkBoundaries[0].startTime || 0;
+		audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
+		audio.load();
+
+		if (audio.readyState < 1) {
+			await new Promise((resolve) => audio.addEventListener('loadedmetadata', resolve, { once: true }));
+		}
+
+		audio.addEventListener('timeupdate', wordHighlighter);
+
+		return await new Promise((resolve) => {
+			let chunkIndex = 0;
+			let boundaryListener = null;
+
+			const cleanupListeners = () => {
+				if (boundaryListener) {
+					audio.removeEventListener('timeupdate', boundaryListener);
+					boundaryListener = null;
+				}
+				audio.removeEventListener('ended', handleEnded);
+			};
+
+			const handleEnded = () => {
+				cleanupListeners();
+				chunkIndex += 1;
+				if (chunkIndex >= chunkBoundaries.length) {
+					return resolve(true);
+				}
+				setTimeout(playChunk, pauseDelay);
+			};
+
+			const playChunk = () => {
+				if (chunkIndex >= chunkBoundaries.length) {
+					cleanupListeners();
+					return resolve(true);
+				}
+
+				const chunk = chunkBoundaries[chunkIndex];
+				audioSettings.playingWordKey = `${chapter}:${verse}:${chunk.startWordIndex}`;
+				__audioSettings.set(audioSettings);
+
+				const nextBoundary = chunk.nextStartTime;
+				audio.currentTime = chunk.startTime || 0;
+
+				if (boundaryListener) {
+					audio.removeEventListener('timeupdate', boundaryListener);
+					boundaryListener = null;
+				}
+				audio.removeEventListener('ended', handleEnded);
+				audio.addEventListener('ended', handleEnded, { once: true });
+
+				if (nextBoundary !== null) {
+					boundaryListener = () => {
+						if (audio.currentTime >= nextBoundary) {
+							audio.pause();
+							audio.removeEventListener('ended', handleEnded);
+							if (boundaryListener) {
+								audio.removeEventListener('timeupdate', boundaryListener);
+								boundaryListener = null;
+							}
+							setTimeout(() => {
+								chunkIndex += 1;
+								playChunk();
+							}, pauseDelay);
+						}
+					};
+					audio.addEventListener('timeupdate', boundaryListener);
+				}
+
+				audio.play().catch((error) => {
+					console.warn('playWordCount chunk error:', error);
+					cleanupListeners();
+					resolve(false);
+				});
+			};
+
+			playChunk();
+		});
+	} catch (error) {
+		console.warn('playVerseInChunks error:', error);
+		return false;
+	}
 }
 
 // Highlight words during audio playback based on timestamps
@@ -338,6 +601,19 @@ export function setVersesToPlay(props) {
 	console.log('versesToPlayArray', window.versesToPlayArray);
 }
 
+function calculateDelay(delaySetting, durationSeconds) {
+	const delayConfig = selectableAudioDelays[delaySetting];
+	if (!delayConfig) return 0;
+	const audioLengthDelayId = Math.max(...Object.keys(selectableAudioDelays).map(Number));
+	return delaySetting === audioLengthDelayId ? (durationSeconds || 0) * 1000 : delayConfig.milliseconds || 0;
+}
+
+function clampWordCountSize(size) {
+	const parsed = Number(size);
+	if (Number.isNaN(parsed)) return 1;
+	return Math.min(10, Math.max(1, parsed));
+}
+
 // Get the total number of words in the verse based on the current mode
 function getWordsInVerse(key) {
 	const isMushafPage = get(__currentPage) === 'mushaf';
@@ -354,10 +630,15 @@ function getWordsInVerse(key) {
 
 // Handler for verse play button and the play button in audio modal
 export function playButtonHandler(key) {
-	const { audioType, timesToRepeat, language } = get(__audioSettings);
-	if (audioType === 'verse') {
+	const audioSettings = get(__audioSettings);
+	const { audioType, timesToRepeat, language, audioRange } = audioSettings;
+	const firstVerseKey = window.versesToPlayArray?.[0] || key;
+
+	if (audioRange === 'wordCount' && audioType === 'verse') {
+		playWordCountVerses();
+	} else if (audioType === 'verse') {
 		playVerseAudio({
-			key: `${window.versesToPlayArray[0]}`,
+			key: `${firstVerseKey}`,
 			timesToRepeat: timesToRepeat,
 			language: language
 		});
@@ -396,6 +677,10 @@ export function prepareVersesToPlay(key) {
 		case 'playThisVerse':
 			// Set verses to play for the current verse only
 			setVersesToPlay({ location: 'verseOptionsOrModal', chapter, startVerse: verse, endVerse: verse });
+			break;
+		case 'wordCount':
+			// Play the selected verses in word-count chunks
+			setVersesToPlay({ location: 'verseOptionsOrModal', chapter, startVerse, endVerse });
 			break;
 		case 'playFromHere':
 			// Call helper function to set verses to play from the current key onwards

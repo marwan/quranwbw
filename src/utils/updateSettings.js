@@ -30,6 +30,7 @@ import {
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
 	__downloadedDataInfo,
+	__offlineEssentialDataEnabled,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled
 } from '$utils/stores';
@@ -150,6 +151,15 @@ export function updateSettings(props) {
 		case 'playbackSpeed':
 			__playbackSpeed.set(props.value);
 			userSettings.audioSettings.playbackSpeed = props.value;
+			break;
+
+		// for starting recitation from a clicked word
+		case 'playFromWordOnClick':
+			__audioSettings.update((audioSettings) => {
+				audioSettings.playFromWordOnClick = props.value;
+				return audioSettings;
+			});
+			userSettings.audioSettings.playFromWordOnClick = props.value;
 			break;
 
 		// for audio settings
@@ -280,6 +290,13 @@ export function updateSettings(props) {
 		case 'downloadedDataInfo':
 			__downloadedDataInfo.set(props.value);
 			userSettings.downloadedDataInfo = props.value;
+			break;
+
+		// for offline essential warmup toggle
+		case 'offlineEssentialDataEnabled':
+			__offlineEssentialDataEnabled.set(props.value);
+			userSettings.offlineSettings = userSettings.offlineSettings || {};
+			userSettings.offlineSettings.downloadEssentialData = props.value;
 			break;
 
 		// for toggling website wide layout

@@ -34,10 +34,13 @@ export const defaultSettings = {
 		translationReciter: 1,
 		playbackSpeed: 3,
 		versePlayButton: 1,
+		playFromWordOnClick: false,
 		rememberSettings: true,
 		audioType: 'verse',
 		audioRange: 'playThisVerse',
 		language: 'arabic',
+		wordCountSize: 5,
+		wordCountDelay: 4,
 		timesToRepeat: 1,
 		repeatType: 'repeatVerse',
 		audioDelay: 1, // none
@@ -52,7 +55,10 @@ export const defaultSettings = {
 	userNotes: {},
 	favouriteChapters: [1, 5, 18],
 	chapter: 1,
-	downloadedDataInfo: {}
+	downloadedDataInfo: {},
+	offlineSettings: {
+		downloadEssentialData: true
+	}
 };
 
 // Do not continue without setting the default user's settings first

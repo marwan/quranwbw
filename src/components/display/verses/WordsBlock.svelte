@@ -11,7 +11,7 @@
 	import { supplicationsFromQuran } from '$data/quranMeta';
 	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick, __wordTranslation, __wordTranslationEnabled, __wordTransliterationEnabled, __wordTooltip, __hideNonDuaPart, __signLanguageModeEnabled } from '$utils/stores';
 	import { loadFont } from '$utils/loadFont';
-	import { wordAudioController } from '$utils/audioController';
+	import { playVerseFromWord, wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	import { getMushafWordFontLink, isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 
@@ -69,11 +69,15 @@
 			__verseKey.set(props.key);
 
 			if (props.type === 'word') {
-				wordAudioController({
-					key: props.key,
-					chapter: +props.key.split(':')[0],
-					verse: +props.key.split(':')[1]
-				});
+				if ($__audioSettings.playFromWordOnClick) {
+					playVerseFromWord(props.key);
+				} else {
+					wordAudioController({
+						key: props.key,
+						chapter: +props.key.split(':')[0],
+						verse: +props.key.split(':')[1]
+					});
+				}
 			} else if (props.type === 'end') {
 				if (!displayIsContinuous) {
 					updateSettings({

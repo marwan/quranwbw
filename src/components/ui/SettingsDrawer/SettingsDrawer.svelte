@@ -29,6 +29,7 @@
 		__wordTransliterationEnabled,
 		__verseTranslations,
 		__verseTafsir,
+		__audioSettings,
 		__reciter,
 		__userSettings,
 		__wordTooltip,
@@ -39,7 +40,8 @@
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
 		__wideWesbiteLayoutEnabled,
-		__signLanguageModeEnabled
+		__signLanguageModeEnabled,
+		__offlineEssentialDataEnabled
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -54,6 +56,8 @@
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { requestOfflineWarmup, clearServiceWorkerCaches } from '$utils/serviceWorker';
+	import { showToast } from '$utils/toast';
 
 	// Components mapping for individual settings
 	const individualSettingsComponents = {
@@ -199,6 +203,22 @@
 				event.target.value = ''; // reset so the same file can be chosen again
 			});
 		}
+	}
+
+	function handleOfflineWarmupToggle(event) {
+		const enabled = event.target.checked;
+		updateSettings({ type: 'offlineEssentialDataEnabled', value: enabled });
+
+		if (enabled) {
+			requestOfflineWarmup();
+		}
+	}
+
+	function handleClearOfflineCache() {
+		showConfirm('Clear the offline cache? You can re-download it later.', 'settings-drawer', async () => {
+			const cleared = await clearServiceWorkerCaches();
+			showToast(cleared ? 'Offline cache cleared.' : 'Failed to clear offline cache.');
+		});
 	}
 </script>
 
@@ -467,6 +487,20 @@
 
 					<div class="border-b {window.theme('border')}"></div>
 
+					<!-- start-recitation-from-word-setting -->
+					<div id="start-recitation-from-word-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<div class="block">Start Recitation From Word Tap</div>
+							<label class="inline-flex items-center cursor-pointer">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__audioSettings.playFromWordOnClick} on:click={(event) => updateSettings({ type: 'playFromWordOnClick', value: event.target.checked })} data-umami-event="Toggle Play From Word On Click" />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>When enabled, tapping a word starts the {term('verse')} audio from that spot (for reciters with word timings).</p>
+					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
 					<!-- verse-play-button-setting -->
 					<div id="verse-play-button-setting" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
@@ -474,6 +508,34 @@
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-play-button')}>{selectableVersePlayButtonOptions[$__playButtonsFunctionality.verse].name}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Select what happens when you click on the play button for a {term('verse')}.</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- offline-settings-block -->
+			<div id="offline-settings-block" class="py-5 border-t-2 {window.theme('border')} {settingsDrawerOpacity}">
+				<h3 class="block mb-2 font-medium text-xl">Offline</h3>
+
+				<div class="flex flex-col flex-wrap text-base">
+					<div id="offline-essential-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Download Essential Data</span>
+							<label class="inline-flex items-center cursor-pointer">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__offlineEssentialDataEnabled} on:click={handleOfflineWarmupToggle} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Preload essential JSON, fonts, and assets for offline use.</p>
+					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<div id="offline-clear-cache-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Offline Cache</span>
+							<button class="text-sm {buttonClasses}" on:click={handleClearOfflineCache}>Clear Cache</button>
+						</div>
+						<p class={settingsDescriptionClasses}>Clears cached offline resources (audio is not included).</p>
 					</div>
 				</div>
 			</div>

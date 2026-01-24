@@ -10,6 +10,7 @@
 	import About from '$svgs/About.svelte';
 	import Changelog from '$svgs/Changelog.svelte';
 	import LegacySite from '$svgs/LegacySite.svelte';
+	import Info from '$svgs/Info.svelte';
 	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
@@ -86,6 +87,12 @@
 				<a href="/changelog" class={linkClasses}>
 					<Changelog size={4} />
 					<span class={linkTextClasses}>Changelog</span>
+				</a>
+
+				<!-- Offline -->
+				<a href="/offline" class={linkClasses}>
+					<Info size={4} />
+					<span class={linkTextClasses}>Offline</span>
 				</a>
 
 				<!-- legacy site link -->

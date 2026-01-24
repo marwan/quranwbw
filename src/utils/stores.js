@@ -64,7 +64,8 @@ let __websiteOnline,
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__verseWordBlocks;
+	__verseWordBlocks,
+	__offlineEssentialDataEnabled;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -157,6 +158,12 @@ if (browser) {
 	// to store the word tooltip type
 	__wordTooltip = writable(userSettings.displaySettings.wordTooltip);
 
+	// to store bottom alert toast state
+	__bottomAlert = writable({
+		visible: false,
+		message: ''
+	});
+
 	// to store all the audio settings
 	__audioSettings = writable(userSettings.audioSettings);
 
@@ -243,6 +250,9 @@ if (browser) {
 
 	// to store the visibility state of word blocks per verse
 	__verseWordBlocks = writable({});
+
+	// to store offline warmup toggle
+	__offlineEssentialDataEnabled = writable(userSettings.offlineSettings?.downloadEssentialData ?? true);
 }
 
 export {
@@ -309,5 +319,6 @@ export {
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__verseWordBlocks
+	__verseWordBlocks,
+	__offlineEssentialDataEnabled
 };
