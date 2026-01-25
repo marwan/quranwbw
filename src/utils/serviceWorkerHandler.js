@@ -1,11 +1,6 @@
 import { staticEndpoint } from '$data/websiteSettings';
 
 export async function checkAndRegisterServiceWorker() {
-	// Skip in E2E test environments
-	if (import.meta.env?.VITE_E2E) {
-		console.log('Skipping Service Worker in E2E mode');
-		return;
-	}
 	if (!('serviceWorker' in navigator)) {
 		console.log('Service Workers are not supported in this browser.');
 		return;
@@ -52,7 +47,8 @@ export async function checkAndRegisterServiceWorker() {
 			}
 		} else {
 			console.log('Unregistering Service Worker and Deleting Cache...');
-			await unregisterServiceWorkerAndClearCache(registrations);
+
+			await unregisterServiceWorkerAndClearCache();
 		}
 	} catch (error) {
 		console.warn('Failed to fetch service worker settings:', error);
@@ -61,8 +57,10 @@ export async function checkAndRegisterServiceWorker() {
 }
 
 // Function to unregister all service workers and delete caches
-async function unregisterServiceWorkerAndClearCache(registrations) {
+export async function unregisterServiceWorkerAndClearCache() {
 	try {
+		const registrations = await navigator.serviceWorker.getRegistrations();
+
 		// Unregister all active service workers
 		await Promise.all(registrations.map((registration) => registration.unregister()));
 

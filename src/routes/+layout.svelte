@@ -26,7 +26,7 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
-	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
+	import { checkAndRegisterServiceWorker } from '$utils/serviceWorkerHandler';
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
@@ -193,8 +193,8 @@
 		}
 	})();
 
-	// Service Worker
-	// checkAndRegisterServiceWorker();
+	// Service worker handling
+	checkAndRegisterServiceWorker();
 </script>
 
 <div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
