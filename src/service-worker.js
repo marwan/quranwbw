@@ -1,34 +1,20 @@
-const cacheName = 'quranwbw-cache-v1';
+import { build, files, version } from '$service-worker';
+
+// Create a unique cache name for this deployment
+const cacheName = `quranwbw-cache-${version}`;
 
 // List of URLs or files to exclude from caching
 const stuffNotToCache = ['/service-worker.js', '/service-worker-settings.json'];
 
-// Exact files (assets, JSON, etc.)
+const precacheFiles = [
+	...files, // Static files from /static folder
+	...build // Generated JS/CSS chunks (includes the main bundle)
+];
+
+// Additional static files to cache
 const staticFilesToCache = [
-	// Styles
-	'/css/global.css?version=85',
-
-	// Fonts
-	'/fonts/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2',
-	'/fonts/AlQuranNeov5x1.woff2',
-	'/fonts/juz_names-Regular.woff2',
-	'/fonts/lexicon.ttf',
-	'/fonts/LPMQ-MSI-ISYARAT.woff2',
-	'/fonts/LPMQIsepMisbah-Regular.woff2',
-	'/fonts/MBLateefi.otf',
-	'/fonts/Mehr-Nastaliq.ttf',
-	'/fonts/NastaleeqB_COLOR-Regular.woff2',
-	'/fonts/Nastaleeq_COLOR-Regular.woff2',
-	'/fonts/qcf-uthmanic-digital-Bold.woff2',
-	'/fonts/qcf-uthmanic-digital.woff2',
-	'/fonts/QCF4_TajweedRules-Regular.woff2',
-	'/fonts/QCF_SurahHome-Regular.woff2',
-	'/fonts/surahs_v4-Regular.woff2',
-	'/fonts/Uthmanic_NeoBCOLOR-VF.woff2',
-	'/fonts/Uthmanic_NeoCOLOR-Regular.woff2',
-
-	// Images
-	'/images/bg-image.png'
+	// Styles (if not already in /static)
+	'/css/global.css?version=85'
 ];
 
 // Static routes (pages)
@@ -45,8 +31,8 @@ self.addEventListener('install', (event) => {
 
 	event.waitUntil(
 		caches.open(cacheName).then((cache) => {
-			// Only precache homepage
-			return cache.add('/');
+			// Precache homepage and all build files (including the main JS bundle)
+			return cache.addAll(['/', ...precacheFiles]);
 		})
 	);
 });
@@ -54,7 +40,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
 	event.waitUntil(
 		(async () => {
-			// Clear old caches
+			// Clear old caches (important when version changes)
 			const keys = await caches.keys();
 			await Promise.all(
 				keys.map((key) => {
@@ -63,6 +49,9 @@ self.addEventListener('activate', (event) => {
 					}
 				})
 			);
+
+			// Claim clients immediately
+			await self.clients.claim();
 
 			// Start background caching AFTER activation
 			const cache = await caches.open(cacheName);
@@ -79,7 +68,7 @@ self.addEventListener('activate', (event) => {
 							}
 						}
 					} catch (error) {
-						console.warn(error);
+						console.warn('Background cache failed for:', route, error);
 					}
 				}
 			};
@@ -125,7 +114,6 @@ self.addEventListener('fetch', (event) => {
 					}
 
 					// For other requests (JS, CSS, fonts, images, etc.), return a proper error
-					// This prevents the infinite loop caused by returning HTML for JS requests
 					return new Response('Offline - resource not cached', {
 						status: 503,
 						statusText: 'Service Unavailable',

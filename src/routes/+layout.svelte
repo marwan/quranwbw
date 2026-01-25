@@ -26,7 +26,6 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
-	import { checkAndRegisterServiceWorker } from '$utils/serviceWorkerHandler';
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
@@ -192,9 +191,6 @@
 			console.error('Error tracking website version:', error);
 		}
 	})();
-
-	// Service worker handling
-	checkAndRegisterServiceWorker();
 </script>
 
 <div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>

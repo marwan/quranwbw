@@ -22,6 +22,9 @@ const config = {
 		},
 		output: {
 			bundleStrategy: 'single'
+		},
+		serviceWorker: {
+			register: true
 		}
 	},
 	preprocess: vitePreprocess()

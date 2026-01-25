@@ -14,7 +14,6 @@
 	const FADE_HEIGHT = 50;
 
 	let fullQuranTextData = null;
-	let isLoading = false;
 	let bookmarkContainer;
 	let fadePixels = FADE_HEIGHT;
 	let forceCloseDropdowns = 0;

@@ -1,60 +1,60 @@
-import { staticEndpoint } from '$data/websiteSettings';
+// import { staticEndpoint } from '$data/websiteSettings';
 
-export async function checkAndRegisterServiceWorker() {
-	if (!('serviceWorker' in navigator)) {
-		console.log('Service Workers are not supported in this browser.');
-		return;
-	}
+// export async function checkAndRegisterServiceWorker() {
+// 	if (!('serviceWorker' in navigator)) {
+// 		console.log('Service Workers are not supported in this browser.');
+// 		return;
+// 	}
 
-	let enabled = null;
-	let version = null;
+// 	let enabled = null;
+// 	let version = null;
 
-	try {
-		// Get current service worker registrations
-		const registrations = await navigator.serviceWorker.getRegistrations();
-		const swAlreadyRegistered = registrations.length > 0;
+// 	try {
+// 		// Get current service worker registrations
+// 		const registrations = await navigator.serviceWorker.getRegistrations();
+// 		const swAlreadyRegistered = registrations.length > 0;
 
-		// Add a random query parameter to prevent caching
-		const response = await fetch(`${staticEndpoint}/others/service-worker-settings.json?bypass_cache=true&version=${Math.random()}`, { cache: 'no-store' });
+// 		// Add a random query parameter to prevent caching
+// 		const response = await fetch(`${staticEndpoint}/others/service-worker-settings.json?bypass_cache=true&version=${Math.random()}`, { cache: 'no-store' });
 
-		// Ensure a successful response
-		if (!response.ok) {
-			throw new Error(`API responded with status ${response.status}`);
-		}
+// 		// Ensure a successful response
+// 		if (!response.ok) {
+// 			throw new Error(`API responded with status ${response.status}`);
+// 		}
 
-		({ enabled, version } = await response.json());
+// 		({ enabled, version } = await response.json());
 
-		console.log(`Service Worker Settings - Enabled: ${enabled}, Version: ${version}`);
+// 		console.log(`Service Worker Settings - Enabled: ${enabled}, Version: ${version}`);
 
-		// If API says disabled and no SW is set, skip further processing
-		if (!enabled && !swAlreadyRegistered) {
-			console.log('Service Worker is disabled and not registered. Skipping...');
-			return;
-		}
+// 		// If API says disabled and no SW is set, skip further processing
+// 		if (!enabled && !swAlreadyRegistered) {
+// 			console.log('Service Worker is disabled and not registered. Skipping...');
+// 			return;
+// 		}
 
-		if (enabled) {
-			if (!swAlreadyRegistered) {
-				navigator.serviceWorker
-					.register('/service-worker.js')
-					.then((registration) => {
-						console.log(`Service Worker Registered (Version ${version})`, registration);
-					})
-					.catch((error) => {
-						console.error('Service Worker Registration Failed', error);
-					});
-			} else {
-				console.log('Service Worker is already registered.');
-			}
-		} else {
-			console.log('Unregistering Service Worker and Deleting Cache...');
+// 		if (enabled) {
+// 			if (!swAlreadyRegistered) {
+// 				navigator.serviceWorker
+// 					.register('/service-worker.js')
+// 					.then((registration) => {
+// 						console.log(`Service Worker Registered (Version ${version})`, registration);
+// 					})
+// 					.catch((error) => {
+// 						console.error('Service Worker Registration Failed', error);
+// 					});
+// 			} else {
+// 				console.log('Service Worker is already registered.');
+// 			}
+// 		} else {
+// 			console.log('Unregistering Service Worker and Deleting Cache...');
 
-			await unregisterServiceWorkerAndClearCache();
-		}
-	} catch (error) {
-		console.warn('Failed to fetch service worker settings:', error);
-		console.log('Keeping existing service worker state unchanged.');
-	}
-}
+// 			await unregisterServiceWorkerAndClearCache();
+// 		}
+// 	} catch (error) {
+// 		console.warn('Failed to fetch service worker settings:', error);
+// 		console.log('Keeping existing service worker state unchanged.');
+// 	}
+// }
 
 // Function to unregister all service workers and delete caches
 export async function unregisterServiceWorkerAndClearCache() {
