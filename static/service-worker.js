@@ -108,12 +108,32 @@ self.addEventListener('fetch', (event) => {
 
 			return fetch(event.request)
 				.then((networkResponse) => {
+					// Only cache successful responses
+					if (!networkResponse || networkResponse.status !== 200) {
+						return networkResponse;
+					}
+
 					return caches.open(cacheName).then((cache) => {
 						cache.put(event.request, networkResponse.clone());
 						return networkResponse;
 					});
 				})
-				.catch(() => caches.match('/'));
+				.catch(() => {
+					// Only return homepage fallback for navigation requests
+					if (event.request.mode === 'navigate') {
+						return caches.match('/');
+					}
+
+					// For other requests (JS, CSS, fonts, images, etc.), return a proper error
+					// This prevents the infinite loop caused by returning HTML for JS requests
+					return new Response('Offline - resource not cached', {
+						status: 503,
+						statusText: 'Service Unavailable',
+						headers: new Headers({
+							'Content-Type': 'text/plain'
+						})
+					});
+				});
 		})
 	);
 });
