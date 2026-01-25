@@ -5,8 +5,10 @@ const stuffNotToCache = ['/service-worker.js', '/service-worker-settings.json'];
 
 // Exact files (assets, JSON, etc.)
 const staticFilesToCache = [
-	'/css/global.css',
-	'/favicon.png',
+	// Styles
+	'/css/global.css?version=85',
+
+	// Fonts
 	'/fonts/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2',
 	'/fonts/AlQuranNeov5x1.woff2',
 	'/fonts/juz_names-Regular.woff2',
@@ -24,6 +26,8 @@ const staticFilesToCache = [
 	'/fonts/surahs_v4-Regular.woff2',
 	'/fonts/Uthmanic_NeoBCOLOR-VF.woff2',
 	'/fonts/Uthmanic_NeoCOLOR-Regular.woff2',
+
+	// Images
 	'/images/bg-image.png'
 ];
 

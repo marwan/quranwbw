@@ -21,7 +21,7 @@
 
 	$: hasBookmarks = $__userBookmarks.length > 0;
 
-	$: if (hasBookmarks && !fullQuranTextData && !isLoading) {
+	$: if (hasBookmarks && !fullQuranTextData) {
 		loadQuranData();
 	}
 
@@ -41,31 +41,28 @@
 	});
 
 	async function loadQuranData() {
-		isLoading = true;
 		try {
 			fullQuranTextData = await fetchAndCacheJson(`${staticEndpoint}/full-quran/uthmani.json?version=1`, 'other');
 		} catch (error) {
 			console.error('Failed to load Quran data:', error);
-		} finally {
-			isLoading = false;
 		}
 	}
 
 	function updateFade({ closeDropdowns = false } = {}) {
 		if (!bookmarkContainer) return;
-		
+
 		const { scrollTop, scrollHeight, clientHeight } = bookmarkContainer;
 		const maxScroll = scrollHeight - clientHeight;
-		
+
 		if (maxScroll <= 0) {
 			// No scrollable overflow: no fade needed
 			fadePixels = 0;
 			return;
 		}
-		
+
 		// Calculate how close we are to the bottom (0 = top, 1 = bottom)
 		const scrollProgress = scrollTop / maxScroll;
-		
+
 		fadePixels = Math.max(0, Math.min(FADE_HEIGHT, FADE_HEIGHT * (1 - scrollProgress)));
 
 		if (closeDropdowns) {
@@ -79,9 +76,9 @@
 </script>
 
 <div class="relative">
-	<div 
-		id="bookmark-cards" 
-		bind:this={bookmarkContainer} 
+	<div
+		id="bookmark-cards"
+		bind:this={bookmarkContainer}
 		on:scroll={handleScroll}
 		class="flex flex-col space-y-4 overflow-y-scroll no-scrollbar-scroll-container"
 		style="max-height: {MAX_HEIGHT}px; mask-image: linear-gradient(to bottom, black 0, black calc(100% - {fadePixels}px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 0, black calc(100% - {fadePixels}px), transparent 100%);"
