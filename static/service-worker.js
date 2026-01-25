@@ -1,4 +1,4 @@
-const cacheName = 'qwbw-app-cache-v1';
+const cacheName = 'quranwbw-cache-v1';
 
 // List of URLs or files to exclude from caching
 const stuffNotToCache = ['/service-worker.js', '/service-worker-settings.json'];
