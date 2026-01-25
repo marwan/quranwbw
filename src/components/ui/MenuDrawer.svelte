@@ -83,6 +83,12 @@
 			<span class={linkTextClasses}>{term('supplications')}</span>
 		</a>
 
+		<!-- Mushaf -->
+		<a href="/#" class={linkClasses}>
+			<Supplication size={4} />
+			<span class={linkTextClasses}>Mushaf</span>
+		</a>
+
 		<!-- Morphology -->
 		<a href="/morphology?word=1:1:1" class={linkClasses}>
 			<Morphology size={4} />

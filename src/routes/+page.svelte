@@ -13,10 +13,11 @@
 	import MorphologyBold from '$svgs/MorphologyBold.svelte';
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
+	import SettingsFilled from '$svgs/SettingsFilled.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled, __menuDrawerHidden } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled, __menuDrawerHidden, __settingsDrawerHidden } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -73,13 +74,14 @@
 	<!-- top menu -->
 	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">
-			<div>
+			<!-- <div>
 				<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __quranNavigationModalVisible.set(true)}><Search2Bold size={4} /><span class="hidden md:block">Search</span></button>
 				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
 				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page/${$__lastRead.page}` : '/page/1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
 				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
-			</div>
+			</div> -->
 			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __menuDrawerHidden.set(false)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
+			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __settingsDrawerHidden.set(false)}><SettingsFilled size={5} /><span class="hidden md:block">Settings</span></button>
 		</div>
 	</div>
 
