@@ -4,6 +4,7 @@ import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __au
 import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
+import { isUserOnline } from '$utils/serviceWorkerHandler';
 
 // Getting the audio element
 let audio = document.querySelector('#player');
@@ -107,6 +108,8 @@ export async function playVerseAudio(props) {
 
 // Function to play word audio
 export function playWordAudio(props) {
+	if (!isUserOnline()) return;
+
 	resetAudioSettings();
 
 	const audioSettings = get(__audioSettings);

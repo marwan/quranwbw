@@ -55,21 +55,21 @@
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
-	import { unregisterServiceWorkerAndClearCache } from '$utils/serviceWorkerHandler';
+	import { unregisterServiceWorkerAndClearCache, isUserOnline } from '$utils/serviceWorkerHandler';
 
-	// Components mapping for individual settings
+	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {
-		'website-theme': WebsiteThemeSelector,
-		'display-type': DisplayTypeSelector,
-		'word-tooltip': WordTooltipSelector,
-		'quran-font': QuranFontSelector,
-		'word-translation': WordTranslationSelector,
-		'word-transliteration': WordTransliterationSelector,
-		'verse-translation': VerseTranslationSelector,
-		'verse-transliteration': VerseTransliterationSelector,
-		'verse-tafsir': VerseTafsirSelector,
-		'verse-reciter': VerseReciterSelector,
-		'verse-play-button': VersePlayButtonSelector
+		'website-theme': [WebsiteThemeSelector, false],
+		'display-type': [DisplayTypeSelector, false],
+		'word-tooltip': [WordTooltipSelector, false],
+		'quran-font': [QuranFontSelector, true],
+		'word-translation': [WordTranslationSelector, true],
+		'word-transliteration': [WordTransliterationSelector, true],
+		'verse-translation': [VerseTranslationSelector, true],
+		'verse-transliteration': [VerseTransliterationSelector, true],
+		'verse-tafsir': [VerseTafsirSelector, true],
+		'verse-reciter': [VerseReciterSelector, true],
+		'verse-play-button': [VersePlayButtonSelector, true]
 	};
 
 	// Transition parameters for drawer
@@ -135,10 +135,15 @@
 
 	// Navigate to an individual setting component
 	function gotoIndividualSetting(type) {
+		// For certain settings, check internet connection first
+		if (individualSettingsComponents[type][1] === true) {
+			if (!isUserOnline()) return;
+		}
+
 		mainSettingsScrollPos = document.getElementById('settings-drawer').scrollTop;
 		showAllSettings = false;
 		showIndividualSetting = true;
-		individualSettingsComponent = individualSettingsComponents[type];
+		individualSettingsComponent = individualSettingsComponents[type][0];
 
 		// Scroll to the individual setting view
 		setTimeout(() => {

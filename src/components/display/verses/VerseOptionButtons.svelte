@@ -15,6 +15,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
+	import { isUserOnline } from '$utils/serviceWorkerHandler';
 
 	const chapter = parseInt(key.split(':')[0], 10);
 	const verse = parseInt(key.split(':')[1], 10);
@@ -27,6 +28,8 @@
 	$: userBookmarks = JSON.parse($__userSettings).userBookmarks;
 
 	function audioHandler(key) {
+		if (!isUserOnline()) return;
+
 		// Stop any audio if something is playing
 		if ($__audioSettings.isPlaying) return resetAudioSettings({ location: 'end' });
 

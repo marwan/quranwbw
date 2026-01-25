@@ -1,4 +1,5 @@
 // import { staticEndpoint } from '$data/websiteSettings';
+import { showAlert } from '$utils/confirmationAlertHandler';
 
 // export async function checkAndRegisterServiceWorker() {
 // 	if (!('serviceWorker' in navigator)) {
@@ -72,4 +73,12 @@ export async function unregisterServiceWorkerAndClearCache() {
 	} catch (error) {
 		console.warn('Error while clearing caches:', error);
 	}
+}
+
+export function isUserOnline() {
+	if (!navigator.onLine) {
+		showAlert('It looks like you’re offline. Please connect to the internet to use this feature.');
+		return false;
+	}
+	return true;
 }

@@ -9,6 +9,7 @@
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
 	import { fade } from 'svelte/transition';
+	import { isUserOnline } from '$utils/serviceWorkerHandler';
 
 	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
 
@@ -101,6 +102,7 @@
 
 	// Update the search query if enter is pressed or search icon is clicked
 	async function updateSearchQuery(query) {
+		if (!isUserOnline()) return;
 		searchQuery = query;
 	}
 
