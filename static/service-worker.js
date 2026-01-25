@@ -5,14 +5,30 @@ const stuffNotToCache = ['/service-worker.js', '/service-worker-settings.json'];
 
 // Exact files (assets, JSON, etc.)
 const staticFilesToCache = [
-	// '/favicon.ico',
-	// '/manifest.webmanifest',
-	// '/icons/icon-192.png',
-	// '/icons/icon-512.png'
+	'/css/global.css',
+	'/favicon.png',
+	'/fonts/AlQuranIndoPakv5byQuranWBW.com-Regular.woff2',
+	'/fonts/AlQuranNeov5x1.woff2',
+	'/fonts/juz_names-Regular.woff2',
+	'/fonts/lexicon.ttf',
+	'/fonts/LPMQ-MSI-ISYARAT.woff2',
+	'/fonts/LPMQIsepMisbah-Regular.woff2',
+	'/fonts/MBLateefi.otf',
+	'/fonts/Mehr-Nastaliq.ttf',
+	'/fonts/NastaleeqB_COLOR-Regular.woff2',
+	'/fonts/Nastaleeq_COLOR-Regular.woff2',
+	'/fonts/qcf-uthmanic-digital-Bold.woff2',
+	'/fonts/qcf-uthmanic-digital.woff2',
+	'/fonts/QCF4_TajweedRules-Regular.woff2',
+	'/fonts/QCF_SurahHome-Regular.woff2',
+	'/fonts/surahs_v4-Regular.woff2',
+	'/fonts/Uthmanic_NeoBCOLOR-VF.woff2',
+	'/fonts/Uthmanic_NeoCOLOR-Regular.woff2',
+	'/images/bg-image.png'
 ];
 
 // Static routes (pages)
-const staticRoutesToCache = ['/duas', '/supplications', '/bookmarks', 'morphology', '/games/guess-the-word'];
+const staticRoutesToCache = ['/duas', '/supplications', '/bookmarks', '/morphology', '/games/guess-the-word'];
 
 // Generate chapter routes /1 to /114
 const chapterRoutesToCache = Array.from({ length: 114 }, (_, i) => `/${i + 1}`);
