@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "Uthmani-Hafs";
-  src: url("../fonts/qcf-uthmanic-digital.woff2") format("woff2");
+  src: url("/fonts/qcf-uthmanic-digital.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: "Uthmani-Hafs-Bold";
-  src: url("../fonts/qcf-uthmanic-digital-Bold.woff2") format("woff2");
+  src: url("/fonts/qcf-uthmanic-digital-Bold.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -20,7 +20,7 @@
 
 @font-face {
   font-family: "IndoPak";
-  src: url("../fonts/AlQuranNeov5x1.woff2") format("woff2");
+  src: url("/fonts/AlQuranNeov5x1.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -28,7 +28,7 @@
 
 @font-face {
   font-family: "Nastaleeq-Hafs";
-  src: url("../fonts/Nastaleeq_COLOR-Regular.woff2") format("woff2");
+  src: url("/fonts/Nastaleeq_COLOR-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -36,7 +36,7 @@
 
 @font-face {
   font-family: "Nastaleeq-Hafs-Bold";
-  src: url("../fonts/NastaleeqB_COLOR-Regular.woff2") format("woff2");
+  src: url("/fonts/NastaleeqB_COLOR-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -44,7 +44,7 @@
 
 @font-face {
   font-family: "Indonesian-Misbah";
-  src: url("../fonts/LPMQIsepMisbah-Regular.woff2") format("woff2");
+  src: url("/fonts/LPMQIsepMisbah-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -52,7 +52,7 @@
 
 @font-face {
   font-family: "Arabic-Sign-Language";
-  src: url("../fonts/LPMQ-MSI-ISYARAT.woff2") format("woff2");
+  src: url("/fonts/LPMQ-MSI-ISYARAT.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -60,7 +60,7 @@
 
 @font-face {
   font-family: "chapter-icons";
-  src: url("../fonts/surahs_v4-Regular.woff2") format("woff2");
+  src: url("/fonts/surahs_v4-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -68,7 +68,7 @@
 
 @font-face {
   font-family: "tajweed-rules";
-  src: url("../fonts/QCF4_TajweedRules-Regular.woff2") format("woff2");
+  src: url("/fonts/QCF4_TajweedRules-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -76,7 +76,7 @@
 
 @font-face {
   font-family: "urdu";
-  src: url("../fonts/Mehr-Nastaliq.ttf") format("truetype");
+  src: url("/fonts/Mehr-Nastaliq.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -84,7 +84,7 @@
 
 @font-face {
   font-family: "sindhi";
-  src: url("../fonts/MBLateefi.otf") format("opentype");
+  src: url("/fonts/MBLateefi.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -92,7 +92,7 @@
 
 @font-face {
   font-family: "lexicon";
-  src: url("../fonts/lexicon.ttf") format("truetype");
+  src: url("/fonts/lexicon.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -100,7 +100,7 @@
 
 @font-face {
   font-family: "juz-icons";
-  src: url("../fonts/juz_names-Regular.woff2") format("woff2");
+  src: url("/fonts/juz_names-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -125,7 +125,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("../images/bg-image.png");
+  background-image: url("/images/bg-image.png");
   background-position: center center;
   background-size: cover;
   opacity: 0.5;

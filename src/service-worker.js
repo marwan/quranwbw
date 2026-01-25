@@ -11,12 +11,6 @@ const precacheFiles = [
 	...build // Generated JS/CSS chunks (includes the main bundle)
 ];
 
-// Additional static files to cache
-const staticFilesToCache = [
-	// Styles (if not already in /static)
-	'/css/global.css?version=85'
-];
-
 // Static routes (pages)
 const staticRoutesToCache = ['/duas', '/supplications', '/bookmarks', '/morphology', '/games/guess-the-word'];
 
@@ -74,7 +68,6 @@ self.addEventListener('activate', (event) => {
 			};
 
 			// Background caching
-			await backgroundCache(staticFilesToCache);
 			await backgroundCache(staticRoutesToCache);
 			await backgroundCache(chapterRoutesToCache);
 			await backgroundCache(juzRoutesToCache);
