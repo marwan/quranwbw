@@ -21,18 +21,12 @@
 	$: selectedTafirId = $__verseTafsir || 30;
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
-	$: if ($__tafsirModalVisible) {
-		tafsirData = loadTafsirData();
-	}
-
-	// Function to load Tafsir data
-	async function loadTafsirData() {
-		try {
-			const selectedTafsir = selectableTafsirs[selectedTafirId];
-			return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
-		} catch (error) {
-			console.warn(error);
-			return [];
+	$: {
+		if ($__tafsirModalVisible) {
+			tafsirData = (async () => {
+				const selectedTafsir = selectableTafsirs[selectedTafirId];
+				return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
+			})();
 		}
 	}
 
@@ -96,9 +90,17 @@
 	</div>
 
 	<svelte:fragment slot="footer">
-		<div class="grid grid-cols-2 gap-4 w-full">
-			<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>Previous {term('verse')}</button>
-			<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>Next {term('verse')}</button>
-		</div>
+		{#key verse}
+			{#await tafsirData}
+				<!-- Show nothing -->
+			{:then data}
+				<div class="grid grid-cols-2 gap-4 w-full">
+					<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>Previous {term('verse')}</button>
+					<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>Next {term('verse')}</button>
+				</div>
+			{:catch error}
+				<!-- Hide buttons on error -->
+			{/await}
+		{/key}
 	</svelte:fragment>
 </Modal>
