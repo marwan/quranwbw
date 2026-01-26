@@ -21,56 +21,52 @@ const chapterRoutesToCache = Array.from({ length: 114 }, (_, i) => `/${i + 1}`);
 const juzRoutesToCache = Array.from({ length: 30 }, (_, i) => `/juz/${i + 1}`);
 
 self.addEventListener('install', (event) => {
-	self.skipWaiting();
-
 	event.waitUntil(
-		caches.open(cacheName).then((cache) => {
-			// Precache homepage and all build files (including the main JS bundle)
-			return cache.addAll(['/', ...precacheFiles]);
-		})
+		(async () => {
+			const cache = await caches.open(cacheName);
+
+			// Cache homepage and build files
+			await cache.addAll(['/', ...precacheFiles]);
+
+			// Background cache routes during install
+			const backgroundCache = async (routes) => {
+				for (const route of routes) {
+					try {
+						const response = await fetch(route);
+						if (response.ok) {
+							await cache.put(route, response.clone());
+						}
+					} catch (error) {
+						console.warn('Install cache failed for:', route, error);
+					}
+				}
+			};
+
+			await backgroundCache(staticRoutesToCache);
+			await backgroundCache(chapterRoutesToCache);
+			await backgroundCache(juzRoutesToCache);
+
+			// Now that everything is cached, skip waiting
+			self.skipWaiting();
+		})()
 	);
 });
 
 self.addEventListener('activate', (event) => {
 	event.waitUntil(
 		(async () => {
-			// Clear old caches (important when version changes)
+			// Delete old caches ONLY AFTER new cache is ready
 			const keys = await caches.keys();
 			await Promise.all(
 				keys.map((key) => {
 					if (key !== cacheName) {
+						console.log('Deleting old cache:', key);
 						return caches.delete(key);
 					}
 				})
 			);
 
-			// Claim clients immediately
 			await self.clients.claim();
-
-			// Start background caching AFTER activation
-			const cache = await caches.open(cacheName);
-
-			// Helper to background-cache routes/files
-			const backgroundCache = async (routes) => {
-				for (const route of routes) {
-					try {
-						const cached = await cache.match(route);
-						if (!cached) {
-							const response = await fetch(route);
-							if (response.ok) {
-								await cache.put(route, response.clone());
-							}
-						}
-					} catch (error) {
-						console.warn('Background cache failed for:', route, error);
-					}
-				}
-			};
-
-			// Background caching
-			await backgroundCache(staticRoutesToCache);
-			await backgroundCache(chapterRoutesToCache);
-			await backgroundCache(juzRoutesToCache);
 		})()
 	);
 });
