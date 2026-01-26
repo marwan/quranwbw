@@ -3,7 +3,7 @@
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import BookmarkCard from '$display/BookmarkCard.svelte';
 	import { __userBookmarks } from '$utils/stores';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 
@@ -41,7 +41,7 @@
 
 	async function loadQuranData() {
 		try {
-			fullQuranTextData = await fetchAndCacheJson(`${staticEndpoint}/full-quran/uthmani.json?version=1`, 'other');
+			fullQuranTextData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, 'other');
 		} catch (error) {
 			console.error('Failed to load Quran data:', error);
 		}

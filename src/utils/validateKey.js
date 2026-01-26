@@ -2,7 +2,7 @@
 import { get } from 'svelte/store';
 import { __currentPage, __chapterNumber } from '$utils/stores';
 import { quranMetaData, supplicationsFromQuran } from '$data/quranMeta';
-import { staticEndpoint } from '$data/websiteSettings';
+import { cdnStaticDataUrls } from '$data/websiteSettings';
 import { fetchAndCacheJson } from '$utils/fetchData';
 
 // Validates the search terms provided in the Quran navigation modal and returns structured results
@@ -102,7 +102,7 @@ export async function isValidWordKey(key) {
 	if (!isValidChapter(chapter) || !isValidVerse(chapter, verse)) return false;
 
 	const verseKey = `${chapter}:${verse}`;
-	const data = await fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other');
+	const data = await fetchAndCacheJson(cdnStaticDataUrls.verseKeyData, 'other');
 
 	return word >= 1 && word <= data[verseKey].words; // Validates word number within verse
 }

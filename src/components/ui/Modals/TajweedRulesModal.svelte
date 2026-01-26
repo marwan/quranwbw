@@ -5,7 +5,7 @@
 	import { __tajweedRulesModalVisible, __currentPage, __chapterNumber } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { linkClasses } from '$data/commonClasses';
 	import { createLink } from '$utils/createLink';
 	import { fetchAndCacheJson } from '$utils/fetchData';
@@ -18,7 +18,7 @@
 	$: {
 		if ($__tajweedRulesModalVisible) {
 			tajweedRulesData = (async () => {
-				return await fetchAndCacheJson(`${staticEndpoint}/tajweed/tajweed-rules.json?version=3`, 'other');
+				return await fetchAndCacheJson(cdnStaticDataUrls.tajweedRules, 'other');
 			})();
 		}
 	}
@@ -72,7 +72,7 @@
 		<!-- links to PDF files -->
 		<div class="mt-4 text-xs">
 			To learn the correct pronunciation of Arabic alphabets, please refer to
-			{@html createLink(`${staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf`, 'Makharij Al Huroof')}.
+			{@html createLink(cdnStaticDataUrls.huroofPDF, 'Makharij Al Huroof')}.
 		</div>
 	{:catch error}
 		<ErrorLoadingData center="false" {error} />
