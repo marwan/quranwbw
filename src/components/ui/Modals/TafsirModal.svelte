@@ -91,15 +91,11 @@
 
 	<svelte:fragment slot="footer">
 		{#key verse}
-			{#await tafsirData}
-				<!-- Show nothing -->
-			{:then data}
+			{#await tafsirData then}
 				<div class="grid grid-cols-2 gap-4 w-full">
 					<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>Previous {term('verse')}</button>
 					<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>Next {term('verse')}</button>
 				</div>
-			{:catch error}
-				<!-- Hide buttons on error -->
 			{/await}
 		{/key}
 	</svelte:fragment>
