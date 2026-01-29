@@ -17,7 +17,6 @@
 	import ResetSettings from '$svgs/ResetSettings.svelte';
 	import Import from '$svgs/Import.svelte';
 	import Export from '$svgs/Export.svelte';
-	import Trash from '$svgs/Trash.svelte';
 
 	import {
 		__currentPage,
@@ -55,7 +54,7 @@
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
-	import { unregisterServiceWorkerAndClearCache, isUserOnline } from '$utils/serviceWorkerHandler';
+	import { isUserOnline } from '$utils/serviceWorkerHandler';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {
@@ -568,21 +567,6 @@
 							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>
 						<p class={settingsDescriptionClasses}>Reset all website settings to default without affecting your bookmarks or notes.</p>
-					</div>
-
-					<div class="border-b {window.theme('border')}"></div>
-
-					<!-- delete-offline-data-button -->
-					<div id="delete-offline-data-button" class={settingsBlockClasses}>
-						<div class="flex flex-row justify-between items-center">
-							<span class="block">Delete Offline Data</span>
-							<button class="text-sm space-x-2 {buttonClasses}" on:click={() => showConfirm('Are you sure you want to delete offline data? This action cannot be reversed.', 'settings-drawer', () => unregisterServiceWorkerAndClearCache())}>
-								<Trash />
-								<span>Delete</span>
-							</button>
-							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Delete</Tooltip>
-						</div>
-						<p class={settingsDescriptionClasses}>This can help fix issues where the site isn’t updating properly or you’re seeing outdated content. Once cleared, the website will automatically download fresh data again the next time you visit.</p>
 					</div>
 				</div>
 			</div>

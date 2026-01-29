@@ -31,7 +31,8 @@ import {
 	__homepageExtrasPanelVisible,
 	__downloadedDataInfo,
 	__wideWesbiteLayoutEnabled,
-	__signLanguageModeEnabled
+	__signLanguageModeEnabled,
+	__offlineDataSettings
 } from '$utils/stores';
 
 // function to update website settings
@@ -292,6 +293,12 @@ export function updateSettings(props) {
 		case 'signLanguageModeEnabled':
 			__signLanguageModeEnabled.set(props.value);
 			userSettings.displaySettings.signLanguageModeEnabled = props.value;
+			break;
+
+		// for offline data settings
+		case 'offlineDataSettings':
+			__offlineDataSettings.set(props.value);
+			userSettings.offlineDataSettings = props.value;
 			break;
 
 		// for increasing/decreasing font sizes

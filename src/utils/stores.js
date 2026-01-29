@@ -64,7 +64,8 @@ let __websiteOnline,
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__verseWordBlocks;
+	__verseWordBlocks,
+	__offlineDataSettings;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -243,6 +244,9 @@ if (browser) {
 
 	// to store the visibility state of word blocks per verse
 	__verseWordBlocks = writable({});
+
+	// to store all the offline data settings
+	__offlineDataSettings = writable(userSettings.offlineDataSettings);
 }
 
 export {
@@ -309,5 +313,6 @@ export {
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__verseWordBlocks
+	__verseWordBlocks,
+	__offlineDataSettings
 };

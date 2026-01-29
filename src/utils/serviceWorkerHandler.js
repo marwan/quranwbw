@@ -1,61 +1,55 @@
-// import { staticEndpoint } from '$data/websiteSettings';
 import { showAlert } from '$utils/confirmationAlertHandler';
 
-// export async function checkAndRegisterServiceWorker() {
-// 	if (!('serviceWorker' in navigator)) {
-// 		console.log('Service Workers are not supported in this browser.');
-// 		return;
-// 	}
+export async function registerServiceWorker() {
+	if (!('serviceWorker' in navigator)) {
+		return { success: false, error: 'Not supported' };
+	}
 
-// 	let enabled = null;
-// 	let version = null;
+	try {
+		// Get or register the service worker
+		let registration = await navigator.serviceWorker.getRegistration();
 
-// 	try {
-// 		// Get current service worker registrations
-// 		const registrations = await navigator.serviceWorker.getRegistrations();
-// 		const swAlreadyRegistered = registrations.length > 0;
+		if (!registration) {
+			registration = await navigator.serviceWorker.register('/service-worker.js', {
+				type: 'module'
+			});
+		}
 
-// 		// Add a random query parameter to prevent caching
-// 		const response = await fetch(`${staticEndpoint}/others/service-worker-settings.json?bypass_cache=true&version=${Math.random()}`, { cache: 'no-store' });
+		// Wait for it to be ready
+		await navigator.serviceWorker.ready;
 
-// 		// Ensure a successful response
-// 		if (!response.ok) {
-// 			throw new Error(`API responded with status ${response.status}`);
-// 		}
+		// Listen for messages from service worker
+		navigator.serviceWorker.addEventListener('message', (event) => {
+			if (event.data.type === 'CACHE_STARTED') {
+				window.dispatchEvent(
+					new CustomEvent('sw-cache-started', {
+						detail: event.data
+					})
+				);
+			} else if (event.data.type === 'CACHE_PROGRESS') {
+				window.dispatchEvent(
+					new CustomEvent('sw-cache-progress', {
+						detail: event.data
+					})
+				);
+			} else if (event.data.type === 'CACHE_COMPLETE') {
+				window.dispatchEvent(
+					new CustomEvent('sw-cache-complete', {
+						detail: event.data
+					})
+				);
+			}
+		});
 
-// 		({ enabled, version } = await response.json());
+		// Tell the service worker to start caching
+		navigator.serviceWorker.controller?.postMessage({ type: 'START_CACHING' });
 
-// 		console.log(`Service Worker Settings - Enabled: ${enabled}, Version: ${version}`);
-
-// 		// If API says disabled and no SW is set, skip further processing
-// 		if (!enabled && !swAlreadyRegistered) {
-// 			console.log('Service Worker is disabled and not registered. Skipping...');
-// 			return;
-// 		}
-
-// 		if (enabled) {
-// 			if (!swAlreadyRegistered) {
-// 				navigator.serviceWorker
-// 					.register('/service-worker.js')
-// 					.then((registration) => {
-// 						console.log(`Service Worker Registered (Version ${version})`, registration);
-// 					})
-// 					.catch((error) => {
-// 						console.error('Service Worker Registration Failed', error);
-// 					});
-// 			} else {
-// 				console.log('Service Worker is already registered.');
-// 			}
-// 		} else {
-// 			console.log('Unregistering Service Worker and Deleting Cache...');
-
-// 			await unregisterServiceWorkerAndClearCache();
-// 		}
-// 	} catch (error) {
-// 		console.warn('Failed to fetch service worker settings:', error);
-// 		console.log('Keeping existing service worker state unchanged.');
-// 	}
-// }
+		return { success: true, registration };
+	} catch (error) {
+		console.error('SW registration failed:', error);
+		return { success: false, error: error.message };
+	}
+}
 
 // Function to unregister all service workers and delete caches
 export async function unregisterServiceWorkerAndClearCache() {
