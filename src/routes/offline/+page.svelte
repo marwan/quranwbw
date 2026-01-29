@@ -60,20 +60,20 @@
 
 	<div class="mt-6 overflow-auto">
 		<table class="w-full text-sm text-left rounded-md">
-			<thead class="text-xs uppercase {window.theme('bgSecondaryLight')}">
+			<!-- <thead class="text-xs uppercase {window.theme('bgSecondaryLight')}">
 				<tr>
-					<th class="px-6 py-3">Resource</th>
-					<th class="px-6 py-3 text-right">Action</th>
+					<th class="px-3 py-3">Resource</th>
+					<th class="px-3 py-3 text-right">Action</th>
 				</tr>
-			</thead>
+			</thead> -->
 			<tbody>
 				<!-- Service Worker & Core Files -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')}">
-					<td class="px-6 py-4">
+					<td class="py-4">
 						<div class="font-semibold">Core Website Files</div>
 						<div class="text-sm mt-1">Essential files required for offline access including all pages, chapters, and juz</div>
 					</td>
-					<td class="px-6 py-4 text-right">
+					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={$__offlineDataSettings.swRegistered ? showConfirm('Are you sure you want to delete this data?', '', () => handleUnregister()) : handleRegister} disabled={isRegistering || isDownloading}>
 							{#if $__offlineDataSettings.swRegistered}
 								<Trash size={4} />
@@ -96,34 +96,43 @@
 
 				<!-- Mushaf Fonts -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {disabledClasses}">
-					<td class="px-6 py-4">
+					<td class="py-4">
 						<div class="font-semibold">Mushaf Quran Fonts (comming soon)</div>
 						<div class="text-sm mt-1">High-quality fonts for displaying the Quran in traditional Mushaf style</div>
 					</td>
-					<td class="px-6 py-4 text-right">
-						<button class="text-sm {buttonClasses}" disabled={isDownloading}> Download </button>
+					<td class="py-4 text-right">
+						<button class="text-sm {buttonClasses}" disabled={isDownloading}>
+							<Download size={4} />
+							<span>Download</span>
+						</button>
 					</td>
 				</tr>
 
 				<!-- Additional Translations -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {disabledClasses}">
-					<td class="px-6 py-4">
+					<td class="py-4">
 						<div class="font-semibold">Additional Translations (comming soon)</div>
 						<div class="text-sm mt-1">Extra translations in various languages for offline reading</div>
 					</td>
-					<td class="px-6 py-4 text-right">
-						<button class="text-sm {buttonClasses}" disabled={isDownloading}> Download </button>
+					<td class="py-4 text-right">
+						<button class="text-sm {buttonClasses}" disabled={isDownloading}>
+							<Download size={4} />
+							<span>Download</span>
+						</button>
 					</td>
 				</tr>
 
 				<!-- Audio Recitations -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {disabledClasses}">
-					<td class="px-6 py-4">
+					<td class="py-4">
 						<div class="font-semibold">Audio Recitations (comming soon)</div>
 						<div class="text-sm mt-1">Download recitations by various Qaris for offline listening</div>
 					</td>
-					<td class="px-6 py-4 text-right">
-						<button class="text-sm {buttonClasses}" disabled={isDownloading}> Download </button>
+					<td class="py-4 text-right">
+						<button class="text-sm {buttonClasses}" disabled={isDownloading}>
+							<Download size={4} />
+							<span>Download</span>
+						</button>
 					</td>
 				</tr>
 			</tbody>
