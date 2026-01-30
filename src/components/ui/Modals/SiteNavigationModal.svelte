@@ -100,6 +100,11 @@
 					<span class={linkTextClasses}>About</span>
 				</a>
 
+				<!-- Offline Mode page -->
+				<a href="/offline" class={linkClasses}>
+					<span class={linkTextClasses}>Offline Mode</span>
+				</a>
+
 				<!-- download modal -->
 				<!-- <button
 					on:click={() => {

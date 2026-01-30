@@ -284,7 +284,7 @@
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Core Website Data</div>
-						<div class="text-sm opacity-70">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as chapters, juz, and verses is not included here. If you want to read those offline, they must be downloaded separately.</div>
+						<div class="text-sm">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as chapters, juz, and verses is not included here. If you want to read those offline, they must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('Are you sure you want to delete this data?', '', () => handleUnregister()) : handleRegister} disabled={isRegistering || isDownloading}>
@@ -305,7 +305,7 @@
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Chapter Data</div>
-						<div class="text-sm opacity-70">These files download the Quran text data and allow you to read all 114 chapters offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
+						<div class="text-sm">These files download the Quran text data and allow you to read all 114 chapters offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={handleDownloadChaptersData} disabled={isRegistering || isDownloading}>
@@ -326,7 +326,7 @@
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Juz Data</div>
-						<div class="text-sm opacity-70">These files allow you to read all 30 Quran juz offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
+						<div class="text-sm">These files allow you to read all 30 Quran juz offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
 					</td>
 					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={handleDownloadJuzData} disabled={isRegistering || isDownloading}>
@@ -347,7 +347,7 @@
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Mushaf Data</div>
-						<div class="text-sm opacity-70">These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.</div>
+						<div class="text-sm">These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.</div>
 					</td>
 					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={handleDownloadMushafData} disabled={isRegistering || isDownloading}>
