@@ -65,7 +65,7 @@ let __websiteOnline,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
-	__offlineDataSettings;
+	__offlineModeSettings;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -164,7 +164,7 @@ if (browser) {
 	// to store the morphology verse/word key
 	__morphologyKey = writable(null);
 
-	// to store all the offline data settings
+	// to store all the offline mode settings
 	__downloadedDataInfo = writable(userSettings.downloadedDataInfo);
 
 	// to store the auto scroll speed
@@ -245,8 +245,8 @@ if (browser) {
 	// to store the visibility state of word blocks per verse
 	__verseWordBlocks = writable({});
 
-	// to store all the offline data settings
-	__offlineDataSettings = writable(userSettings.offlineDataSettings);
+	// to store all the offline mode settings
+	__offlineModeSettings = writable(userSettings.offlineModeSettings);
 }
 
 export {
@@ -314,5 +314,5 @@ export {
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
-	__offlineDataSettings
+	__offlineModeSettings
 };

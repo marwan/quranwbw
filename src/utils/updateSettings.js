@@ -32,7 +32,7 @@ import {
 	__downloadedDataInfo,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__offlineDataSettings
+	__offlineModeSettings
 } from '$utils/stores';
 
 // function to update website settings
@@ -295,10 +295,10 @@ export function updateSettings(props) {
 			userSettings.displaySettings.signLanguageModeEnabled = props.value;
 			break;
 
-		// for offline data settings
-		case 'offlineDataSettings':
-			__offlineDataSettings.set(props.value);
-			userSettings.offlineDataSettings = props.value;
+		// for offline mode settings
+		case 'offlineModeSettings':
+			__offlineModeSettings.set(props.value);
+			userSettings.offlineModeSettings = props.value;
 			break;
 
 		// for increasing/decreasing font sizes
