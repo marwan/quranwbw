@@ -43,7 +43,7 @@
 		try {
 			fullQuranTextData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, 'other');
 		} catch (error) {
-			console.error('Failed to load Quran data:', error);
+			console.warn('Failed to load Quran data:', error);
 		}
 	}
 

@@ -46,7 +46,7 @@ export async function registerServiceWorker() {
 
 		return { success: true, registration };
 	} catch (error) {
-		console.error('SW registration failed:', error);
+		console.warn('SW registration failed:', error);
 		return { success: false, error: error.message };
 	}
 }

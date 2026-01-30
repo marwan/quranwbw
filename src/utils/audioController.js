@@ -410,7 +410,7 @@ export function prepareVersesToPlay(key) {
 			break;
 		default:
 			// Handle invalid audioRange values
-			console.error('Invalid audioRange:', audioRange);
+			console.warn('Invalid audioRange:', audioRange);
 	}
 }
 

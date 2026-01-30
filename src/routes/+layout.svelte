@@ -179,7 +179,7 @@
 			// Save back to localStorage
 			localStorage.setItem(storageKey, JSON.stringify(data));
 		} catch (error) {
-			console.error('Error tracking website version:', error);
+			console.warn('Error tracking website version:', error);
 		}
 	})();
 </script>

@@ -8,7 +8,7 @@
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
 	import { isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { staticEndpoint, bismillahFonts } from '$data/websiteSettings';
 	import { loadFont } from '$utils/loadFont';
 
 	$: isUthmaniFontType = [1, 2, 3, 5, 7, 8].includes($__fontType);
@@ -26,39 +26,31 @@
 		const elements = document.querySelectorAll('.bismillah');
 		elements.forEach((el) => el.classList.add('invisible'));
 
-		// FontType → { file, version }
-		const fontMap = {
-			1: { file: 'qcf-bismillah-normal', version: 13 }, // Uthmanic Digital Font
-			2: { file: 'qcf-bismillah-normal', version: 13 }, // Uthmanic Mushaf non-Tajweed
-			3: { file: 'QCF_Bismillah_COLOR-Regular', version: 13 }, // Uthmanic Mushaf Tajweed
-			4: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Madinah Edition)
-			5: { file: 'Qcf-nastaleeq-bismillah-normal', version: 13 }, // Uthman Taha Digital
-			6: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Hanafi Edition)
-			7: { file: 'qcf-bismillah-bold', version: 13 }, // Uthmanic Digital Bold
-			8: { file: 'Qcf-nastaleeq-bismillah-bold', version: 13 }, // Uthman Taha Digital Bold
-			9: { file: 'MisbahBismillah-Arabic', version: 13 } // Indonesian Isep Misbah Digital Font
-		};
+		// Uthmanic Mushaf Tajweed
+		const defaultBismillah = bismillahFonts[3].file;
 
 		// Default font
 		let { file: fileName, version: fontVersion } = {
-			file: 'QCF_Bismillah_COLOR-Regular',
+			file: defaultBismillah,
 			version: 13
 		};
 
 		// Pick from map if available
-		if (fontMap[$__fontType]) {
-			({ file: fileName, version: fontVersion } = fontMap[$__fontType]);
+		if (bismillahFonts[$__fontType]) {
+			({ file: fileName, version: fontVersion } = bismillahFonts[$__fontType]);
 		}
 
 		// Special override: Uthmanic Mushaf Tajweed
 		if ($__fontType === 3) {
-			fileName = isFirefoxDarkTajweed() ? 'QCF_Bismillah_COLOR-Dark-FF-Regular' : 'QCF_Bismillah_COLOR-Regular';
+			fileName = isFirefoxDarkTajweed() ? bismillahFonts.firefoxDarkTajweed.file : defaultBismillah;
 			customFontPalette = isFirefoxDarkTajweed() ? 'hafs-palette-firefox-dark' : 'theme-palette-tajweed';
 			fontVersion = 13;
 		}
 
 		// Load font
 		const url = `${staticEndpoint}/fonts/Extras/bismillah/${fileName}.woff2?version=${fontVersion}`;
+
+		console.log(url);
 
 		loadFont('bismillah', url).then(() => {
 			elements.forEach((el) => el.classList.remove('invisible'));

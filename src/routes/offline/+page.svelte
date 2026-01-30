@@ -10,7 +10,8 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
-	import { cdnStaticDataUrls } from '$data/websiteSettings';
+	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, bismillahFonts } from '$data/websiteSettings';
+	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 
 	let isRegistering = false;
 
@@ -50,6 +51,7 @@
 	ensureOfflineSettingsStructure('serviceWorker');
 	ensureOfflineSettingsStructure('chapterData');
 	ensureOfflineSettingsStructure('juzData');
+	ensureOfflineSettingsStructure('mushafData');
 
 	// Reactive statement for local reference
 	$: offlineModeSettings = $__offlineModeSettings;
@@ -58,6 +60,7 @@
 	$: isServiceWorkerRegistered = offlineModeSettings?.serviceWorker?.downloaded ?? false;
 	$: isChapterDataDownloaded = offlineModeSettings?.chapterData?.downloaded ?? false;
 	$: isJuzDataDownloaded = offlineModeSettings?.juzData?.downloaded ?? false;
+	$: isMushafDataDownloaded = offlineModeSettings?.mushafData?.downloaded ?? false;
 
 	// Track if any download is in progress
 	$: isDownloading = isRegistering;
@@ -84,6 +87,12 @@
 
 		// Download all CDN static data files
 		await downloadAllCdnStaticData();
+
+		// Download all bismillah fonts
+		await downloadAllBismillahFonts();
+
+		// Download chapter header font
+		await downloadChapterHeaderFont();
 
 		if (!result.success) {
 			alert('Failed to enable offline mode: ' + result.error);
@@ -118,7 +127,7 @@
 				await fetch(route);
 			}
 
-			// Fetch chapter data and translations (downloads all chapters)
+			// Fetch chapter data and translations
 			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
 			await fetchVerseTranslationData({ preventStoreUpdate: true });
 
@@ -152,7 +161,7 @@
 				await fetch(route);
 			}
 
-			// Fetch chapter data and translations (downloads all chapters)
+			// Fetch chapter data and translations
 			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
 			await fetchVerseTranslationData({ preventStoreUpdate: true });
 
@@ -166,6 +175,44 @@
 		} catch (error) {
 			console.warn('Juz download failed:', error);
 			alert('Failed to download juz data: ' + error.message);
+		}
+	}
+
+	// Cache all 604 mushaf page routes and download mushaf font files
+	async function handleDownloadMushafData() {
+		isDownloading = true;
+
+		ensureOfflineSettingsStructure('mushafData', {
+			downloaded: false,
+			downloadedAt: null
+		});
+
+		try {
+			const totalPages = 10;
+
+			// Download all 604 mushaf page routes (service worker will cache them automatically)
+			const mushafRoutes = Array.from({ length: totalPages }, (_, i) => `/page/${i + 1}`);
+
+			for (const route of mushafRoutes) {
+				await fetch(route);
+			}
+
+			// Download all 604 mushaf font files
+			for (let page = 1; page <= totalPages; page++) {
+				await fetch(getMushafWordFontLink(page));
+			}
+
+			// Mark as complete
+			updateOfflineSettingsStructure('mushafData', {
+				downloaded: true,
+				downloadedAt: new Date().toISOString()
+			});
+
+			isDownloading = false;
+		} catch (error) {
+			console.warn('Mushaf download failed:', error);
+			alert('Failed to download mushaf data: ' + error.message);
+			isDownloading = false;
 		}
 	}
 
@@ -186,6 +233,33 @@
 		}
 	}
 
+	// Download all bismillah fonts
+	async function downloadAllBismillahFonts() {
+		try {
+			const fontPromises = Object.values(bismillahFonts).map(({ file, version }) => {
+				const url = `${staticEndpoint}/fonts/Extras/bismillah/${file}.woff2?version=${version}`;
+				return fetch(url);
+			});
+
+			// Wait for all fonts to be downloaded
+			await Promise.all(fontPromises);
+
+			console.log('All bismillah fonts cached successfully');
+		} catch (error) {
+			console.warn('Failed to cache bismillah fonts:', error);
+		}
+	}
+
+	// Download chapter header font
+	async function downloadChapterHeaderFont() {
+		try {
+			await fetch(chapterHeaderFontLink);
+			console.log('Chapter header font cached successfully');
+		} catch (error) {
+			console.warn('Failed to cache chapter header font:', error);
+		}
+	}
+
 	__currentPage.set('Offline Mode');
 </script>
 
@@ -202,16 +276,10 @@
 
 	<div class="mt-6 overflow-auto">
 		<table class="w-full text-sm text-left rounded-md">
-			<!-- <thead class="text-xs uppercase {window.theme('bgSecondaryLight')}">
-				<tr>
-					<th class="px-3 py-3">Resource</th>
-					<th class="px-3 py-3 text-right">Action</th>
-				</tr>
-			</thead> -->
 			<tbody>
 				<!-- Service Worker & Core Files -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')}">
-					<td class="py-4 pr-4">
+					<td class="py-4 pr-4 space-y-2">
 						<div class="font-semibold">Core Website Files</div>
 						<div class="text-sm">These are the basic files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as chapters, juz, and verses is not included here. If you want to read those offline, they must be downloaded separately.</div>
 					</td>
@@ -220,7 +288,7 @@
 							{#if isServiceWorkerRegistered}
 								<Trash size={4} />
 								<span>Delete</span>
-							{:else if isRegistering}
+							{:else if isRegistering || isDownloading}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
 								<Download size={4} />
@@ -232,9 +300,9 @@
 
 				<!-- Chapter Data Files (only enable if service worker has been registered) -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
-					<td class="py-4 pr-4">
+					<td class="py-4 pr-4 space-y-2">
 						<div class="font-semibold">Chapter Data Files</div>
-						<div class="text-sm">These files allow you to read all 114 Quran chapters offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
+						<div class="text-sm">These files download the Quran text data and allow you to read all 114 chapters offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={handleDownloadChaptersData} disabled={isRegistering || isDownloading}>
@@ -253,7 +321,7 @@
 
 				<!-- Juz Data Files (only enable if service worker has been registered) -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
-					<td class="py-4 pr-4">
+					<td class="py-4 pr-4 space-y-2">
 						<div class="font-semibold">Juz Data Files</div>
 						<div class="text-sm">These files allow you to read all 30 Quran juz offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
 					</td>
@@ -273,43 +341,22 @@
 				</tr>
 
 				<!-- Mushaf Fonts -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {disabledClasses}">
-					<td class="py-4">
-						<div class="font-semibold">Mushaf Quran Fonts (comming soon)</div>
-						<div class="text-sm mt-1">High-quality fonts for displaying the Quran in traditional Mushaf style</div>
+				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
+					<td class="py-4 pr-4 space-y-2">
+						<div class="font-semibold">Mushaf Data</div>
+						<div class="text-sm">These files let you open the Mushaf (page) view offline. Only the 604 page routes and the required font files are downloaded. The actual Quran text data must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm {buttonClasses}" disabled={isDownloading}>
-							<Download size={4} />
-							<span>Download</span>
-						</button>
-					</td>
-				</tr>
-
-				<!-- Additional Translations -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {disabledClasses}">
-					<td class="py-4">
-						<div class="font-semibold">Additional Translations (comming soon)</div>
-						<div class="text-sm mt-1">Extra translations in various languages for offline reading</div>
-					</td>
-					<td class="py-4 text-right">
-						<button class="text-sm {buttonClasses}" disabled={isDownloading}>
-							<Download size={4} />
-							<span>Download</span>
-						</button>
-					</td>
-				</tr>
-
-				<!-- Audio Recitations -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {disabledClasses}">
-					<td class="py-4">
-						<div class="font-semibold">Audio Recitations (comming soon)</div>
-						<div class="text-sm mt-1">Download recitations by various Qaris for offline listening</div>
-					</td>
-					<td class="py-4 text-right">
-						<button class="text-sm {buttonClasses}" disabled={isDownloading}>
-							<Download size={4} />
-							<span>Download</span>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={handleDownloadMushafData} disabled={isRegistering || isDownloading}>
+							{#if isMushafDataDownloaded}
+								<Check size={5} />
+								<span>Downloaded</span>
+							{:else if isDownloading}
+								<Spinner size="8" inline={true} hideMessages={true} />
+							{:else}
+								<Download size={4} />
+								<span>Download</span>
+							{/if}
 						</button>
 					</td>
 				</tr>
