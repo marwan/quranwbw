@@ -39,12 +39,6 @@ const precacheFiles = [
 // Important pages we want to cache
 const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications'];
 
-// Generate routes for all 114 chapters (e.g., /1, /2, /3, ... /114)
-const chapterRoutesToCache = Array.from({ length: 114 }, (_, i) => `/${i + 1}`);
-
-// Generate routes for all 30 juz (e.g., /juz/1, /juz/2, ... /juz/30)
-const juzRoutesToCache = Array.from({ length: 30 }, (_, i) => `/juz/${i + 1}`);
-
 // This flag tracks whether the user has enabled offline mode
 // Starts as false - user must explicitly enable it
 let cachingEnabled = false;
@@ -199,8 +193,6 @@ async function performCaching() {
 
 	// Cache all the different types of pages
 	await backgroundCache(staticRoutesToCache, 'static-routes');
-	await backgroundCache(chapterRoutesToCache, 'chapters');
-	await backgroundCache(juzRoutesToCache, 'juz');
 }
 
 /**
