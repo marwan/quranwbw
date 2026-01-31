@@ -9,14 +9,9 @@
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { term } from '$utils/terminologies';
 	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { tafsirDataUrls } from '$data/websiteSettings';
 
 	let tafsirData;
-
-	// we have all the tafsirs on first endpoint and Tafheem Ul Quran (urdu) on second
-	const tafsirUrls = {
-		1: 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir',
-		2: 'https://static.quranwbw.com/data/v4/tafsirs'
-	};
 
 	$: selectedTafirId = $__verseTafsir || 30;
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
@@ -25,7 +20,7 @@
 		if ($__tafsirModalVisible) {
 			tafsirData = (async () => {
 				const selectedTafsir = selectableTafsirs[selectedTafirId];
-				return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
+				return await fetchAndCacheJson(`${tafsirDataUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
 			})();
 		}
 	}

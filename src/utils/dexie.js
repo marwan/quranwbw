@@ -17,3 +17,14 @@ export const cacheTableMap = {
 	tafsir: db.tafsir_data,
 	other: db.other_data
 };
+
+// Clears all records from the specified Dexie table without altering its schema
+export async function clearDexieTable(tableName) {
+	if (!db.tables.some((t) => t.name === tableName)) {
+		console.warn(`Table "${tableName}" does not exist`);
+		return;
+	}
+
+	await db.table(tableName).clear();
+	console.log(`Table "${tableName}" cleared successfully`);
+}

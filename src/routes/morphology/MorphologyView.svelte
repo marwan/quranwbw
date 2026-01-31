@@ -6,7 +6,7 @@
 	import Table from './Table.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { morphologyDataUrls } from '$data/websiteSettings';
 	import { __currentPage, __fontType, __morphologyKey, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { buttonClasses, buttonOutlineClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchAndCacheJson, fetchWordData } from '$utils/fetchData';
@@ -38,22 +38,22 @@
 		}).then((data) => data[`${chapter}:${verse}`]);
 
 		// Fetch word summary data
-		const wordSummaryDataPromise = fetchAndCacheJson(`${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`, 'morphology').catch(() => ({}));
+		const wordSummaryDataPromise = fetchAndCacheJson(morphologyDataUrls.getWordSummary(chapter), 'morphology').catch(() => ({}));
 
 		// Fetch word verbs data
-		const wordVerbsDataPromise = fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-verbs.json?version=1`, 'morphology').catch(() => ({}));
+		const wordVerbsDataPromise = fetchAndCacheJson(morphologyDataUrls.wordVerbs, 'morphology').catch(() => ({}));
 
 		// Fetch words with same root
-		const wordsWithSameRootDataPromise = fetchAndCacheJson(`${staticEndpoint}/morphology-data/words-with-same-root-keys.json?version=3`, 'morphology').catch(() => ({}));
+		const wordsWithSameRootDataPromise = fetchAndCacheJson(morphologyDataUrls.wordsWithSameRootKeys, 'morphology').catch(() => ({}));
 
 		// Fetch exact words in Quran
 		const exactWordsInQuranDataPromise = (async () => {
 			try {
 				const [keyMap, exactMap] = await Promise.all([
 					// Uthmani text and root data
-					fetchAndCacheJson(`${staticEndpoint}/morphology-data/word-uthmani-and-roots.json?version=1`, 'morphology'),
+					fetchAndCacheJson(morphologyDataUrls.wordUthmaniAndRoots, 'morphology'),
 					// Exact words keys
-					fetchAndCacheJson(`${staticEndpoint}/morphology-data/exact-words-keys.json?version=1`, 'morphology')
+					fetchAndCacheJson(morphologyDataUrls.exactWordsKeys, 'morphology')
 				]);
 
 				const keyToMeta = keyMap?.data || {};

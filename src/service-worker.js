@@ -27,7 +27,8 @@ const cacheNames = {
 	chapterData: 'quranwbw-chapter-data', // Chapter routes and data
 	juzData: 'quranwbw-juz-data', // Juz routes and data
 	mushafData: 'quranwbw-mushaf-data', // Mushaf pages and fonts
-	morphologyData: 'quranwbw-morphology-data' // Morphology data files
+	morphologyData: 'quranwbw-morphology-data', // Morphology data files
+	tafisrData: 'quranwbw-tafisr-data' // Tafsir data files
 	// staticAssets: 'quranwbw-static-assets' // CDN files, fonts, etc.
 };
 

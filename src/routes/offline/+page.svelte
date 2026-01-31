@@ -3,15 +3,17 @@
 	import Download from '$svgs/Download.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import { __currentPage, __offlineModeSettings, __fontType } from '$utils/stores';
+	import { __currentPage, __offlineModeSettings, __fontType, __verseTafsir } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
-	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, bismillahFonts } from '$data/websiteSettings';
+	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, bismillahFonts, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { term } from '$utils/terminologies';
+	import { selectableTafsirs } from '$data/selectableTafsirs';
+	import { clearDexieTable } from '$utils/dexie';
 
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
 
@@ -19,12 +21,16 @@
 	let isDownloadingChapter = false;
 	let isDownloadingJuz = false;
 	let isDownloadingMushaf = false;
+	let isDownloadingMorphology = false;
+	let isDownloadingTafsir = false;
 
 	// Initialize structures on component load
 	ensureOfflineSettingsStructure('serviceWorker');
 	ensureOfflineSettingsStructure('chapterData');
 	ensureOfflineSettingsStructure('juzData');
 	ensureOfflineSettingsStructure('mushafData');
+	ensureOfflineSettingsStructure('morphologyData');
+	ensureOfflineSettingsStructure('tafsirData');
 
 	// Reactive statement for local reference
 	$: offlineModeSettings = $__offlineModeSettings;
@@ -34,9 +40,11 @@
 	$: isChapterDataDownloaded = offlineModeSettings?.chapterData?.downloaded ?? false;
 	$: isJuzDataDownloaded = offlineModeSettings?.juzData?.downloaded ?? false;
 	$: isMushafDataDownloaded = offlineModeSettings?.mushafData?.downloaded ?? false;
+	$: isMorphologyDataDownloaded = offlineModeSettings?.morphologyData?.downloaded ?? false;
+	$: isTafsirDataDownloaded = offlineModeSettings?.tafsirData?.downloaded ?? false;
 
 	// Track if ANY download is in progress
-	$: isDownloading = isRegistering || isDownloadingChapter || isDownloadingJuz || isDownloadingMushaf;
+	$: isDownloading = isRegistering || isDownloadingChapter || isDownloadingJuz || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir;
 
 	// Listen for cache started
 	window.addEventListener('sw-cache-started', () => {
@@ -184,7 +192,9 @@
 	// Delete specific cache data
 	async function handleDeleteSpecificCache(cacheName, objectName) {
 		try {
+			// Delete the data from both cache and indexedDB
 			await deleteSpecificCache(cacheName);
+			await clearDexieTable(cacheName);
 
 			updateOfflineSettingsStructure(objectName, {
 				downloaded: false,
@@ -327,6 +337,83 @@
 		}
 	}
 
+	// Cache all morphology data files
+	async function handleDownloadMorphologyData() {
+		if (!isUserOnline()) return showOfflineAlert();
+
+		isDownloadingMorphology = true;
+
+		ensureOfflineSettingsStructure('morphologyData', {
+			downloaded: false,
+			downloadedAt: null
+		});
+
+		try {
+			// Download word summaries for all 114 chapters
+			for (let chapter = 1; chapter <= 114; chapter++) {
+				await fetchAndCacheJson(morphologyDataUrls.getWordSummary(chapter), 'morphology');
+			}
+
+			// Download static morphology files
+			await fetchAndCacheJson(morphologyDataUrls.wordVerbs, 'morphology');
+			await fetchAndCacheJson(morphologyDataUrls.wordsWithSameRootKeys, 'morphology');
+			await fetchAndCacheJson(morphologyDataUrls.wordUthmaniAndRoots, 'morphology');
+			await fetchAndCacheJson(morphologyDataUrls.exactWordsKeys, 'morphology');
+
+			// Fetch chapter data and translations
+			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+			await fetchVerseTranslationData({ preventStoreUpdate: true });
+
+			// Mark as complete
+			updateOfflineSettingsStructure('morphologyData', {
+				downloaded: true,
+				downloadedAt: new Date().toISOString()
+			});
+
+			window.umami?.track('Morphology Data Download');
+		} catch (error) {
+			console.error('Morphology download failed:', error);
+			showAlert(errorAlertMessage, '');
+		} finally {
+			isDownloadingMorphology = false;
+		}
+	}
+
+	// Cache all tafsir data files
+	async function handleDownloadTafsirData() {
+		if (!isUserOnline()) return showOfflineAlert();
+
+		isDownloadingTafsir = true;
+
+		ensureOfflineSettingsStructure('tafsirData', {
+			downloaded: false,
+			downloadedAt: null
+		});
+
+		try {
+			const selectedTafirId = $__verseTafsir || 30;
+			const selectedTafsir = selectableTafsirs[selectedTafirId];
+
+			// Download tafsir data for all 114 chapters
+			for (let chapter = 1; chapter <= 114; chapter++) {
+				await fetchAndCacheJson(`${tafsirDataUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
+			}
+
+			// Mark as complete
+			updateOfflineSettingsStructure('tafsirData', {
+				downloaded: true,
+				downloadedAt: new Date().toISOString()
+			});
+
+			window.umami?.track('Tafsir Data Download');
+		} catch (error) {
+			console.error('Tafsir download failed:', error);
+			showAlert(errorAlertMessage, '');
+		} finally {
+			isDownloadingTafsir = false;
+		}
+	}
+
 	// Download and cache all essential CDN static data files
 	async function downloadAllCdnStaticData() {
 		try {
@@ -466,6 +553,47 @@
 								<Trash size={4} />
 								<span>Delete</span>
 							{:else if isDownloadingMushaf}
+								<Spinner size="8" inline={true} hideMessages={true} />
+							{:else}
+								<Download size={4} />
+								<span>Download</span>
+							{/if}
+						</button>
+					</td>
+				</tr>
+
+				<!-- Morphology Data (only enable if service worker has been registered) -->
+				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingMorphology)) && disabledClasses}">
+					<td class="py-4 pr-4 space-y-2">
+						<div class={window.theme('textSecondary')}>Morphology Data</div>
+						<div class="text-sm">These files allow you to view detailed word information in the Morphology section. This includes word meanings, roots, verb forms, and related words used across the Quran.</div>
+					</td>
+					<td class="py-4 text-right">
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isMorphologyDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('morphology_data', 'morphologyData')) : handleDownloadMorphologyData} disabled={!isServiceWorkerRegistered || isDownloading}>
+							{#if isMorphologyDataDownloaded}
+								<Trash size={4} />
+								<span>Delete</span>
+							{:else if isDownloadingMorphology}
+								<Spinner size="8" inline={true} hideMessages={true} />
+							{:else}
+								<Download size={4} />
+								<span>Download</span>
+							{/if}
+						</button>
+					</td>
+				</tr>
+
+				<!-- Tafsir Data (only enable if service worker has been registered) -->
+				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingTafsir)) && disabledClasses}">
+					<td class="py-4 pr-4 space-y-2">
+						<div class={window.theme('textSecondary')}>Tafsir Data</div>
+						<div class="text-sm">These files let you read {term('tafsir')} for all {term('chapters')} offline, based on the {term('tafsir')} you have selected in your settings.</div>
+					</td><td class="py-4 text-right">
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isTafsirDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('tafsir_data', 'tafsirData')) : handleDownloadTafsirData} disabled={!isServiceWorkerRegistered || isDownloading}>
+							{#if isTafsirDataDownloaded}
+								<Trash size={4} />
+								<span>Delete</span>
+							{:else if isDownloadingTafsir}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
 								<Download size={4} />
