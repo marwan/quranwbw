@@ -104,17 +104,6 @@
 				<a href="/offline" class={linkClasses}>
 					<span class={linkTextClasses}>Offline Mode</span>
 				</a>
-
-				<!-- download modal -->
-				<!-- <button
-					on:click={() => {
-						__siteNavigationModalVisible.set(false);
-						__downloadModalVisible.set(true);
-					}}
-					class={linkClasses}
-				>
-					<span class={linkTextClasses}>Offline Mode</span>
-				</button> -->
 			</div>
 		</div>
 	</div>

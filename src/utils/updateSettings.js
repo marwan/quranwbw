@@ -29,7 +29,6 @@ import {
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__downloadedDataInfo,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__offlineModeSettings
@@ -275,12 +274,6 @@ export function updateSettings(props) {
 		case 'homepageExtrasPanelVisible':
 			__homepageExtrasPanelVisible.set(props.value);
 			userSettings.displaySettings.homepageExtrasPanelVisible = props.value;
-			break;
-
-		// for offline data settings
-		case 'downloadedDataInfo':
-			__downloadedDataInfo.set(props.value);
-			userSettings.downloadedDataInfo = props.value;
 			break;
 
 		// for toggling website wide layout

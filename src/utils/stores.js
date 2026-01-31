@@ -1,8 +1,7 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 
-let __websiteOnline,
-	__currentPage,
+let __currentPage,
 	__chapterNumber,
 	__pageNumber,
 	__chapterData,
@@ -34,7 +33,6 @@ let __websiteOnline,
 	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataInfo,
 	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
@@ -48,7 +46,6 @@ let __websiteOnline,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__downloadModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
@@ -69,9 +66,6 @@ let __websiteOnline,
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-
-	// to store network status of website
-	__websiteOnline = writable(true);
 
 	// to store the current page
 	__currentPage = writable('home');
@@ -164,9 +158,6 @@ if (browser) {
 	// to store the morphology verse/word key
 	__morphologyKey = writable(null);
 
-	// to store all the offline mode settings
-	__downloadedDataInfo = writable(userSettings.downloadedDataInfo);
-
 	// to store the auto scroll speed
 	__autoScrollSpeed = writable(userSettings.displaySettings.autoScrollSpeed);
 
@@ -187,7 +178,6 @@ if (browser) {
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
-	__downloadModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
 		type: null,
@@ -250,7 +240,6 @@ if (browser) {
 }
 
 export {
-	__websiteOnline,
 	__currentPage,
 	__chapterNumber,
 	__pageNumber,
@@ -283,7 +272,6 @@ export {
 	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataInfo,
 	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
@@ -297,7 +285,6 @@ export {
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__downloadModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
