@@ -18,7 +18,6 @@ export const cdnStaticDataUrls = {
 	fullQuranUthmani: `${staticEndpoint}/full-quran/uthmani.json?version=1`,
 	verseKeyData: `${staticEndpoint}/meta/verseKeyData.json?version=2`,
 	tajweedRules: `${staticEndpoint}/tajweed/tajweed-rules.json?version=3`,
-	huroofPDF: `${staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf`,
 	keysInJuz: `${staticEndpoint}/meta/keysInJuz.json?version=1`,
 	keysInPage: `${staticEndpoint}/meta/keysInPage.json?version=2`
 };
