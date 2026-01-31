@@ -361,15 +361,13 @@
 			const totalStepsInDownloadProgress = totalPages * 2 + 2 + 1;
 			let completedStepsInDownloadProgress = 0;
 
-			// Cache all mushaf page routes
-			for (let i = 1; i <= totalPages; i++) {
-				await cacheUrlToCache(`/page/${i}`, 'quranwbw-mushaf-data');
+			for (let page = 1; page <= totalPages; page++) {
+				// Cache all mushaf page routes
+				await cacheUrlToCache(`/page/${page}`, 'quranwbw-mushaf-data');
 				completedStepsInDownloadProgress++;
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-			}
 
-			// Cache all mushaf font files
-			for (let page = 1; page <= totalPages; page++) {
+				// Cache all mushaf font files
 				await cacheUrlToCache(getMushafWordFontLink(page), 'quranwbw-mushaf-data');
 				completedStepsInDownloadProgress++;
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
