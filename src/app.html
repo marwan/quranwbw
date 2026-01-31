@@ -61,11 +61,6 @@
 
 				const fontUrl = fontMap[fontType];
 				if (fontUrl) preloadFont(fontUrl);
-
-				// Preload Bismillah for all types except 4 and 6 (IndoPak)
-				if (![4, 6].includes(fontType)) {
-					preloadFont(`${baseFontUrl}/QCF_Bismillah_COLOR-Regular-v2.woff2`);
-				}
 			}
 		</script>
 
