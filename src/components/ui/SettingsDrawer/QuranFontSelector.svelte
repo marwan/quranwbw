@@ -8,7 +8,7 @@
 	import { isUserOnline } from '$utils/serviceWorkerHandler';
 
 	// Get downloaded font types from offline settings
-	$: downloadedFontTypes = $__offlineModeSettings?.downloadedFontTypes ?? [];
+	$: downloadedFontTypes = $__offlineModeSettings?.downloadedDataSettings?.fontTypes ?? [];
 
 	// Check if user is online
 	$: userOnline = isUserOnline();

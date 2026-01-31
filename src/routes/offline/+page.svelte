@@ -3,7 +3,7 @@
 	import Download from '$svgs/Download.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import { __currentPage, __offlineModeSettings, __fontType, __verseTafsir } from '$utils/stores';
+	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
 	import { updateSettings } from '$utils/updateSettings';
@@ -17,7 +17,9 @@
 
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
 
-	const totalChapters = 114;
+	// Chapter and Quran pages count
+	const totalChapters = 10;
+	const totalPages = 20;
 
 	let isRegistering = false;
 	let isDownloadingChapter = false;
@@ -33,6 +35,12 @@
 	ensureOfflineSettingsStructure('mushafData');
 	ensureOfflineSettingsStructure('morphologyData');
 	ensureOfflineSettingsStructure('tafsirData');
+	ensureOfflineSettingsStructure('downloadedDataSettings', {
+		fontTypes: [],
+		wordTranslations: [],
+		wordTransliterations: [],
+		verseTranslations: []
+	});
 
 	// Reactive statement for local reference
 	$: offlineModeSettings = $__offlineModeSettings;
@@ -68,10 +76,6 @@
 	});
 
 	// Helper function to ensure nested structure exists with custom properties
-	// Examples:
-	// ensureOfflineSettingsStructure('serviceWorker', { downloaded: false, downloadedAt: null })
-	// ensureOfflineSettingsStructure('chapterData', { downloaded: false, downloadedAt: null, chapters: [] })
-	// ensureOfflineSettingsStructure('mushafData', { downloaded: false, downloadedAt: null, fonts: ['uthmanic'] })
 	function ensureOfflineSettingsStructure(key, defaultStructure = { downloaded: false, downloadedAt: null }) {
 		if (!$__offlineModeSettings) {
 			$__offlineModeSettings = {};
@@ -83,9 +87,6 @@
 	}
 
 	// Helper function to update a specific structure and save to localStorage
-	// Examples:
-	// updateOfflineSettingsStructure('serviceWorker', { downloaded: true, downloadedAt: new Date().toISOString() })
-	// updateOfflineSettingsStructure('chapterData', { downloaded: true, chapters: [1, 2, 3] })
 	function updateOfflineSettingsStructure(key, updates) {
 		ensureOfflineSettingsStructure(key);
 
@@ -124,31 +125,84 @@
 		window.umami?.track(`Delete Specific Cache (${cacheName})`);
 	}
 
-	// Helper function to add font types to downloaded list
-	// Examples:
-	// addDownloadedFontTypes(1) - Adds font type 1
-	// addDownloadedFontTypes([2, 3]) - Adds font types 2 and 3
-	function addDownloadedFontTypes(fontTypes) {
-		// Ensure downloadedFontTypes structure exists
-		ensureOfflineSettingsStructure('downloadedFontTypes', []);
+	// Helper function to add downloaded data settings
+	// Tracks fontTypes, wordTranslations, wordTransliterations, and verseTranslations
+	function addDownloadedDataSettings({ fontTypes, wordTranslation, wordTransliteration, verseTranslations }) {
+		// Ensure structure exists
+		ensureOfflineSettingsStructure('downloadedDataSettings', {
+			fontTypes: [],
+			wordTranslations: [],
+			wordTransliterations: [],
+			verseTranslations: []
+		});
 
-		// Convert single number to array for consistent handling
-		const fontTypesArray = Array.isArray(fontTypes) ? fontTypes : [fontTypes];
+		// Get current settings
+		const currentSettings = offlineModeSettings.downloadedDataSettings;
 
-		// Get current downloaded font types (ensure it's an array)
-		const currentFontTypes = Array.isArray(offlineModeSettings.downloadedFontTypes) ? offlineModeSettings.downloadedFontTypes : [];
+		// Helper to merge arrays without duplicates
+		const mergeArrays = (current, newItems) => {
+			const itemsArray = Array.isArray(newItems) ? newItems : [newItems];
+			return [...new Set([...current, ...itemsArray])];
+		};
 
-		// Add new font types, avoiding duplicates
-		const updatedFontTypes = [...new Set([...currentFontTypes, ...fontTypesArray])];
+		// Update font types if provided
+		if (fontTypes !== undefined && fontTypes !== null) {
+			currentSettings.fontTypes = mergeArrays(currentSettings.fontTypes, fontTypes);
+		}
 
-		// Update in localStorage
-		offlineModeSettings.downloadedFontTypes = updatedFontTypes;
+		// Update word translations if provided
+		if (wordTranslation !== undefined && wordTranslation !== null) {
+			currentSettings.wordTranslations = mergeArrays(currentSettings.wordTranslations, wordTranslation);
+		}
+
+		// Update word transliterations if provided
+		if (wordTransliteration !== undefined && wordTransliteration !== null) {
+			currentSettings.wordTransliterations = mergeArrays(currentSettings.wordTransliterations, wordTransliteration);
+		}
+
+		// Update verse translations if provided
+		if (verseTranslations !== undefined && verseTranslations !== null) {
+			currentSettings.verseTranslations = mergeArrays(currentSettings.verseTranslations, verseTranslations);
+		}
+
+		// Save to localStorage
 		updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
 	}
 
 	// Helper function to update the download progress percentage
 	function updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress) {
 		downloadProgressPercentage = Math.round((completedStepsInDownloadProgress / totalStepsInDownloadProgress) * 100);
+	}
+
+	// Download and cache all chapter and verse translation/transliteration data files
+	async function downloadChapterAndVerseTranslationData({ fontType, wordTranslation, wordTransliteration, verseTranslations }) {
+		try {
+			// Use provided values or fall back to current user settings
+			const activeFontType = fontType ?? $__fontType;
+			const activeWordTranslation = wordTranslation ?? $__wordTranslation;
+			const activeWordTransliteration = wordTransliteration ?? $__wordTransliteration;
+			const activeVerseTranslations = verseTranslations ?? $__verseTranslations;
+
+			// If fontType is an array, use the first item for fetching
+			const fontTypeForFetch = Array.isArray(activeFontType) ? activeFontType[0] : activeFontType;
+
+			// Fetch chapter data with the specified font type
+			await fetchChapterData({ chapter: 1, fontType: fontTypeForFetch, preventStoreUpdate: true });
+
+			// Fetch verse translations
+			await fetchVerseTranslationData({ preventStoreUpdate: true });
+
+			// Track what was downloaded (use original activeFontType which could be array)
+			addDownloadedDataSettings({
+				fontTypes: activeFontType,
+				wordTranslation: activeWordTranslation,
+				wordTransliteration: activeWordTransliteration,
+				verseTranslations: activeVerseTranslations
+			});
+		} catch (error) {
+			console.warn('Failed to download chapter and verse translation data:', error);
+			throw error;
+		}
 	}
 
 	// Core data registration
@@ -238,13 +292,12 @@
 
 		ensureOfflineSettingsStructure('chapterData', {
 			downloaded: false,
-			downloadedAt: null,
-			fontType: $__fontType
+			downloadedAt: null
 		});
 
 		try {
-			// Total steps: 114 chapter routes + 2 data fetches + 1 buffer
-			const totalStepsInDownloadProgress = totalChapters + 2 + 1;
+			// Total steps: 114 chapter routes + 1 data fetch + 1 buffer
+			const totalStepsInDownloadProgress = totalChapters + 1 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Download all 114 chapter routes (service worker will cache them automatically)
@@ -256,18 +309,10 @@
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
-			// Fetch chapter data
-			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+			// Download chapter and verse data
+			await downloadChapterAndVerseTranslationData({});
 			completedStepsInDownloadProgress++;
 			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			// Fetch translations
-			await fetchVerseTranslationData({ preventStoreUpdate: true });
-			completedStepsInDownloadProgress++;
-			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			// Save the current selected user's font type so we can enable these in offline mode
-			addDownloadedFontTypes($__fontType);
 
 			// Mark as complete
 			updateOfflineSettingsStructure('chapterData', {
@@ -300,8 +345,8 @@
 		try {
 			const totalJuz = 30;
 
-			// Total steps: 30 juz routes + 2 data fetches + 1 buffer
-			const totalStepsInDownloadProgress = totalJuz + 2 + 1;
+			// Total steps: 30 juz routes + 1 data fetch + 1 buffer
+			const totalStepsInDownloadProgress = totalJuz + 1 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Download all 30 juz routes (service worker will cache them automatically)
@@ -313,18 +358,10 @@
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
-			// Fetch chapter data
-			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+			// Download chapter and verse data
+			await downloadChapterAndVerseTranslationData({});
 			completedStepsInDownloadProgress++;
 			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			// Fetch translations
-			await fetchVerseTranslationData({ preventStoreUpdate: true });
-			completedStepsInDownloadProgress++;
-			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			// Save the current selected user's font type so we can enable these in offline mode
-			addDownloadedFontTypes($__fontType);
 
 			// Mark as complete
 			updateOfflineSettingsStructure('juzData', {
@@ -355,10 +392,8 @@
 		});
 
 		try {
-			const totalPages = 604;
-
-			// Total steps: 604 page routes + 604 font files + 2 data fetches + 1 buffer
-			const totalStepsInDownloadProgress = totalPages * 2 + 2 + 1;
+			// Total steps: 604 page routes + 604 font files + 1 data fetch + 1 buffer
+			const totalStepsInDownloadProgress = totalPages * 2 + 1 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			for (let page = 1; page <= totalPages; page++) {
@@ -373,18 +408,10 @@
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
-			// Fetch chapter data
-			await fetchChapterData({ chapter: 1, fontType: 2, preventStoreUpdate: true });
+			// Download chapter and verse data for both font types 2 and 3
+			await downloadChapterAndVerseTranslationData({ fontType: [2, 3] });
 			completedStepsInDownloadProgress++;
 			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			// Fetch translations
-			await fetchVerseTranslationData({ preventStoreUpdate: true });
-			completedStepsInDownloadProgress++;
-			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			// Save the Non-Tajweed and Tajweed font types so we can enable these in offline mode
-			addDownloadedFontTypes([2, 3]);
 
 			// Mark as complete
 			updateOfflineSettingsStructure('mushafData', {
@@ -415,8 +442,8 @@
 		});
 
 		try {
-			// Total steps: 114 chapter word summaries + 6 data fetches + 1 buffer
-			const totalStepsInDownloadProgress = totalChapters + 6 + 1;
+			// Total steps: 114 chapter word summaries + 4 static files + 1 data fetch + 1 buffer
+			const totalStepsInDownloadProgress = totalChapters + 4 + 1 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Download word summaries for all 114 chapters
@@ -443,13 +470,8 @@
 			completedStepsInDownloadProgress++;
 			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
-			// Fetch chapter data
-			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
-			completedStepsInDownloadProgress++;
-			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			// Fetch translations
-			await fetchVerseTranslationData({ preventStoreUpdate: true });
+			// Download chapter and verse data
+			await downloadChapterAndVerseTranslationData({});
 			completedStepsInDownloadProgress++;
 			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
@@ -511,20 +533,6 @@
 			downloadProgressPercentage = 100;
 		}
 	}
-
-	// Download and cache all chapter and verse translation/transliteration data files
-	// async function downloadChapterAndVerseTranslationData(props) {
-	// 	try {
-	// 		const fontType = props.fontType || $__fontType;
-
-	// 		// Fetch chapter data and verse translation/transliteration
-	// 		await fetchChapterData({ chapter: 1, fontType, preventStoreUpdate: true });
-	// 		await fetchVerseTranslationData({ preventStoreUpdate: true });
-	// 	} catch (error) {
-	// 		console.warn('Failed to download chapter and verse translation data:', error);
-	// 		throw error;
-	// 	}
-	// }
 
 	// Download and cache all essential CDN static data files
 	async function downloadAllCdnStaticData() {
