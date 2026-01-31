@@ -11,6 +11,7 @@
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
 	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, bismillahFonts } from '$data/websiteSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
+	import { term } from '$utils/terminologies';
 
 	let isRegistering = false;
 	let isDownloadingChapter = false;
@@ -191,7 +192,7 @@
 
 		try {
 			// Download all 114 chapter routes (service worker will cache them automatically)
-			const chapterRoutes = Array.from({ length: 114 }, (_, i) => `/${i + 1}`);
+			const chapterRoutes = Array.from({ length: 10 }, (_, i) => `/${i + 1}`);
 
 			for (const route of chapterRoutes) {
 				await cacheUrlToCache(route, 'quranwbw-chapter-data');
@@ -376,7 +377,7 @@
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {isDownloading && !isRegistering && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Core Website Data</div>
-						<div class="text-sm">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as chapters, juz, and verses is not included here. If you want to read those offline, they must be downloaded separately.</div>
+						<div class="text-sm">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as {term('chapters')}, {term('juzs')}, and Mushaf data is not included here. If you want to read those offline, they must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('This will delete the core website files and all other offline data. Offline access will no longer be available.', '', () => handleCoreDataUnregister()) : handleCoreDataRegister} disabled={isDownloading}>
@@ -396,8 +397,8 @@
 				<!-- Chapter Data Files (only enable if service worker has been registered) -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingChapter)) && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
-						<div class={window.theme('textSecondary')}>Chapter Data</div>
-						<div class="text-sm">These files download the Quran text data and allow you to read all 114 chapters offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
+						<div class={window.theme('textSecondary')}>{term('chapter')} Data</div>
+						<div class="text-sm">These files download the Quran text data and allow you to read all 114 {term('chapters')} offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={isChapterDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-chapter-data', 'chapterData')) : handleDownloadChaptersData} disabled={!isServiceWorkerRegistered || isDownloading}>
@@ -417,8 +418,8 @@
 				<!-- Juz Data Files (only enable if service worker has been registered) -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingJuz)) && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
-						<div class={window.theme('textSecondary')}>Juz Data</div>
-						<div class="text-sm">These files allow you to read all 30 Quran juz offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
+						<div class={window.theme('textSecondary')}>{term('juzs')} Data</div>
+						<div class="text-sm">These files allow you to read all 30 Quran {term('juzs')} offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
 					</td>
 					<td class="py-4 text-right">
 						<button class="text-sm space-x-2 {buttonClasses}" on:click={isJuzDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-juz-data', 'juzData')) : handleDownloadJuzData} disabled={!isServiceWorkerRegistered || isDownloading}>
@@ -435,7 +436,7 @@
 					</td>
 				</tr>
 
-				<!-- Mushaf Fonts -->
+				<!-- Mushaf Data (only enable if service worker has been registered) -->
 				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingMushaf)) && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Mushaf Data</div>
