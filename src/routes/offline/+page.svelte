@@ -15,38 +15,6 @@
 
 	let isRegistering = false;
 
-	// Helper function to ensure nested structure exists with custom properties
-	// Examples:
-	// ensureOfflineSettingsStructure('serviceWorker', { downloaded: false, downloadedAt: null })
-	// ensureOfflineSettingsStructure('chapterData', { downloaded: false, downloadedAt: null, chapters: [] })
-	// ensureOfflineSettingsStructure('mushafData', { downloaded: false, downloadedAt: null, fonts: ['uthmanic'] })
-	function ensureOfflineSettingsStructure(key, defaultStructure = { downloaded: false, downloadedAt: null }) {
-		if (!$__offlineModeSettings) {
-			$__offlineModeSettings = {};
-		}
-
-		if (!$__offlineModeSettings[key]) {
-			$__offlineModeSettings[key] = { ...defaultStructure };
-		}
-	}
-
-	// Helper function to update a specific structure and save to localStorage
-	// Examples:
-	// updateOfflineSettingsStructure('serviceWorker', { downloaded: true, downloadedAt: new Date().toISOString() })
-	// updateOfflineSettingsStructure('chapterData', { downloaded: true, chapters: [1, 2, 3] })
-	function updateOfflineSettingsStructure(key, updates) {
-		ensureOfflineSettingsStructure(key);
-
-		// Merge updates into existing structure
-		offlineModeSettings[key] = {
-			...offlineModeSettings[key],
-			...updates
-		};
-
-		// Save to localStorage
-		updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
-	}
-
 	// Initialize structures on component load
 	ensureOfflineSettingsStructure('serviceWorker');
 	ensureOfflineSettingsStructure('chapterData');
@@ -81,6 +49,62 @@
 		});
 	});
 
+	// Helper function to ensure nested structure exists with custom properties
+	// Examples:
+	// ensureOfflineSettingsStructure('serviceWorker', { downloaded: false, downloadedAt: null })
+	// ensureOfflineSettingsStructure('chapterData', { downloaded: false, downloadedAt: null, chapters: [] })
+	// ensureOfflineSettingsStructure('mushafData', { downloaded: false, downloadedAt: null, fonts: ['uthmanic'] })
+	function ensureOfflineSettingsStructure(key, defaultStructure = { downloaded: false, downloadedAt: null }) {
+		if (!$__offlineModeSettings) {
+			$__offlineModeSettings = {};
+		}
+
+		if (!$__offlineModeSettings[key]) {
+			$__offlineModeSettings[key] = { ...defaultStructure };
+		}
+	}
+
+	// Helper function to update a specific structure and save to localStorage
+	// Examples:
+	// updateOfflineSettingsStructure('serviceWorker', { downloaded: true, downloadedAt: new Date().toISOString() })
+	// updateOfflineSettingsStructure('chapterData', { downloaded: true, chapters: [1, 2, 3] })
+	function updateOfflineSettingsStructure(key, updates) {
+		ensureOfflineSettingsStructure(key);
+
+		// Merge updates into existing structure
+		offlineModeSettings[key] = {
+			...offlineModeSettings[key],
+			...updates
+		};
+
+		// Save to localStorage
+		updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
+	}
+
+	// Helper to cache URL to specific cache
+	async function cacheUrlToCache(url, cacheName) {
+		if (navigator.serviceWorker.controller) {
+			navigator.serviceWorker.controller.postMessage({
+				type: 'CACHE_URL',
+				url: url,
+				cacheName: cacheName
+			});
+			// Small delay to ensure caching completes
+			await new Promise((resolve) => setTimeout(resolve, 50));
+		}
+	}
+
+	// Helper to delete specific cache
+	async function deleteSpecificCache(cacheName) {
+		if (navigator.serviceWorker.controller) {
+			navigator.serviceWorker.controller.postMessage({
+				type: 'DELETE_CACHE',
+				cacheName: cacheName
+			});
+		}
+	}
+
+	// Core data registration
 	async function handleRegister() {
 		isRegistering = true;
 		const result = await registerServiceWorker();
@@ -100,6 +124,7 @@
 		}
 	}
 
+	// Core data unregistration
 	async function handleUnregister() {
 		await unregisterServiceWorkerAndClearCache();
 
@@ -108,6 +133,16 @@
 
 		// Save to localStorage
 		updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
+	}
+
+	// Delete specific cache data
+	async function handleDeleteSpecificCache(cacheName, objectName) {
+		await deleteSpecificCache(cacheName);
+
+		updateOfflineSettingsStructure(objectName, {
+			downloaded: false,
+			downloadedAt: null
+		});
 	}
 
 	// Cache all 114 chapter routes and download chapter data based on user's settings
@@ -124,7 +159,7 @@
 			const chapterRoutes = Array.from({ length: 114 }, (_, i) => `/${i + 1}`);
 
 			for (const route of chapterRoutes) {
-				await fetch(route);
+				await cacheUrlToCache(route, 'quranwbw-chapter-data');
 			}
 
 			// Fetch chapter data and translations
@@ -158,7 +193,7 @@
 			const juzRoutes = Array.from({ length: 30 }, (_, i) => `/juz/${i + 1}`);
 
 			for (const route of juzRoutes) {
-				await fetch(route);
+				await cacheUrlToCache(route, 'quranwbw-juz-data');
 			}
 
 			// Fetch chapter data and translations
@@ -194,12 +229,12 @@
 			const mushafRoutes = Array.from({ length: totalPages }, (_, i) => `/page/${i + 1}`);
 
 			for (const route of mushafRoutes) {
-				await fetch(route);
+				await cacheUrlToCache(route, 'quranwbw-mushaf-data');
 			}
 
 			// Download all 604 mushaf font files
 			for (let page = 1; page <= totalPages; page++) {
-				await fetch(getMushafWordFontLink(page));
+				await cacheUrlToCache(getMushafWordFontLink(page), 'quranwbw-mushaf-data');
 			}
 
 			// Fetch chapter data (mushaf text)
@@ -308,10 +343,10 @@
 						<div class="text-sm">These files download the Quran text data and allow you to read all 114 chapters offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={handleDownloadChaptersData} disabled={isRegistering || isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isChapterDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-chapter-data', 'chapterData')) : handleDownloadChaptersData} disabled={isRegistering || isDownloading}>
 							{#if isChapterDataDownloaded}
-								<Check size={5} />
-								<span>Downloaded</span>
+								<Trash size={4} />
+								<span>Delete</span>
 							{:else if isDownloading}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
@@ -329,10 +364,10 @@
 						<div class="text-sm">These files allow you to read all 30 Quran juz offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={handleDownloadJuzData} disabled={isRegistering || isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isJuzDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-juz-data', 'juzData')) : handleDownloadJuzData} disabled={isRegistering || isDownloading}>
 							{#if isJuzDataDownloaded}
-								<Check size={5} />
-								<span>Downloaded</span>
+								<Trash size={4} />
+								<span>Delete</span>
 							{:else if isDownloading}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
@@ -350,10 +385,10 @@
 						<div class="text-sm">These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={handleDownloadMushafData} disabled={isRegistering || isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isMushafDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-mushaf-data', 'mushafData')) : handleDownloadMushafData} disabled={isRegistering || isDownloading}>
 							{#if isMushafDataDownloaded}
-								<Check size={5} />
-								<span>Downloaded</span>
+								<Trash size={4} />
+								<span>Delete</span>
 							{:else if isDownloading}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
