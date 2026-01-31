@@ -21,7 +21,7 @@
 	import { term } from '$utils/terminologies';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
-	import { isUserOnline } from '$utils/serviceWorkerHandler';
+	import { isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
 
 	// Constants
 	const mushafFontTypes = [2, 3];
@@ -39,7 +39,7 @@
 
 	// Event handlers
 	const handleAdvancedPlay = () => {
-		if (!isUserOnline()) return;
+		if (!isUserOnline()) return showOfflineAlert();
 		showAudioModal($__verseKey);
 		dropdownOpen = false;
 	};
@@ -70,7 +70,7 @@
 	};
 
 	const handleCopy = () => {
-		if (!isUserOnline()) return;
+		if (!isUserOnline()) return showOfflineAlert();
 		__copyShareVerseModalVisible.set(true);
 		dropdownOpen = false;
 	};

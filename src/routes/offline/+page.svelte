@@ -3,9 +3,9 @@
 	import Download from '$svgs/Download.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import { __currentPage, __offlineModeSettings } from '$utils/stores';
+	import { __currentPage, __offlineModeSettings, __fontType } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
-	import { registerServiceWorker, unregisterServiceWorkerAndClearCache } from '$utils/serviceWorkerHandler';
+	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
@@ -106,8 +106,32 @@
 		}
 	}
 
+	// Helper function to add font types to downloaded list
+	// Examples:
+	// addDownloadedFontTypes(1) - Adds font type 1
+	// addDownloadedFontTypes([2, 3]) - Adds font types 2 and 3
+	function addDownloadedFontTypes(fontTypes) {
+		// Ensure downloadedFontTypes structure exists
+		ensureOfflineSettingsStructure('downloadedFontTypes', []);
+
+		// Convert single number to array for consistent handling
+		const fontTypesArray = Array.isArray(fontTypes) ? fontTypes : [fontTypes];
+
+		// Get current downloaded font types (ensure it's an array)
+		const currentFontTypes = Array.isArray(offlineModeSettings.downloadedFontTypes) ? offlineModeSettings.downloadedFontTypes : [];
+
+		// Add new font types, avoiding duplicates
+		const updatedFontTypes = [...new Set([...currentFontTypes, ...fontTypesArray])];
+
+		// Update in localStorage
+		offlineModeSettings.downloadedFontTypes = updatedFontTypes;
+		updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
+	}
+
 	// Core data registration
-	async function handleRegister() {
+	async function handleCoreDataRegister() {
+		if (!isUserOnline()) return showOfflineAlert();
+
 		isRegistering = true;
 		const result = await registerServiceWorker();
 
@@ -127,7 +151,7 @@
 	}
 
 	// Core data unregistration
-	async function handleUnregister() {
+	async function handleCoreDataUnregister() {
 		await unregisterServiceWorkerAndClearCache();
 
 		// Empty the object
@@ -149,11 +173,14 @@
 
 	// Cache all 114 chapter routes and download chapter data based on user's settings
 	async function handleDownloadChaptersData() {
+		if (!isUserOnline()) return showOfflineAlert();
+
 		isDownloadingChapter = true;
 
 		ensureOfflineSettingsStructure('chapterData', {
 			downloaded: false,
-			downloadedAt: null
+			downloadedAt: null,
+			fontType: $__fontType
 		});
 
 		try {
@@ -167,6 +194,9 @@
 			// Fetch chapter data and translations
 			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
 			await fetchVerseTranslationData({ preventStoreUpdate: true });
+
+			// Save the current selected user's font type so we can enable these in offline mode
+			addDownloadedFontTypes($__fontType);
 
 			// Mark as complete
 			updateOfflineSettingsStructure('chapterData', {
@@ -184,6 +214,8 @@
 
 	// Cache all 30 juz routes and download chapter data based on user's settings
 	async function handleDownloadJuzData() {
+		if (!isUserOnline()) return showOfflineAlert();
+
 		isDownloadingJuz = true;
 
 		ensureOfflineSettingsStructure('juzData', {
@@ -203,6 +235,9 @@
 			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
 			await fetchVerseTranslationData({ preventStoreUpdate: true });
 
+			// Save the current selected user's font type so we can enable these in offline mode
+			addDownloadedFontTypes($__fontType);
+
 			// Mark as complete
 			updateOfflineSettingsStructure('juzData', {
 				downloaded: true,
@@ -219,6 +254,8 @@
 
 	// Cache all 604 mushaf page routes and download mushaf font files
 	async function handleDownloadMushafData() {
+		if (!isUserOnline()) return showOfflineAlert();
+
 		isDownloadingMushaf = true;
 
 		ensureOfflineSettingsStructure('mushafData', {
@@ -241,8 +278,12 @@
 				await cacheUrlToCache(getMushafWordFontLink(page), 'quranwbw-mushaf-data');
 			}
 
-			// Fetch chapter data (mushaf text)
+			// Fetch chapter data (mushaf text) and translations
 			await fetchChapterData({ chapter: 1, fontType: 2, preventStoreUpdate: true });
+			await fetchVerseTranslationData({ preventStoreUpdate: true });
+
+			// Save the Non-Tajweed and Tajweed font types so we can enable these in offline mode
+			addDownloadedFontTypes([2, 3]);
 
 			// Mark as complete
 			updateOfflineSettingsStructure('mushafData', {
@@ -326,7 +367,7 @@
 						<div class="text-sm">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as chapters, juz, and verses is not included here. If you want to read those offline, they must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('Are you sure you want to delete this data?', '', () => handleUnregister()) : handleRegister} disabled={isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('Are you sure you want to delete this data?', '', () => handleCoreDataUnregister()) : handleCoreDataRegister} disabled={isDownloading}>
 							{#if isServiceWorkerRegistered}
 								<Trash size={4} />
 								<span>Delete</span>

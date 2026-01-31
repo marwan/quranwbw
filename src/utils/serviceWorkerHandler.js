@@ -70,9 +70,11 @@ export async function unregisterServiceWorkerAndClearCache() {
 }
 
 export function isUserOnline() {
-	if (!navigator.onLine) {
-		showAlert('It looks like you’re offline. Please connect to the internet to use this feature.', 'settings-drawer');
-		return false;
-	}
-	return true;
+	return navigator.onLine === true;
+}
+
+export function showOfflineAlert() {
+	if (isUserOnline()) return;
+	showAlert('It looks like you’re offline. Please connect to the internet to use this feature.', 'settings-drawer');
+	return false;
 }
