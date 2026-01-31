@@ -159,7 +159,8 @@
 		downloadProgressPercentage = 0;
 
 		try {
-			const totalStepsInDownloadProgress = 5;
+			// Total steps: 1 service worker registration + 3 data fetches + 1 buffer
+			const totalStepsInDownloadProgress = 4 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			const result = await registerServiceWorker();
@@ -242,7 +243,8 @@
 		});
 
 		try {
-			const totalStepsInDownloadProgress = totalChapters + 3;
+			// Total steps: 114 chapter routes + 2 data fetches + 1 buffer
+			const totalStepsInDownloadProgress = totalChapters + 2 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Download all 114 chapter routes (service worker will cache them automatically)
@@ -298,7 +300,8 @@
 		try {
 			const totalJuz = 30;
 
-			const totalStepsInDownloadProgress = totalJuz + 3;
+			// Total steps: 30 juz routes + 2 data fetches + 1 buffer
+			const totalStepsInDownloadProgress = totalJuz + 2 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Download all 30 juz routes (service worker will cache them automatically)
@@ -354,8 +357,8 @@
 		try {
 			const totalPages = 604;
 
-			// Total steps: 604 page routes + 604 font files + 2 data fetches
-			const totalStepsInDownloadProgress = totalPages * 2 + 3;
+			// Total steps: 604 page routes + 604 font files + 2 data fetches + 1 buffer
+			const totalStepsInDownloadProgress = totalPages * 2 + 2 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Cache all mushaf page routes
@@ -414,7 +417,8 @@
 		});
 
 		try {
-			const totalStepsInDownloadProgress = totalChapters + 7;
+			// Total steps: 114 chapter word summaries + 6 data fetches + 1 buffer
+			const totalStepsInDownloadProgress = totalChapters + 6 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Download word summaries for all 114 chapters
@@ -480,7 +484,8 @@
 		});
 
 		try {
-			const totalStepsInDownloadProgress = totalChapters;
+			// Total steps: 114 chapter tafsirs + 1 buffer
+			const totalStepsInDownloadProgress = totalChapters + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			const selectedTafirId = $__verseTafsir || 30;
