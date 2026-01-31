@@ -17,6 +17,8 @@
 
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
 
+	const totalChapters = 114;
+
 	let isRegistering = false;
 	let isDownloadingChapter = false;
 	let isDownloadingJuz = false;
@@ -45,6 +47,9 @@
 
 	// Track if ANY download is in progress
 	$: isDownloading = isRegistering || isDownloadingChapter || isDownloadingJuz || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir;
+
+	// Track the download progress percentage
+	$: downloadProgressPercentage = 0;
 
 	// Listen for cache started
 	window.addEventListener('sw-cache-started', () => {
@@ -141,14 +146,25 @@
 		updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
 	}
 
+	// Helper function to update the download progress percentage
+	function updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress) {
+		downloadProgressPercentage = Math.round((completedStepsInDownloadProgress / totalStepsInDownloadProgress) * 100);
+	}
+
 	// Core data registration
 	async function handleCoreDataRegister() {
 		if (!isUserOnline()) return showOfflineAlert();
 
 		isRegistering = true;
+		downloadProgressPercentage = 0;
 
 		try {
+			const totalStepsInDownloadProgress = 5;
+			let completedStepsInDownloadProgress = 0;
+
 			const result = await registerServiceWorker();
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
 			if (!result.success) {
 				throw new Error(result.error);
@@ -156,12 +172,18 @@
 
 			// Download all CDN static data files
 			await downloadAllCdnStaticData();
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
 			// Download all bismillah fonts
 			await downloadAllBismillahFonts();
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
 			// Download chapter header font
 			await downloadChapterHeaderFont();
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
 			window.umami?.track('Core Data Download');
 		} catch (error) {
@@ -211,6 +233,7 @@
 		if (!isUserOnline()) return showOfflineAlert();
 
 		isDownloadingChapter = true;
+		downloadProgressPercentage = 0;
 
 		ensureOfflineSettingsStructure('chapterData', {
 			downloaded: false,
@@ -219,16 +242,27 @@
 		});
 
 		try {
+			const totalStepsInDownloadProgress = totalChapters + 3;
+			let completedStepsInDownloadProgress = 0;
+
 			// Download all 114 chapter routes (service worker will cache them automatically)
-			const chapterRoutes = Array.from({ length: 114 }, (_, i) => `/${i + 1}`);
+			const chapterRoutes = Array.from({ length: totalChapters }, (_, i) => `/${i + 1}`);
 
 			for (const route of chapterRoutes) {
 				await cacheUrlToCache(route, 'quranwbw-chapter-data');
+				completedStepsInDownloadProgress++;
+				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
-			// Fetch chapter data and translations
+			// Fetch chapter data
 			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+
+			// Fetch translations
 			await fetchVerseTranslationData({ preventStoreUpdate: true });
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
 			// Save the current selected user's font type so we can enable these in offline mode
 			addDownloadedFontTypes($__fontType);
@@ -245,6 +279,7 @@
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingChapter = false;
+			downloadProgressPercentage = 100;
 		}
 	}
 
@@ -253,6 +288,7 @@
 		if (!isUserOnline()) return showOfflineAlert();
 
 		isDownloadingJuz = true;
+		downloadProgressPercentage = 0;
 
 		ensureOfflineSettingsStructure('juzData', {
 			downloaded: false,
@@ -260,16 +296,29 @@
 		});
 
 		try {
+			const totalJuz = 30;
+
+			const totalStepsInDownloadProgress = totalJuz + 3;
+			let completedStepsInDownloadProgress = 0;
+
 			// Download all 30 juz routes (service worker will cache them automatically)
-			const juzRoutes = Array.from({ length: 30 }, (_, i) => `/juz/${i + 1}`);
+			const juzRoutes = Array.from({ length: totalJuz }, (_, i) => `/juz/${i + 1}`);
 
 			for (const route of juzRoutes) {
 				await cacheUrlToCache(route, 'quranwbw-juz-data');
+				completedStepsInDownloadProgress++;
+				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
-			// Fetch chapter data and translations
+			// Fetch chapter data
 			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+
+			// Fetch translations
 			await fetchVerseTranslationData({ preventStoreUpdate: true });
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
 			// Save the current selected user's font type so we can enable these in offline mode
 			addDownloadedFontTypes($__fontType);
@@ -286,6 +335,7 @@
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingJuz = false;
+			downloadProgressPercentage = 100;
 		}
 	}
 
@@ -294,6 +344,7 @@
 		if (!isUserOnline()) return showOfflineAlert();
 
 		isDownloadingMushaf = true;
+		downloadProgressPercentage = 0;
 
 		ensureOfflineSettingsStructure('mushafData', {
 			downloaded: false,
@@ -303,21 +354,33 @@
 		try {
 			const totalPages = 604;
 
-			// Download all 604 mushaf page routes (service worker will cache them automatically)
-			const mushafRoutes = Array.from({ length: totalPages }, (_, i) => `/page/${i + 1}`);
+			// Total steps: 604 page routes + 604 font files + 2 data fetches
+			const totalStepsInDownloadProgress = totalPages * 2 + 3;
+			let completedStepsInDownloadProgress = 0;
 
-			for (const route of mushafRoutes) {
-				await cacheUrlToCache(route, 'quranwbw-mushaf-data');
+			// Cache all mushaf page routes
+			for (let i = 1; i <= totalPages; i++) {
+				await cacheUrlToCache(`/page/${i}`, 'quranwbw-mushaf-data');
+				completedStepsInDownloadProgress++;
+				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
-			// Download all 604 mushaf font files
+			// Cache all mushaf font files
 			for (let page = 1; page <= totalPages; page++) {
 				await cacheUrlToCache(getMushafWordFontLink(page), 'quranwbw-mushaf-data');
+				completedStepsInDownloadProgress++;
+				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
-			// Fetch chapter data (mushaf text) and translations
+			// Fetch chapter data
 			await fetchChapterData({ chapter: 1, fontType: 2, preventStoreUpdate: true });
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+
+			// Fetch translations
 			await fetchVerseTranslationData({ preventStoreUpdate: true });
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
 			// Save the Non-Tajweed and Tajweed font types so we can enable these in offline mode
 			addDownloadedFontTypes([2, 3]);
@@ -334,6 +397,7 @@
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMushaf = false;
+			downloadProgressPercentage = 100;
 		}
 	}
 
@@ -342,6 +406,7 @@
 		if (!isUserOnline()) return showOfflineAlert();
 
 		isDownloadingMorphology = true;
+		downloadProgressPercentage = 0;
 
 		ensureOfflineSettingsStructure('morphologyData', {
 			downloaded: false,
@@ -349,20 +414,42 @@
 		});
 
 		try {
+			const totalStepsInDownloadProgress = totalChapters + 7;
+			let completedStepsInDownloadProgress = 0;
+
 			// Download word summaries for all 114 chapters
 			for (let chapter = 1; chapter <= 114; chapter++) {
 				await fetchAndCacheJson(morphologyDataUrls.getWordSummary(chapter), 'morphology');
+				completedStepsInDownloadProgress++;
+				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
 			// Download static morphology files
 			await fetchAndCacheJson(morphologyDataUrls.wordVerbs, 'morphology');
-			await fetchAndCacheJson(morphologyDataUrls.wordsWithSameRootKeys, 'morphology');
-			await fetchAndCacheJson(morphologyDataUrls.wordUthmaniAndRoots, 'morphology');
-			await fetchAndCacheJson(morphologyDataUrls.exactWordsKeys, 'morphology');
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
-			// Fetch chapter data and translations
+			await fetchAndCacheJson(morphologyDataUrls.wordsWithSameRootKeys, 'morphology');
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+
+			await fetchAndCacheJson(morphologyDataUrls.wordUthmaniAndRoots, 'morphology');
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+
+			await fetchAndCacheJson(morphologyDataUrls.exactWordsKeys, 'morphology');
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+
+			// Fetch chapter data
 			await fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+
+			// Fetch translations
 			await fetchVerseTranslationData({ preventStoreUpdate: true });
+			completedStepsInDownloadProgress++;
+			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 
 			// Mark as complete
 			updateOfflineSettingsStructure('morphologyData', {
@@ -376,6 +463,7 @@
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMorphology = false;
+			downloadProgressPercentage = 100;
 		}
 	}
 
@@ -384,6 +472,7 @@
 		if (!isUserOnline()) return showOfflineAlert();
 
 		isDownloadingTafsir = true;
+		downloadProgressPercentage = 0;
 
 		ensureOfflineSettingsStructure('tafsirData', {
 			downloaded: false,
@@ -391,12 +480,17 @@
 		});
 
 		try {
+			const totalStepsInDownloadProgress = totalChapters;
+			let completedStepsInDownloadProgress = 0;
+
 			const selectedTafirId = $__verseTafsir || 30;
 			const selectedTafsir = selectableTafsirs[selectedTafirId];
 
 			// Download tafsir data for all 114 chapters
 			for (let chapter = 1; chapter <= 114; chapter++) {
 				await fetchAndCacheJson(`${tafsirDataUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
+				completedStepsInDownloadProgress++;
+				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
 
 			// Mark as complete
@@ -411,8 +505,23 @@
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingTafsir = false;
+			downloadProgressPercentage = 100;
 		}
 	}
+
+	// Download and cache all chapter and verse translation/transliteration data files
+	// async function downloadChapterAndVerseTranslationData(props) {
+	// 	try {
+	// 		const fontType = props.fontType || $__fontType;
+
+	// 		// Fetch chapter data and verse translation/transliteration
+	// 		await fetchChapterData({ chapter: 1, fontType, preventStoreUpdate: true });
+	// 		await fetchVerseTranslationData({ preventStoreUpdate: true });
+	// 	} catch (error) {
+	// 		console.warn('Failed to download chapter and verse translation data:', error);
+	// 		throw error;
+	// 	}
+	// }
 
 	// Download and cache all essential CDN static data files
 	async function downloadAllCdnStaticData() {
@@ -491,6 +600,7 @@
 								<span>Delete</span>
 							{:else if isRegistering}
 								<Spinner size="8" inline={true} hideMessages={true} />
+								<span>{downloadProgressPercentage}%</span>
 							{:else}
 								<Download size={4} />
 								<span>Download</span>
@@ -512,6 +622,7 @@
 								<span>Delete</span>
 							{:else if isDownloadingChapter}
 								<Spinner size="8" inline={true} hideMessages={true} />
+								<span>{downloadProgressPercentage}%</span>
 							{:else}
 								<Download size={4} />
 								<span>Download</span>
@@ -533,6 +644,7 @@
 								<span>Delete</span>
 							{:else if isDownloadingJuz}
 								<Spinner size="8" inline={true} hideMessages={true} />
+								<span>{downloadProgressPercentage}%</span>
 							{:else}
 								<Download size={4} />
 								<span>Download</span>
@@ -554,6 +666,7 @@
 								<span>Delete</span>
 							{:else if isDownloadingMushaf}
 								<Spinner size="8" inline={true} hideMessages={true} />
+								<span>{downloadProgressPercentage}%</span>
 							{:else}
 								<Download size={4} />
 								<span>Download</span>
@@ -575,6 +688,7 @@
 								<span>Delete</span>
 							{:else if isDownloadingMorphology}
 								<Spinner size="8" inline={true} hideMessages={true} />
+								<span>{downloadProgressPercentage}%</span>
 							{:else}
 								<Download size={4} />
 								<span>Download</span>
@@ -595,6 +709,7 @@
 								<span>Delete</span>
 							{:else if isDownloadingTafsir}
 								<Spinner size="8" inline={true} hideMessages={true} />
+								<span>{downloadProgressPercentage}%</span>
 							{:else}
 								<Download size={4} />
 								<span>Download</span>
