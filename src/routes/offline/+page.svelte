@@ -104,6 +104,8 @@
 				cacheName: cacheName
 			});
 		}
+
+		window.umami?.track(`Delete Specific Cache (${cacheName})`);
 	}
 
 	// Helper function to add font types to downloaded list
@@ -144,6 +146,8 @@
 		// Download chapter header font
 		await downloadChapterHeaderFont();
 
+		window.umami?.track('Core Data Download');
+
 		if (!result.success) {
 			alert('Failed to enable offline mode: ' + result.error);
 			isRegistering = false;
@@ -159,6 +163,8 @@
 
 		// Save to localStorage
 		updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
+
+		window.umami?.track('Core Data Delete');
 	}
 
 	// Delete specific cache data
@@ -205,6 +211,8 @@
 			});
 
 			isDownloadingChapter = false;
+
+			window.umami?.track('Chapter Data Download');
 		} catch (error) {
 			console.warn('Chapter download failed:', error);
 			alert('Failed to download chapters: ' + error.message);
@@ -245,6 +253,8 @@
 			});
 
 			isDownloadingJuz = false;
+
+			window.umami?.track('Juz Data Download');
 		} catch (error) {
 			console.warn('Juz download failed:', error);
 			alert('Failed to download juz data: ' + error.message);
@@ -292,6 +302,8 @@
 			});
 
 			isDownloadingMushaf = false;
+
+			window.umami?.track('Mushaf Data Download');
 		} catch (error) {
 			console.warn('Mushaf download failed:', error);
 			alert('Failed to download mushaf data: ' + error.message);
@@ -367,7 +379,7 @@
 						<div class="text-sm">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as chapters, juz, and verses is not included here. If you want to read those offline, they must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('Are you sure you want to delete this data?', '', () => handleCoreDataUnregister()) : handleCoreDataRegister} disabled={isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('This will delete the core website files and all other offline data. Offline access will no longer be available.', '', () => handleCoreDataUnregister()) : handleCoreDataRegister} disabled={isDownloading}>
 							{#if isServiceWorkerRegistered}
 								<Trash size={4} />
 								<span>Delete</span>
