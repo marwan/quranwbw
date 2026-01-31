@@ -7,11 +7,13 @@
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
 	import { updateSettings } from '$utils/updateSettings';
-	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
 	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, bismillahFonts } from '$data/websiteSettings';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { term } from '$utils/terminologies';
+
+	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
 
 	let isRegistering = false;
 	let isDownloadingChapter = false;
@@ -136,46 +138,62 @@
 		if (!isUserOnline()) return showOfflineAlert();
 
 		isRegistering = true;
-		const result = await registerServiceWorker();
 
-		// Download all CDN static data files
-		await downloadAllCdnStaticData();
+		try {
+			const result = await registerServiceWorker();
 
-		// Download all bismillah fonts
-		await downloadAllBismillahFonts();
+			if (!result.success) {
+				throw new Error(result.error);
+			}
 
-		// Download chapter header font
-		await downloadChapterHeaderFont();
+			// Download all CDN static data files
+			await downloadAllCdnStaticData();
 
-		window.umami?.track('Core Data Download');
+			// Download all bismillah fonts
+			await downloadAllBismillahFonts();
 
-		if (!result.success) {
-			alert('Failed to enable offline mode: ' + result.error);
+			// Download chapter header font
+			await downloadChapterHeaderFont();
+
+			window.umami?.track('Core Data Download');
+		} catch (error) {
+			console.warn('Core data registration failed:', error);
+			showAlert(errorAlertMessage, '');
 			isRegistering = false;
 		}
 	}
 
 	// Core data unregistration
 	async function handleCoreDataUnregister() {
-		await unregisterServiceWorkerAndClearCache();
+		try {
+			await unregisterServiceWorkerAndClearCache();
 
-		// Empty the object
-		offlineModeSettings = {};
+			// Empty the object
+			offlineModeSettings = {};
 
-		// Save to localStorage
-		updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
+			// Save to localStorage
+			updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
 
-		window.umami?.track('Core Data Delete');
+			window.umami?.track('Core Data Delete');
+		} catch (error) {
+			console.warn('Core data unregistration failed:', error);
+			showAlert(errorAlertMessage, '');
+		}
 	}
 
 	// Delete specific cache data
 	async function handleDeleteSpecificCache(cacheName, objectName) {
-		await deleteSpecificCache(cacheName);
+		try {
+			await deleteSpecificCache(cacheName);
 
-		updateOfflineSettingsStructure(objectName, {
-			downloaded: false,
-			downloadedAt: null
-		});
+			updateOfflineSettingsStructure(objectName, {
+				downloaded: false,
+				downloadedAt: null
+			});
+		} catch (error) {
+			console.warn('Delete specific cache failed:', error);
+			showAlert(errorAlertMessage, '');
+		}
 	}
 
 	// Cache all 114 chapter routes and download chapter data based on user's settings
@@ -192,7 +210,7 @@
 
 		try {
 			// Download all 114 chapter routes (service worker will cache them automatically)
-			const chapterRoutes = Array.from({ length: 10 }, (_, i) => `/${i + 1}`);
+			const chapterRoutes = Array.from({ length: 114 }, (_, i) => `/${i + 1}`);
 
 			for (const route of chapterRoutes) {
 				await cacheUrlToCache(route, 'quranwbw-chapter-data');
@@ -211,12 +229,11 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			isDownloadingChapter = false;
-
 			window.umami?.track('Chapter Data Download');
 		} catch (error) {
 			console.warn('Chapter download failed:', error);
-			alert('Failed to download chapters: ' + error.message);
+			showAlert(errorAlertMessage, '');
+		} finally {
 			isDownloadingChapter = false;
 		}
 	}
@@ -253,12 +270,11 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			isDownloadingJuz = false;
-
 			window.umami?.track('Juz Data Download');
 		} catch (error) {
 			console.warn('Juz download failed:', error);
-			alert('Failed to download juz data: ' + error.message);
+			showAlert(errorAlertMessage, '');
+		} finally {
 			isDownloadingJuz = false;
 		}
 	}
@@ -275,7 +291,7 @@
 		});
 
 		try {
-			const totalPages = 10;
+			const totalPages = 604;
 
 			// Download all 604 mushaf page routes (service worker will cache them automatically)
 			const mushafRoutes = Array.from({ length: totalPages }, (_, i) => `/page/${i + 1}`);
@@ -302,12 +318,11 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			isDownloadingMushaf = false;
-
 			window.umami?.track('Mushaf Data Download');
 		} catch (error) {
 			console.warn('Mushaf download failed:', error);
-			alert('Failed to download mushaf data: ' + error.message);
+			showAlert(errorAlertMessage, '');
+		} finally {
 			isDownloadingMushaf = false;
 		}
 	}
@@ -326,6 +341,7 @@
 			console.log('All CDN static data cached successfully');
 		} catch (error) {
 			console.warn('Failed to cache CDN static data:', error);
+			throw error;
 		}
 	}
 
@@ -343,6 +359,7 @@
 			console.log('All bismillah fonts cached successfully');
 		} catch (error) {
 			console.warn('Failed to cache bismillah fonts:', error);
+			throw error;
 		}
 	}
 
@@ -353,6 +370,7 @@
 			console.log('Chapter header font cached successfully');
 		} catch (error) {
 			console.warn('Failed to cache chapter header font:', error);
+			throw error;
 		}
 	}
 
