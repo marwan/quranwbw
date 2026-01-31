@@ -2,7 +2,6 @@
 	import PageHead from '$misc/PageHead.svelte';
 	import Download from '$svgs/Download.svelte';
 	import Trash from '$svgs/Trash.svelte';
-	import Check from '$svgs/Check.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import { __currentPage, __offlineModeSettings } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
@@ -14,6 +13,9 @@
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 
 	let isRegistering = false;
+	let isDownloadingChapter = false;
+	let isDownloadingJuz = false;
+	let isDownloadingMushaf = false;
 
 	// Initialize structures on component load
 	ensureOfflineSettingsStructure('serviceWorker');
@@ -30,8 +32,8 @@
 	$: isJuzDataDownloaded = offlineModeSettings?.juzData?.downloaded ?? false;
 	$: isMushafDataDownloaded = offlineModeSettings?.mushafData?.downloaded ?? false;
 
-	// Track if any download is in progress
-	$: isDownloading = isRegistering;
+	// Track if ANY download is in progress
+	$: isDownloading = isRegistering || isDownloadingChapter || isDownloadingJuz || isDownloadingMushaf;
 
 	// Listen for cache started
 	window.addEventListener('sw-cache-started', () => {
@@ -147,7 +149,7 @@
 
 	// Cache all 114 chapter routes and download chapter data based on user's settings
 	async function handleDownloadChaptersData() {
-		isDownloading = true;
+		isDownloadingChapter = true;
 
 		ensureOfflineSettingsStructure('chapterData', {
 			downloaded: false,
@@ -172,16 +174,17 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			isDownloading = false;
+			isDownloadingChapter = false;
 		} catch (error) {
 			console.warn('Chapter download failed:', error);
 			alert('Failed to download chapters: ' + error.message);
+			isDownloadingChapter = false;
 		}
 	}
 
 	// Cache all 30 juz routes and download chapter data based on user's settings
 	async function handleDownloadJuzData() {
-		isDownloading = true;
+		isDownloadingJuz = true;
 
 		ensureOfflineSettingsStructure('juzData', {
 			downloaded: false,
@@ -206,16 +209,17 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			isDownloading = false;
+			isDownloadingJuz = false;
 		} catch (error) {
 			console.warn('Juz download failed:', error);
 			alert('Failed to download juz data: ' + error.message);
+			isDownloadingJuz = false;
 		}
 	}
 
 	// Cache all 604 mushaf page routes and download mushaf font files
 	async function handleDownloadMushafData() {
-		isDownloading = true;
+		isDownloadingMushaf = true;
 
 		ensureOfflineSettingsStructure('mushafData', {
 			downloaded: false,
@@ -246,11 +250,11 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			isDownloading = false;
+			isDownloadingMushaf = false;
 		} catch (error) {
 			console.warn('Mushaf download failed:', error);
 			alert('Failed to download mushaf data: ' + error.message);
-			isDownloading = false;
+			isDownloadingMushaf = false;
 		}
 	}
 
@@ -307,7 +311,7 @@
 	<div class="markdown mx-auto">
 		<h3>Offline Mode</h3>
 		<p>
-			Offline mode lets you use parts of QuranWBW without an internet connection by saving some website data on your device. This is optional and you can update or remove the saved data at any time. Please note that enabling offline mode downloads the core website files, which may use a noticeable amount of data and take some time, especially on slower connections or mobile data. It’s best to use
+			Offline mode lets you use parts of QuranWBW without an internet connection by saving some website data on your device. This is optional and you can update or remove the saved data at any time. Please note that enabling offline mode downloads the core website files, which may use a noticeable amount of data and take some time, especially on slower connections or mobile data. It's best to use
 			a stable Wi-Fi connection if possible.
 		</p>
 	</div>
@@ -316,17 +320,17 @@
 		<table class="w-full text-sm text-left rounded-md">
 			<tbody>
 				<!-- Service Worker & Core Files -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')}">
+				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {isDownloading && !isRegistering && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Core Website Data</div>
 						<div class="text-sm">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as chapters, juz, and verses is not included here. If you want to read those offline, they must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('Are you sure you want to delete this data?', '', () => handleUnregister()) : handleRegister} disabled={isRegistering || isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('Are you sure you want to delete this data?', '', () => handleUnregister()) : handleRegister} disabled={isDownloading}>
 							{#if isServiceWorkerRegistered}
 								<Trash size={4} />
 								<span>Delete</span>
-							{:else if isRegistering || isDownloading}
+							{:else if isRegistering}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
 								<Download size={4} />
@@ -337,17 +341,17 @@
 				</tr>
 
 				<!-- Chapter Data Files (only enable if service worker has been registered) -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
+				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingChapter)) && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Chapter Data</div>
 						<div class="text-sm">These files download the Quran text data and allow you to read all 114 chapters offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isChapterDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-chapter-data', 'chapterData')) : handleDownloadChaptersData} disabled={isRegistering || isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isChapterDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-chapter-data', 'chapterData')) : handleDownloadChaptersData} disabled={!isServiceWorkerRegistered || isDownloading}>
 							{#if isChapterDataDownloaded}
 								<Trash size={4} />
 								<span>Delete</span>
-							{:else if isDownloading}
+							{:else if isDownloadingChapter}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
 								<Download size={4} />
@@ -358,17 +362,17 @@
 				</tr>
 
 				<!-- Juz Data Files (only enable if service worker has been registered) -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
+				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingJuz)) && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Juz Data</div>
 						<div class="text-sm">These files allow you to read all 30 Quran juz offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isJuzDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-juz-data', 'juzData')) : handleDownloadJuzData} disabled={isRegistering || isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isJuzDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-juz-data', 'juzData')) : handleDownloadJuzData} disabled={!isServiceWorkerRegistered || isDownloading}>
 							{#if isJuzDataDownloaded}
 								<Trash size={4} />
 								<span>Delete</span>
-							{:else if isDownloading}
+							{:else if isDownloadingJuz}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
 								<Download size={4} />
@@ -379,17 +383,17 @@
 				</tr>
 
 				<!-- Mushaf Fonts -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {!isServiceWorkerRegistered && disabledClasses}">
+				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingMushaf)) && disabledClasses}">
 					<td class="py-4 pr-4 space-y-2">
 						<div class={window.theme('textSecondary')}>Mushaf Data</div>
 						<div class="text-sm">These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.</div>
 					</td>
 					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isMushafDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-mushaf-data', 'mushafData')) : handleDownloadMushafData} disabled={isRegistering || isDownloading}>
+						<button class="text-sm space-x-2 {buttonClasses}" on:click={isMushafDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-mushaf-data', 'mushafData')) : handleDownloadMushafData} disabled={!isServiceWorkerRegistered || isDownloading}>
 							{#if isMushafDataDownloaded}
 								<Trash size={4} />
 								<span>Delete</span>
-							{:else if isDownloading}
+							{:else if isDownloadingMushaf}
 								<Spinner size="8" inline={true} hideMessages={true} />
 							{:else}
 								<Download size={4} />
