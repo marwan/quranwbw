@@ -2,6 +2,7 @@
 	import PageHead from '$misc/PageHead.svelte';
 	import Download from '$svgs/Download.svelte';
 	import Trash from '$svgs/Trash.svelte';
+	import Info from '$svgs/Info.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
@@ -58,6 +59,9 @@
 
 	// Track the download progress percentage
 	$: downloadProgressPercentage = 0;
+
+	// Recompute whether the downloaded offline data still matches the user's current settings whenever any related store value changes
+	$: downloadedDataSettingsMismatch = hasOfflineSettingsMismatch($__offlineModeSettings, $__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations);
 
 	// Listen for cache started
 	window.addEventListener('sw-cache-started', () => {
@@ -202,6 +206,30 @@
 		} catch (error) {
 			console.warn('Failed to download chapter and verse translation data:', error);
 			throw error;
+		}
+	}
+
+	// Checks whether the user's current settings are fully covered by the previously downloaded offline data.
+	// Returns true if any required setting is missing (indicating a re-download is recommended).
+	function hasOfflineSettingsMismatch() {
+		try {
+			const downloadedDataSettings = $__offlineModeSettings.downloadedDataSettings;
+			const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [] } = downloadedDataSettings;
+
+			// Single-value checks (only if data exists)
+			if (fontTypes.length && !fontTypes.includes($__fontType)) return true;
+			if (wordTranslations.length && !wordTranslations.includes($__wordTranslation)) return true;
+			if (wordTransliterations.length && !wordTransliterations.includes($__wordTransliteration)) return true;
+
+			// Multi-value check (only if data exists)
+			if (downloadedVerseTranslations.length && Array.isArray($__verseTranslations) && $__verseTranslations.some((t) => !downloadedVerseTranslations.includes(t))) {
+				return true;
+			}
+
+			return false;
+		} catch (error) {
+			console.warn('Offline settings mismatch check failed:', error);
+			return false;
 		}
 	}
 
@@ -594,6 +622,16 @@
 			a stable Wi-Fi connection if possible.
 		</p>
 	</div>
+
+	{#if downloadedDataSettingsMismatch}
+		<div class="mt-4 p-3 rounded-md flex flex-row space-x-2 items-center text-sm {window.theme('bgSecondaryLight')}">
+			<span class="flex-shrink-0 w-4 h-4">
+				<Info />
+			</span>
+
+			<span> Your settings have changed since the last download. To ensure offline access continues to work correctly, it’s recommended that you delete the existing downloaded data and download it again so it matches your current preferences. </span>
+		</div>
+	{/if}
 
 	<div class="mt-6 overflow-auto">
 		<table class="w-full text-sm text-left rounded-md">
