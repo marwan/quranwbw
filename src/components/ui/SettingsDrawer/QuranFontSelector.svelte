@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Check from '$svgs/Check.svelte';
 	import { __currentPage, __fontType, __offlineModeSettings } from '$utils/stores';
@@ -10,8 +11,13 @@
 	// Get downloaded font types from offline settings
 	$: downloadedFontTypes = $__offlineModeSettings?.downloadedDataSettings?.fontTypes ?? [];
 
-	// Check if user is online
-	$: userOnline = isUserOnline();
+	// User online tracker
+	let userOnline = false;
+
+	// Check online status on component mount
+	onMount(async () => {
+		userOnline = await isUserOnline();
+	});
 
 	// Helper function to check if a font type should be shown
 	function shouldShowFontType(fontType, fontKey) {
@@ -22,6 +28,8 @@
 		if (userOnline) {
 			return isAllowedOnPage;
 		}
+
+		console.log(downloadedFontTypes);
 
 		// If user is offline, check both page restrictions AND if font is downloaded
 		const isFontDownloaded = downloadedFontTypes.includes(Number(fontKey));

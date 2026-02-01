@@ -15,7 +15,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
-	import { isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
+	import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
 
 	const chapter = parseInt(key.split(':')[0], 10);
 	const verse = parseInt(key.split(':')[1], 10);
@@ -27,8 +27,8 @@
 	// Update userBookmarks whenever the __userSettings changes
 	$: userBookmarks = JSON.parse($__userSettings).userBookmarks;
 
-	function audioHandler(key) {
-		if (!isUserOnline()) return showOfflineAlert();
+	async function audioHandler(key) {
+		if (!(await checkOnlineAndAlert())) return;
 
 		// Stop any audio if something is playing
 		if ($__audioSettings.isPlaying) return resetAudioSettings({ location: 'end' });

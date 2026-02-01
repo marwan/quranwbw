@@ -54,11 +54,11 @@
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
-	import { isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
+	import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {
-		'website-theme': [WebsiteThemeSelector, true],
+		'website-theme': [WebsiteThemeSelector, false],
 		'display-type': [DisplayTypeSelector, false],
 		'word-tooltip': [WordTooltipSelector, false],
 		'quran-font': [QuranFontSelector, false],
@@ -133,10 +133,10 @@
 	}
 
 	// Navigate to an individual setting component
-	function gotoIndividualSetting(type) {
+	async function gotoIndividualSetting(type) {
 		// For certain settings, check internet connection first
 		if (individualSettingsComponents[type][1] === true) {
-			if (!isUserOnline()) return showOfflineAlert();
+			if (!(await checkOnlineAndAlert())) return;
 		}
 
 		mainSettingsScrollPos = document.getElementById('settings-drawer').scrollTop;

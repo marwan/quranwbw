@@ -28,8 +28,7 @@ const cacheNames = {
 	juzData: 'quranwbw-juz-data', // Juz routes and data
 	mushafData: 'quranwbw-mushaf-data', // Mushaf pages and fonts
 	morphologyData: 'quranwbw-morphology-data', // Morphology data files
-	tafisrData: 'quranwbw-tafisr-data' // Tafsir data files
-	// staticAssets: 'quranwbw-static-assets' // CDN files, fonts, etc.
+	tafsirData: 'quranwbw-tafsir-data' // Tafsir data files
 };
 
 // Files we should never cache (the service worker itself and its settings)
@@ -45,8 +44,9 @@ const precacheFiles = [
 const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications'];
 
 // This flag tracks whether the user has enabled offline mode
-// Starts as false - user must explicitly enable it
+// CRITICAL: This must be loaded from cache on startup!
 let cachingEnabled = false;
+let cachingStatusLoaded = false; // Track if we've loaded the status
 
 /**
  * CHECK IF USER PREVIOUSLY ENABLED OFFLINE MODE
@@ -85,6 +85,18 @@ async function saveCachingStatus(enabled) {
 }
 
 /**
+ * ENSURE CACHING STATUS IS LOADED
+ * This must be called before any fetch events use cachingEnabled
+ */
+async function ensureCachingStatusLoaded() {
+	if (!cachingStatusLoaded) {
+		cachingEnabled = await getCachingStatus();
+		cachingStatusLoaded = true;
+		console.log('[SW] Caching status loaded:', cachingEnabled);
+	}
+}
+
+/**
  * INSTALL EVENT
  * Runs when service worker is first installed
  * We skip waiting so the new service worker activates immediately
@@ -105,8 +117,8 @@ self.addEventListener('install', () => {
 self.addEventListener('activate', (event) => {
 	event.waitUntil(
 		(async () => {
-			// Check if user previously enabled offline mode
-			cachingEnabled = await getCachingStatus();
+			// CRITICAL: Load caching status immediately
+			await ensureCachingStatusLoaded();
 
 			// If they did, automatically recache everything with the new version
 			if (cachingEnabled) {
@@ -217,6 +229,7 @@ self.addEventListener('message', (event) => {
 	// User wants to enable offline mode
 	if (event.data.type === 'START_CACHING') {
 		cachingEnabled = true;
+		cachingStatusLoaded = true;
 		saveCachingStatus(true); // Remember this preference
 
 		event.waitUntil(
@@ -282,6 +295,7 @@ self.addEventListener('message', (event) => {
 	// User wants to disable offline mode and clear all data
 	else if (event.data.type === 'DISABLE_CACHING') {
 		cachingEnabled = false;
+		cachingStatusLoaded = true;
 		saveCachingStatus(false); // Remember this preference
 
 		event.waitUntil(
@@ -315,26 +329,30 @@ self.addEventListener('message', (event) => {
 self.addEventListener('fetch', (event) => {
 	const url = new URL(event.request.url);
 
-	// Ignore non-GET requests (POST, PUT, etc.) and excluded files
-	if (event.request.method !== 'GET' || stuffNotToCache.some((excluded) => url.pathname.includes(excluded))) {
+	// Ignore non-GET requests, excluded files, and connectivity checks
+	if (event.request.method !== 'GET' || stuffNotToCache.some((excluded) => url.pathname.includes(excluded)) || url.hostname === 'www.gstatic.com') {
 		return;
 	}
 
 	event.respondWith(
 		(async () => {
-			// If caching is enabled, try all caches
+			// CRITICAL: Ensure caching status is loaded before checking it
+			await ensureCachingStatusLoaded();
+
+			// If caching is enabled, try all caches first
 			if (cachingEnabled) {
 				const allCacheNames = Object.values(cacheNames);
 				for (const cacheName of allCacheNames) {
 					const cache = await caches.open(cacheName);
 					const cachedResponse = await cache.match(event.request);
 					if (cachedResponse) {
+						console.log('[SW] Serving from cache:', url.pathname);
 						return cachedResponse;
 					}
 				}
 			}
 
-			// Otherwise, fetch from network
+			// Not in cache, try network
 			try {
 				const networkResponse = await fetch(event.request);
 
@@ -352,22 +370,50 @@ self.addEventListener('fetch', (event) => {
 				return networkResponse;
 			} catch (error) {
 				// Network request failed (user is offline)
+				console.warn('[SW] Network failed for:', url.pathname, error);
 
-				// For page navigation, show the homepage if cached
-				if (event.request.mode === 'navigate' && cachingEnabled) {
-					const cache = await caches.open(cacheNames.core);
-					return cache.match('/');
+				// If caching is enabled, try to find in cache again (redundant but safe)
+				if (cachingEnabled) {
+					const allCacheNames = Object.values(cacheNames);
+					for (const cacheName of allCacheNames) {
+						const cache = await caches.open(cacheName);
+						const cachedResponse = await cache.match(event.request);
+						if (cachedResponse) {
+							console.log('[SW] Serving from cache (offline):', url.pathname);
+							return cachedResponse;
+						}
+					}
 				}
 
-				console.warn(error);
+				// For page navigation, show the homepage if cached
+				if (event.request.mode === 'navigate') {
+					const cache = await caches.open(cacheNames.core);
+					const homepageResponse = await cache.match('/');
+					if (homepageResponse) {
+						console.log('[SW] Serving homepage for failed navigation');
+						return homepageResponse;
+					}
+				}
 
-				// For other resources (images, CSS, etc.), return error
+				// For images, return transparent 1x1 pixel
+				if (event.request.destination === 'image') {
+					return new Response(atob('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'), { headers: { 'Content-Type': 'image/gif' } });
+				}
+
+				// For fonts, return empty response
+				if (event.request.destination === 'font') {
+					return new Response('', {
+						status: 200,
+						headers: new Headers({ 'Content-Type': 'font/woff2' })
+					});
+				}
+
+				// For other resources, return error
+				console.error('[SW] Resource not cached and offline:', url.pathname);
 				return new Response('Offline - resource not cached', {
 					status: 503,
 					statusText: 'Service Unavailable',
-					headers: new Headers({
-						'Content-Type': 'text/plain'
-					})
+					headers: new Headers({ 'Content-Type': 'text/plain' })
 				});
 			}
 		})()

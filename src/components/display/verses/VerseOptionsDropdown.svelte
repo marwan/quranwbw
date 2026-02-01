@@ -21,7 +21,7 @@
 	import { term } from '$utils/terminologies';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
-	import { isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
+	import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
 
 	// Constants
 	const mushafFontTypes = [2, 3];
@@ -38,8 +38,8 @@
 	$: hasNotes = Object.prototype.hasOwnProperty.call($__userNotes, $__verseKey);
 
 	// Event handlers
-	const handleAdvancedPlay = () => {
-		if (!isUserOnline()) return showOfflineAlert();
+	const handleAdvancedPlay = async () => {
+		if (!(await checkOnlineAndAlert())) return;
 		showAudioModal($__verseKey);
 		dropdownOpen = false;
 	};
@@ -69,8 +69,8 @@
 		dropdownOpen = false;
 	};
 
-	const handleCopy = () => {
-		if (!isUserOnline()) return showOfflineAlert();
+	const handleCopy = async () => {
+		if (!(await checkOnlineAndAlert())) return;
 		__copyShareVerseModalVisible.set(true);
 		dropdownOpen = false;
 	};

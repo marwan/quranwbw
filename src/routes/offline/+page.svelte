@@ -5,7 +5,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
-	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, isUserOnline, showOfflineAlert } from '$utils/serviceWorkerHandler';
+	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
@@ -207,7 +207,7 @@
 
 	// Core data registration
 	async function handleCoreDataRegister() {
-		if (!isUserOnline()) return showOfflineAlert();
+		if (!(await checkOnlineAndAlert())) return;
 
 		isRegistering = true;
 		downloadProgressPercentage = 0;
@@ -285,7 +285,7 @@
 
 	// Cache all 114 chapter routes and download chapter data based on user's settings
 	async function handleDownloadChaptersData() {
-		if (!isUserOnline()) return showOfflineAlert();
+		if (!(await checkOnlineAndAlert())) return;
 
 		isDownloadingChapter = true;
 		downloadProgressPercentage = 0;
@@ -332,7 +332,7 @@
 
 	// Cache all 30 juz routes and download chapter data based on user's settings
 	async function handleDownloadJuzData() {
-		if (!isUserOnline()) return showOfflineAlert();
+		if (!(await checkOnlineAndAlert())) return;
 
 		isDownloadingJuz = true;
 		downloadProgressPercentage = 0;
@@ -381,7 +381,7 @@
 
 	// Cache all 604 mushaf page routes and download mushaf font files
 	async function handleDownloadMushafData() {
-		if (!isUserOnline()) return showOfflineAlert();
+		if (!(await checkOnlineAndAlert())) return;
 
 		isDownloadingMushaf = true;
 		downloadProgressPercentage = 0;
@@ -431,7 +431,7 @@
 
 	// Cache all morphology data files
 	async function handleDownloadMorphologyData() {
-		if (!isUserOnline()) return showOfflineAlert();
+		if (!(await checkOnlineAndAlert())) return;
 
 		isDownloadingMorphology = true;
 		downloadProgressPercentage = 0;
@@ -447,7 +447,7 @@
 			let completedStepsInDownloadProgress = 0;
 
 			// Download word summaries for all 114 chapters
-			for (let chapter = 1; chapter <= 114; chapter++) {
+			for (let chapter = 1; chapter <= totalChapters; chapter++) {
 				await fetchAndCacheJson(morphologyDataUrls.getWordSummary(chapter), 'morphology');
 				completedStepsInDownloadProgress++;
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
@@ -493,7 +493,7 @@
 
 	// Cache all tafsir data files
 	async function handleDownloadTafsirData() {
-		if (!isUserOnline()) return showOfflineAlert();
+		if (!(await checkOnlineAndAlert())) return;
 
 		isDownloadingTafsir = true;
 		downloadProgressPercentage = 0;
@@ -512,7 +512,7 @@
 			const selectedTafsir = selectableTafsirs[selectedTafirId];
 
 			// Download tafsir data for all 114 chapters
-			for (let chapter = 1; chapter <= 114; chapter++) {
+			for (let chapter = 1; chapter <= totalChapters; chapter++) {
 				await fetchAndCacheJson(`${tafsirDataUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
 				completedStepsInDownloadProgress++;
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);

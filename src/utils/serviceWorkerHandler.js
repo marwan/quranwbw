@@ -69,12 +69,48 @@ export async function unregisterServiceWorkerAndClearCache() {
 	}
 }
 
-export function isUserOnline() {
-	return navigator.onLine === true;
+// Returns true if the user has actual internet connectivity.
+// Uses `navigator.onLine` plus a small uncached network ping to avoid false positives.
+export async function isUserOnline(timeout = 500) {
+	// Quick fail: browser explicitly says offline
+	// if (!navigator.onLine) return false;
+
+	const controller = new AbortController();
+	const id = setTimeout(() => controller.abort(), timeout);
+
+	try {
+		// Use a lightweight, no-cors, cache-busted request
+		const response = await fetch('https://www.gstatic.com/generate_204?cacheBust=' + Date.now(), {
+			method: 'GET',
+			mode: 'no-cors',
+			cache: 'no-store',
+			signal: controller.signal
+		});
+
+		clearTimeout(id);
+
+		// Check if response is actually successful
+		// Note: no-cors mode always returns opaque responses (status 0)
+		// so we check for either 0 (opaque success) or 200-299 range
+		return response.type === 'opaque' || (response.status >= 200 && response.status < 300);
+	} catch (error) {
+		clearTimeout(id);
+		console.warn('Network check failed:', error);
+		return false;
+	}
 }
 
 export function showOfflineAlert() {
-	if (isUserOnline()) return;
 	showAlert('It looks like you’re offline. Please connect to the internet to use this feature.', 'settings-drawer');
+	return false;
+}
+
+// Checks internet connectivity and shows the offline alert if unavailable.
+// Returns true if online, false if offline.
+export async function checkOnlineAndAlert() {
+	const online = await isUserOnline();
+	if (online) return true;
+
+	showOfflineAlert();
 	return false;
 }
