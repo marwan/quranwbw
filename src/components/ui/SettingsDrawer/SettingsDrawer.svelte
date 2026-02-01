@@ -64,8 +64,8 @@
 		'quran-font': [QuranFontSelector, false],
 		'word-translation': [WordTranslationSelector, true],
 		'word-transliteration': [WordTransliterationSelector, true],
-		'verse-translation': [VerseTranslationSelector, true],
-		'verse-transliteration': [VerseTransliterationSelector, true],
+		'verse-translation': [VerseTranslationSelector, false],
+		'verse-transliteration': [VerseTransliterationSelector, false],
 		'verse-tafsir': [VerseTafsirSelector, true],
 		'verse-reciter': [VerseReciterSelector, true],
 		'verse-play-button': [VersePlayButtonSelector, true]

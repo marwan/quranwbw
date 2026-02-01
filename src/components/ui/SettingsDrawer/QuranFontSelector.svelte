@@ -1,7 +1,7 @@
 <script>
-	import { onMount } from 'svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Check from '$svgs/Check.svelte';
+	import { onMount } from 'svelte';
 	import { __currentPage, __fontType, __offlineModeSettings } from '$utils/stores';
 	import { selectableFontTypes, fontTypes } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
