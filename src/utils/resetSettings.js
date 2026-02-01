@@ -1,22 +1,16 @@
-import { updateSettings } from '$utils/updateSettings';
-import { __userBookmarks, __userNotes, __lastRead } from '$utils/stores';
-import { setUserSettings, defaultSettings } from '$src/hooks.client';
-import { get } from 'svelte/store';
+import { deleteDexieDatabase } from '$utils/dexie';
+import { unregisterServiceWorkerAndClearCache } from '$utils/serviceWorkerHandler';
 
-export function resetSettings() {
-	const userBookmarks = get(__userBookmarks);
-	const userNotes = get(__userNotes);
-	const lastRead = get(__lastRead);
-
-	// Remove current settings from localStorage and set new ones
+export async function resetSettings() {
+	// 1. Remove stored user settings
 	localStorage.removeItem('userSettings');
-	setUserSettings(defaultSettings);
 
-	// Restore important data
-	updateSettings({ type: 'userBookmarks', key: userBookmarks, override: true, set: true });
-	updateSettings({ type: 'userNotes', key: userNotes, override: true });
-	updateSettings({ type: 'lastRead', value: lastRead });
+	// 2. Unregister service workers and clear caches
+	await unregisterServiceWorkerAndClearCache();
 
-	// Reload the page
+	// 3. Delete IndexedDB (Dexie)
+	await deleteDexieDatabase();
+
+	// 4. Hard reload to ensure clean state
 	location.reload();
 }

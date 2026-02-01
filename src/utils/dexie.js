@@ -28,3 +28,15 @@ export async function clearDexieTable(tableName) {
 	await db.table(tableName).clear();
 	console.log(`Table "${tableName}" cleared successfully`);
 }
+
+// Completely deletes the Dexie database
+export async function deleteDexieDatabase() {
+	try {
+		db.close();
+		await db.delete();
+		console.log(`Dexie database "${db.name}" deleted`);
+	} catch (error) {
+		console.warn('Failed to delete Dexie database', error);
+		throw error;
+	}
+}
