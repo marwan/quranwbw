@@ -45,7 +45,8 @@
 		fontTypes: [],
 		wordTranslations: [],
 		wordTransliterations: [],
-		verseTranslations: []
+		verseTranslations: [],
+		tafsirs: []
 	});
 
 	// Reactive statement for local reference
@@ -72,7 +73,7 @@
 	$: downloadProgressPercentage = 0;
 
 	// Recompute whether the downloaded offline data still matches the user's current settings
-	$: downloadedDataSettingsMismatch = hasOfflineSettingsMismatch($__offlineModeSettings, $__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations);
+	$: downloadedDataSettingsMismatch = hasOfflineSettingsMismatch($__offlineModeSettings, $__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir);
 
 	// Listen for cache started
 	window.addEventListener('sw-cache-started', () => {
@@ -141,13 +142,14 @@
 	}
 
 	// Helper function to add downloaded data settings
-	function addDownloadedDataSettings({ fontTypes, wordTranslation, wordTransliteration, verseTranslations }) {
+	function addDownloadedDataSettings({ fontTypes, wordTranslation, wordTransliteration, verseTranslations, tafsir }) {
 		// Ensure structure exists
 		ensureOfflineSettingsStructure('downloadedDataSettings', {
 			fontTypes: [],
 			wordTranslations: [],
 			wordTransliterations: [],
-			verseTranslations: []
+			verseTranslations: [],
+			tafsirs: []
 		});
 
 		// Get current settings
@@ -177,6 +179,11 @@
 		// Update verse translations if provided
 		if (verseTranslations !== undefined && verseTranslations !== null) {
 			currentSettings.verseTranslations = mergeArrays(currentSettings.verseTranslations, verseTranslations);
+		}
+
+		//  Update tafsirs if provided
+		if (tafsir !== undefined && tafsir !== null) {
+			currentSettings.tafsirs = mergeArrays(currentSettings.tafsirs, tafsir);
 		}
 
 		// Save to localStorage
@@ -223,12 +230,13 @@
 	function hasOfflineSettingsMismatch() {
 		try {
 			const downloadedDataSettings = $__offlineModeSettings.downloadedDataSettings;
-			const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [] } = downloadedDataSettings;
+			const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [], tafsirs = [] } = downloadedDataSettings;
 
 			// Single-value checks (only if data exists)
 			if (fontTypes.length && !fontTypes.includes($__fontType)) return true;
 			if (wordTranslations.length && !wordTranslations.includes($__wordTranslation)) return true;
 			if (wordTransliterations.length && !wordTransliterations.includes($__wordTransliteration)) return true;
+			if (tafsirs.length && !tafsirs.includes($__verseTafsir)) return true;
 
 			// Multi-value check (only if data exists)
 			if (downloadedVerseTranslations.length && Array.isArray($__verseTranslations) && $__verseTranslations.some((t) => !downloadedVerseTranslations.includes(t))) {
@@ -362,13 +370,47 @@
 	// Delete specific cache data
 	async function handleDeleteSpecificCache(cacheName, objectName) {
 		try {
-			// Delete the data from both cache and indexedDB
-			await deleteSpecificCache(cacheName);
-			await clearDexieTable(cacheName);
+			// 1. Remove cached data
+			await Promise.all([deleteSpecificCache(cacheName), clearDexieTable(cacheName)]);
 
+			// 2. Update offline download state
 			updateOfflineSettingsStructure(objectName, {
 				downloaded: false,
 				downloadedAt: null
+			});
+
+			const downloadedDataSettings = offlineModeSettings.downloadedDataSettings;
+
+			// 3. Handle related settings cleanup
+			switch (objectName) {
+				case 'tafsirData': {
+					downloadedDataSettings.tafsirs = [];
+					break;
+				}
+
+				case 'chapterData':
+				case 'juzData': {
+					// Clear shared text-related data only if both are deleted
+					if (!isChapterDataDownloaded && !isJuzDataDownloaded) {
+						downloadedDataSettings.fontTypes = [];
+						downloadedDataSettings.wordTranslations = [];
+						downloadedDataSettings.wordTransliterations = [];
+						downloadedDataSettings.verseTranslations = [];
+					}
+					break;
+				}
+
+				case 'mushafData': {
+					// Remove Mushaf-specific font types (2 and 3)
+					downloadedDataSettings.fontTypes = (downloadedDataSettings.fontTypes || []).filter((fontId) => fontId !== 2 && fontId !== 3);
+					break;
+				}
+			}
+
+			// 4. Persist updated settings
+			updateSettings({
+				type: 'offlineModeSettings',
+				value: offlineModeSettings
 			});
 		} catch (error) {
 			console.warn('Delete specific cache failed:', error);
@@ -622,6 +664,11 @@
 				completedStepsInDownloadProgress++;
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
+
+			// Track downloaded tafsir
+			addDownloadedDataSettings({
+				tafsir: selectedTafirId
+			});
 
 			updateOfflineSettingsStructure('tafsirData', {
 				downloaded: true,
