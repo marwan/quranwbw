@@ -205,5 +205,5 @@
 		</div>
 	</div>
 {:catch error}
-	<ErrorLoadingData center="false" {error} />
+	<ErrorLoadingData {error} />
 {/await}

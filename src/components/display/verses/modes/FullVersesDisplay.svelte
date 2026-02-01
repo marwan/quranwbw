@@ -7,6 +7,7 @@
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
 	import Bismillah from '$misc/Bismillah.svelte';
 	import ChapterHeader from '$misc/ChapterHeader.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __currentPage, __keysToFetch, __pageURL } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
@@ -46,6 +47,7 @@
 	let dataMap = {};
 	let keyToStartWith = null;
 	let isLoading = false; // Tracks the loading state of dataMap
+	let fetchError = null; // Tracks for any data fetch errors
 
 	// Only allow display types listed in displayComponents, else default to type 1, and don't save the layout in settings if not allowed
 	$: if (!Object.prototype.hasOwnProperty.call(displayComponents, $__displayType)) {
@@ -162,6 +164,8 @@
 	 */
 	async function fetchAllChapterData() {
 		isLoading = true;
+		fetchError = null;
+
 		try {
 			// Step 1: Slice relevant keys and extract unique chapter keys
 			const relevantKeys = keysArray.slice(startIndex, endIndex + 1);
@@ -194,6 +198,7 @@
 				dataMap[fullKey] = fetchedDataMap[chapter][fullKey];
 			});
 		} catch (error) {
+			fetchError = error;
 			console.warn('Error fetching chapter data:', error);
 		} finally {
 			isLoading = false;
@@ -209,6 +214,8 @@
 {#key dataMap}
 	{#if isLoading}
 		<Spinner />
+	{:else if fetchError}
+		<ErrorLoadingData error={fetchError} />
 	{:else}
 		{#if showLoadPreviousVerseButton}
 			{@const previousKey = keysArray[getIndexOfKey(keyToStartWith) - 1]}
