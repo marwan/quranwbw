@@ -624,8 +624,8 @@
 	</div>
 
 	{#if downloadedDataSettingsMismatch}
-		<div class="mt-4 p-3 rounded-md flex flex-row space-x-2 items-center text-sm {window.theme('bgSecondaryLight')}">
-			<span class="flex-shrink-0 w-4 h-4">
+		<div class="mt-4 p-3 rounded-md flex flex-row space-x-2 items-start text-sm {window.theme('bgSecondaryLight')}">
+			<span class="flex-shrink-0 w-5 h-5 mt-1">
 				<Info />
 			</span>
 
@@ -633,140 +633,150 @@
 		</div>
 	{/if}
 
-	<div class="mt-6 overflow-auto">
-		<table class="w-full text-sm text-left rounded-md">
-			<tbody>
-				<!-- Service Worker & Core Files -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {isDownloading && !isRegistering && disabledClasses}">
-					<td class="py-4 pr-4 space-y-2">
-						<div class={window.theme('textSecondary')}>Core Website Data</div>
-						<div class="text-sm">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as {term('chapters')}, {term('juzs')}, and Mushaf data is not included here. If you want to read those offline, they must be downloaded separately.</div>
-					</td>
-					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('This will delete the core website files and all other offline data. Offline access will no longer be available.', '', () => handleCoreDataUnregister()) : handleCoreDataRegister} disabled={isDownloading}>
-							{#if isServiceWorkerRegistered}
-								<Trash size={4} />
-								<span>Delete</span>
-							{:else if isRegistering}
-								<Spinner size="8" inline={true} hideMessages={true} />
-								<span>{downloadProgressPercentage}%</span>
-							{:else}
-								<Download size={4} />
-								<span>Download</span>
-							{/if}
-						</button>
-					</td>
-				</tr>
+	<!-- Individual Download Options -->
+	<div class="my-6 flex flex-col space-y-4 overflow-auto">
+		<!-- Service Worker & Core Files -->
+		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isRegistering && disabledClasses}">
+			<div class={window.theme('textSecondary')}>Core Website Data</div>
 
-				<!-- Chapter Data Files (only enable if service worker has been registered) -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingChapter)) && disabledClasses}">
-					<td class="py-4 pr-4 space-y-2">
-						<div class={window.theme('textSecondary')}>{term('chapter')} Data</div>
-						<div class="text-sm">These files download the Quran text data and allow you to read all 114 {term('chapters')} offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
-					</td>
-					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isChapterDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-chapter-data', 'chapterData')) : handleDownloadChaptersData} disabled={!isServiceWorkerRegistered || isDownloading}>
-							{#if isChapterDataDownloaded}
-								<Trash size={4} />
-								<span>Delete</span>
-							{:else if isDownloadingChapter}
-								<Spinner size="8" inline={true} hideMessages={true} />
-								<span>{downloadProgressPercentage}%</span>
-							{:else}
-								<Download size={4} />
-								<span>Download</span>
-							{/if}
-						</button>
-					</td>
-				</tr>
+			<div class="flex flex-row space-x-8 justify-between">
+				<div class="text-sm">These are the core files needed for the website to open and work offline. This lets you load the site and move around even when you don't have an internet connection. Quran content such as {term('chapters')}, {term('juzs')}, and Mushaf data is not included here. If you want to read those offline, they must be downloaded separately.</div>
 
-				<!-- Juz Data Files (only enable if service worker has been registered) -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingJuz)) && disabledClasses}">
-					<td class="py-4 pr-4 space-y-2">
-						<div class={window.theme('textSecondary')}>{term('juzs')} Data</div>
-						<div class="text-sm">These files allow you to read all 30 Quran {term('juzs')} offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
-					</td>
-					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isJuzDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-juz-data', 'juzData')) : handleDownloadJuzData} disabled={!isServiceWorkerRegistered || isDownloading}>
-							{#if isJuzDataDownloaded}
-								<Trash size={4} />
-								<span>Delete</span>
-							{:else if isDownloadingJuz}
-								<Spinner size="8" inline={true} hideMessages={true} />
-								<span>{downloadProgressPercentage}%</span>
-							{:else}
-								<Download size={4} />
-								<span>Download</span>
-							{/if}
-						</button>
-					</td>
-				</tr>
+				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isServiceWorkerRegistered ? showConfirm('This will delete the core website files and all other offline data. Offline access will no longer be available.', '', () => handleCoreDataUnregister()) : handleCoreDataRegister} disabled={isDownloading}>
+					{#if isServiceWorkerRegistered}
+						<Trash size={4} />
+						<span>Delete</span>
+					{:else if isRegistering}
+						<Spinner size="8" inline={true} hideMessages={true} />
+						<span>{downloadProgressPercentage}%</span>
+					{:else}
+						<Download size={4} />
+						<span>Download</span>
+					{/if}
+				</button>
+			</div>
+		</div>
 
-				<!-- Mushaf Data (only enable if service worker has been registered) -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingMushaf)) && disabledClasses}">
-					<td class="py-4 pr-4 space-y-2">
-						<div class={window.theme('textSecondary')}>Mushaf Data</div>
-						<div class="text-sm">These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.</div>
-					</td>
-					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isMushafDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-mushaf-data', 'mushafData')) : handleDownloadMushafData} disabled={!isServiceWorkerRegistered || isDownloading}>
-							{#if isMushafDataDownloaded}
-								<Trash size={4} />
-								<span>Delete</span>
-							{:else if isDownloadingMushaf}
-								<Spinner size="8" inline={true} hideMessages={true} />
-								<span>{downloadProgressPercentage}%</span>
-							{:else}
-								<Download size={4} />
-								<span>Download</span>
-							{/if}
-						</button>
-					</td>
-				</tr>
+		<div class="border-b {window.theme('border')}"></div>
 
-				<!-- Morphology Data (only enable if service worker has been registered) -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingMorphology)) && disabledClasses}">
-					<td class="py-4 pr-4 space-y-2">
-						<div class={window.theme('textSecondary')}>Morphology Data</div>
-						<div class="text-sm">These files allow you to view detailed word information in the Morphology section. This includes word meanings, roots, verb forms, and related words used across the Quran.</div>
-					</td>
-					<td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isMorphologyDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('morphology_data', 'morphologyData')) : handleDownloadMorphologyData} disabled={!isServiceWorkerRegistered || isDownloading}>
-							{#if isMorphologyDataDownloaded}
-								<Trash size={4} />
-								<span>Delete</span>
-							{:else if isDownloadingMorphology}
-								<Spinner size="8" inline={true} hideMessages={true} />
-								<span>{downloadProgressPercentage}%</span>
-							{:else}
-								<Download size={4} />
-								<span>Download</span>
-							{/if}
-						</button>
-					</td>
-				</tr>
+		<!-- Chapter Data Files (only enable if service worker has been registered) -->
+		<div class="flex flex-col space-y-2 text-sm {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingChapter)) && disabledClasses}">
+			<div class={window.theme('textSecondary')}>{term('chapter')} Data</div>
 
-				<!-- Tafsir Data (only enable if service worker has been registered) -->
-				<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingTafsir)) && disabledClasses}">
-					<td class="py-4 pr-4 space-y-2">
-						<div class={window.theme('textSecondary')}>Tafsir Data</div>
-						<div class="text-sm">These files let you read {term('tafsir')} for all {term('chapters')} offline, based on the {term('tafsir')} you have selected in your settings.</div>
-					</td><td class="py-4 text-right">
-						<button class="text-sm space-x-2 {buttonClasses}" on:click={isTafsirDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('tafsir_data', 'tafsirData')) : handleDownloadTafsirData} disabled={!isServiceWorkerRegistered || isDownloading}>
-							{#if isTafsirDataDownloaded}
-								<Trash size={4} />
-								<span>Delete</span>
-							{:else if isDownloadingTafsir}
-								<Spinner size="8" inline={true} hideMessages={true} />
-								<span>{downloadProgressPercentage}%</span>
-							{:else}
-								<Download size={4} />
-								<span>Download</span>
-							{/if}
-						</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+			<div class="flex flex-row space-x-8 justify-between">
+				<div class="text-sm">These files download the Quran text data and allow you to read all 114 {term('chapters')} offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
+
+				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isChapterDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-chapter-data', 'chapterData')) : handleDownloadChaptersData} disabled={!isServiceWorkerRegistered || isDownloading}>
+					{#if isChapterDataDownloaded}
+						<Trash size={4} />
+						<span>Delete</span>
+					{:else if isDownloadingChapter}
+						<Spinner size="8" inline={true} hideMessages={true} />
+						<span>{downloadProgressPercentage}%</span>
+					{:else}
+						<Download size={4} />
+						<span>Download</span>
+					{/if}
+				</button>
+			</div>
+		</div>
+
+		<div class="border-b {window.theme('border')}"></div>
+
+		<!-- Juz Data Files (only enable if service worker has been registered) -->
+		<div class="flex flex-col space-y-2 text-sm {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingJuz)) && disabledClasses}">
+			<div class={window.theme('textSecondary')}>{term('juzs')} Data</div>
+
+			<div class="flex flex-row space-x-8 justify-between">
+				<div class="text-sm">These files allow you to read all 30 Quran {term('juzs')} offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
+
+				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isJuzDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-juz-data', 'juzData')) : handleDownloadJuzData} disabled={!isServiceWorkerRegistered || isDownloading}>
+					{#if isJuzDataDownloaded}
+						<Trash size={4} />
+						<span>Delete</span>
+					{:else if isDownloadingJuz}
+						<Spinner size="8" inline={true} hideMessages={true} />
+						<span>{downloadProgressPercentage}%</span>
+					{:else}
+						<Download size={4} />
+						<span>Download</span>
+					{/if}
+				</button>
+			</div>
+		</div>
+
+		<div class="border-b {window.theme('border')}"></div>
+
+		<!-- Mushaf Data (only enable if service worker has been registered) -->
+		<div class="flex flex-col space-y-2 text-sm {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingMushaf)) && disabledClasses}">
+			<div class={window.theme('textSecondary')}>Mushaf Data</div>
+
+			<div class="flex flex-row space-x-8 justify-between">
+				<div class="text-sm">These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.</div>
+
+				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isMushafDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-mushaf-data', 'mushafData')) : handleDownloadMushafData} disabled={!isServiceWorkerRegistered || isDownloading}>
+					{#if isMushafDataDownloaded}
+						<Trash size={4} />
+						<span>Delete</span>
+					{:else if isDownloadingMushaf}
+						<Spinner size="8" inline={true} hideMessages={true} />
+						<span>{downloadProgressPercentage}%</span>
+					{:else}
+						<Download size={4} />
+						<span>Download</span>
+					{/if}
+				</button>
+			</div>
+		</div>
+
+		<div class="border-b {window.theme('border')}"></div>
+
+		<!-- Morphology Data (only enable if service worker has been registered) -->
+		<div class="flex flex-col space-y-2 text-sm {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingMorphology)) && disabledClasses}">
+			<div class={window.theme('textSecondary')}>Morphology Data</div>
+
+			<div class="flex flex-row space-x-8 justify-between">
+				<div class="text-sm">These files allow you to view detailed word information in the Morphology section. This includes word meanings, roots, verb forms, and related words used across the Quran.</div>
+
+				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isMorphologyDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('morphology_data', 'morphologyData')) : handleDownloadMorphologyData} disabled={!isServiceWorkerRegistered || isDownloading}>
+					{#if isMorphologyDataDownloaded}
+						<Trash size={4} />
+						<span>Delete</span>
+					{:else if isDownloadingMorphology}
+						<Spinner size="8" inline={true} hideMessages={true} />
+						<span>{downloadProgressPercentage}%</span>
+					{:else}
+						<Download size={4} />
+						<span>Download</span>
+					{/if}
+				</button>
+			</div>
+		</div>
+
+		<div class="border-b {window.theme('border')}"></div>
+
+		<!-- Tafsir Data (only enable if service worker has been registered) -->
+		<div class="flex flex-col space-y-2 text-sm {(!isServiceWorkerRegistered || (isDownloading && !isDownloadingTafsir)) && disabledClasses}">
+			<div class={window.theme('textSecondary')}>Tafsir Data</div>
+
+			<div class="flex flex-row space-x-8 justify-between">
+				<div class="text-sm">These files let you read {term('tafsir')} for all {term('chapters')} offline, based on the {term('tafsir')} you have selected in your settings.</div>
+
+				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isTafsirDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('tafsir_data', 'tafsirData')) : handleDownloadTafsirData} disabled={!isServiceWorkerRegistered || isDownloading}>
+					{#if isTafsirDataDownloaded}
+						<Trash size={4} />
+						<span>Delete</span>
+					{:else if isDownloadingTafsir}
+						<Spinner size="8" inline={true} hideMessages={true} />
+						<span>{downloadProgressPercentage}%</span>
+					{:else}
+						<Download size={4} />
+						<span>Download</span>
+					{/if}
+				</button>
+			</div>
+		</div>
+
+		<div class="border-b {window.theme('border')}"></div>
 	</div>
 </div>
