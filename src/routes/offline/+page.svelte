@@ -407,6 +407,9 @@
 				}
 			}
 
+			// Clears all downloadedDataSettings arrays if no offline data is marked as downloaded
+			await clearDownloadedDataSettingsIfNoOfflineData();
+
 			// 4. Persist updated settings
 			updateSettings({
 				type: 'offlineModeSettings',
@@ -415,6 +418,30 @@
 		} catch (error) {
 			console.warn('Delete specific cache failed:', error);
 			showAlert(errorAlertMessage, '');
+		}
+	}
+
+	// Clears all downloadedDataSettings arrays if no content offline data is downloaded
+	async function clearDownloadedDataSettingsIfNoOfflineData() {
+		try {
+			if (!offlineModeSettings?.downloadedDataSettings) return;
+
+			console.log('running clearDownloadedDataSettingsIfNoOfflineData');
+
+			// Dynamically detect all content-related offline data keys
+			const offlineContentKeys = Object.keys(offlineModeSettings).filter((key) => key !== 'serviceWorker' && key !== 'downloadedDataSettings' && offlineModeSettings[key]?.hasOwnProperty('downloaded'));
+
+			// Check if any content data is still downloaded
+			const hasAnyContentDownloaded = offlineContentKeys.some((key) => offlineModeSettings[key]?.downloaded === true);
+
+			if (hasAnyContentDownloaded) return;
+
+			// Delete and reset everything
+			await unregisterServiceWorkerAndClearCache();
+			offlineModeSettings = {};
+			updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
+		} catch (error) {
+			console.warn('Failed to clear downloadedDataSettings:', error);
 		}
 	}
 
@@ -787,7 +814,7 @@
 			<div class="flex flex-col flex-1 space-y-4">
 				<div class="text-sm mb-auto">
 					This section lets you choose exactly what you want to download. You can download or remove specific data like {term('chapters')}, {term('juzs')}, Mushaf pages,
-					{term('tafsir')}, or morphology, based on your needs.
+					{term('tafsir')}, or Morphology, based on your needs.
 				</div>
 
 				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={() => (showAdvancedDownloadOptions = !showAdvancedDownloadOptions)} disabled={isDownloading}>
