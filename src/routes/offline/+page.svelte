@@ -429,7 +429,7 @@
 			console.log('running clearDownloadedDataSettingsIfNoOfflineData');
 
 			// Dynamically detect all content-related offline data keys
-			const offlineContentKeys = Object.keys(offlineModeSettings).filter((key) => key !== 'serviceWorker' && key !== 'downloadedDataSettings' && offlineModeSettings[key]?.hasOwnProperty('downloaded'));
+			const offlineContentKeys = Object.keys(offlineModeSettings).filter((key) => key !== 'serviceWorker' && key !== 'downloadedDataSettings' && Object.prototype.hasOwnProperty.call(offlineModeSettings[key], 'downloaded'));
 
 			// Check if any content data is still downloaded
 			const hasAnyContentDownloaded = offlineContentKeys.some((key) => offlineModeSettings[key]?.downloaded === true);
