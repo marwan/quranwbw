@@ -807,6 +807,9 @@
 			</div>
 		</div>
 
+		<!-- Vertical divider -->
+		<div class="hidden md:block w-px {window.theme('bgSecondaryExtraDark')}"></div>
+
 		<!-- Advanced Data Download Toggle -->
 		<div class="flex flex-col flex-1 space-y-2 text-sm">
 			<div class={window.theme('textSecondary')}>Advanced Data Download</div>
