@@ -925,8 +925,8 @@ export const selectableTranslationReciters = {
 
 export const selectablePlaybackSpeeds = {
 	1: { id: 1, speed: 0.5 },
-	2: { id: 2, speed: 0.85 },
-	3: { id: 3, speed: 0.75 },
+	2: { id: 2, speed: 0.75 },
+	3: { id: 3, speed: 0.85 },
 	4: { id: 4, speed: 1 },
 	5: { id: 5, speed: 1.25 },
 	6: { id: 6, speed: 1.5 },
