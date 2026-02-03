@@ -143,10 +143,9 @@ self.addEventListener('activate', (event) => {
 				const keys = await caches.keys();
 				await Promise.all(
 					keys.map((key) => {
-						// Keep all named caches (config, chapterData, etc.) and only delete old versioned core caches
-						const isNamedCache = Object.values(cacheNames).some((cacheName) => cacheName === key || !cacheName.includes('${version}'));
-						if (!isNamedCache && key !== cacheNames.core) {
-							console.log('Deleting old cache:', key);
+						// Delete any cache that starts with 'quranwbw-cache-' but is not the current version
+						if (key.startsWith('quranwbw-cache-') && key !== cacheNames.core) {
+							console.log('[SW] Deleting old versioned cache:', key);
 							return caches.delete(key);
 						}
 					})
@@ -156,10 +155,9 @@ self.addEventListener('activate', (event) => {
 				const keys = await caches.keys();
 				await Promise.all(
 					keys.map((key) => {
-						// Keep all named caches and only delete old versioned core caches
-						const isNamedCache = Object.values(cacheNames).some((cacheName) => cacheName === key || !cacheName.includes('${version}'));
-						if (!isNamedCache && key !== cacheNames.core) {
-							console.log('Deleting old cache:', key);
+						// Delete any cache that starts with 'quranwbw-cache-' but is not the current version
+						if (key.startsWith('quranwbw-cache-') && key !== cacheNames.core) {
+							console.log('[SW] Deleting old versioned cache:', key);
 							return caches.delete(key);
 						}
 					})
