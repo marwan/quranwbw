@@ -78,7 +78,7 @@
 
 <PageHead title="Index" />
 
-<div class="mx-auto px-4 max-w-6xl">
+<div class="mx-auto max-w-6xl">
 	<!-- Search Input -->
 	<div class="pt-4 pb-2">
 		<form on:submit|preventDefault={() => updateSearchQuery(document.getElementById('search-input').value)} class="flex items-center w-full max-w-xl mx-auto">
