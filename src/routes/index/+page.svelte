@@ -3,6 +3,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search2 from '$svgs/Search2.svelte';
 	import Cross from '$svgs/Cross.svelte';
+	import ArrowUp from '$svgs/ArrowUp.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { onMount } from 'svelte';
 	import { debounce } from '$utils/debounce';
@@ -15,6 +16,7 @@
 	let searchQuery = '';
 	let debouncedSearch = '';
 	let isSearching = false;
+	let showScrollTop = false;
 
 	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 
@@ -55,9 +57,25 @@
 		searchQuery = '';
 	}
 
+	function scrollToTop() {
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}
+
+	function handleScroll() {
+		showScrollTop = window.scrollY > 150;
+	}
+
 	onMount(async () => {
 		indexes = await fetchAndCacheJson(`${staticEndpoint}/others/quran-topics.json?version=1`, 'other');
 		allIndexes = Object.entries(indexes);
+
+		// Add scroll listener
+		window.addEventListener('scroll', handleScroll);
+
+		// Cleanup
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
 	});
 
 	__currentPage.set('index');
@@ -70,7 +88,7 @@
 	<div class="pt-4 pb-2">
 		<form on:submit|preventDefault class="flex items-center w-full max-w-xl mx-auto">
 			<div class="relative w-full">
-				<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search by topic or keyword..." />
+				<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search indexes..." />
 			</div>
 			<button type="button" on:click={clearSearch} title={searchQuery ? 'Clear' : 'Search'} class="py-4 px-5 rounded-r-3xl items-center border {window.theme('border')} {window.theme('bgSecondaryLight')}">
 				{#if searchQuery}
@@ -128,3 +146,10 @@
 		{/if}
 	{/if}
 </div>
+
+<!-- Scroll to Top Button -->
+{#if showScrollTop}
+	<button on:click={scrollToTop} class="z-20 fixed bottom-6 right-6 p-3 rounded-full transition-opacity duration-300 {window.theme('bgSecondaryLight')} {window.theme('border')} border" title="Scroll to top" aria-label="Scroll to top">
+		<ArrowUp size={5} />
+	</button>
+{/if}
