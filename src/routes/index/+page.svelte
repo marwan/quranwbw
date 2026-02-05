@@ -57,10 +57,6 @@
 		searchQuery = '';
 	}
 
-	function scrollToTop() {
-		window.scrollTo({ top: 0, behavior: 'smooth' });
-	}
-
 	function handleScroll() {
 		showScrollTop = window.scrollY > 150;
 	}
@@ -127,7 +123,7 @@
 						</h2>
 						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
 							{#each groupedIndexes[letter] as [index, verses]}
-								<a href={`verses?keys=${verses.join(',')}`} class="block py-2 rounded-md hover:underline" target="_blank" rel="noopener">
+								<a href={`verses?keys=${verses.join(',')}`} class="block py-2 rounded-md hover:underline" rel="noopener">
 									{index}
 									<span class={window.theme('textSecondary')}>({verses.length})</span>
 								</a>
@@ -149,7 +145,7 @@
 
 <!-- Scroll to Top Button -->
 {#if showScrollTop}
-	<button on:click={scrollToTop} class="z-20 fixed bottom-6 right-6 p-3 rounded-full transition-opacity duration-300 {window.theme('bgMain')} {window.theme('border')} border" title="Scroll to top" aria-label="Scroll to top">
+	<button on:click={() => window.scrollTo({ top: 0, behavior: 'auto' })} class="z-20 fixed bottom-6 right-6 p-3 rounded-full transition-opacity duration-300 {window.theme('bgMain')} {window.theme('border')} border" title="Scroll to top" aria-label="Scroll to top">
 		<ArrowUp size={5} />
 	</button>
 {/if}
