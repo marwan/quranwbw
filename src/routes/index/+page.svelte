@@ -15,7 +15,6 @@
 	let searchQuery = '';
 	let debouncedSearch = '';
 	let isSearching = false;
-	let selectedLetter = '';
 
 	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 
@@ -44,28 +43,16 @@
 	// Run this whenever searchQuery changes
 	$: searchQuery, updateDebouncedSearch();
 
-	// Filter indexes on debouncedSearch and selectedLetter
+	// Filter indexes on debouncedSearch
 	$: filteredIndexes = allIndexes
 		.filter(([index]) => {
 			const matchesSearch = debouncedSearch ? index.toLowerCase().includes(debouncedSearch) : true;
-			const matchesLetter = selectedLetter ? index[0].toUpperCase() === selectedLetter : true;
-			return matchesSearch && matchesLetter;
+			return matchesSearch;
 		})
 		.sort((a, b) => a[0].localeCompare(b[0]));
 
-	function selectLetter(letter) {
-		// selectedLetter = selectedLetter === letter ? '' : letter;
-		searchQuery = letter;
-	}
-
 	function clearSearch() {
 		searchQuery = '';
-		selectedLetter = '';
-	}
-
-	function updateSearchQuery(value) {
-		searchQuery = value;
-		selectedLetter = '';
 	}
 
 	onMount(async () => {
@@ -81,11 +68,11 @@
 <div class="mx-auto max-w-6xl">
 	<!-- Search Input -->
 	<div class="pt-4 pb-2">
-		<form on:submit|preventDefault={() => updateSearchQuery(document.getElementById('search-input').value)} class="flex items-center w-full max-w-xl mx-auto">
+		<form on:submit|preventDefault class="flex items-center w-full max-w-xl mx-auto">
 			<div class="relative w-full">
-				<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search indexes..." />
+				<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search by topic or keyword..." />
 			</div>
-			<button type={searchQuery ? 'button' : 'submit'} on:click={searchQuery ? clearSearch : null} title={searchQuery ? 'Clear' : 'Search'} class="py-4 px-5 rounded-r-3xl items-center border {window.theme('border')} {window.theme('bgSecondaryLight')}">
+			<button type="button" on:click={clearSearch} title={searchQuery ? 'Clear' : 'Search'} class="py-4 px-5 rounded-r-3xl items-center border {window.theme('border')} {window.theme('bgSecondaryLight')}">
 				{#if searchQuery}
 					<Cross size={5} />
 				{:else}
@@ -95,26 +82,13 @@
 		</form>
 
 		<!-- Alphabet Selector -->
-		<!-- <div class="flex flex-wrap gap-2 justify-center mb-4 px-2">
+		<div class="max-w-lg mx-auto flex flex-wrap gap-2 justify-center my-4 px-2 text-sm">
 			{#each alphabet as letter}
-				<button on:click={() => selectLetter(letter)} class="min-w-[2.5rem] h-10 px-3 rounded-md text-sm font-medium transition-colors">
+				<a href="#{letter}" class="ml-1 mt-1 px-2 py-1 rounded-full cursor-pointer no-underline min-w-[2rem] text-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}">
 					{letter}
-				</button>
+				</a>
 			{/each}
-		</div> -->
-
-		<!-- Results Count -->
-		{#if filteredIndexes.length > 0}
-			<div class="flex flex-col text-center text-xs space-y-2 max-w-2xl mx-auto mt-4">
-				Showing {filteredIndexes.length}
-				{filteredIndexes.length !== 1 ? 'results' : 'result'}
-				{#if searchQuery}
-					matching "{searchQuery}"
-				{:else if selectedLetter}
-					starting with "{selectedLetter}"
-				{/if}
-			</div>
-		{/if}
+		</div>
 	</div>
 
 	<!-- Loading Message -->
@@ -129,7 +103,7 @@
 		{#if filteredIndexes.length > 0}
 			{#each alphabet as letter}
 				{#if groupedIndexes[letter] && groupedIndexes[letter].length > 0}
-					<div class="py-6 border-b {window.theme('border')}">
+					<div id={letter} class="py-6 border-b {window.theme('border')} scroll-mt-4">
 						<h2 class="text-xl font-bold mb-4 {window.theme('textSecondary')}">
 							{letter}
 						</h2>
@@ -149,8 +123,6 @@
 				No results found
 				{#if searchQuery}
 					matching "{searchQuery}"
-				{:else if selectedLetter}
-					starting with "{selectedLetter}"
 				{/if}
 			</div>
 		{/if}
