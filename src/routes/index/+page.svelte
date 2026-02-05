@@ -149,7 +149,7 @@
 
 <!-- Scroll to Top Button -->
 {#if showScrollTop}
-	<button on:click={scrollToTop} class="z-20 fixed bottom-6 right-6 p-3 rounded-full transition-opacity duration-300 {window.theme('bgSecondaryLight')} {window.theme('border')} border" title="Scroll to top" aria-label="Scroll to top">
+	<button on:click={scrollToTop} class="z-20 fixed bottom-6 right-6 p-3 rounded-full transition-opacity duration-300 {window.theme('bgMain')} {window.theme('border')} border" title="Scroll to top" aria-label="Scroll to top">
 		<ArrowUp size={5} />
 	</button>
 {/if}
