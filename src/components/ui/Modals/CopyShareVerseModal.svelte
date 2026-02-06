@@ -155,11 +155,13 @@
 	}
 </script>
 
-<Modal id="copyShareVerseModal" bind:open={$__copyShareVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme" bodyClass="p-6" placement="center" position="bottom" outsideclose>
+<Modal id="copyShareVerseModal" bind:open={$__copyShareVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" placement="center" position="bottom" outsideclose>
 	<!-- Modal content -->
-	<h3 id="modal-title" class="mb-2 text-xl font-medium">{quranMetaData[chapter || 1].transliteration}, {$__verseKey}</h3>
+	<h3 id="modal-title" class="mb-2 text-xl font-medium flex-shrink-0">
+		{quranMetaData[chapter || 1].transliteration}, {$__verseKey}
+	</h3>
 
-	<div class="max-h-[70vh] overflow-y-scroll w-full pr-2">
+	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
 		<!-- Copy Type -->
 		<div class="flex flex-col space-y-4 py-4">
 			<span class="text-sm">Type</span>
@@ -266,9 +268,9 @@
 				{/if}
 			</div>
 		{/if}
+	</div>
 
-		<div class="flex flex-row">
-			<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">Copy</button>
-		</div>
+	<div class="flex-shrink-0 mt-4">
+		<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">Copy</button>
 	</div>
 </Modal>

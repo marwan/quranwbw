@@ -401,7 +401,7 @@
 		</Checkbox>
 	</div>
 
-	<div class="flex-shrink-0 pt-4">
+	<div class="flex-shrink-0 mt-4">
 		<button on:click={() => playButtonHandler($__audioSettings.playingKey)} class="w-full {buttonClasses} {invalidStartVerse || invalidEndVerse || invalidTimesToRepeat ? disabledClasses : null}">Play</button>
 	</div>
 </Modal>
