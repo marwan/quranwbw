@@ -110,11 +110,11 @@
 		<!-- Topics Display -->
 		{#if allTopics.length > 0}
 			{#each alphabet as letter}
-				{#if groupedTopics[letter] && groupedTopics[letter].length > 0}
-					<div id={letter} class="py-6 border-b {window.theme('border')} scroll-mt-4">
-						<h2 class="text-xl font-bold mb-4 {window.theme('textSecondary')}">
-							{letter}
-						</h2>
+				<div id={letter} class="py-6 border-b {window.theme('border')} scroll-mt-4">
+					<h2 class="text-xl font-bold mb-4 {window.theme('textSecondary')}">
+						{letter}
+					</h2>
+					{#if groupedTopics[letter] && groupedTopics[letter].length > 0}
 						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
 							{#each groupedTopics[letter] as item}
 								<a href="?id={item.id}" class="block py-2 rounded-md hover:underline text-left" rel="noopener">
@@ -123,8 +123,10 @@
 								</a>
 							{/each}
 						</div>
-					</div>
-				{/if}
+					{:else}
+						<p>No topics available for this letter.</p>
+					{/if}
+				</div>
 			{/each}
 		{/if}
 	{/if}
