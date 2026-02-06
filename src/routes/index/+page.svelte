@@ -7,7 +7,6 @@
 	import { onMount } from 'svelte';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	let allIndexes = [];
