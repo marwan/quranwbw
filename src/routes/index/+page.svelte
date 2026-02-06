@@ -140,7 +140,7 @@
 		</div>
 	{:else}
 		<!-- Search Input -->
-		<div class="py-2">
+		<div class="my-4">
 			<!-- <form on:submit|preventDefault class="flex items-center w-full max-w-xl mx-auto">
 				<div class="relative w-full">
 					<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search indexes..." />
@@ -155,7 +155,7 @@
 			</form> -->
 
 			<!-- Alphabet Selector -->
-			<div class="mx-auto flex flex-wrap justify-center my-4 px-2">
+			<div class="mx-auto flex flex-wrap justify-center px-2">
 				{#each alphabet as letter}
 					<a href="#{letter}" class="ml-1 mt-1 px-2 py-1 rounded-full cursor-pointer no-underline min-w-[2rem] text-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}">
 						{letter}
