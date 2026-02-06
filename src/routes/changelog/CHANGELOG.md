@@ -1,6 +1,6 @@
-### Feb 5, 2026
+### Feb 6, 2026
 
-- **All-New Index Page:** Introducing a brand-new Index page that organizes the Qur’an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Index from the top of the homepage, via the main navigation menu, or by clicking [here](/index).
+- **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur’an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
 
 ---
 
