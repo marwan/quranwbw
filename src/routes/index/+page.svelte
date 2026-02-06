@@ -52,10 +52,6 @@
 		}
 	}
 
-	function handleTopicClick(topicId) {
-		goto(`?id=${topicId}`, { keepFocus: true, noScroll: false });
-	}
-
 	function handleScroll() {
 		showScrollTop = window.scrollY > 150;
 	}
@@ -90,10 +86,11 @@
 	{#if isLoading}
 		<Spinner />
 	{:else if selectedTopicId && selectedTopicKeys}
+		{@const resultsCount = selectedTopicKeys.split(',').length}
 		<!-- Verses Display -->
 		<div>
 			<div class="my-4 text-center text-xs">
-				<span>Showing results for the topic "{selectedTopicName}".</span>
+				<span>Showing {resultsCount} {resultsCount > 1 ? 'results' : 'result'} for the topic "{selectedTopicName}".</span>
 				<!-- <span> Click here to go back to the Index page.</span> -->
 			</div>
 
@@ -121,10 +118,10 @@
 						</h2>
 						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
 							{#each groupedIndexes[letter] as item}
-								<button on:click={() => handleTopicClick(item.id)} class="block py-2 rounded-md hover:underline text-left" rel="noopener">
+								<a href="?id={item.id}" class="block py-2 rounded-md hover:underline text-left" rel="noopener">
 									{item.topic}
 									<span class={window.theme('textSecondary')}>({item.verses.length})</span>
-								</button>
+								</a>
 							{/each}
 						</div>
 					</div>
