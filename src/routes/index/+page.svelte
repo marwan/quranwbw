@@ -1,8 +1,6 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	// import Search2 from '$svgs/Search2.svelte';
-	// import Cross from '$svgs/Cross.svelte';
 	import ArrowUp from '$svgs/ArrowUp.svelte';
 	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import { __currentPage } from '$utils/stores';
@@ -10,7 +8,6 @@
 	import { debounce } from '$utils/debounce';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
-	// import { buttonClasses } from '$data/commonClasses';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
@@ -23,12 +20,11 @@
 	let selectedTopicId = null;
 	let selectedTopicKeys = '';
 	let selectedTopicName = '';
+	let isLoading = true;
 
 	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 
 	let groupedIndexes = {};
-
-	$: console.log(selectedTopicName);
 
 	$: {
 		groupedIndexes = {};
@@ -81,17 +77,9 @@
 		}
 	}
 
-	// function clearSearch() {
-	// 	searchQuery = '';
-	// }
-
 	function handleTopicClick(topicId) {
 		goto(`?id=${topicId}`, { keepFocus: true, noScroll: false });
 	}
-
-	// function closeVerses() {
-	// 	goto('/index', { keepFocus: true });
-	// }
 
 	function handleScroll() {
 		showScrollTop = window.scrollY > 150;
@@ -106,6 +94,8 @@
 			topic: topic,
 			verses: verses
 		}));
+
+		isLoading = false;
 
 		// Add scroll listener
 		window.addEventListener('scroll', handleScroll);
@@ -122,17 +112,13 @@
 <PageHead title="Index" />
 
 <div class="mx-auto max-w-6xl">
-	{#if selectedTopicId && selectedTopicKeys}
+	{#if isLoading}
+		<Spinner />
+	{:else if selectedTopicId && selectedTopicKeys}
 		<!-- Verses Display -->
-		<div class="">
-			<!-- <p class="text-lg mb-2 {window.theme('textSecondary')}">
-				Showing verses for <span class="font-semibold">{selectedTopicName}</span>
-			</p>
-			<button class="text-sm {buttonClasses}" on:click={closeVerses}>Back to Topics</button> -->
-
-			<div class="my-4 text-sm text-center">
-				<span>Showing results for the topic </span>
-				<span>"</span><span class={window.theme('textSecondary')}>{selectedTopicName}</span><span>".</span>
+		<div>
+			<div class="my-4 text-center text-xs">
+				<span>Showing results for the topic "{selectedTopicName}".</span>
 				<!-- <span> Click here to go back to the Index page.</span> -->
 			</div>
 
@@ -141,19 +127,6 @@
 	{:else}
 		<!-- Search Input -->
 		<div class="my-4">
-			<!-- <form on:submit|preventDefault class="flex items-center w-full max-w-xl mx-auto">
-				<div class="relative w-full">
-					<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search indexes..." />
-				</div>
-				<button type="button" on:click={clearSearch} title={searchQuery ? 'Clear' : 'Search'} class="py-4 px-5 rounded-r-3xl items-center border {window.theme('border')} {window.theme('bgSecondaryLight')}">
-					{#if searchQuery}
-						<Cross size={5} />
-					{:else}
-						<Search2 size={5} />
-					{/if}
-				</button>
-			</form> -->
-
 			<!-- Alphabet Selector -->
 			<div class="mx-auto flex flex-wrap justify-center px-2">
 				{#each alphabet as letter}
@@ -166,9 +139,7 @@
 
 		<!-- Loading Message -->
 		{#if isSearching}
-			<div class="flex justify-center py-8">
-				<Spinner />
-			</div>
+			<Spinner />
 		{/if}
 
 		<!-- Indexes Display -->
@@ -204,7 +175,7 @@
 </div>
 
 <!-- Scroll to Top Button -->
-{#if showScrollTop}
+{#if showScrollTop && !selectedTopicId}
 	<button on:click={() => window.scrollTo({ top: 0, behavior: 'auto' })} class="z-20 fixed bottom-6 right-6 p-3 rounded-full transition-opacity duration-300 {window.theme('bgMain')} {window.theme('border')} border" title="Scroll to top" aria-label="Scroll to top">
 		<ArrowUp size={5} />
 	</button>
