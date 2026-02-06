@@ -49,6 +49,8 @@ For those who wish to run the project locally or contribute to its development, 
 ```bash
 # Clone the repository
 git clone https://github.com/marwan/quranwbw.git
+
+# Navigate into the project directory
 cd quranwbw
 
 # Install project dependencies
@@ -71,6 +73,7 @@ The application will typically be accessible at `http://localhost:5173`.
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling. If you make any changes to styles (especially within `.html`, `.svelte` files, or the Tailwind configuration), you’ll need to regenerate the CSS by running:
 
 ```bash
+# Build and regenerate Tailwind CSS
 npm run css
 ```
 
@@ -85,19 +88,19 @@ It is currently hosted on Cloudflare Pages, but it can also be deployed to other
 
 QuranWBW welcomes focused contributions that improve the project. You can help by reporting bugs, suggesting small features, improving documentation, or spreading the word.
 
-#### Before submitting:
+#### Guidelines
 
 - Discuss significant changes via GitHub issues first
 - Match existing design patterns and code style
-- Keep PRs focused (one feature/fix per PR)
+- Keep PRs focused (one feature or fix per PR)
 - Include screenshots for UI changes
 - Test in both development and production builds
 
-#### Code quality:
+#### Expectations
 
-- AI-generated code must be reviewed and understood by you
-- Follow existing structure and naming conventions
-- Avoid large refactors across many files
+- Review and understand any AI-generated code you submit
+- Follow the existing structure and naming conventions
+- Avoid large refactors or changes across many files
 - Discuss new dependencies before adding them
 
 We can't accept large unfocused PRs, unreviewed AI-generated code, or changes that deviate from the existing design language.
