@@ -39,95 +39,116 @@
 		<CloseButton on:click={() => ($__menuDrawerHidden = true)} class="my-4 rounded-3xl" />
 	</div>
 
-	<div class="flex flex-col space-y-4 my-4">
-		<!-- Search -->
-		<a href="/search" class={linkClasses}>
-			<Search2 size={4} />
-			<span class={linkTextClasses}>Search</span>
-		</a>
+	<div class="flex flex-col space-y-8 my-4">
+		<!-- Study & Reading -->
+		<div class="space-y-4">
+			<div class="text-xs uppercase opacity-70 px-2">Study & Reading</div>
 
-		<!-- settings modal -->
-		<button
-			on:click={() => {
-				__siteNavigationModalVisible.set(false);
-				__settingsDrawerHidden.set(false);
-			}}
-			class={linkClasses}
-		>
-			<Settings size={4} />
-			<span class={linkTextClasses}>Settings</span>
-		</button>
+			<a href="/search" class={linkClasses}>
+				<Search2 size={4} />
+				<span class={linkTextClasses}>Search</span>
+			</a>
 
-		<!-- Bookmarks -->
-		<a href="/bookmarks" class={linkClasses}>
-			<Bookmark size={4} />
-			<span class={linkTextClasses}>Bookmarks</span>
-		</a>
+			<a href="/#" class={linkClasses}>
+				<Supplication size={4} />
+				<span class={linkTextClasses}>Mushaf</span>
+			</a>
 
-		<!-- tajweed rules modal -->
-		<button
-			on:click={() => {
-				__siteNavigationModalVisible.set(false);
-				__tajweedRulesModalVisible.set(true);
-			}}
-			class={linkClasses}
-			data-umami-event="Tajweed Modal Button"
-		>
-			<TajweedRules size={4} />
-			<span class={linkTextClasses}>{term('tajweed')} Rules</span>
-		</button>
+			<a href="/morphology?word=1:1:1" class={linkClasses}>
+				<Morphology size={4} />
+				<span class={linkTextClasses}>Morphology</span>
+			</a>
 
-		<!-- Supplications -->
-		<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
-			<Supplication size={4} />
-			<span class={linkTextClasses}>{term('supplications')}</span>
-		</a>
+			<button
+				on:click={() => {
+					__siteNavigationModalVisible.set(false);
+					__tajweedRulesModalVisible.set(true);
+				}}
+				class={linkClasses}
+				data-umami-event="Tajweed Modal Button"
+			>
+				<TajweedRules size={4} />
+				<span class={linkTextClasses}>{term('tajweed')} Rules</span>
+			</button>
+		</div>
 
-		<!-- Mushaf -->
-		<a href="/#" class={linkClasses}>
-			<Supplication size={4} />
-			<span class={linkTextClasses}>Mushaf</span>
-		</a>
+		<div class="border-b {window.theme('border')}"></div>
 
-		<!-- Morphology -->
-		<a href="/morphology?word=1:1:1" class={linkClasses}>
-			<Morphology size={4} />
-			<span class={linkTextClasses}>Morphology</span>
-		</a>
+		<!-- Discover & Explore -->
+		<div class="space-y-4">
+			<div class="text-xs uppercase opacity-70 px-2">Discover & Explore</div>
 
-		<!-- Guess The Word -->
-		<a href="/games/guess-the-word" class={linkClasses}>
-			<Puzzle size={4} />
-			<span class={linkTextClasses}>Word Game</span>
-		</a>
+			<a href="/index" class={linkClasses}>
+				<About size={4} />
+				<span class={linkTextClasses}>Quran Index</span>
+			</a>
 
-		<!-- changelog -->
-		<a href="/changelog" class={linkClasses}>
-			<Changelog size={4} />
-			<span class={linkTextClasses}>Changelog</span>
-		</a>
+			<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
+				<Supplication size={4} />
+				<span class={linkTextClasses}>{term('supplications')}</span>
+			</a>
+		</div>
 
-		<!-- legacy site link -->
-		<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
-			<LegacySite size={4} />
-			<span class={linkTextClasses}>Old Website</span>
-		</a>
+		<div class="border-b {window.theme('border')}"></div>
 
-		<!-- About -->
-		<a href="/about" class={linkClasses}>
-			<About size={4} />
-			<span class={linkTextClasses}>About</span>
-		</a>
+		<!-- Personal -->
+		<div class="space-y-4">
+			<div class="text-xs uppercase opacity-70 px-2">Personal</div>
 
-		<!-- download modal -->
-		<!-- <button
-					on:click={() => {
-						__siteNavigationModalVisible.set(false);
-						__downloadModalVisible.set(true);
-					}}
-					class={linkClasses}
-				>
-					<span class={linkTextClasses}>Offline Mode</span>
-				</button> -->
+			<a href="/bookmarks" class={linkClasses}>
+				<Bookmark size={4} />
+				<span class={linkTextClasses}>Bookmarks</span>
+			</a>
+
+			<button
+				on:click={() => {
+					__siteNavigationModalVisible.set(false);
+					__settingsDrawerHidden.set(false);
+				}}
+				class={linkClasses}
+			>
+				<Settings size={4} />
+				<span class={linkTextClasses}>Settings</span>
+			</button>
+
+			<a href="/offline" class={linkClasses}>
+				<About size={4} />
+				<span class={linkTextClasses}>Offline Mode</span>
+			</a>
+		</div>
+
+		<div class="border-b {window.theme('border')}"></div>
+
+		<!-- Learn & Practice -->
+		<div class="space-y-4">
+			<div class="text-xs uppercase opacity-70 px-2">Learn & Practice</div>
+
+			<a href="/games/guess-the-word" class={linkClasses}>
+				<Puzzle size={4} />
+				<span class={linkTextClasses}>Word Game</span>
+			</a>
+		</div>
+
+		<div class="border-b {window.theme('border')}"></div>
+
+		<!-- About & Updates -->
+		<div class="space-y-4">
+			<div class="text-xs uppercase opacity-70 px-2">About & Updates</div>
+
+			<a href="/changelog" class={linkClasses}>
+				<Changelog size={4} />
+				<span class={linkTextClasses}>Changelog</span>
+			</a>
+
+			<a href="/about" class={linkClasses}>
+				<About size={4} />
+				<span class={linkTextClasses}>About</span>
+			</a>
+
+			<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
+				<LegacySite size={4} />
+				<span class={linkTextClasses}>Old Website</span>
+			</a>
+		</div>
 	</div>
 </Drawer>
