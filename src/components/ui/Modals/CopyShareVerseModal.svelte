@@ -156,7 +156,6 @@
 </script>
 
 <Modal id="copyShareVerseModal" bind:open={$__copyShareVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" placement="center" position="bottom" outsideclose>
-	<!-- Modal content -->
 	<h3 id="modal-title" class="mb-2 text-xl font-medium flex-shrink-0">
 		{quranMetaData[chapter || 1].transliteration}, {$__verseKey}
 	</h3>
