@@ -1,8 +1,8 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import Search2 from '$svgs/Search2.svelte';
-	import Cross from '$svgs/Cross.svelte';
+	// import Search2 from '$svgs/Search2.svelte';
+	// import Cross from '$svgs/Cross.svelte';
 	import ArrowUp from '$svgs/ArrowUp.svelte';
 	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import { __currentPage } from '$utils/stores';
@@ -81,9 +81,9 @@
 		}
 	}
 
-	function clearSearch() {
-		searchQuery = '';
-	}
+	// function clearSearch() {
+	// 	searchQuery = '';
+	// }
 
 	function handleTopicClick(topicId) {
 		goto(`?id=${topicId}`, { keepFocus: true, noScroll: false });
@@ -129,12 +129,19 @@
 				Showing verses for <span class="font-semibold">{selectedTopicName}</span>
 			</p>
 			<button class="text-sm {buttonClasses}" on:click={closeVerses}>Back to Topics</button> -->
+
+			<div class="my-4 text-sm text-center">
+				<span>Showing results for the topic </span>
+				<span>"</span><span class={window.theme('textSecondary')}>{selectedTopicName}</span><span>".</span>
+				<!-- <span> Click here to go back to the Index page.</span> -->
+			</div>
+
 			<FullVersesDisplay keys={selectedTopicKeys} />
 		</div>
 	{:else}
 		<!-- Search Input -->
-		<div class="pt-4 pb-2">
-			<form on:submit|preventDefault class="flex items-center w-full max-w-xl mx-auto">
+		<div class="py-2">
+			<!-- <form on:submit|preventDefault class="flex items-center w-full max-w-xl mx-auto">
 				<div class="relative w-full">
 					<input type="search" id="search-input" bind:value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search indexes..." />
 				</div>
@@ -145,10 +152,10 @@
 						<Search2 size={5} />
 					{/if}
 				</button>
-			</form>
+			</form> -->
 
 			<!-- Alphabet Selector -->
-			<div class="max-w-lg mx-auto flex flex-wrap gap-2 justify-center my-4 px-2 text-sm">
+			<div class="mx-auto flex flex-wrap justify-center my-4 px-2">
 				{#each alphabet as letter}
 					<a href="#{letter}" class="ml-1 mt-1 px-2 py-1 rounded-full cursor-pointer no-underline min-w-[2rem] text-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}">
 						{letter}
