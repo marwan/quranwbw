@@ -56,7 +56,7 @@
 
 	// Show/hide scroll to top button based on scroll position
 	function handleScroll() {
-		showScrollTop = window.scrollY > 150;
+		showScrollTop = window.scrollY > 70;
 	}
 
 	onMount(async () => {
