@@ -21,8 +21,8 @@
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
 
 	// Chapter and Quran pages count
-	const totalChapters = 10;
-	const totalPages = 20;
+	const totalChapters = 114;
+	const totalPages = 604;
 
 	let isRegistering = false;
 	let isDownloadingEssential = false;
@@ -782,9 +782,12 @@
 	<div class="my-8 flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0 overflow-auto">
 		<!-- Basic Data Download -->
 		<div class="flex flex-col flex-1 space-y-2 text-sm {isDownloading && !isDownloadingEssential && disabledClasses}">
-			<div class={window.theme('textSecondary')}>
-				<span>Essential Offline Data</span>
-				<span class="ml-1 mt-1 px-2 py-1 rounded-full text-xs {window.theme('bgSecondaryLight')}">Recommended</span>
+			<div class="flex flex-row justify-between">
+				<div>
+					<span class={window.theme('textSecondary')}>Essential Offline Data</span>
+					<span class="opacity-70"> (~16 MB)</span>
+				</div>
+				<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">Recommended</span>
 			</div>
 
 			<div class="flex flex-col flex-1 space-y-4">
@@ -832,7 +835,10 @@
 	<div class="my-6 flex flex-col space-y-4 overflow-auto {!showAdvancedDownloadOptions && disabledClasses}">
 		<!-- Chapter Data Files -->
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingChapter && disabledClasses}">
-			<div class={window.theme('textSecondary')}>{term('chapter')} Data</div>
+			<div>
+				<span class={window.theme('textSecondary')}>{term('chapter')} Data</span>
+				<span class="opacity-70"> (~8 MB)</span>
+			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
 				<div class="text-sm">These files download the Quran text data and allow you to read all 114 {term('chapters')} offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
@@ -856,7 +862,10 @@
 
 		<!-- Juz Data Files -->
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingJuz && disabledClasses}">
-			<div class={window.theme('textSecondary')}>{term('juzs')} Data</div>
+			<div>
+				<span class={window.theme('textSecondary')}>{term('juzs')} Data </span>
+				<span class="opacity-70">(~8 MB)</span>
+			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
 				<div class="text-sm">These files allow you to read all 30 Quran {term('juzs')} offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
@@ -880,7 +889,10 @@
 
 		<!-- Mushaf Data -->
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingMushaf && disabledClasses}">
-			<div class={window.theme('textSecondary')}>Mushaf Data</div>
+			<div>
+				<span class={window.theme('textSecondary')}>Mushaf Data</span>
+				<span class="opacity-70">(~65 MB)</span>
+			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
 				<div class="text-sm">These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.</div>
@@ -904,7 +916,10 @@
 
 		<!-- Morphology Data -->
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingMorphology && disabledClasses}">
-			<div class={window.theme('textSecondary')}>Morphology Data</div>
+			<div>
+				<span class={window.theme('textSecondary')}>Morphology Data</span>
+				<span class="opacity-70">(~45 MB)</span>
+			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
 				<div class="text-sm">These files allow you to view detailed word information in the Morphology section. This includes word meanings, roots, verb forms, and related words used across the Quran.</div>
@@ -928,7 +943,10 @@
 
 		<!-- Tafsir Data -->
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingTafsir && disabledClasses}">
-			<div class={window.theme('textSecondary')}>Tafsir Data</div>
+			<div>
+				<span class={window.theme('textSecondary')}>Tafsir Data</span>
+				<span class="opacity-70">(~45 MB)</span>
+			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
 				<div class="text-sm">These files let you read {term('tafsir')} for all {term('chapters')} offline, based on the {term('tafsir')} you have selected in your settings.</div>
