@@ -9,6 +9,7 @@
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { page } from '$app/stores';
 
+	// State variables
 	let allTopics = [];
 	let showScrollTop = false;
 	let selectedTopicId = null;
@@ -16,10 +17,12 @@
 	let selectedTopicName = '';
 	let isLoading = true;
 
+	// Generate A-Z alphabet array
 	const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 
 	let groupedTopics = {};
 
+	// Group topics by first letter
 	$: {
 		groupedTopics = {};
 		for (const item of allTopics) {
@@ -32,7 +35,7 @@
 		}
 	}
 
-	// Watch for URL parameter changes
+	// Handle URL parameter changes for topic selection
 	$: if ($page) {
 		const urlParams = new URLSearchParams($page.url.search);
 		const topicId = urlParams.get('id');
@@ -51,14 +54,16 @@
 		}
 	}
 
+	// Show/hide scroll to top button based on scroll position
 	function handleScroll() {
 		showScrollTop = window.scrollY > 150;
 	}
 
 	onMount(async () => {
+		// Fetch and parse topics data
 		const rawTopics = await fetchAndCacheJson(`${staticEndpoint}/others/quran-topics.json?version=1`, 'other');
 
-		// Convert to array with IDs
+		// Convert to array with IDs (1-based indexing)
 		allTopics = Object.entries(rawTopics).map(([topic, verses], index) => ({
 			id: index + 1,
 			topic: topic,
@@ -88,11 +93,7 @@
 		{@const resultsCount = selectedTopicKeys.split(',').length}
 		<!-- Verses Display -->
 		<div>
-			<div class="my-4 text-center text-xs">
-				<span>Showing {resultsCount} {resultsCount > 1 ? 'results' : 'result'} for the topic "{selectedTopicName}".</span>
-				<!-- <span> Click here to go back to the Topics page.</span> -->
-			</div>
-
+			<div class="my-4 text-center text-xs">Showing {resultsCount} {resultsCount > 1 ? 'results' : 'result'} for the topic "{selectedTopicName}".</div>
 			<FullVersesDisplay keys={selectedTopicKeys} />
 		</div>
 	{:else}
