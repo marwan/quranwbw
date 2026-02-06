@@ -8,7 +8,9 @@
 
 QuranWBW.com is your companion for reading, listening to, and learning the Holy Quran, word-by-word. With features like word audios, Tajweed colors, and transliteration, you can delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.
 
-This website is a passion project, not a full-time endeavor. For issues, suggestions, or contributions, please visit our [GitHub repository](https://github.com/marwan/quranwbw) or contact us via [email](mailto:quranwbw@gmail.com). You can also join our [WhatsApp group](https://chat.whatsapp.com/CtrbWUB4GTyDdZWXWujVSl) for updates.
+## Project Status
+
+This is a passion project maintained in spare time. Development happens in bursts, and there may be periods of inactivity lasting weeks or months. Bug fixes and feature requests will be addressed as time permits. Your patience and understanding are appreciated.
 
 ## Stack & Architecture
 
@@ -44,8 +46,6 @@ But if QUL doesn't have what you need, or you're curious about our data, just ge
 
 For those who wish to run the project locally or contribute to its development, the setup process is outlined below.
 
-#### Local Setup
-
 ```bash
 # Clone the repository
 git clone https://github.com/marwan/quranwbw.git
@@ -56,6 +56,12 @@ npm install
 
 # Start the development server
 npm run dev
+
+# Create a production build
+npm run build
+
+# Preview the production build locally
+npm run preview
 ```
 
 The application will typically be accessible at `http://localhost:5173`.
@@ -77,16 +83,25 @@ It is currently hosted on Cloudflare Pages, but it can also be deployed to other
 
 ## Contribution
 
-QuranWBW welcomes thoughtful and focused contributions. You’re encouraged to get involved in ways such as:
+QuranWBW welcomes focused contributions that improve the project. You can help by reporting bugs, suggesting small features, improving documentation, or spreading the word.
 
-- Suggesting or implementing small, well-scoped features
-- Reporting bugs or edge cases with clear reproduction steps
-- Improving documentation, clarity, or minor UI/UX details
-- Sharing feedback or ideas for future enhancements
-- Helping spread the word by sharing the website and earning rewards
+#### Before submitting:
 
-To keep the project maintainable, please avoid large refactors, wide-ranging changes across many files, or opinionated rewrites. Contributions should be targeted, purposeful, and aligned with the existing structure and style of the project.
+- Discuss significant changes via GitHub issues first
+- Match existing design patterns and code style
+- Keep PRs focused (one feature/fix per PR)
+- Include screenshots for UI changes
+- Test in both development and production builds
 
-If you’re planning something bigger, it’s best to open an issue or start a discussion first so we can align on the approach.
+#### Code quality:
+
+- AI-generated code must be reviewed and understood by you
+- Follow existing structure and naming conventions
+- Avoid large refactors across many files
+- Discuss new dependencies before adding them
+
+We can't accept large unfocused PRs, unreviewed AI-generated code, or changes that deviate from the existing design language.
+
+If you're unsure about anything, don't hesitate to open an issue, join our [WhatsApp group](https://chat.whatsapp.com/CtrbWUB4GTyDdZWXWujVSl), or [email us](mailto:quranwbw@gmail.com). We also have a private Discord channel, which you can join upon request.
 
 Your contributions, big or small, help make QuranWBW better for everyone.
