@@ -31,10 +31,8 @@ let __websiteOnline,
 	__bottomToolbarVisible,
 	__mushafPageDivisions,
 	__wordTooltip,
-	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataInfo,
 	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
@@ -47,12 +45,10 @@ let __websiteOnline,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__downloadModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
-	__timeSpecificChapters,
 	__englishTerminology,
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
@@ -161,9 +157,6 @@ if (browser) {
 	// to store the morphology verse/word key
 	__morphologyKey = writable(null);
 
-	// to store all the offline data settings
-	__downloadedDataInfo = writable(userSettings.downloadedDataInfo);
-
 	// to store the auto scroll speed
 	__autoScrollSpeed = writable(userSettings.displaySettings.autoScrollSpeed);
 
@@ -183,7 +176,6 @@ if (browser) {
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
-	__downloadModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
 		type: null,
@@ -198,12 +190,6 @@ if (browser) {
 	// quiz settings
 	__quizCorrectAnswers = writable(userSettings.quiz.correctAnswers);
 	__quizWrongAnswers = writable(userSettings.quiz.wrongAnswers);
-
-	// for al-kahf on friday and al-mulk at night
-	__timeSpecificChapters = writable({
-		isFriday: false,
-		isNight: false
-	});
 
 	// english/arabic Quranic terms
 	__englishTerminology = writable(userSettings.displaySettings.englishTerminology);
@@ -270,10 +256,8 @@ export {
 	__bottomToolbarVisible,
 	__mushafPageDivisions,
 	__wordTooltip,
-	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataInfo,
 	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
@@ -286,12 +270,10 @@ export {
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__downloadModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
-	__timeSpecificChapters,
 	__englishTerminology,
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
