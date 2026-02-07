@@ -60,12 +60,6 @@
 						<span class={linkTextClasses}>Bookmarks</span>
 					</a>
 
-					<!-- Bookmarks -->
-					<a href="/bookmarks" class={linkClasses}>
-						<Bookmark size={4} />
-						<span class={linkTextClasses}>Bookmarks</span>
-					</a>
-
 					<!-- tajweed rules modal -->
 					<button
 						on:click={() => {
@@ -108,13 +102,13 @@
 						<About size={4} />
 						<span class={linkTextClasses}>About</span>
 					</a>
-				</div>
 
-				<!-- legacy site link -->
-				<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
-					<LegacySite size={4} />
-					<span class={linkTextClasses}>Old Website</span>
-				</a>
+					<!-- legacy site link -->
+					<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
+						<LegacySite size={4} />
+						<span class={linkTextClasses}>Old Website</span>
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>
