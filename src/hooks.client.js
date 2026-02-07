@@ -32,7 +32,7 @@ export const defaultSettings = {
 	audioSettings: {
 		reciter: 10,
 		translationReciter: 1,
-		playbackSpeed: 3,
+		playbackSpeed: 4, // x1
 		versePlayButton: 1,
 		rememberSettings: true,
 		audioType: 'verse',
