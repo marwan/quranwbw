@@ -101,7 +101,7 @@ export const selectableFontTypes = {
 		font: 'Qalam Digital Font (Madinah Edition)',
 		displayOrder: 5,
 		disallowedInPages: ['mushaf'],
-		version: 6
+		version: 7
 	},
 	5: {
 		id: 5,
@@ -117,7 +117,7 @@ export const selectableFontTypes = {
 		font: 'Qalam Digital Font (Hanafi Edition)',
 		displayOrder: 6,
 		disallowedInPages: ['mushaf'],
-		version: 6
+		version: 7
 	},
 	7: {
 		id: 1,
@@ -926,11 +926,13 @@ export const selectableTranslationReciters = {
 export const selectablePlaybackSpeeds = {
 	1: { id: 1, speed: 0.5 },
 	2: { id: 2, speed: 0.75 },
-	3: { id: 3, speed: 1 },
-	4: { id: 4, speed: 1.25 },
-	5: { id: 5, speed: 1.5 },
-	6: { id: 6, speed: 1.75 },
-	7: { id: 7, speed: 2 }
+	3: { id: 3, speed: 0.85 },
+	4: { id: 4, speed: 1 },
+	5: { id: 5, speed: 1.25 },
+	6: { id: 6, speed: 1.5 },
+	7: { id: 7, speed: 1.75 },
+	8: { id: 8, speed: 1.85 },
+	9: { id: 9, speed: 2 }
 };
 
 export const selectableTooltipOptions = {
