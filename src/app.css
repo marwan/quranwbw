@@ -292,6 +292,10 @@ svg {
   unicode-bidi: plaintext;
 }
 
+.font-serif {
+  font-family: "serif";
+}
+
 .direction-rtl {
   direction: rtl;
 }

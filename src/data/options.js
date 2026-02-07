@@ -548,7 +548,8 @@ export const selectableVerseTranslations = {
 		resource_name: 'Transliteration (Syllables)',
 		language_id: 11115,
 		version: 2,
-		displayOrder: 4
+		displayOrder: 4,
+		font: 'font-serif'
 	},
 	57: {
 		resource_id: 57,
@@ -562,7 +563,8 @@ export const selectableVerseTranslations = {
 		resource_name: 'Transliteration (Advanced Tajweed)',
 		language_id: 11115,
 		version: 1,
-		displayOrder: 3
+		displayOrder: 3,
+		font: 'font-serif'
 	},
 
 	// turkish
@@ -785,12 +787,14 @@ export const selectableWordTransliterations = {
 	3: {
 		id: 3,
 		language: 'Transliteration (Advanced Tajweed)',
-		version: 1
+		version: 1,
+		font: 'font-serif'
 	},
 	4: {
 		id: 4,
 		language: 'Transliteration (Syllables)',
-		version: 1
+		version: 1,
+		font: 'font-serif'
 	}
 };
 
