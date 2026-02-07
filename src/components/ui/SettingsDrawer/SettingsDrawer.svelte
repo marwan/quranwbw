@@ -42,7 +42,7 @@
 		__signLanguageModeEnabled
 	} from '$utils/stores';
 
-	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTransliterations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
+	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
 
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
@@ -111,10 +111,15 @@
 	// Hide settings drawer and go back to main settings on certain conditions
 	$: if ($__currentPage || $__settingsDrawerHidden) goBackToMainSettings();
 
-	// Count total selected verse transliterations
-	$: {
-		totalVerseTransliterationsSelected = $__verseTranslations.filter((item) => selectableVerseTransliterations.includes(item)).length;
-	}
+	// Build a Set of all transliteration resource IDs (language_id === 11115)
+	const transliterationIdSet = new Set(
+		Object.values(selectableVerseTranslations)
+			.filter((item) => item.language_id === 11115)
+			.map((item) => item.resource_id)
+	);
+
+	// Count how many selected verse translations are transliterations
+	$: totalVerseTransliterationsSelected = $__verseTranslations.filter((id) => transliterationIdSet.has(id)).length;
 
 	// Go back to main settings and restore scroll position
 	function goBackToMainSettings() {

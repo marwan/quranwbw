@@ -538,21 +538,31 @@ export const selectableVerseTranslations = {
 	// transliterations
 	1: {
 		resource_id: 1,
-		resource_name: 'Transliteration (Tajweed)',
+		resource_name: 'Transliteration (Simple Tajweed)',
 		language_id: 11115,
-		version: 1
+		version: 2,
+		displayOrder: 2
 	},
 	3: {
 		resource_id: 3,
 		resource_name: 'Transliteration (Syllables)',
 		language_id: 11115,
-		version: 1
+		version: 2,
+		displayOrder: 4
 	},
 	57: {
 		resource_id: 57,
 		resource_name: 'Transliteration (Normal)',
 		language_id: 11115,
-		version: 1
+		version: 2,
+		displayOrder: 1
+	},
+	4: {
+		resource_id: 4,
+		resource_name: 'Transliteration (Advanced Tajweed)',
+		language_id: 11115,
+		version: 1,
+		displayOrder: 3
 	},
 
 	// turkish
@@ -651,8 +661,6 @@ export const selectableVerseTranslations = {
 		version: 1
 	}
 };
-
-export const selectableVerseTransliterations = [1, 3, 57];
 
 export const selectableWordTranslations = {
 	1: {
@@ -766,12 +774,22 @@ export const selectableWordTranslations = {
 export const selectableWordTransliterations = {
 	1: {
 		id: 1,
-		language: 'Normal Transliteration',
+		language: 'Transliteration (Normal)',
 		version: 1
 	},
 	2: {
 		id: 2,
-		language: 'Tajweed Transliteration',
+		language: 'Transliteration (Simple Tajweed)',
+		version: 1
+	},
+	3: {
+		id: 3,
+		language: 'Transliteration (Advanced Tajweed)',
+		version: 1
+	},
+	4: {
+		id: 4,
+		language: 'Transliteration (Syllables)',
 		version: 1
 	}
 };
