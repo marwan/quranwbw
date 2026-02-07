@@ -1,6 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Settings from '$svgs/Settings.svelte';
+	import Topics from '$svgs/Topics.svelte';
 	import TajweedRules from '$svgs/TajweedRules.svelte';
 	import Supplication from '$svgs/Supplication.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
@@ -47,6 +48,18 @@
 						<span class={linkTextClasses}>Settings</span>
 					</button>
 
+					<!-- topics page link -->
+					<a href="/topics" class={linkClasses}>
+						<Topics size={4} />
+						<span class={linkTextClasses}>Topics</span>
+					</a>
+
+					<!-- Bookmarks -->
+					<a href="/bookmarks" class={linkClasses}>
+						<Bookmark size={4} />
+						<span class={linkTextClasses}>Bookmarks</span>
+					</a>
+
 					<!-- Bookmarks -->
 					<a href="/bookmarks" class={linkClasses}>
 						<Bookmark size={4} />
@@ -90,18 +103,18 @@
 						<span class={linkTextClasses}>Changelog</span>
 					</a>
 
-					<!-- legacy site link -->
-					<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
-						<LegacySite size={4} />
-						<span class={linkTextClasses}>Old Website</span>
-					</a>
-
 					<!-- About -->
 					<a href="/about" class={linkClasses}>
 						<About size={4} />
 						<span class={linkTextClasses}>About</span>
 					</a>
 				</div>
+
+				<!-- legacy site link -->
+				<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
+					<LegacySite size={4} />
+					<span class={linkTextClasses}>Old Website</span>
+				</a>
 			</div>
 		</div>
 	</div>
