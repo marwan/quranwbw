@@ -10,6 +10,7 @@
 	import Puzzle from '$svgs/Puzzle.svelte';
 	import About from '$svgs/About.svelte';
 	import Changelog from '$svgs/Changelog.svelte';
+	import Offline from '$svgs/Offline.svelte';
 	import LegacySite from '$svgs/LegacySite.svelte';
 	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
@@ -103,6 +104,7 @@
 
 				<!-- Offline Mode page -->
 				<a href="/offline" class={linkClasses}>
+					<Offline size={4} />
 					<span class={linkTextClasses}>Offline Mode</span>
 				</a>
 

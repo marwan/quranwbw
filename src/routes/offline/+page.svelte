@@ -785,7 +785,7 @@
 			<div class="flex flex-row justify-between">
 				<div>
 					<span class={window.theme('textSecondary')}>Essential Offline Data</span>
-					<span class="opacity-70"> (~16 MB)</span>
+					<span class="opacity-70"> (~20 MB)</span>
 				</div>
 				<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">Recommended</span>
 			</div>
@@ -837,7 +837,7 @@
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingChapter && disabledClasses}">
 			<div>
 				<span class={window.theme('textSecondary')}>{term('chapter')} Data</span>
-				<span class="opacity-70"> (~8 MB)</span>
+				<span class="opacity-70"> (~10 MB)</span>
 			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
@@ -864,7 +864,7 @@
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingJuz && disabledClasses}">
 			<div>
 				<span class={window.theme('textSecondary')}>{term('juzs')} Data </span>
-				<span class="opacity-70">(~8 MB)</span>
+				<span class="opacity-70">(~10 MB)</span>
 			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
@@ -891,7 +891,7 @@
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingMushaf && disabledClasses}">
 			<div>
 				<span class={window.theme('textSecondary')}>Mushaf Data</span>
-				<span class="opacity-70">(~65 MB)</span>
+				<span class="opacity-70">(~70 MB)</span>
 			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
@@ -918,7 +918,7 @@
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingMorphology && disabledClasses}">
 			<div>
 				<span class={window.theme('textSecondary')}>Morphology Data</span>
-				<span class="opacity-70">(~45 MB)</span>
+				<span class="opacity-70">(~50 MB)</span>
 			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">
@@ -945,7 +945,7 @@
 		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingTafsir && disabledClasses}">
 			<div>
 				<span class={window.theme('textSecondary')}>Tafsir Data</span>
-				<span class="opacity-70">(~45 MB)</span>
+				<span class="opacity-70">(~50 MB)</span>
 			</div>
 
 			<div class="flex flex-row space-x-8 justify-between">

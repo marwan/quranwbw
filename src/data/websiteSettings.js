@@ -19,7 +19,8 @@ export const cdnStaticDataUrls = {
 	verseKeyData: `${staticEndpoint}/meta/verseKeyData.json?version=2`,
 	tajweedRules: `${staticEndpoint}/tajweed/tajweed-rules.json?version=3`,
 	keysInJuz: `${staticEndpoint}/meta/keysInJuz.json?version=1`,
-	keysInPage: `${staticEndpoint}/meta/keysInPage.json?version=2`
+	keysInPage: `${staticEndpoint}/meta/keysInPage.json?version=2`,
+	quranTopics: `${staticEndpoint}/others/quran-topics.json?version=1`
 };
 
 // FontType → { file, version }
