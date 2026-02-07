@@ -23,7 +23,6 @@ let __currentPage,
 	__displayType,
 	__websiteTheme,
 	__lastRead,
-	__favouriteChapters,
 	__pageURL,
 	__settingsDrawerHidden,
 	__topNavbarVisible,
@@ -32,7 +31,6 @@ let __currentPage,
 	__wordTooltip,
 	__audioSettings,
 	__morphologyKey,
-	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
 	__notesModalVisible,
@@ -126,9 +124,6 @@ if (browser) {
 	// to store the last read key
 	__lastRead = writable(userSettings.lastRead);
 
-	// to store the user's favourite chapters
-	__favouriteChapters = writable(userSettings.favouriteChapters);
-
 	// to store a random number (for now) when changing verses due to some issues while re-rendering the component (probably because I'm still learning Svelte)
 	__pageURL = writable(null);
 
@@ -152,9 +147,6 @@ if (browser) {
 
 	// to store the morphology verse/word key
 	__morphologyKey = writable(null);
-
-	// to store the auto scroll speed
-	__autoScrollSpeed = writable(userSettings.displaySettings.autoScrollSpeed);
 
 	// to store the first verse on page
 	__firstVerseOnPage = writable(1);
@@ -244,7 +236,6 @@ export {
 	__displayType,
 	__websiteTheme,
 	__lastRead,
-	__favouriteChapters,
 	__pageURL,
 	__settingsDrawerHidden,
 	__topNavbarVisible,
@@ -253,7 +244,6 @@ export {
 	__wordTooltip,
 	__audioSettings,
 	__morphologyKey,
-	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
 	__notesModalVisible,

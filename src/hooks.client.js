@@ -7,7 +7,6 @@ export const defaultSettings = {
 		wordTranslationEnabled: true,
 		wordTransliterationEnabled: true,
 		wordTooltip: 1,
-		autoScrollSpeed: 40,
 		wakeLockEnabled: false,
 		englishTerminology: false,
 		hideNonDuaPart: false,
@@ -50,9 +49,7 @@ export const defaultSettings = {
 	lastRead: {},
 	userBookmarks: [],
 	userNotes: {},
-	favouriteChapters: [1, 5, 18],
-	chapter: 1,
-	downloadedDataInfo: {}
+	chapter: 1
 };
 
 // Do not continue without setting the default user's settings first
