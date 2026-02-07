@@ -44,7 +44,6 @@ let __websiteOnline,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
-	__lexiconModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
@@ -56,7 +55,6 @@ let __websiteOnline,
 	__timeSpecificChapters,
 	__englishTerminology,
 	__hideNonDuaPart,
-	__wordRoot,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
@@ -182,7 +180,6 @@ if (browser) {
 	__settingsSelectorModal = writable({
 		visible: false
 	});
-	__lexiconModalVisible = writable(false);
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
@@ -213,9 +210,6 @@ if (browser) {
 
 	// show/hide non-dua words
 	__hideNonDuaPart = writable(userSettings.displaySettings.hideNonDuaPart);
-
-	// to store the word root for showing lexicon data
-	__wordRoot = writable(null);
 
 	// functionalities of the play buttons
 	__playButtonsFunctionality = writable({
@@ -289,7 +283,6 @@ export {
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
-	__lexiconModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
@@ -301,7 +294,6 @@ export {
 	__timeSpecificChapters,
 	__englishTerminology,
 	__hideNonDuaPart,
-	__wordRoot,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,

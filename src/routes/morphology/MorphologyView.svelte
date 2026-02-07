@@ -141,7 +141,6 @@
 			<div id="word-summary" class="text-center mx-auto md:w-3/4 text-sm md:text-lg pb-6 border-b-2 {window.theme('border')}">
 				<div class="flex flex-col space-y-4">
 					<span>{@html allData.wordSummaryData.data[$__morphologyKey]}</span>
-					<!-- <button class="text-lg font-bold underline" on:click={() => showLexiconModal()}>View Lanes Lexicon Data &rarr;</button> -->
 				</div>
 
 				<!-- Buttons -->
