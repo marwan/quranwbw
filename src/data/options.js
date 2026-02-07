@@ -26,7 +26,7 @@ export const selectableDisplays = {
 		layout: 'wbw',
 		continuous: true,
 		customClasses: 'text-center direction-rtl',
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
 		disallowedInFontTypes: []
 	},
 	4: {
@@ -36,7 +36,7 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: true,
 		customClasses: 'text-center direction-rtl',
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	5: {
@@ -46,14 +46,14 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: false,
 		customClasses: null,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	6: {
 		displayID: 6,
 		displayName: 'Mushaf',
 		continuous: true,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	7: {
