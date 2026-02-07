@@ -5,7 +5,6 @@
 	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { onMount } from 'svelte';
-	import { staticEndpoint } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { page } from '$app/stores';
