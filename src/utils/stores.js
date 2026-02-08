@@ -23,17 +23,14 @@ let __currentPage,
 	__displayType,
 	__websiteTheme,
 	__lastRead,
-	__favouriteChapters,
 	__pageURL,
 	__settingsDrawerHidden,
 	__topNavbarVisible,
 	__bottomToolbarVisible,
 	__mushafPageDivisions,
 	__wordTooltip,
-	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
 	__notesModalVisible,
@@ -42,7 +39,6 @@ let __currentPage,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
-	__lexiconModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
@@ -50,10 +46,8 @@ let __currentPage,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
-	__timeSpecificChapters,
 	__englishTerminology,
 	__hideNonDuaPart,
-	__wordRoot,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
@@ -131,9 +125,6 @@ if (browser) {
 	// to store the last read key
 	__lastRead = writable(userSettings.lastRead);
 
-	// to store the user's favourite chapters
-	__favouriteChapters = writable(userSettings.favouriteChapters);
-
 	// to store a random number (for now) when changing verses due to some issues while re-rendering the component (probably because I'm still learning Svelte)
 	__pageURL = writable(null);
 
@@ -158,9 +149,6 @@ if (browser) {
 	// to store the morphology verse/word key
 	__morphologyKey = writable(null);
 
-	// to store the auto scroll speed
-	__autoScrollSpeed = writable(userSettings.displaySettings.autoScrollSpeed);
-
 	// to store the first verse on page
 	__firstVerseOnPage = writable(1);
 
@@ -174,7 +162,6 @@ if (browser) {
 	__settingsSelectorModal = writable({
 		visible: false
 	});
-	__lexiconModalVisible = writable(false);
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
@@ -193,20 +180,11 @@ if (browser) {
 	__quizCorrectAnswers = writable(userSettings.quiz.correctAnswers);
 	__quizWrongAnswers = writable(userSettings.quiz.wrongAnswers);
 
-	// for al-kahf on friday and al-mulk at night
-	__timeSpecificChapters = writable({
-		isFriday: false,
-		isNight: false
-	});
-
 	// english/arabic Quranic terms
 	__englishTerminology = writable(userSettings.displaySettings.englishTerminology);
 
 	// show/hide non-dua words
 	__hideNonDuaPart = writable(userSettings.displaySettings.hideNonDuaPart);
-
-	// to store the word root for showing lexicon data
-	__wordRoot = writable(null);
 
 	// functionalities of the play buttons
 	__playButtonsFunctionality = writable({
@@ -262,17 +240,14 @@ export {
 	__displayType,
 	__websiteTheme,
 	__lastRead,
-	__favouriteChapters,
 	__pageURL,
 	__settingsDrawerHidden,
 	__topNavbarVisible,
 	__bottomToolbarVisible,
 	__mushafPageDivisions,
 	__wordTooltip,
-	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
 	__notesModalVisible,
@@ -281,7 +256,6 @@ export {
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
-	__lexiconModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
@@ -289,10 +263,8 @@ export {
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
-	__timeSpecificChapters,
 	__englishTerminology,
 	__hideNonDuaPart,
-	__wordRoot,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,

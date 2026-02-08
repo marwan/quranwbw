@@ -76,10 +76,19 @@ function formatWordKey(keySplit) {
 function findChapters(key) {
 	let chapters = {};
 
+	// Normalizes search terms by lowercasing and removing apostrophes
+	const normalizeSearch = (str = '') => str.toLowerCase().replace(/['’‘`]/g, '');
+	const normalizedKey = normalizeSearch(key);
+
 	for (let chapter = 1; chapter <= 114; chapter++) {
+		// Collect all searchable names for the chapter (Arabic, transliteration, translation, alternates)
 		const { arabic, transliteration, translation, alternateNames = [] } = quranMetaData[chapter];
-		if ([arabic, transliteration, translation, ...alternateNames].some((term) => term.toLowerCase().includes(key.toLowerCase()))) {
-			chapters[chapter] = { transliteration, translation }; // Adds matching chapters to results
+
+		const terms = [arabic, transliteration, translation, ...alternateNames];
+
+		// Match if the normalized search key exists in any chapter name variant
+		if (terms.some((term) => term && normalizeSearch(term).includes(normalizedKey))) {
+			chapters[chapter] = { transliteration, translation };
 		}
 	}
 

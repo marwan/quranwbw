@@ -19,7 +19,6 @@ import {
 	__lastRead,
 	__wordTooltip,
 	__userBookmarks,
-	__autoScrollSpeed,
 	__wakeLockEnabled,
 	__userNotes,
 	__quizCorrectAnswers,
@@ -242,12 +241,6 @@ export function updateSettings(props) {
 				__lastRead.set(data);
 				userSettings.lastRead = props.value;
 			}
-			break;
-
-		// for auto scroll
-		case 'autoScrollSpeed':
-			__autoScrollSpeed.set(props.value);
-			userSettings.displaySettings.autoScrollSpeed = props.value;
 			break;
 
 		// for toggling wakeLock
