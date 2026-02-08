@@ -19,7 +19,6 @@ import {
 	__lastRead,
 	__wordTooltip,
 	__userBookmarks,
-	__autoScrollSpeed,
 	__wakeLockEnabled,
 	__userNotes,
 	__quizCorrectAnswers,
@@ -29,7 +28,6 @@ import {
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__downloadedDataInfo,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled
 } from '$utils/stores';
@@ -225,12 +223,6 @@ export function updateSettings(props) {
 			}
 			break;
 
-		// for auto scroll
-		case 'autoScrollSpeed':
-			__autoScrollSpeed.set(props.value);
-			userSettings.displaySettings.autoScrollSpeed = props.value;
-			break;
-
 		// for toggling wakeLock
 		case 'wakeLockEnabled':
 			__wakeLockEnabled.set(props.value);
@@ -274,12 +266,6 @@ export function updateSettings(props) {
 		case 'homepageExtrasPanelVisible':
 			__homepageExtrasPanelVisible.set(props.value);
 			userSettings.displaySettings.homepageExtrasPanelVisible = props.value;
-			break;
-
-		// for offline data settings
-		case 'downloadedDataInfo':
-			__downloadedDataInfo.set(props.value);
-			userSettings.downloadedDataInfo = props.value;
 			break;
 
 		// for toggling website wide layout

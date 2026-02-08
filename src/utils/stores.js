@@ -1,8 +1,7 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 
-let __websiteOnline,
-	__currentPage,
+let __currentPage,
 	__chapterNumber,
 	__pageNumber,
 	__chapterData,
@@ -24,18 +23,14 @@ let __websiteOnline,
 	__displayType,
 	__websiteTheme,
 	__lastRead,
-	__favouriteChapters,
 	__pageURL,
 	__settingsDrawerHidden,
 	__topNavbarVisible,
 	__bottomToolbarVisible,
 	__mushafPageDivisions,
 	__wordTooltip,
-	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataInfo,
-	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
 	__notesModalVisible,
@@ -44,19 +39,15 @@ let __websiteOnline,
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
-	__lexiconModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__downloadModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
-	__timeSpecificChapters,
 	__englishTerminology,
 	__hideNonDuaPart,
-	__wordRoot,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
@@ -68,9 +59,6 @@ let __websiteOnline,
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-
-	// to store network status of website
-	__websiteOnline = writable(true);
 
 	// to store the current page
 	__currentPage = writable('home');
@@ -136,9 +124,6 @@ if (browser) {
 	// to store the last read key
 	__lastRead = writable(userSettings.lastRead);
 
-	// to store the user's favourite chapters
-	__favouriteChapters = writable(userSettings.favouriteChapters);
-
 	// to store a random number (for now) when changing verses due to some issues while re-rendering the component (probably because I'm still learning Svelte)
 	__pageURL = writable(null);
 
@@ -163,12 +148,6 @@ if (browser) {
 	// to store the morphology verse/word key
 	__morphologyKey = writable(null);
 
-	// to store all the offline data settings
-	__downloadedDataInfo = writable(userSettings.downloadedDataInfo);
-
-	// to store the auto scroll speed
-	__autoScrollSpeed = writable(userSettings.displaySettings.autoScrollSpeed);
-
 	// to store the first verse on page
 	__firstVerseOnPage = writable(1);
 
@@ -182,11 +161,9 @@ if (browser) {
 	__settingsSelectorModal = writable({
 		visible: false
 	});
-	__lexiconModalVisible = writable(false);
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
-	__downloadModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
 		type: null,
@@ -202,20 +179,11 @@ if (browser) {
 	__quizCorrectAnswers = writable(userSettings.quiz.correctAnswers);
 	__quizWrongAnswers = writable(userSettings.quiz.wrongAnswers);
 
-	// for al-kahf on friday and al-mulk at night
-	__timeSpecificChapters = writable({
-		isFriday: false,
-		isNight: false
-	});
-
 	// english/arabic Quranic terms
 	__englishTerminology = writable(userSettings.displaySettings.englishTerminology);
 
 	// show/hide non-dua words
 	__hideNonDuaPart = writable(userSettings.displaySettings.hideNonDuaPart);
-
-	// to store the word root for showing lexicon data
-	__wordRoot = writable(null);
 
 	// functionalities of the play buttons
 	__playButtonsFunctionality = writable({
@@ -246,7 +214,6 @@ if (browser) {
 }
 
 export {
-	__websiteOnline,
 	__currentPage,
 	__chapterNumber,
 	__pageNumber,
@@ -269,18 +236,14 @@ export {
 	__displayType,
 	__websiteTheme,
 	__lastRead,
-	__favouriteChapters,
 	__pageURL,
 	__settingsDrawerHidden,
 	__topNavbarVisible,
 	__bottomToolbarVisible,
 	__mushafPageDivisions,
 	__wordTooltip,
-	__bottomAlert,
 	__audioSettings,
 	__morphologyKey,
-	__downloadedDataInfo,
-	__autoScrollSpeed,
 	__firstVerseOnPage,
 	__audioModalVisible,
 	__notesModalVisible,
@@ -289,19 +252,15 @@ export {
 	__quranNavigationModalVisible,
 	__siteNavigationModalVisible,
 	__settingsSelectorModal,
-	__lexiconModalVisible,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__downloadModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
-	__timeSpecificChapters,
 	__englishTerminology,
 	__hideNonDuaPart,
-	__wordRoot,
 	__playButtonsFunctionality,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
