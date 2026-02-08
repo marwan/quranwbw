@@ -73,7 +73,7 @@
 	$: downloadProgressPercentage = 0;
 
 	// Recompute whether the downloaded offline data still matches the user's current settings
-	$: downloadedDataSettingsMismatch = hasOfflineSettingsMismatch($__offlineModeSettings, $__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir);
+	// $: downloadedDataSettingsMismatch = hasOfflineSettingsMismatch($__offlineModeSettings, $__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir);
 
 	// Listen for cache started
 	window.addEventListener('sw-cache-started', () => {
@@ -227,28 +227,28 @@
 	}
 
 	// Checks whether the user's current settings match downloaded offline data
-	function hasOfflineSettingsMismatch() {
-		try {
-			const downloadedDataSettings = $__offlineModeSettings.downloadedDataSettings;
-			const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [], tafsirs = [] } = downloadedDataSettings;
+	// function hasOfflineSettingsMismatch() {
+	// 	try {
+	// 		const downloadedDataSettings = $__offlineModeSettings.downloadedDataSettings;
+	// 		const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [], tafsirs = [] } = downloadedDataSettings;
 
-			// Single-value checks (only if data exists)
-			if (fontTypes.length && !fontTypes.includes($__fontType)) return true;
-			if (wordTranslations.length && !wordTranslations.includes($__wordTranslation)) return true;
-			if (wordTransliterations.length && !wordTransliterations.includes($__wordTransliteration)) return true;
-			if (tafsirs.length && !tafsirs.includes($__verseTafsir)) return true;
+	// 		// Single-value checks (only if data exists)
+	// 		if (fontTypes.length && !fontTypes.includes($__fontType)) return true;
+	// 		if (wordTranslations.length && !wordTranslations.includes($__wordTranslation)) return true;
+	// 		if (wordTransliterations.length && !wordTransliterations.includes($__wordTransliteration)) return true;
+	// 		if (tafsirs.length && !tafsirs.includes($__verseTafsir)) return true;
 
-			// Multi-value check (only if data exists)
-			if (downloadedVerseTranslations.length && Array.isArray($__verseTranslations) && $__verseTranslations.some((t) => !downloadedVerseTranslations.includes(t))) {
-				return true;
-			}
+	// 		// Multi-value check (only if data exists)
+	// 		if (downloadedVerseTranslations.length && Array.isArray($__verseTranslations) && $__verseTranslations.some((t) => !downloadedVerseTranslations.includes(t))) {
+	// 			return true;
+	// 		}
 
-			return false;
-		} catch (error) {
-			console.warn('Offline settings mismatch check failed:', error);
-			return false;
-		}
-	}
+	// 		return false;
+	// 	} catch (error) {
+	// 		console.warn('Offline settings mismatch check failed:', error);
+	// 		return false;
+	// 	}
+	// }
 
 	// Ensure core data is downloaded (auto-download if not)
 	async function ensureCoreDataDownloaded() {
@@ -768,7 +768,7 @@
 		</p>
 	</div>
 
-	{#if downloadedDataSettingsMismatch}
+	<!-- {#if downloadedDataSettingsMismatch}
 		<div class="mt-4 p-3 rounded-md flex flex-row space-x-2 items-start text-sm {window.theme('bgSecondaryLight')}">
 			<span class="flex-shrink-0 w-5 h-5 mt-1">
 				<Info />
@@ -776,7 +776,7 @@
 
 			<span> Your settings have changed since the last download. To ensure offline access continues to work correctly, it's recommended that you delete the existing downloaded data and download it again so it matches your current preferences. </span>
 		</div>
-	{/if}
+	{/if} -->
 
 	<!-- Basic Data Download Option and Advanced Data Download Toggle -->
 	<div class="my-8 flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0 overflow-auto">
