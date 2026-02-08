@@ -6,11 +6,17 @@
 		"dev": "vite dev --host",
 		"build": "vite build",
 		"preview": "vite preview",
+		"start": "node build",
 		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify",
 		"lint:unused": "eslint . --ext .js,.svelte --max-warnings=0"
 	},
+	"overrides": {
+		"cookie": "^0.7.0",
+		"esbuild": "^0.25.1"
+	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/adapter-node": "^5.4.0",
 		"@sveltejs/kit": "^2.26.1",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.0",
