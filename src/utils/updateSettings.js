@@ -371,4 +371,7 @@ function toggleDownloadedDataSetting(offlineModeSettings, type, id) {
 	if (index === -1) {
 		array.push(id);
 	}
+
+	// Update the store
+	__offlineModeSettings.set(offlineModeSettings);
 }

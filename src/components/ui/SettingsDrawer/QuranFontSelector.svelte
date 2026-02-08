@@ -65,7 +65,7 @@
 							{/if}
 						{/each}
 					{:else}
-						<p class="text-xs opacity-70">No fonts available in this category</p>
+						<p class="text-xs opacity-70">No fonts available</p>
 					{/if}
 				</div>
 			</div>

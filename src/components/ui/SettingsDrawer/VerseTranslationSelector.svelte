@@ -64,7 +64,7 @@
 								{/if}
 							{/each}
 						{:else}
-							<p class="text-xs opacity-70">No translations available in this language</p>
+							<p class="text-xs opacity-70">No translations available</p>
 						{/if}
 					</div>
 				</div>
