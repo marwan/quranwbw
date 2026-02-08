@@ -12,13 +12,15 @@
 	$: if ($__morphologyModalVisible) resetAudioSettings();
 </script>
 
-<Modal bind:open={$__morphologyModalVisible} id="morphologyModal" transitionParams={getModalTransition('bottom')} size="lg" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
-	<div class="flex flex-row space-x-2">
+<Modal bind:open={$__morphologyModalVisible} id="morphologyModal" transitionParams={getModalTransition('bottom')} size="lg" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+	<div class="flex flex-row space-x-2 flex-shrink-0">
 		<h3 id="modal-title" class="mb-6 text-xl font-medium">Word {$__morphologyKey}</h3>
 		<a href="/morphology?word={$__morphologyKey}" class="inline-flex mt-[-2px] mb-6 p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => window.umami.track('Full View Morphology Button')}>
 			<ExternalLink size={4} />
 		</a>
 	</div>
 
-	<div class="max-h-[70vh] min-h-[70vh] overflow-y-scroll w-full pr-2"><MorphologyView data={wordKeyData} /></div>
+	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
+		<MorphologyView data={wordKeyData} />
+	</div>
 </Modal>

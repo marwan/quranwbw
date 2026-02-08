@@ -460,7 +460,7 @@
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">Playback Speed (x{selectablePlaybackSpeeds[playbackSpeedValue].speed})</span>
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group">
-								<Range min="1" max="7" bind:value={playbackSpeedValue} class={rangeClasses} />
+								<Range min="1" max={Object.keys(selectablePlaybackSpeeds).length} bind:value={playbackSpeedValue} class={rangeClasses} />
 							</div>
 						</div>
 					</div>
