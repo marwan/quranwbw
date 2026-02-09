@@ -1,3 +1,9 @@
+### Feb 8, 2026
+
+- **Advanced Tajweed & Syllables Transliteration:** Added two new word-by-word transliterations — **Advanced Tajweed** and **Syllables** — along with one new verse-by-verse transliteration (**Advanced Tajweed**). Existing transliterations have also been updated with improvements and fixes for better accuracy and readability.
+
+---
+
 ### Feb 6, 2026
 
 - **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur’an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
