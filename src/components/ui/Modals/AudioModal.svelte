@@ -286,7 +286,7 @@
 							<Dropdown bind:open={startVerseDropdownOpen} class="w-max">
 								<!-- Sticky Search Box -->
 								<div class="p-2 sticky top-0 z-10">
-									<Input type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}">
+									<Input min="1" max={versesInChapter} type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 w-32 {window.theme('placeholder')}">
 										<Search slot="left" size={6} classes="pt-1 {startVerseSearch.length > 0 && 'hidden'}" />
 									</Input>
 								</div>
@@ -319,7 +319,7 @@
 							<Dropdown bind:open={endVerseDropdownOpen} class="w-max">
 								<!-- Sticky Search Box -->
 								<div class="p-2 sticky top-0 z-10">
-									<Input type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 max-w-32 {window.theme('placeholder')}">
+									<Input min="1" max={versesInChapter} type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 w-32 {window.theme('placeholder')}">
 										<Search slot="left" size={6} classes="pt-1 {endVerseSearch.length > 0 && 'hidden'}" />
 									</Input>
 								</div>
