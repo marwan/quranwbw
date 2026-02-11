@@ -1,4 +1,4 @@
-### Feb 8, 2026
+### Feb 11, 2026
 
 - **Advanced Tajweed & Syllables Transliteration:** Added two new word-by-word transliterations — **Advanced Tajweed** and **Syllables** — along with one new verse-by-verse transliteration (**Advanced Tajweed**). Existing transliterations have also been updated with improvements and fixes for better accuracy and readability.
 
