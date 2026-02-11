@@ -22,7 +22,7 @@ export const defaultSettings = {
 	},
 	translations: {
 		word: 1,
-		verse_v1: [57, 131],
+		verse_v1: [1, 131],
 		tafsir: 30
 	},
 	transliteration: {
