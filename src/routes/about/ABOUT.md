@@ -40,6 +40,7 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 - [Kalimat](https://www.kalimat.dev/) for their AI powered semantic search API.
 - [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/) for the copyrighted Isep Misbah Fonts[5].
 - M Zamroni Ahbab for the Arabic Sign Language font[6].
+- [Understand Quran Academy](https://understandquran.com/) for the Advanced Tajweed and Syllables transliteration data[7].
 
 All data used on this website belongs to their respective owners and authors. Permission must be obtained from them before copying any content.
 
@@ -56,3 +57,5 @@ All data used on this website belongs to their respective owners and authors. Pe
 [5] _The Isep Misbah Fonts are copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for these fonts was prepared by [Ayman Siddiqui](https://zoopernet.com)._
 
 [6] _The Arabic Sign Language font was designed by M Zamroni Ahbab and is copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for this font was prepared by [Ayman Siddiqui](https://zoopernet.com)._
+
+[7] _The Advanced Tajweed and Syllables transliteration content is published by [Understand Quran Academy](https://understandquran.com/), Hyderabad, India. The original work was authored by Shaikh M. A. H. Eliyasee, with enhancements and compilation by Abul Bashar, Tareq Maghrabi, Naseer Imtiaz, Mrs. & Mr. Waseem A. Khan, and Abdulazeez Abdulraheem. The original transliteration data was contributed by Shaikh AbdulGhafoor Parekh and Aisha Fozia. Web publishing was carried out by Muhammad Mujtaba Shareef and Waseem Khan, while Unicode conversion and word-by-word compilation were performed by [Ayman Siddiqui](https://zoopernet.com), Rania Siddiqua, and Syeda Amena._
