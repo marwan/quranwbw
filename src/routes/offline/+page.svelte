@@ -2,9 +2,10 @@
 	import PageHead from '$misc/PageHead.svelte';
 	import Download from '$svgs/Download.svelte';
 	import Trash from '$svgs/Trash.svelte';
-	import Info from '$svgs/Info.svelte';
+	import Refresh from '$svgs/Refresh.svelte';
 	import Eye from '$svgs/Eye.svelte';
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
+	import Info from '$svgs/Info.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
@@ -19,6 +20,7 @@
 	import { clearDexieTable } from '$utils/dexie';
 
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
+	const mismatchMessage = 'Settings changed. Re-download to ensure offline access works correctly.';
 
 	// Chapter and Quran pages count
 	const totalChapters = 114;
@@ -33,6 +35,7 @@
 	let isDownloadingTafsir = false;
 
 	let showAdvancedDownloadOptions = false;
+	let downloadProgressPercentage = 0;
 
 	// Initialize structures on component load
 	ensureOfflineSettingsStructure('serviceWorker');
@@ -69,11 +72,83 @@
 	// Track if ANY download is in progress
 	$: isDownloading = isRegistering || isDownloadingEssential || isDownloadingChapter || isDownloadingJuz || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir;
 
-	// Track the download progress percentage
-	$: downloadProgressPercentage = 0;
+	// Check for specific data type mismatches (reactive to all relevant stores)
+	$: mismatchStatus = getOfflineSettingsMismatch($__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir, $__offlineModeSettings);
 
-	// Recompute whether the downloaded offline data still matches the user's current settings
-	// $: downloadedDataSettingsMismatch = hasOfflineSettingsMismatch($__offlineModeSettings, $__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir);
+	// Check if chapter/juz data has mismatch (they share the same settings)
+	$: hasChapterJuzMismatch = mismatchStatus.fontType || mismatchStatus.wordTranslation || mismatchStatus.wordTransliteration || mismatchStatus.verseTranslations;
+
+	// Check if mushaf data has mismatch
+	$: hasMushafMismatch = mismatchStatus.fontType;
+
+	// Check if tafsir data has mismatch
+	$: hasTafsirMismatch = mismatchStatus.verseTafsir;
+
+	$: console.log({ hasTafsirMismatch });
+
+	// Define data sections configuration
+	$: dataSections = [
+		{
+			id: 'chapterData',
+			title: `${term('chapter')} Data`,
+			sizeLabel: '~10 MB',
+			description: `These files download the Quran text data and allow you to read all 114 ${term('chapters')} offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.`,
+			isDataDownloaded: isChapterDataDownloaded,
+			isDownloading: isDownloadingChapter,
+			showMismatchBanner: hasChapterJuzMismatch,
+			onDownload: handleDownloadChaptersData,
+			onDelete: () => handleDeleteSpecificData('quranwbw-chapter-data', 'chapterData'),
+			onRedownload: () => handleRedownloadData('chapterData')
+		},
+		{
+			id: 'juzData',
+			title: `${term('juzs')} Data`,
+			sizeLabel: '~10 MB',
+			description: `These files allow you to read all 30 Quran ${term('juzs')} offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.`,
+			isDataDownloaded: isJuzDataDownloaded,
+			isDownloading: isDownloadingJuz,
+			showMismatchBanner: hasChapterJuzMismatch,
+			onDownload: handleDownloadJuzData,
+			onDelete: () => handleDeleteSpecificData('quranwbw-juz-data', 'juzData'),
+			onRedownload: () => handleRedownloadData('juzData')
+		},
+		{
+			id: 'mushafData',
+			title: 'Mushaf Data',
+			sizeLabel: '~70 MB',
+			description: 'These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.',
+			isDataDownloaded: isMushafDataDownloaded,
+			isDownloading: isDownloadingMushaf,
+			showMismatchBanner: hasMushafMismatch,
+			onDownload: handleDownloadMushafData,
+			onDelete: () => handleDeleteSpecificData('quranwbw-mushaf-data', 'mushafData'),
+			onRedownload: () => handleRedownloadData('mushafData')
+		},
+		{
+			id: 'morphologyData',
+			title: 'Morphology Data',
+			sizeLabel: '~50 MB',
+			description: 'These files allow you to view detailed word information in the Morphology section. This includes word meanings, roots, verb forms, and related words used across the Quran.',
+			isDataDownloaded: isMorphologyDataDownloaded,
+			isDownloading: isDownloadingMorphology,
+			showMismatchBanner: false,
+			onDownload: handleDownloadMorphologyData,
+			onDelete: () => handleDeleteSpecificData('morphology_data', 'morphologyData'),
+			onRedownload: () => handleRedownloadData('morphologyData')
+		},
+		{
+			id: 'tafsirData',
+			title: 'Tafsir Data',
+			sizeLabel: '~50 MB',
+			description: `These files let you read ${term('tafsir')} for all ${term('chapters')} offline, based on the ${term('tafsir')} you have selected in your settings.`,
+			isDataDownloaded: isTafsirDataDownloaded,
+			isDownloading: isDownloadingTafsir,
+			showMismatchBanner: hasTafsirMismatch,
+			onDownload: handleDownloadTafsirData,
+			onDelete: () => handleDeleteSpecificData('tafsir_data', 'tafsirData'),
+			onRedownload: () => handleRedownloadData('tafsirData')
+		}
+	];
 
 	// Listen for cache started
 	window.addEventListener('sw-cache-started', () => {
@@ -227,28 +302,28 @@
 	}
 
 	// Checks whether the user's current settings match downloaded offline data
-	// function hasOfflineSettingsMismatch() {
-	// 	try {
-	// 		const downloadedDataSettings = $__offlineModeSettings.downloadedDataSettings;
-	// 		const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [], tafsirs = [] } = downloadedDataSettings;
+	// Returns an object with mismatch status for each data type
+	function getOfflineSettingsMismatch(fontType, wordTranslation, wordTransliteration, verseTranslations, verseTafsir, offlineSettings) {
+		try {
+			const downloadedDataSettings = offlineSettings.downloadedDataSettings;
+			if (!downloadedDataSettings) {
+				return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false };
+			}
 
-	// 		// Single-value checks (only if data exists)
-	// 		if (fontTypes.length && !fontTypes.includes($__fontType)) return true;
-	// 		if (wordTranslations.length && !wordTranslations.includes($__wordTranslation)) return true;
-	// 		if (wordTransliterations.length && !wordTransliterations.includes($__wordTransliteration)) return true;
-	// 		if (tafsirs.length && !tafsirs.includes($__verseTafsir)) return true;
+			const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [], tafsirs = [] } = downloadedDataSettings;
 
-	// 		// Multi-value check (only if data exists)
-	// 		if (downloadedVerseTranslations.length && Array.isArray($__verseTranslations) && $__verseTranslations.some((t) => !downloadedVerseTranslations.includes(t))) {
-	// 			return true;
-	// 		}
-
-	// 		return false;
-	// 	} catch (error) {
-	// 		console.warn('Offline settings mismatch check failed:', error);
-	// 		return false;
-	// 	}
-	// }
+			return {
+				fontType: fontTypes.length > 0 && !fontTypes.includes(fontType),
+				wordTranslation: wordTranslations.length > 0 && !wordTranslations.includes(wordTranslation),
+				wordTransliteration: wordTransliterations.length > 0 && !wordTransliterations.includes(wordTransliteration),
+				verseTafsir: tafsirs.length > 0 && !tafsirs.includes(verseTafsir),
+				verseTranslations: downloadedVerseTranslations.length > 0 && Array.isArray(verseTranslations) && verseTranslations.some((t) => !downloadedVerseTranslations.includes(t))
+			};
+		} catch (error) {
+			console.warn('Offline settings mismatch check failed:', error);
+			return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false };
+		}
+	}
 
 	// Ensure core data is downloaded (auto-download if not)
 	async function ensureCoreDataDownloaded() {
@@ -368,7 +443,7 @@
 	}
 
 	// Delete specific cache data
-	async function handleDeleteSpecificCache(cacheName, objectName) {
+	async function handleDeleteSpecificData(cacheName, objectName) {
 		try {
 			// 1. Remove cached data
 			await Promise.all([deleteSpecificCache(cacheName), clearDexieTable(cacheName)]);
@@ -429,7 +504,7 @@
 			console.log('running clearDownloadedDataSettingsIfNoOfflineData');
 
 			// Dynamically detect all content-related offline data keys
-			const offlineContentKeys = Object.keys(offlineModeSettings).filter((key) => key !== 'serviceWorker' && key !== 'downloadedDataSettings' && Object.prototype.hasOwnProperty.call(offlineModeSettings[key], 'downloaded'));
+			const offlineContentKeys = Object.keys(offlineModeSettings).filter((key) => key !== 'serviceWorker' && key !== 'downloadedDataSettings' && typeof offlineModeSettings[key] === 'object' && Object.prototype.hasOwnProperty.call(offlineModeSettings[key], 'downloaded'));
 
 			// Check if any content data is still downloaded
 			const hasAnyContentDownloaded = offlineContentKeys.some((key) => offlineModeSettings[key]?.downloaded === true);
@@ -438,10 +513,53 @@
 
 			// Delete and reset everything
 			await unregisterServiceWorkerAndClearCache();
-			offlineModeSettings = {};
-			updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
+			$__offlineModeSettings = {};
+			updateSettings({ type: 'offlineModeSettings', value: {} });
 		} catch (error) {
 			console.warn('Failed to clear downloadedDataSettings:', error);
+		}
+	}
+
+	// Redownload specific data (deletes and reinstalls)
+	async function handleRedownloadData(dataType) {
+		try {
+			switch (dataType) {
+				case 'chapterData':
+					await handleDeleteSpecificData('quranwbw-chapter-data', 'chapterData');
+					await handleDownloadChaptersData();
+					break;
+
+				case 'juzData':
+					await handleDeleteSpecificData('quranwbw-juz-data', 'juzData');
+					await handleDownloadJuzData();
+					break;
+
+				case 'mushafData':
+					await handleDeleteSpecificData('quranwbw-mushaf-data', 'mushafData');
+					await handleDownloadMushafData();
+					break;
+
+				case 'morphologyData':
+					await handleDeleteSpecificData('morphology_data', 'morphologyData');
+					await handleDownloadMorphologyData();
+					break;
+
+				case 'tafsirData':
+					await handleDeleteSpecificData('tafsir_data', 'tafsirData');
+					await handleDownloadTafsirData();
+					break;
+
+				case 'essentialData':
+					await handleDeleteEssentialData();
+					await handleDownloadEssentialData();
+					break;
+
+				default:
+					console.warn('Unknown data type:', dataType);
+			}
+		} catch (error) {
+			console.warn('Redownload failed:', error);
+			showAlert(errorAlertMessage, '');
 		}
 	}
 
@@ -768,16 +886,6 @@
 		</p>
 	</div>
 
-	<!-- {#if downloadedDataSettingsMismatch}
-		<div class="mt-4 p-3 rounded-md flex flex-row space-x-2 items-start text-sm {window.theme('bgSecondaryLight')}">
-			<span class="flex-shrink-0 w-5 h-5 mt-1">
-				<Info />
-			</span>
-
-			<span> Your settings have changed since the last download. To ensure offline access continues to work correctly, it's recommended that you delete the existing downloaded data and download it again so it matches your current preferences. </span>
-		</div>
-	{/if} -->
-
 	<!-- Basic Data Download Option and Advanced Data Download Toggle -->
 	<div class="my-8 flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0 overflow-auto">
 		<!-- Basic Data Download -->
@@ -833,139 +941,58 @@
 
 	<!-- Individual Download Options -->
 	<div class="my-6 flex flex-col space-y-4 overflow-auto {!showAdvancedDownloadOptions && disabledClasses}">
-		<!-- Chapter Data Files -->
-		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingChapter && disabledClasses}">
-			<div>
-				<span class={window.theme('textSecondary')}>{term('chapter')} Data</span>
-				<span class="opacity-70"> (~10 MB)</span>
+		{#each dataSections as section, index}
+			<!-- Data Section -->
+			<div class="flex flex-col space-y-2 text-sm {isDownloading && !section.isDownloading && disabledClasses}">
+				<div>
+					<span class={window.theme('textSecondary')}>{section.title}</span>
+					<span class="opacity-70"> ({section.sizeLabel})</span>
+				</div>
+
+				<!-- Mismatch banner with re-download button -->
+				{#if section.isDataDownloaded && section.showMismatchBanner}
+					<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-start text-sm {window.theme('bgSecondaryLight')}">
+						<span class="flex-shrink-0 w-5 h-5 mt-1 md:mt-0.5"><Info /></span>
+						<span>{mismatchMessage}</span>
+					</div>
+				{/if}
+
+				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+					<div class="text-sm">{section.description}</div>
+
+					<div class="flex flex-row space-x-2">
+						{#if section.isDataDownloaded}
+							<!-- Re-download button (only shown when data is downloaded) -->
+							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses}" on:click={section.onRedownload} disabled={isDownloading}>
+								{#if section.isDownloading}
+									<span>{downloadProgressPercentage}%</span>
+								{:else}
+									<Refresh size={4} />
+								{/if}
+							</button>
+
+							<!-- Delete button (only shown when data is downloaded) -->
+							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses}" on:click={() => showConfirm('Are you sure you want to delete this data?', '', section.onDelete)} disabled={isDownloading}>
+								<Trash size={4} />
+							</button>
+						{:else}
+							<!-- Download button (only shown when data is NOT downloaded) -->
+							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses}" on:click={section.onDownload} disabled={isDownloading}>
+								{#if section.isDownloading}
+									<span>{downloadProgressPercentage}%</span>
+								{:else}
+									<Download size={4} />
+								{/if}
+							</button>
+						{/if}
+					</div>
+				</div>
 			</div>
 
-			<div class="flex flex-row space-x-8 justify-between">
-				<div class="text-sm">These files download the Quran text data and allow you to read all 114 {term('chapters')} offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.</div>
-
-				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isChapterDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-chapter-data', 'chapterData')) : handleDownloadChaptersData} disabled={isDownloading}>
-					{#if isChapterDataDownloaded}
-						<Trash size={4} />
-						<span>Delete</span>
-					{:else if isDownloadingChapter}
-						<Spinner size="5" inline={true} hideMessages={true} />
-						<span>{downloadProgressPercentage}%</span>
-					{:else}
-						<Download size={4} />
-						<span>Download</span>
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		<div class="border-b {window.theme('border')}"></div>
-
-		<!-- Juz Data Files -->
-		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingJuz && disabledClasses}">
-			<div>
-				<span class={window.theme('textSecondary')}>{term('juzs')} Data </span>
-				<span class="opacity-70">(~10 MB)</span>
-			</div>
-
-			<div class="flex flex-row space-x-8 justify-between">
-				<div class="text-sm">These files allow you to read all 30 Quran {term('juzs')} offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.</div>
-
-				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isJuzDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-juz-data', 'juzData')) : handleDownloadJuzData} disabled={isDownloading}>
-					{#if isJuzDataDownloaded}
-						<Trash size={4} />
-						<span>Delete</span>
-					{:else if isDownloadingJuz}
-						<Spinner size="5" inline={true} hideMessages={true} />
-						<span>{downloadProgressPercentage}%</span>
-					{:else}
-						<Download size={4} />
-						<span>Download</span>
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		<div class="border-b {window.theme('border')}"></div>
-
-		<!-- Mushaf Data -->
-		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingMushaf && disabledClasses}">
-			<div>
-				<span class={window.theme('textSecondary')}>Mushaf Data</span>
-				<span class="opacity-70">(~70 MB)</span>
-			</div>
-
-			<div class="flex flex-row space-x-8 justify-between">
-				<div class="text-sm">These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.</div>
-
-				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isMushafDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('quranwbw-mushaf-data', 'mushafData')) : handleDownloadMushafData} disabled={isDownloading}>
-					{#if isMushafDataDownloaded}
-						<Trash size={4} />
-						<span>Delete</span>
-					{:else if isDownloadingMushaf}
-						<Spinner size="5" inline={true} hideMessages={true} />
-						<span>{downloadProgressPercentage}%</span>
-					{:else}
-						<Download size={4} />
-						<span>Download</span>
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		<div class="border-b {window.theme('border')}"></div>
-
-		<!-- Morphology Data -->
-		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingMorphology && disabledClasses}">
-			<div>
-				<span class={window.theme('textSecondary')}>Morphology Data</span>
-				<span class="opacity-70">(~50 MB)</span>
-			</div>
-
-			<div class="flex flex-row space-x-8 justify-between">
-				<div class="text-sm">These files allow you to view detailed word information in the Morphology section. This includes word meanings, roots, verb forms, and related words used across the Quran.</div>
-
-				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isMorphologyDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('morphology_data', 'morphologyData')) : handleDownloadMorphologyData} disabled={isDownloading}>
-					{#if isMorphologyDataDownloaded}
-						<Trash size={4} />
-						<span>Delete</span>
-					{:else if isDownloadingMorphology}
-						<Spinner size="5" inline={true} hideMessages={true} />
-						<span>{downloadProgressPercentage}%</span>
-					{:else}
-						<Download size={4} />
-						<span>Download</span>
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		<div class="border-b {window.theme('border')}"></div>
-
-		<!-- Tafsir Data -->
-		<div class="flex flex-col space-y-2 text-sm {isDownloading && !isDownloadingTafsir && disabledClasses}">
-			<div>
-				<span class={window.theme('textSecondary')}>Tafsir Data</span>
-				<span class="opacity-70">(~50 MB)</span>
-			</div>
-
-			<div class="flex flex-row space-x-8 justify-between">
-				<div class="text-sm">These files let you read {term('tafsir')} for all {term('chapters')} offline, based on the {term('tafsir')} you have selected in your settings.</div>
-
-				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isTafsirDataDownloaded ? showConfirm('Are you sure you want to delete this data?', '', () => handleDeleteSpecificCache('tafsir_data', 'tafsirData')) : handleDownloadTafsirData} disabled={isDownloading}>
-					{#if isTafsirDataDownloaded}
-						<Trash size={4} />
-						<span>Delete</span>
-					{:else if isDownloadingTafsir}
-						<Spinner size="5" inline={true} hideMessages={true} />
-						<span>{downloadProgressPercentage}%</span>
-					{:else}
-						<Download size={4} />
-						<span>Download</span>
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		<div class="border-b {window.theme('border')}"></div>
+			<!-- Divider (only between sections, not after the last one) -->
+			{#if index < dataSections.length - 1}
+				<div class="border-b {window.theme('border')}"></div>
+			{/if}
+		{/each}
 	</div>
 </div>

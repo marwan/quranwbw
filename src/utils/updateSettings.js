@@ -144,10 +144,6 @@ export function updateSettings(props) {
 			__verseTafsir.set(props.value);
 			userSettings.translations.tafsir = props.value;
 			trackEvent = true;
-
-			// Toggle in offline mode settings
-			toggleDownloadedDataSetting(userSettings.offlineModeSettings, 'tafsirs', props.value);
-
 			break;
 
 		// for verse reciter
