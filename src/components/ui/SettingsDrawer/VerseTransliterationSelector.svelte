@@ -48,7 +48,7 @@
 					<div id="translation-name" class="text-md font-medium">{language.language}</div>
 					<div id="translation-list" class="space-y-3">
 						{#if hasVisibleTransliterations(language.language_id)}
-							{#each Object.values(selectableVerseTranslations) as translation}
+							{#each Object.values(selectableVerseTranslations).sort((a, b) => (a.displayOrder ?? Infinity) - (b.displayOrder ?? Infinity)) as translation}
 								{#if translation.language_id === language.language_id && shouldShowTransliteration(translation.resource_id)}
 									<div class="flex items-center w-full">
 										<Checkbox on:click={() => updateSettings({ type: 'verseTranslation', value: translation.resource_id })} custom>
@@ -72,5 +72,7 @@
 		{/each}
 	</div>
 
-	<div class="text-xs opacity-70 pb-8">Relying solely on transliteration to recite the Quran is not recommended, as it can lead to pronunciation errors. To fully appreciate and receive the reward and blessings of recitation, one should learn to read the Quran in Arabic.</div>
+	<div class="text-xs opacity-70 pb-4">Relying solely on transliteration to recite the Quran is not recommended, as it can lead to pronunciation errors. To fully appreciate and receive the reward and blessings of recitation, one should learn to read the Quran in Arabic.</div>
+
+	<div class="text-xs opacity-70 pb-8">The transliteration appear in the order you select them. To rearrange the sequence, simply deselect all options and then reselect them in your desired order.</div>
 {/if}

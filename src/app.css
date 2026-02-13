@@ -98,6 +98,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "noto-serif";
+  src: url("../fonts/NotoSerif-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -282,6 +290,10 @@ svg {
 .font-Arabic-Sign-Language {
   font-family: "Arabic-Sign-Language";
   unicode-bidi: plaintext;
+}
+
+.font-serif {
+  font-family: "noto-serif";
 }
 
 .direction-rtl {
