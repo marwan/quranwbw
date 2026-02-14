@@ -6,15 +6,13 @@ import { __websiteTheme, __fontType } from '$utils/stores';
 // Returns the Mushaf word font URL for a given page number
 export function getMushafWordFontLink(page) {
 	const paddedPage = String(page).padStart(3, '0');
-	const os = getOS();
-	const isIOSorMac = os === 'iOS' || os === 'macOS';
 	const isAppleLightThemeWithoutCOLRv1Support = [1, 2, 3].includes(get(__websiteTheme));
 	const isTajweedFontType = get(__fontType) === 3;
 	let basePath, fileName, fontVersion;
 
 	// Use OT-SVG fonts on iOS/macOS for specific light themes (Golden Glint, Classic Light, Silver Lining) when using Mushaf Tajweed fonts
 	// Certain iOS/macOS versions (notably iOS 26.2) have COLRv1 rendering bugs that cause incorrect or distorted colors, so OT-SVG is used as a fallback
-	if (isIOSorMac && isAppleLightThemeWithoutCOLRv1Support && isTajweedFontType) {
+	if (isIOSorMac() && isAppleLightThemeWithoutCOLRv1Support && isTajweedFontType) {
 		basePath = 'OT-SVG-LIGHT';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
 		fontVersion = 1;
@@ -95,4 +93,9 @@ function getOS() {
 	}
 
 	return null;
+}
+
+export function isIOSorMac() {
+	const os = getOS();
+	return os === 'iOS' || os === 'macOS';
 }

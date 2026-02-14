@@ -14,7 +14,7 @@
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
 	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, bismillahFonts, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
-	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
+	import { getMushafWordFontLink, isIOSorMac } from '$utils/getMushafWordFontLink';
 	import { term } from '$utils/terminologies';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { clearDexieTable } from '$utils/dexie';
@@ -123,7 +123,10 @@
 			showMismatchBanner: hasMushafMismatch,
 			onDownload: handleDownloadMushafData,
 			onDelete: () => handleDeleteSpecificData('quranwbw-mushaf-data', 'mushafData'),
-			onRedownload: () => handleRedownloadData('mushafData')
+			onRedownload: () => handleRedownloadData('mushafData'),
+
+			// Disabled on iOS/macOS because the current OT-SVG fallback fonts are significantly large (~190 MB), making downloads impractical.
+			isSectionDisabled: () => isIOSorMac()
 		},
 		{
 			id: 'morphologyData',
@@ -557,10 +560,14 @@
 
 				default:
 					console.warn('Unknown data type:', dataType);
+
+					window.umami?.track(`Data Re-download: ${dataType}`);
 			}
 		} catch (error) {
 			console.warn('Redownload failed:', error);
 			showAlert(errorAlertMessage, '');
+		} finally {
+			window.umami?.track(`Data Re-download: ${dataType}`);
 		}
 	}
 
@@ -944,7 +951,7 @@
 	<div class="my-6 flex flex-col space-y-4 overflow-auto {!showAdvancedDownloadOptions && disabledClasses}">
 		{#each dataSections as section, index}
 			<!-- Data Section -->
-			<div class="flex flex-col space-y-2 text-sm {isDownloading && !section.isDownloading && disabledClasses}">
+			<div class="flex flex-col space-y-2 text-sm {(isDownloading && !section.isDownloading) || (section.isSectionDisabled && section.isSectionDisabled()) ? disabledClasses : ''}">
 				<div>
 					<span class={window.theme('textSecondary')}>{section.title}</span>
 					<span class="opacity-70"> ({section.sizeLabel})</span>
