@@ -32,6 +32,7 @@ import {
 	__signLanguageModeEnabled,
 	__offlineModeSettings
 } from '$utils/stores';
+import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -360,6 +361,10 @@ function toggleDownloadedDataSetting(offlineModeSettings, type, id) {
 	if (index === -1) {
 		array.push(id);
 	}
+
+	// Download all data again as per current user's settings
+	fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+	fetchVerseTranslationData({ preventStoreUpdate: true });
 
 	// Update the store
 	__offlineModeSettings.set(offlineModeSettings);

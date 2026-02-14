@@ -19,6 +19,7 @@
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { clearDexieTable } from '$utils/dexie';
 
+	// Common messages
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
 	const mismatchMessage = 'Settings changed. Re-download to ensure offline access works correctly.';
 
@@ -26,6 +27,7 @@
 	const totalChapters = 114;
 	const totalPages = 604;
 
+	// Track download state
 	let isRegistering = false;
 	let isDownloadingEssential = false;
 	let isDownloadingChapter = false;
@@ -33,7 +35,6 @@
 	let isDownloadingMushaf = false;
 	let isDownloadingMorphology = false;
 	let isDownloadingTafsir = false;
-
 	let showAdvancedDownloadOptions = false;
 	let downloadProgressPercentage = 0;
 
