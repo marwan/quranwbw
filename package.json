@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "vite dev --host",
 		"build": "vite build",
-		"preview": "vite preview",
+		"preview": "vite build && vite preview",
 		"start": "node build",
 		"css": "npx tailwindcss -i ./src/app.css -c ./tailwind.config.js -o ./static/css/global.css --watch --minify",
 		"lint:unused": "eslint . --ext .js,.svelte --max-warnings=0"
