@@ -10,21 +10,37 @@ export function getMushafWordFontLink(page) {
 	const isIOSorMac = os === 'iOS' || os === 'macOS';
 	const isAppleLightThemeWithoutCOLRv1Support = [1, 2, 3].includes(get(__websiteTheme));
 	const isTajweedFontType = get(__fontType) === 3;
+	let basePath, fileName, fontVersion;
 
-	// Defaults
-	let basePath = 'COLRv1';
-	let fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-	let fontVersion = 12;
-
+	// Use OT-SVG fonts on iOS/macOS for specific light themes (Golden Glint, Classic Light, Silver Lining) when using Mushaf Tajweed fonts
+	// Certain iOS/macOS versions (notably iOS 26.2) have COLRv1 rendering bugs that cause incorrect or distorted colors, so OT-SVG is used as a fallback
 	if (isIOSorMac && isAppleLightThemeWithoutCOLRv1Support && isTajweedFontType) {
 		basePath = 'OT-SVG-LIGHT';
+		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
 		fontVersion = 1;
-	} else if (isFirefoxDarkTajweed()) {
+	}
+
+	// Firefox cannot correctly handle multiple COLRv1 palettes in dark themes, resulting in missing or incorrect colors
+	// A dark-base COLRv1 font is used to ensure proper rendering
+	else if (isFirefoxDarkTajweed()) {
 		basePath = 'COLRv1-Dark-FF';
-	} else if (isFirefoxDarkNonTajweed()) {
+		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
+		fontVersion = 12;
+	}
+
+	// The default COLRv1 font is based on a light Tajweed palette, which causing visibility problems for non-Tajweed words in certain themes
+	// A separate non-colored font variant is used as a workaround
+	else if (isFirefoxDarkNonTajweed()) {
 		basePath = 'COLRv1-Dark-FF-Non-Colored';
 		fileName = `QCF4${paddedPage}_X-Regular.woff2`;
 		fontVersion = 10;
+	}
+
+	// Use standard COLRv1 fonts for all platforms, themes, and font types when no platform-specific or browser-specific rendering issues apply
+	else {
+		basePath = 'COLRv1';
+		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
+		fontVersion = 12;
 	}
 
 	return `${mushafWordFontLink}/${basePath}/${fileName}?version=${fontVersion}`;
