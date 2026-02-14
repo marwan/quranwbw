@@ -4,7 +4,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { __audioSettings } from '$utils/stores';
 	import { playVerseAudio, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
-	import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
+	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// quick play from first verse of page till the max chapter verses
 	async function audioHandler() {

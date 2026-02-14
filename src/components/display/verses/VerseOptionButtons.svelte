@@ -15,7 +15,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
-	import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
+	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	const chapter = parseInt(key.split(':')[0], 10);
 	const verse = parseInt(key.split(':')[1], 10);

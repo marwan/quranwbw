@@ -13,7 +13,7 @@
 	import { term } from '$utils/terminologies';
 	import { wordAudioController } from '$utils/audioController';
 	import { fade } from 'svelte/transition';
-	import { isUserOnline } from '$utils/serviceWorkerHandler';
+	import { isUserOnline } from '$utils/offlineModeHandler';
 	import { onMount } from 'svelte';
 
 	let chapter, verse, word;

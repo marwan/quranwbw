@@ -6,7 +6,7 @@
 	import { verseTafsirLanguages, selectableTafsirs } from '$data/selectableTafsirs';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
-	import { isUserOnline } from '$utils/serviceWorkerHandler';
+	import { isUserOnline } from '$utils/offlineModeHandler';
 
 	// Get downloaded tafsirs from offline settings
 	$: downloadedTafsirs = $__offlineModeSettings?.downloadedDataSettings?.tafsirs ?? [];

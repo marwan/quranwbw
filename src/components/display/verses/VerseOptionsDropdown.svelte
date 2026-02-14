@@ -21,7 +21,7 @@
 	import { term } from '$utils/terminologies';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
-	import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
+	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// Constants
 	const mushafFontTypes = [2, 3];

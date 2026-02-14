@@ -1,5 +1,5 @@
 import { deleteDexieDatabase } from '$utils/dexie';
-import { unregisterServiceWorkerAndClearCache } from '$utils/serviceWorkerHandler';
+import { unregisterServiceWorkerAndClearCache } from '$utils/offlineModeHandler';
 
 export async function resetSettings() {
 	// 1. Remove stored user settings

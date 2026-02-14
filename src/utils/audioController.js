@@ -4,7 +4,7 @@ import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __au
 import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
-import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
+import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 // Getting the audio element
 let audio = document.querySelector('#player');

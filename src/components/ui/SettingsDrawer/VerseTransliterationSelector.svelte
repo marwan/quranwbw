@@ -6,7 +6,7 @@
 	import { selectableVerseTranslations, verseTranslationsLanguages } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualCheckboxClasses } from '$data/commonClasses';
-	import { isUserOnline } from '$utils/serviceWorkerHandler';
+	import { isUserOnline } from '$utils/offlineModeHandler';
 
 	// Get downloaded verse transliterations from offline settings
 	$: downloadedVerseTransliterations = $__offlineModeSettings?.downloadedDataSettings?.verseTranslations ?? [];

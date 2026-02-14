@@ -54,7 +54,7 @@
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
-	import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
+	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {

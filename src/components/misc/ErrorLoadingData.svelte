@@ -1,5 +1,5 @@
 <script>
-	import { isUserOnline } from '$utils/serviceWorkerHandler';
+	import { isUserOnline } from '$utils/offlineModeHandler';
 	import { onMount } from 'svelte';
 
 	// Whether the message should be vertically centered

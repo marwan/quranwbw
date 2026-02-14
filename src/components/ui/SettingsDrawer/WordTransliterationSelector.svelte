@@ -6,7 +6,7 @@
 	import { selectableWordTransliterations } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
-	import { isUserOnline } from '$utils/serviceWorkerHandler';
+	import { isUserOnline } from '$utils/offlineModeHandler';
 
 	// Get downloaded word transliterations from offline settings
 	$: downloadedWordTransliterations = $__offlineModeSettings?.downloadedDataSettings?.wordTransliterations ?? [];

@@ -9,7 +9,7 @@
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
 	import { fade } from 'svelte/transition';
-	import { checkOnlineAndAlert } from '$utils/serviceWorkerHandler';
+	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
 
