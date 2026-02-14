@@ -9,13 +9,14 @@ export function getMushafWordFontLink(page) {
 	const os = getOS();
 	const isIOSorMac = os === 'iOS' || os === 'macOS';
 	const isAppleLightThemeWithoutCOLRv1Support = [1, 2, 3].includes(get(__websiteTheme));
+	const isTajweedFontType = get(__fontType) === 3;
 
 	// Defaults
 	let basePath = 'COLRv1';
 	let fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
 	let fontVersion = 12;
 
-	if (isIOSorMac && isAppleLightThemeWithoutCOLRv1Support) {
+	if (isIOSorMac && isAppleLightThemeWithoutCOLRv1Support && isTajweedFontType) {
 		basePath = 'OT-SVG-LIGHT';
 		fontVersion = 1;
 	} else if (isFirefoxDarkTajweed()) {
