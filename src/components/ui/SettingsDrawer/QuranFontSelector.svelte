@@ -6,7 +6,7 @@
 	import { selectableFontTypes, fontTypes } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
-	import { isUserOnline } from '$utils/offlineModeHandler';
+	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';
 
 	// Get downloaded font types from offline settings
 	$: downloadedFontTypes = $__offlineModeSettings?.downloadedDataSettings?.fontTypes ?? [];
@@ -65,7 +65,7 @@
 							{/if}
 						{/each}
 					{:else}
-						<p class="text-xs opacity-70">No fonts available</p>
+						<p class="text-xs opacity-70">{dataUnavailableWhileOfflineMessage}</p>
 					{/if}
 				</div>
 			</div>

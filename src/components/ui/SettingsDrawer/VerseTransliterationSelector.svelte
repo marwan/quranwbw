@@ -6,7 +6,7 @@
 	import { selectableVerseTranslations, verseTranslationsLanguages } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualCheckboxClasses } from '$data/commonClasses';
-	import { isUserOnline } from '$utils/offlineModeHandler';
+	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';
 
 	// Get downloaded verse transliterations from offline settings
 	$: downloadedVerseTransliterations = $__offlineModeSettings?.downloadedDataSettings?.verseTranslations ?? [];
@@ -64,7 +64,7 @@
 								{/if}
 							{/each}
 						{:else}
-							<p class="text-xs opacity-70">No transliterations available</p>
+							<p class="text-xs opacity-70">{dataUnavailableWhileOfflineMessage}</p>
 						{/if}
 					</div>
 				</div>

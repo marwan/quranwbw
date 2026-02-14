@@ -1,5 +1,7 @@
 import { showAlert } from '$utils/confirmationAlertHandler';
 
+export const dataUnavailableWhileOfflineMessage = 'Data unavailable offline';
+
 export async function registerServiceWorker() {
 	if (!('serviceWorker' in navigator)) {
 		return { success: false, error: 'Not supported' };
@@ -73,7 +75,7 @@ export async function unregisterServiceWorkerAndClearCache() {
 // Uses `navigator.onLine` plus a small uncached network ping to avoid false positives.
 export async function isUserOnline(timeout = 500) {
 	// Quick fail: browser explicitly says offline
-	// if (!navigator.onLine) return false;
+	if (!navigator.onLine) return false;
 
 	const controller = new AbortController();
 	const id = setTimeout(() => controller.abort(), timeout);

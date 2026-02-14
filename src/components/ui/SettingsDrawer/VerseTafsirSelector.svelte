@@ -6,7 +6,7 @@
 	import { verseTafsirLanguages, selectableTafsirs } from '$data/selectableTafsirs';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
-	import { isUserOnline } from '$utils/offlineModeHandler';
+	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';
 
 	// Get downloaded tafsirs from offline settings
 	$: downloadedTafsirs = $__offlineModeSettings?.downloadedDataSettings?.tafsirs ?? [];
@@ -59,7 +59,7 @@
 							{/if}
 						{/each}
 					{:else}
-						<p class="text-xs opacity-70">No tafsirs available</p>
+						<p class="text-xs opacity-70">{dataUnavailableWhileOfflineMessage}</p>
 					{/if}
 				</div>
 			</div>
