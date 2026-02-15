@@ -73,7 +73,7 @@ export async function unregisterServiceWorkerAndClearCache() {
 
 // Returns true if the user has actual internet connectivity.
 // Uses `navigator.onLine` plus a small uncached network ping to avoid false positives.
-export async function isUserOnline(timeout = 500) {
+export async function isUserOnline(timeout = 1000) {
 	// Quick fail: browser explicitly says offline
 	if (!navigator.onLine) return false;
 
