@@ -58,7 +58,7 @@
 			updateURL(searchQuery);
 			return data;
 		} catch (error) {
-			console.warn('Error fetching search results:', error);
+			console.warn(error);
 			badRequest = true;
 			return null;
 		}

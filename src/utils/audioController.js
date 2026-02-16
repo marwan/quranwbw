@@ -252,7 +252,7 @@ async function wordHighlighter() {
 			lastPlayedKey = audioSettings.playingWordKey;
 		}
 	} catch (error) {
-		console.warn('wordHighlighter error:', error);
+		console.warn(error);
 	}
 }
 
@@ -408,9 +408,6 @@ export function prepareVersesToPlay(key) {
 			// Set verses to play from the startVerse to the end of the chapter
 			setVersesToPlay({ location: 'verseOptionsOrModal', chapter, startVerse, endVerse: endVerse });
 			break;
-		default:
-			// Handle invalid audioRange values
-			console.warn('Invalid audioRange:', audioRange);
 	}
 }
 
@@ -430,6 +427,6 @@ function scrollElementIntoView(id) {
 			block: 'center'
 		});
 	} catch (error) {
-		console.warn('scrollElementIntoView error:', error);
+		console.warn(error);
 	}
 }

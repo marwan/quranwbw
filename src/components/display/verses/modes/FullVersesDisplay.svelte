@@ -58,7 +58,9 @@
 	$: loadPrevNextVerseButtons = `flex ${selectableDisplays[$__displayType].continuous ? 'flex-row-reverse' : 'flex-row'} space-x-4 justify-center`;
 
 	// Checking if a start key was provided
-	if (params.get('startKey') !== undefined || params.get('startKey') !== null) {
+	const startKey = params.get('startKey');
+
+	if (typeof startKey === 'string' && startKey.length > 0) {
 		try {
 			keyToStartWith = params.get('startKey');
 
@@ -199,7 +201,7 @@
 			});
 		} catch (error) {
 			fetchError = error;
-			console.warn('Error fetching chapter data:', error);
+			console.warn(error);
 		} finally {
 			isLoading = false;
 		}

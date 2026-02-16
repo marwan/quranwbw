@@ -50,8 +50,6 @@
 		// Load font
 		const url = `${staticEndpoint}/fonts/Extras/bismillah/${fileName}.woff2?version=${fontVersion}`;
 
-		console.log(url);
-
 		loadFont('bismillah', url).then(() => {
 			elements.forEach((el) => el.classList.remove('invisible'));
 		});

@@ -76,12 +76,6 @@
 	// Check for specific data type mismatches (reactive to all relevant stores)
 	$: mismatchStatus = getOfflineSettingsMismatch($__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir, $__offlineModeSettings);
 
-	// Check if chapter/juz data has mismatch (they share the same settings)
-	$: hasChapterJuzMismatch = mismatchStatus.fontType || mismatchStatus.wordTranslation || mismatchStatus.wordTransliteration || mismatchStatus.verseTranslations;
-
-	// Check if mushaf data has mismatch
-	$: hasMushafMismatch = mismatchStatus.fontType;
-
 	// Check if tafsir data has mismatch
 	$: hasTafsirMismatch = mismatchStatus.verseTafsir;
 
@@ -90,11 +84,11 @@
 		{
 			id: 'chapterData',
 			title: `${term('chapter')} Data`,
-			sizeLabel: '~10 MB',
+			dataSizeInMB: 20,
 			description: `These files download the Quran text data and allow you to read all 114 ${term('chapters')} offline. The content follows your selected reading settings, such as translations and transliterations. Any special Mushaf font files are not included and must be downloaded separately.`,
 			isDataDownloaded: isChapterDataDownloaded,
 			isDownloading: isDownloadingChapter,
-			showMismatchBanner: hasChapterJuzMismatch,
+			showMismatchBanner: false,
 			onDownload: handleDownloadChaptersData,
 			onDelete: () => handleDeleteSpecificData('quranwbw-chapter-data', 'chapterData'),
 			onRedownload: () => handleRedownloadData('chapterData')
@@ -102,11 +96,11 @@
 		{
 			id: 'juzData',
 			title: `${term('juzs')} Data`,
-			sizeLabel: '~10 MB',
+			dataSizeInMB: 20,
 			description: `These files allow you to read all 30 Quran ${term('juzs')} offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.`,
 			isDataDownloaded: isJuzDataDownloaded,
 			isDownloading: isDownloadingJuz,
-			showMismatchBanner: hasChapterJuzMismatch,
+			showMismatchBanner: false,
 			onDownload: handleDownloadJuzData,
 			onDelete: () => handleDeleteSpecificData('quranwbw-juz-data', 'juzData'),
 			onRedownload: () => handleRedownloadData('juzData')
@@ -114,11 +108,11 @@
 		{
 			id: 'mushafData',
 			title: 'Mushaf Data',
-			sizeLabel: '~70 MB',
+			dataSizeInMB: 60,
 			description: 'These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.',
 			isDataDownloaded: isMushafDataDownloaded,
 			isDownloading: isDownloadingMushaf,
-			showMismatchBanner: hasMushafMismatch,
+			showMismatchBanner: false,
 			onDownload: handleDownloadMushafData,
 			onDelete: () => handleDeleteSpecificData('quranwbw-mushaf-data', 'mushafData'),
 			onRedownload: () => handleRedownloadData('mushafData'),
@@ -129,7 +123,7 @@
 		{
 			id: 'morphologyData',
 			title: 'Morphology Data',
-			sizeLabel: '~50 MB',
+			dataSizeInMB: 90,
 			description: 'These files allow you to view detailed word information in the Morphology section. This includes word meanings, roots, verb forms, and related words used across the Quran.',
 			isDataDownloaded: isMorphologyDataDownloaded,
 			isDownloading: isDownloadingMorphology,
@@ -141,7 +135,7 @@
 		{
 			id: 'tafsirData',
 			title: 'Tafsir Data',
-			sizeLabel: '~50 MB',
+			dataSizeInMB: 90,
 			description: `These files let you read ${term('tafsir')} for all ${term('chapters')} offline, based on the ${term('tafsir')} you have selected in your settings.`,
 			isDataDownloaded: isTafsirDataDownloaded,
 			isDownloading: isDownloadingTafsir,
@@ -298,7 +292,7 @@
 				verseTranslations: activeVerseTranslations
 			});
 		} catch (error) {
-			console.warn('Failed to download chapter and verse translation data:', error);
+			console.warn(error);
 			throw error;
 		}
 	}
@@ -322,7 +316,7 @@
 				verseTranslations: downloadedVerseTranslations.length > 0 && Array.isArray(verseTranslations) && verseTranslations.some((t) => !downloadedVerseTranslations.includes(t))
 			};
 		} catch (error) {
-			console.warn('Offline settings mismatch check failed:', error);
+			console.warn(error);
 			return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false };
 		}
 	}
@@ -405,7 +399,7 @@
 
 			window.umami?.track('Essential Data Download');
 		} catch (error) {
-			console.warn('Essential data download failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingEssential = false;
@@ -439,7 +433,7 @@
 
 			window.umami?.track('Essential Data Delete');
 		} catch (error) {
-			console.warn('Essential data delete failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		}
 	}
@@ -493,7 +487,7 @@
 				value: offlineModeSettings
 			});
 		} catch (error) {
-			console.warn('Delete specific cache failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		}
 	}
@@ -518,7 +512,7 @@
 			$__offlineModeSettings = {};
 			updateSettings({ type: 'offlineModeSettings', value: {} });
 		} catch (error) {
-			console.warn('Failed to clear downloadedDataSettings:', error);
+			console.warn(error);
 		}
 	}
 
@@ -555,14 +549,11 @@
 					await handleDeleteEssentialData();
 					await handleDownloadEssentialData();
 					break;
-
-				default:
-					console.warn('Unknown data type:', dataType);
-
-					window.umami?.track(`Data Re-download: ${dataType}`);
 			}
+
+			window.umami?.track(`Data Re-download: ${dataType}`);
 		} catch (error) {
-			console.warn('Redownload failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			window.umami?.track(`Data Re-download: ${dataType}`);
@@ -610,7 +601,7 @@
 
 			window.umami?.track('Chapter Data Download');
 		} catch (error) {
-			console.warn('Chapter download failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingChapter = false;
@@ -660,7 +651,7 @@
 
 			window.umami?.track('Juz Data Download');
 		} catch (error) {
-			console.warn('Juz download failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingJuz = false;
@@ -712,7 +703,7 @@
 
 			window.umami?.track('Mushaf Data Download');
 		} catch (error) {
-			console.warn('Mushaf download failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMushaf = false;
@@ -776,7 +767,7 @@
 
 			window.umami?.track('Morphology Data Download');
 		} catch (error) {
-			console.error('Morphology download failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMorphology = false;
@@ -828,7 +819,7 @@
 
 			window.umami?.track('Tafsir Data Download');
 		} catch (error) {
-			console.error('Tafsir download failed:', error);
+			console.warn(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingTafsir = false;
@@ -846,7 +837,7 @@
 			await Promise.all(cachePromises);
 			console.log('All CDN static data cached successfully');
 		} catch (error) {
-			console.warn('Failed to cache CDN static data:', error);
+			console.warn(error);
 			throw error;
 		}
 	}
@@ -862,7 +853,7 @@
 			await Promise.all(fontPromises);
 			console.log('All bismillah fonts cached successfully');
 		} catch (error) {
-			console.warn('Failed to cache bismillah fonts:', error);
+			console.warn(error);
 			throw error;
 		}
 	}
@@ -873,7 +864,7 @@
 			await fetch(chapterHeaderFontLink);
 			console.log('Chapter header font cached successfully');
 		} catch (error) {
-			console.warn('Failed to cache chapter header font:', error);
+			console.warn(error);
 			throw error;
 		}
 	}
@@ -899,7 +890,7 @@
 			<div class="flex flex-row justify-between">
 				<div>
 					<span class={window.theme('textSecondary')}>Essential Offline Data</span>
-					<span class="opacity-70"> (~20 MB)</span>
+					<span class="opacity-70"> (~{dataSections[0].dataSizeInMB + dataSections[1].dataSizeInMB} MB)</span>
 				</div>
 				<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">Recommended</span>
 			</div>
@@ -952,7 +943,7 @@
 			<div class="flex flex-col space-y-2 text-sm {(isDownloading && !section.isDownloading) || (section.isSectionDisabled && section.isSectionDisabled()) ? disabledClasses : ''}">
 				<div>
 					<span class={window.theme('textSecondary')}>{section.title}</span>
-					<span class="opacity-70"> ({section.sizeLabel})</span>
+					<span class="opacity-70"> (~{section.dataSizeInMB} MB)</span>
 				</div>
 
 				<!-- Mismatch banner with re-download button -->

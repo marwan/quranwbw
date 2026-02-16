@@ -21,7 +21,7 @@ export const cacheTableMap = {
 // Clears all records from the specified Dexie table without altering its schema
 export async function clearDexieTable(tableName) {
 	if (!db.tables.some((t) => t.name === tableName)) {
-		console.warn(`Table "${tableName}" does not exist`);
+		console.log(`Table "${tableName}" does not exist`);
 		return;
 	}
 
@@ -36,7 +36,7 @@ export async function deleteDexieDatabase() {
 		await db.delete();
 		console.log(`Dexie database "${db.name}" deleted`);
 	} catch (error) {
-		console.warn('Failed to delete Dexie database', error);
+		console.warn(error);
 		throw error;
 	}
 }

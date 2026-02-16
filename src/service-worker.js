@@ -61,7 +61,7 @@ async function getCachingStatus() {
 			return data.enabled;
 		}
 	} catch (error) {
-		console.warn('Could not read caching status:', error);
+		console.warn(error);
 	}
 	return false;
 }
@@ -80,7 +80,7 @@ async function saveCachingStatus(enabled) {
 			})
 		);
 	} catch (error) {
-		console.warn('Could not save caching status:', error);
+		console.warn(error);
 	}
 }
 
@@ -194,7 +194,7 @@ async function performCaching() {
 					await cache.put(routes[i], response.clone());
 				}
 			} catch (error) {
-				console.warn('Install cache failed for:', routes[i], error);
+				console.warn(error);
 			}
 
 			// Send progress update to the website (so we can show a progress bar)
@@ -264,7 +264,7 @@ self.addEventListener('message', (event) => {
 						await cache.put(event.data.url, response);
 					}
 				} catch (error) {
-					console.warn('Failed to cache URL:', event.data.url, error);
+					console.warn(error);
 				}
 			})()
 		);
@@ -285,7 +285,7 @@ self.addEventListener('message', (event) => {
 						});
 					});
 				} catch (error) {
-					console.warn('Failed to delete cache:', event.data.cacheName, error);
+					console.warn(error);
 				}
 			})()
 		);
@@ -368,7 +368,7 @@ self.addEventListener('fetch', (event) => {
 				return networkResponse;
 			} catch (error) {
 				// Network request failed (user is offline)
-				console.warn('[SW] Network failed for:', url.pathname, error);
+				console.warn(error);
 
 				// If caching is enabled, try to find in cache again (redundant but safe)
 				if (cachingEnabled) {
@@ -407,7 +407,6 @@ self.addEventListener('fetch', (event) => {
 				}
 
 				// For other resources, return error
-				console.error('[SW] Resource not cached and offline:', url.pathname);
 				return new Response('Offline - resource not cached', {
 					status: 503,
 					statusText: 'Service Unavailable',

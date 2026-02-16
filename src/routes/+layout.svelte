@@ -65,7 +65,6 @@
 			if (!wakeLock) {
 				try {
 					wakeLock = await navigator.wakeLock.request('screen');
-					console.log('Wake lock enabled');
 				} catch (error) {
 					console.warn(error);
 				}
@@ -74,7 +73,6 @@
 			if (wakeLock) {
 				await wakeLock.release();
 				wakeLock = null;
-				console.log('Wake lock disabled');
 			}
 		}
 	})();
@@ -179,7 +177,7 @@
 			// Save back to localStorage
 			localStorage.setItem(storageKey, JSON.stringify(data));
 		} catch (error) {
-			console.warn('Error tracking website version:', error);
+			console.warn(error);
 		}
 	})();
 </script>

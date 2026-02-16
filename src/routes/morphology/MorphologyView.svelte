@@ -95,7 +95,7 @@
 				// Since the 'exact-words-keys' file excludes unique words, if this word is not found, it means it's unique — so return the original word key.
 				return uthmaniToKeys[uthmani] || [$__morphologyKey];
 			} catch (error) {
-				console.warn('Failed to load exact words in Quran:', error);
+				console.warn(error);
 				return [];
 			}
 		})();

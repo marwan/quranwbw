@@ -307,7 +307,7 @@
 
 					return themes[id][type] || '';
 				} catch (error) {
-					console.warn('An error occurred while fetching the theme:', error);
+					console.warn(error);
 					return '';
 				}
 			}

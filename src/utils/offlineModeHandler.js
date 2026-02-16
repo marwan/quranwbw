@@ -48,7 +48,7 @@ export async function registerServiceWorker() {
 
 		return { success: true, registration };
 	} catch (error) {
-		console.warn('SW registration failed:', error);
+		console.warn(error);
 		return { success: false, error: error.message };
 	}
 }
@@ -67,7 +67,7 @@ export async function unregisterServiceWorkerAndClearCache() {
 
 		console.log('All service workers unregistered and caches cleared.');
 	} catch (error) {
-		console.warn('Error while clearing caches:', error);
+		console.warn(error);
 	}
 }
 
@@ -97,7 +97,7 @@ export async function isUserOnline(timeout = 1000) {
 		return response.type === 'opaque' || (response.status >= 200 && response.status < 300);
 	} catch (error) {
 		clearTimeout(id);
-		console.warn('Network check failed:', error);
+		console.warn(error);
 		return false;
 	}
 }

@@ -104,7 +104,7 @@ export async function fetchVerseTranslationData(props) {
 
 			return { id, data };
 		} catch (error) {
-			console.warn(`Error fetching translation ${id}:`, error);
+			console.warn(error);
 			return { id, data: null };
 		}
 	});
@@ -153,7 +153,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 						console.log(`[cache] background update done for ${cacheKey}`);
 						return freshData;
 					} catch (error) {
-						console.warn(`[cache] background update failed for ${cacheKey}:`, error);
+						console.warn(error);
 					} finally {
 						inFlightRequests.delete(cacheKey);
 					}
@@ -210,7 +210,7 @@ async function manageCache(key, type, dataToSet = undefined) {
 		}
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
-		console.warn('IndexedDB cache error:', error?.message || error);
+		console.warn(error);
 		return dataToSet !== undefined ? false : null;
 	}
 }
