@@ -294,7 +294,7 @@ async function fetchChapterTimestampData(chapter) {
 
 	try {
 		const targetUrl = `https://quran.com/api/proxy/content/api/qdc/audio/reciters/${CHAPTER_AUDIO_RECITER_ID}/audio_files?chapter=${chapter}&segments=true`;
-		const response = await fetch(`http://api.quranwbw.com/v2/qurancom-proxy?url=${encodeURIComponent(targetUrl)}`);
+		const response = await fetch(`https://api.quranwbw.com/v2/qurancom-proxy?url=${encodeURIComponent(targetUrl)}`);
 
 		if (!response.ok) {
 			throw new Error(`Failed to fetch timestamp data: ${response.status}`);
