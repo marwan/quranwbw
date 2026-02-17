@@ -28,6 +28,22 @@ function isConsecutiveArabicVerse(nextKey) {
 	return currentChapter === nextChapter && nextVerse === currentVerse + 1;
 }
 
+export function pauseOrResumeAudio() {
+	const audioSettings = get(__audioSettings);
+
+	if (audioSettings.audioType !== 'verse') return;
+
+	if (!audio.paused) {
+		audio.pause();
+		audioSettings.audioIsPaused = true;
+	} else {
+		audio.play();
+		audioSettings.audioIsPaused = false;
+	}
+
+	__audioSettings.set(audioSettings);
+}
+
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
 	const audioSettings = get(__audioSettings);
@@ -70,9 +86,9 @@ export async function playVerseAudio(props) {
 			return;
 		}
 
-		// Load chapter audio if not already loaded or if different chapter
 		const currentAudioSrc = audio.src;
 		const chapterAudioUrl = `${CHAPTER_AUDIO_BASE_URL}/${playChapter}.mp3`;
+		const wasPaused = audioSettings.audioIsPaused;
 
 		if (!currentAudioSrc.includes(`/${playChapter}.mp3`)) {
 			audio.src = chapterAudioUrl;
@@ -80,13 +96,19 @@ export async function playVerseAudio(props) {
 			audio.currentTime = verseTiming.timestamp_from / 1000;
 		}
 
-		// Only seek if not a seamless continuation — the audio is already at the right position
-		if (!isSeamlessContinuation) {
+		// Only seek if not a seamless continuation or resuming from pause
+		if (!isSeamlessContinuation && !wasPaused) {
 			audio.currentTime = verseTiming.timestamp_from / 1000;
 		}
 
 		audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
 		if (!isSeamlessContinuation) audio.play();
+
+		audioSettings.audioIsPaused = false;
+
+		// Attach progress tracker for chapter audio
+		audio.removeEventListener('timeupdate', trackAudioProgress);
+		audio.addEventListener('timeupdate', trackAudioProgress);
 
 		audioSettings.isPlaying = true;
 		audioSettings.playingKey = props.key;
@@ -331,6 +353,11 @@ export function resetAudioSettings(props) {
 		audioSettings.isPlaying = false;
 		audioSettings.playingWordKey = null;
 
+		// Reset paused state and tracking
+		audioSettings.audioIsPaused = false;
+		audioSettings.audioElapsed = 0;
+		audioSettings.audioDuration = 0;
+
 		if (props?.location === 'end') {
 			window.versesToPlayArray = [];
 		}
@@ -422,6 +449,21 @@ async function wordHighlighter() {
 		}
 	} catch (error) {
 		console.warn('Word highlighter error:', error);
+	}
+}
+
+function trackAudioProgress() {
+	const audioSettings = get(__audioSettings);
+	const newElapsed = Math.floor(audio.currentTime); // floor to whole seconds
+
+	if (!isNaN(audio.duration)) {
+		audioSettings.audioDuration = audio.duration;
+	}
+
+	// Only update store if the second has changed
+	if (newElapsed !== Math.floor(audioSettings.audioElapsed)) {
+		audioSettings.audioElapsed = audio.currentTime;
+		__audioSettings.set(audioSettings);
 	}
 }
 

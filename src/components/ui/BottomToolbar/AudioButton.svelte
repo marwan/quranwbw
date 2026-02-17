@@ -1,9 +1,15 @@
+<!-- AudioButton.svelte -->
 <script>
 	import PlaySolid from '$svgs/PlaySolid.svelte';
 	import Pause from '$svgs/Pause.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { __audioSettings } from '$utils/stores';
 	import { playVerseAudio, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
+
+	$: console.log({
+		audioElapsed: $__audioSettings.audioElapsed,
+		audioDuration: $__audioSettings.audioDuration
+	});
 
 	// quick play from first verse of page till the max chapter verses
 	function audioHandler() {
@@ -22,6 +28,13 @@
 			});
 		}
 	}
+
+	function formatTime(seconds) {
+		const h = Math.floor(seconds / 3600);
+		const m = Math.floor((seconds % 3600) / 60);
+		const s = Math.floor(seconds % 60);
+		return h > 0 ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+	}
 </script>
 
 <!-- play/pause button -->
@@ -32,7 +45,8 @@
 
 		<!-- show badge when a verse is playing -->
 		{#if $__audioSettings.isPlaying && $__audioSettings.audioType === 'verse'}
-			<div class="absolute inline-flex items-center justify-center z-30 text-xs px-2 rounded-3xl -top-3 border {window.theme('bgMain')} {window.theme('border')}">{$__audioSettings.playingKey}</div>
+			<div class="absolute inline-flex items-center justify-center z-30 text-xs px-2 rounded-3xl -top-3 border {window.theme('bgMain')} {window.theme('border')}">{formatTime($__audioSettings.audioElapsed)}/{formatTime($__audioSettings.audioDuration)}</div>
+			<!-- <div class="absolute inline-flex items-center justify-center z-30 text-xs px-2 rounded-3xl -top-3 border {window.theme('bgMain')} {window.theme('border')}">{$__audioSettings.playingKey}</div> -->
 		{/if}
 	</button>
 </div>
