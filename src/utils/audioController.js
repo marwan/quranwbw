@@ -7,16 +7,26 @@ import { wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 // import { fetchAndCacheJson } from '$utils/fetchData';
 
-// Getting the audio element
-let audio = document.querySelector('#player');
-let lastPlayedKey = null;
-
 // Hardcoded reciter ID for chapter-based audio (will be made dynamic later)
 const CHAPTER_AUDIO_RECITER_ID = 7;
 const CHAPTER_AUDIO_BASE_URL = 'https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/';
 
+// Getting the audio element
+let audio = document.querySelector('#player');
+let lastPlayedKey = null;
+
 // Cache for timestamp data per chapter
 const timestampCache = new Map();
+
+function isConsecutiveArabicVerse(nextKey) {
+	const audioSettings = get(__audioSettings);
+	if (!audioSettings.playingKey || audioSettings.audioType !== 'verse') return false;
+
+	const [currentChapter, currentVerse] = audioSettings.playingKey.split(':').map(Number);
+	const [nextChapter, nextVerse] = nextKey.split(':').map(Number);
+
+	return currentChapter === nextChapter && nextVerse === currentVerse + 1;
+}
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -24,7 +34,8 @@ export async function playVerseAudio(props) {
 	const [playChapter, playVerse] = props.key.split(':').map(Number);
 	let playBoth = false;
 
-	resetAudioSettings();
+	const isSeamlessContinuation = props.language === 'arabic' && isConsecutiveArabicVerse(props.key);
+	if (!isSeamlessContinuation) resetAudioSettings();
 
 	// Default language to Arabic
 	if (props.language === undefined) props.language = 'arabic';
@@ -66,12 +77,16 @@ export async function playVerseAudio(props) {
 		if (!currentAudioSrc.includes(`/${playChapter}.mp3`)) {
 			audio.src = chapterAudioUrl;
 			audio.load();
+			audio.currentTime = verseTiming.timestamp_from / 1000;
 		}
 
-		// Set playback position to the verse timestamp
-		audio.currentTime = verseTiming.timestamp_from / 1000; // Convert milliseconds to seconds
+		// Only seek if not a seamless continuation — the audio is already at the right position
+		if (!isSeamlessContinuation) {
+			audio.currentTime = verseTiming.timestamp_from / 1000;
+		}
+
 		audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
-		audio.play();
+		if (!isSeamlessContinuation) audio.play();
 
 		audioSettings.isPlaying = true;
 		audioSettings.playingKey = props.key;
@@ -101,7 +116,6 @@ export async function playVerseAudio(props) {
 		};
 
 		async function handleVerseEnd() {
-			audio.ontimeupdate = null; // Remove the timeupdate listener
 			const previousLanguage = props.language;
 
 			// Determine the delay based on audioDelay settings
