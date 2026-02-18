@@ -49,7 +49,8 @@ export const defaultSettings = {
 	lastRead: {},
 	userBookmarks: [],
 	userNotes: {},
-	chapter: 1
+	chapter: 1,
+	offlineModeSettings: {}
 };
 
 // Do not continue without setting the default user's settings first

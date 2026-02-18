@@ -30,7 +30,7 @@
 	let _blocked = false; // management of the race condition between focusin and click events
 	const block = () => ((_blocked = true), setTimeout(() => (_blocked = false), 250));
 	const showHandler = (ev) => {
-		if (referenceEl === undefined) console.error('trigger undefined');
+		if (referenceEl === undefined) console.warn('trigger undefined');
 		if (!reference && triggerEls.includes(ev.target) && referenceEl !== ev.target) {
 			referenceEl = ev.target;
 			block();
@@ -96,7 +96,7 @@
 		if (triggeredBy) triggerEls = [...document.querySelectorAll(triggeredBy)];
 		else triggerEls = contentEl.previousElementSibling ? [contentEl.previousElementSibling] : [];
 		if (!triggerEls.length) {
-			// console.error('No triggers found.');
+			// console.warn('No triggers found.');
 		}
 		triggerEls.forEach((element) => {
 			if (element.tabIndex < 0) element.tabIndex = 0; // trigger must be focusable
@@ -105,7 +105,7 @@
 		if (reference) {
 			referenceEl = document.querySelector(reference) ?? document.body;
 			if (referenceEl === document.body) {
-				console.error(`Popup reference not found: '${reference}'`);
+				console.warn(`Popup reference not found: '${reference}'`);
 			} else {
 				referenceEl.addEventListener('focusout', hideHandler);
 				if (hoverable) referenceEl.addEventListener('mouseleave', hideHandler);

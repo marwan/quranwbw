@@ -56,7 +56,7 @@
 	}
 
 	// Update chapter names for the mushaf page
-	$: {
+	$: if ($__mushafPageDivisions?.juz && $__mushafPageDivisions?.chapters) {
 		try {
 			mushafJuz = `${term('juz')} ${$__mushafPageDivisions.juz}`;
 			mushafChapters = Object.values($__mushafPageDivisions.chapters).map((value) => quranMetaData[value].transliteration);

@@ -1,3 +1,9 @@
+### Feb 18, 2026
+
+- **Offline Mode (Beta):** QuranWBW now includes an optional Offline Mode, currently in beta. This feature allows access to key parts of the website without an internet connection by downloading essential data such as core site files, chapters, and juz, with optional advanced content like Mushaf pages, tafsir, and morphology. As a beta feature, you may encounter bugs or incomplete behavior, but we are actively improving stability, performance, and coverage with ongoing updates. A stable Wi-Fi connection is recommended for larger downloads.
+
+---
+
 ### Feb 11, 2026
 
 - **Advanced Tajweed & Syllables Transliteration:** Added two new word-by-word transliterations — **Advanced Tajweed** and **Syllables** — along with one new verse-by-verse transliteration (**Advanced Tajweed**). Existing transliterations have also been updated with improvements and fixes for better accuracy and readability.

@@ -4,9 +4,12 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { __audioSettings } from '$utils/stores';
 	import { playVerseAudio, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
+	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// quick play from first verse of page till the max chapter verses
-	function audioHandler() {
+	async function audioHandler() {
+		if (!(await checkOnlineAndAlert())) return;
+
 		$__audioSettings.language = 'arabic';
 		$__audioSettings.playBoth = false;
 

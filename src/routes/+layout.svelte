@@ -1,4 +1,5 @@
 <script>
+	import '../app.css';
 	import '$utils/checkURLParameters';
 	import '$utils/keyDownHandler';
 	import '$utils/devTools';
@@ -26,7 +27,6 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
-	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
@@ -65,7 +65,6 @@
 			if (!wakeLock) {
 				try {
 					wakeLock = await navigator.wakeLock.request('screen');
-					console.log('Wake lock enabled');
 				} catch (error) {
 					console.warn(error);
 				}
@@ -74,7 +73,6 @@
 			if (wakeLock) {
 				await wakeLock.release();
 				wakeLock = null;
-				console.log('Wake lock disabled');
 			}
 		}
 	})();
@@ -179,12 +177,9 @@
 			// Save back to localStorage
 			localStorage.setItem(storageKey, JSON.stringify(data));
 		} catch (error) {
-			console.error('Error tracking website version:', error);
+			console.warn(error);
 		}
 	})();
-
-	// Service Worker
-	// checkAndRegisterServiceWorker();
 </script>
 
 <div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>

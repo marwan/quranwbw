@@ -5,8 +5,8 @@
 	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { onMount } from 'svelte';
-	import { staticEndpoint } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { page } from '$app/stores';
 
 	// State variables
@@ -61,7 +61,7 @@
 
 	onMount(async () => {
 		// Fetch and parse topics data
-		const rawTopics = await fetchAndCacheJson(`${staticEndpoint}/others/quran-topics.json?version=1`, 'other');
+		const rawTopics = await fetchAndCacheJson(cdnStaticDataUrls.quranTopics, 'other');
 
 		// Convert to array with IDs (1-based indexing)
 		allTopics = Object.entries(rawTopics).map(([topic, verses], index) => ({
