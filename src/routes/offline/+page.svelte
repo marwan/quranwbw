@@ -869,7 +869,7 @@
 		}
 	}
 
-	__currentPage.set('Offline Mode');
+	__currentPage.set('Offline Mode (Beta)');
 </script>
 
 <PageHead title={'Offline Mode (Beta)'} />
