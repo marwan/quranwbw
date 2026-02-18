@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import '$utils/consoleClientLogger';
 	import '$utils/checkURLParameters';
 	import '$utils/keyDownHandler';
 	import '$utils/devTools';
