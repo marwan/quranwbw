@@ -107,7 +107,7 @@
 					<!-- Offline Mode page -->
 					<a href="/offline" class={linkClasses}>
 						<Offline size={4} />
-						<span class={linkTextClasses}>Offline Mode</span>
+						<span class={linkTextClasses}>Offline Mode (Beta)</span>
 					</a>
 
 					<!-- legacy site link -->
