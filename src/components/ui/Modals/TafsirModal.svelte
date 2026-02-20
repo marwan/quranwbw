@@ -14,12 +14,12 @@
 	let tafsirData;
 
 	$: selectedTafirId = $__verseTafsir || 30;
+	$: selectedTafsir = selectableTafsirs[selectedTafirId];
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
 	$: {
 		if ($__tafsirModalVisible) {
 			tafsirData = (async () => {
-				const selectedTafsir = selectableTafsirs[selectedTafirId];
 				return await fetchAndCacheJson(`${tafsirDataUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
 			})();
 		}
@@ -28,8 +28,8 @@
 	// CSS classes for Tafsir text based on selected Tafsir language
 	$: tafsirTextClasses = `
 		flex flex-col space-y-4
-		${['Arabic', 'Urdu'].includes(selectableTafsirs[selectedTafirId].language) && 'direction-rtl text-lg'}
-		${selectableTafsirs[selectedTafirId].font}
+		${['Arabic', 'Urdu'].includes(selectedTafsir.language) && 'direction-rtl text-lg'}
+		${selectedTafsir.font}
 	`;
 
 	// Scroll to top if verse changes
@@ -42,6 +42,11 @@
 		} catch (error) {
 			console.warn(error);
 		}
+	}
+
+	// Replaces each newline (\n) with a configurable number of <br /> tags for HTML rendering
+	function formatTafsir(text) {
+		return text.replace(/\n/g, '<br />'.repeat(selectedTafsir?.brPerNewline || 2));
 	}
 </script>
 
@@ -72,7 +77,7 @@
 						<div class={tafsirTextClasses}>
 							{#each Object.entries(data.ayahs) as [_, tafsir]}
 								{#if tafsir.surah === chapter && tafsir.ayah === verse}
-									{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
+									{@html formatTafsir(tafsir.text)}
 								{/if}
 							{/each}
 						</div>

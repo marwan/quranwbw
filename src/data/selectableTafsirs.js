@@ -17,6 +17,7 @@ export const selectableTafsirs = {
 		language: 'Albanian',
 		name: 'Tafsir Ibn Kathir',
 		slug: 'sq-ibn-kathir',
+		brPerNewline: 1,
 		url: 2
 	},
 	202: {
@@ -25,6 +26,7 @@ export const selectableTafsirs = {
 		language: 'Albanian',
 		name: 'Tafsir Al Saddi',
 		slug: 'sq-al-saddi',
+		brPerNewline: 1,
 		url: 2
 	},
 
