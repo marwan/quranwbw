@@ -1,14 +1,33 @@
 // https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/editions.json
 
 export const verseTafsirLanguages = [
-	{ id: 1, language: 'Arabic' },
-	{ id: 2, language: 'Bangla' },
-	{ id: 3, language: 'English' },
-	{ id: 4, language: 'Russian' },
-	{ id: 5, language: 'Urdu' }
+	{ id: 1, language: 'Albanian' },
+	{ id: 2, language: 'Arabic' },
+	{ id: 3, language: 'Bangla' },
+	{ id: 4, language: 'English' },
+	{ id: 5, language: 'Russian' },
+	{ id: 6, language: 'Urdu' }
 ];
 
 export const selectableTafsirs = {
+	// Albanian
+	201: {
+		id: 201,
+		author: 'Hafiz Ibn Kathir',
+		language: 'Albanian',
+		name: 'Tafsir Ibn Kathir',
+		slug: 'sq-ibn-kathir',
+		url: 2
+	},
+	202: {
+		id: 202,
+		author: 'Saddi',
+		language: 'Albanian',
+		name: 'Tafsir Al Saddi',
+		slug: 'sq-al-saddi',
+		url: 2
+	},
+
 	// Arabic
 	10: {
 		id: 10,
@@ -22,7 +41,7 @@ export const selectableTafsirs = {
 		id: 11,
 		author: 'Saddi',
 		language: 'Arabic',
-		name: 'Tafseer Al Saddi',
+		name: 'Tafsir Al Saddi',
 		slug: 'ar-tafseer-al-saddi',
 		url: 1
 	},
@@ -30,7 +49,7 @@ export const selectableTafsirs = {
 		id: 12,
 		author: 'Baghawy',
 		language: 'Arabic',
-		name: 'Tafseer Al-Baghawi',
+		name: 'Tafsir Al-Baghawi',
 		slug: 'ar-tafsir-al-baghawi',
 		url: 1
 	},
@@ -38,7 +57,7 @@ export const selectableTafsirs = {
 		id: 13,
 		author: 'Tanweer',
 		language: 'Arabic',
-		name: 'Tafseer Tanwir al-Miqbas',
+		name: 'Tafsir Tanwir al-Miqbas',
 		slug: 'ar-tafseer-tanwir-al-miqbas',
 		url: 1
 	},
@@ -70,7 +89,7 @@ export const selectableTafsirs = {
 		id: 17,
 		author: 'Qurtubi',
 		language: 'Arabic',
-		name: 'Tafseer Al Qurtubi',
+		name: 'Tafsir Al Qurtubi',
 		slug: 'ar-tafseer-al-qurtubi',
 		url: 1
 	},
@@ -88,7 +107,7 @@ export const selectableTafsirs = {
 		id: 21,
 		author: 'Tawheed Publication',
 		language: 'Bangla',
-		name: 'Tafseer ibn Kathir',
+		name: 'Tafsir Ibn Kathir',
 		slug: 'bn-tafseer-ibn-e-kaseer',
 		url: 1
 	},
@@ -197,7 +216,7 @@ export const selectableTafsirs = {
 		id: 50,
 		author: 'Saddi',
 		language: 'Russian',
-		name: 'Tafseer Al Saddi',
+		name: 'Tafsir Al Saddi',
 		slug: 'ru-tafseer-al-saddi',
 		url: 1
 	},
