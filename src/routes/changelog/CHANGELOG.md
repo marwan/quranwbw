@@ -1,3 +1,9 @@
+### Feb 22, 2026
+
+- **New Albanian Tafsirs Added:** Two new Albanian-language tafsirs have been added for deeper understanding — **Tafsir Ibn Kathir** and **Tafsir Al-Saddi**, expanding tafsir availability for Albanian-speaking readers.
+
+---
+
 ### Feb 18, 2026
 
 - **Offline Mode (Beta):** QuranWBW now includes an optional Offline Mode, currently in beta. This feature allows access to key parts of the website without an internet connection by downloading essential data such as core site files, chapters, and juz, with optional advanced content like Mushaf pages, tafsir, and morphology. As a beta feature, you may encounter bugs or incomplete behavior, but we are actively improving stability, performance, and coverage with ongoing updates. A stable Wi-Fi connection is recommended for larger downloads.
