@@ -22,9 +22,9 @@ export const selectableTafsirs = {
 	},
 	202: {
 		id: 202,
-		author: 'Saddi',
+		author: "Sa'di",
 		language: 'Albanian',
-		name: 'Tafsir Al Saddi',
+		name: "Tafsir As-Sa'di",
 		slug: 'sq-al-saddi',
 		brPerNewline: 1,
 		url: 2
@@ -41,9 +41,9 @@ export const selectableTafsirs = {
 	},
 	11: {
 		id: 11,
-		author: 'Saddi',
+		author: "Sa'di",
 		language: 'Arabic',
-		name: 'Tafsir Al Saddi',
+		name: "Tafsir As-Sa'di",
 		slug: 'ar-tafseer-al-saddi',
 		url: 1
 	},
@@ -216,9 +216,9 @@ export const selectableTafsirs = {
 	// Russian
 	50: {
 		id: 50,
-		author: 'Saddi',
+		author: "Sa'di",
 		language: 'Russian',
-		name: 'Tafsir Al Saddi',
+		name: "Tafsir As-Sa'di",
 		slug: 'ru-tafseer-al-saddi',
 		url: 1
 	},

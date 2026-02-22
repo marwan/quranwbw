@@ -1,6 +1,6 @@
 ### Feb 22, 2026
 
-- **New Albanian Tafsirs Added:** Two new Albanian-language tafsirs have been added for deeper understanding — **Tafsir Ibn Kathir** and **Tafsir Al-Saddi**, expanding tafsir availability for Albanian-speaking readers.
+- **New Albanian Tafsirs Added:** Two new Albanian-language tafsirs have been added for deeper understanding — **Tafsir Ibn Kathir** and **Tafsir As-Sa'di**, expanding tafsir availability for Albanian-speaking readers.
 
 ---
 
