@@ -4,7 +4,7 @@
 	import Pause from '$svgs/Pause.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { __audioSettings } from '$utils/stores';
-	import { playVerseAudio, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
+	import { playVerseAudio, setVersesToPlay, resetAudioSettings, pauseOrResumeAudio } from '$utils/audioController';
 
 	$: console.log({
 		audioElapsed: $__audioSettings.audioElapsed,
@@ -29,6 +29,31 @@
 		}
 	}
 
+	// For the stop button: fully stops
+	function handleStop() {
+		resetAudioSettings({ location: 'end' });
+	}
+
+	// For the play/pause toggle button:
+	function handlePlayPause() {
+		$__audioSettings.language = 'arabic';
+		$__audioSettings.playBoth = false;
+
+		if ($__audioSettings.isPlaying || $__audioSettings.isPlaying.audioIsPaused) {
+			// Audio is active (playing or paused) — toggle pause
+			pauseOrResumeAudio();
+		} else {
+			// Nothing playing — start fresh with verses on page
+			setVersesToPlay({ allVersesOnPage: true });
+
+			playVerseAudio({
+				key: `${window.versesToPlayArray[0]}`,
+				timesToRepeat: 1,
+				language: 'arabic'
+			});
+		}
+	}
+
 	function formatTime(seconds) {
 		const h = Math.floor(seconds / 3600);
 		const m = Math.floor((seconds % 3600) / 60);
@@ -39,7 +64,7 @@
 
 <!-- play/pause button -->
 <div class="flex items-center justify-center">
-	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => audioHandler()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group {window.theme('input')} {window.theme('bgSecondaryDark')}" data-umami-event="Toolbar Play Button">
+	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => handlePlayPause()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group {window.theme('input')} {window.theme('bgSecondaryDark')}" data-umami-event="Toolbar Play Button">
 		<span><svelte:component this={$__audioSettings.isPlaying ? Pause : PlaySolid} size={5} /></span>
 		<span class="sr-only">{$__audioSettings.isPlaying ? 'Pause' : 'Play'}</span>
 
