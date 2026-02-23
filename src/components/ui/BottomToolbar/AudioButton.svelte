@@ -39,7 +39,7 @@
 		$__audioSettings.language = 'arabic';
 		$__audioSettings.playBoth = false;
 
-		if ($__audioSettings.isPlaying || $__audioSettings.isPlaying.audioIsPaused) {
+		if ($__audioSettings.isPlaying || $__audioSettings.audioIsPaused) {
 			// Audio is active (playing or paused) — toggle pause
 			pauseOrResumeAudio();
 		} else {
