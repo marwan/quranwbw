@@ -30,7 +30,8 @@ import {
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__offlineModeSettings
+	__offlineModeSettings,
+	__enhancedContrastEnabled
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
@@ -301,6 +302,12 @@ export function updateSettings(props) {
 		case 'offlineModeSettings':
 			__offlineModeSettings.set(props.value);
 			userSettings.offlineModeSettings = props.value;
+			break;
+
+		// for enchanced contrast toggle
+		case 'enhancedContrastEnabled':
+			__enhancedContrastEnabled.set(props.value);
+			userSettings.enhancedContrastEnabled = props.value;
 			break;
 
 		// for increasing/decreasing font sizes

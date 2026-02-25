@@ -56,7 +56,8 @@ let __currentPage,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
-	__offlineModeSettings;
+	__offlineModeSettings,
+	__enhancedContrastEnabled;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -215,6 +216,9 @@ if (browser) {
 
 	// to store all the offline mode settings
 	__offlineModeSettings = writable(userSettings.offlineModeSettings);
+
+	// to store the enhanced contrast toggle
+	__enhancedContrastEnabled = writable(userSettings.enhancedContrastEnabled);
 }
 
 export {
@@ -273,5 +277,6 @@ export {
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
-	__offlineModeSettings
+	__offlineModeSettings,
+	__enhancedContrastEnabled
 };

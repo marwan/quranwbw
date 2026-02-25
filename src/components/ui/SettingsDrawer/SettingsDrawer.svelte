@@ -39,7 +39,8 @@
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
 		__wideWesbiteLayoutEnabled,
-		__signLanguageModeEnabled
+		__signLanguageModeEnabled,
+		__enhancedContrastEnabled
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -330,6 +331,20 @@
 							</label>
 						</div>
 						<p class={settingsDescriptionClasses}>Enable this to switch the Quran view to Arabic Sign Language mode. The Indonesian Isep Misbah Digital font will be used, and some options will be disabled.</p>
+					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- enhanced-contrast-setting -->
+					<div id="enhanced-contrast-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Enhanced Contrast</span>
+							<label class="inline-flex items-center cursor-pointer">
+								<input type="checkbox" value="" class="sr-only peer" checked={$__enhancedContrastEnabled} on:click={(event) => updateSettings({ type: 'enhancedContrastEnabled', value: event.target.checked })} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Makes dark colors a little deeper so sections and cards are easier to see on some screens. Turn this on if parts of the page look too dark, flat, or hard to tell apart.</p>
 					</div>
 				</div>
 			</div>

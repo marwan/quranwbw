@@ -50,7 +50,8 @@ export const defaultSettings = {
 	userBookmarks: [],
 	userNotes: {},
 	chapter: 1,
-	offlineModeSettings: {}
+	offlineModeSettings: {},
+	enhancedContrastEnabled: false
 };
 
 // Do not continue without setting the default user's settings first
