@@ -6,7 +6,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __displayType, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { term } from '$utils/terminologies';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 
@@ -21,7 +21,7 @@
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
 		juzKeysData = (async () => {
 			try {
-				const data = await fetchAndCacheJson(`${staticEndpoint}/meta/keysInJuz.json?version=1`, 'other');
+				const data = await fetchAndCacheJson(cdnStaticDataUrls.keysInJuz, 'other');
 				return data[juzNumber];
 			} catch (error) {
 				console.warn(error);

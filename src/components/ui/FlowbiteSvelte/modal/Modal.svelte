@@ -125,7 +125,6 @@
 	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 	<div transition:fly={transitionParams} on:keydown={handleKeys} on:wheel|preventDefault|nonpassive use:prepareFocus use:focusTrap on:click={onAutoClose} on:mousedown={onOutsideClose} class={dialogCls} tabindex="-1" aria-modal="true" role="dialog">
 		<div class="{modalPositions[position].innerClasses} {sizes[size]} {modalPositions[position].sizes}">
-			<!-- Modal content -->
 			<Frame rounded shadow {...$$restProps} class={frameCls} {color}>
 				<!-- Modal header -->
 				{#if $$slots.header || title}

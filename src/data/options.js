@@ -26,7 +26,7 @@ export const selectableDisplays = {
 		layout: 'wbw',
 		continuous: true,
 		customClasses: 'text-center direction-rtl',
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
 		disallowedInFontTypes: []
 	},
 	4: {
@@ -36,7 +36,7 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: true,
 		customClasses: 'text-center direction-rtl',
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	5: {
@@ -46,14 +46,14 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: false,
 		customClasses: null,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	6: {
 		displayID: 6,
 		displayName: 'Mushaf',
 		continuous: true,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	7: {
@@ -101,7 +101,7 @@ export const selectableFontTypes = {
 		font: 'Qalam Digital Font (Madinah Edition)',
 		displayOrder: 5,
 		disallowedInPages: ['mushaf'],
-		version: 6
+		version: 7
 	},
 	5: {
 		id: 5,
@@ -117,7 +117,7 @@ export const selectableFontTypes = {
 		font: 'Qalam Digital Font (Hanafi Edition)',
 		displayOrder: 6,
 		disallowedInPages: ['mushaf'],
-		version: 6
+		version: 7
 	},
 	7: {
 		id: 1,
@@ -538,21 +538,33 @@ export const selectableVerseTranslations = {
 	// transliterations
 	1: {
 		resource_id: 1,
-		resource_name: 'Transliteration (Tajweed)',
+		resource_name: 'Transliteration (Simple Tajweed)',
 		language_id: 11115,
-		version: 1
+		version: 2,
+		displayOrder: 2
 	},
 	3: {
 		resource_id: 3,
 		resource_name: 'Transliteration (Syllables)',
 		language_id: 11115,
-		version: 1
+		version: 2,
+		displayOrder: 4,
+		font: 'font-serif'
 	},
 	57: {
 		resource_id: 57,
 		resource_name: 'Transliteration (Normal)',
 		language_id: 11115,
-		version: 1
+		version: 2,
+		displayOrder: 1
+	},
+	4: {
+		resource_id: 4,
+		resource_name: 'Transliteration (Advanced Tajweed)',
+		language_id: 11115,
+		version: 1,
+		displayOrder: 3,
+		font: 'font-serif'
 	},
 
 	// turkish
@@ -651,8 +663,6 @@ export const selectableVerseTranslations = {
 		version: 1
 	}
 };
-
-export const selectableVerseTransliterations = [1, 3, 57];
 
 export const selectableWordTranslations = {
 	1: {
@@ -766,13 +776,25 @@ export const selectableWordTranslations = {
 export const selectableWordTransliterations = {
 	1: {
 		id: 1,
-		language: 'Normal Transliteration',
+		language: 'Transliteration (Normal)',
 		version: 1
 	},
 	2: {
 		id: 2,
-		language: 'Tajweed Transliteration',
+		language: 'Transliteration (Simple Tajweed)',
 		version: 1
+	},
+	3: {
+		id: 3,
+		language: 'Transliteration (Advanced Tajweed)',
+		version: 1,
+		font: 'font-serif'
+	},
+	4: {
+		id: 4,
+		language: 'Transliteration (Syllables)',
+		version: 1,
+		font: 'font-serif'
 	}
 };
 
@@ -926,11 +948,13 @@ export const selectableTranslationReciters = {
 export const selectablePlaybackSpeeds = {
 	1: { id: 1, speed: 0.5 },
 	2: { id: 2, speed: 0.75 },
-	3: { id: 3, speed: 1 },
-	4: { id: 4, speed: 1.25 },
-	5: { id: 5, speed: 1.5 },
-	6: { id: 6, speed: 1.75 },
-	7: { id: 7, speed: 2 }
+	3: { id: 3, speed: 0.85 },
+	4: { id: 4, speed: 1 },
+	5: { id: 5, speed: 1.25 },
+	6: { id: 6, speed: 1.5 },
+	7: { id: 7, speed: 1.75 },
+	8: { id: 8, speed: 1.85 },
+	9: { id: 9, speed: 2 }
 };
 
 export const selectableTooltipOptions = {

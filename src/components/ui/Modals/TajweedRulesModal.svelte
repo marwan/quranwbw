@@ -5,7 +5,7 @@
 	import { __tajweedRulesModalVisible, __currentPage, __chapterNumber } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { staticEndpoint, cdnStaticDataUrls } from '$data/websiteSettings';
 	import { linkClasses } from '$data/commonClasses';
 	import { createLink } from '$utils/createLink';
 	import { fetchAndCacheJson } from '$utils/fetchData';
@@ -18,7 +18,7 @@
 	$: {
 		if ($__tajweedRulesModalVisible) {
 			tajweedRulesData = (async () => {
-				return await fetchAndCacheJson(`${staticEndpoint}/tajweed/tajweed-rules.json?version=3`, 'other');
+				return await fetchAndCacheJson(cdnStaticDataUrls.tajweedRules, 'other');
 			})();
 		}
 	}

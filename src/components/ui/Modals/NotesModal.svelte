@@ -71,19 +71,26 @@
 	}
 </script>
 
-<Modal id="notesModal" bind:open={$__notesModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl" bodyClass="p-6" position="bottom" center outsideclose>
-	<h3 class="mb-6 text-xl font-medium">{quranMetaData[chapter].transliteration}, {$__verseKey}</h3>
-	<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')}" placeholder="Write your thoughts here..."></textarea>
+<Modal id="notesModal" bind:open={$__notesModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+	<h3 class="mb-6 text-xl font-medium flex-shrink-0">
+		{quranMetaData[chapter].transliteration}, {$__verseKey}
+	</h3>
 
-	{#if noteModifiedAt !== null}
-		<div id="notes-last-modified" class="text-xs mt-4">Modified {noteModifiedAt}.</div>
-	{/if}
+	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
+		<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')} resize-none" placeholder="Write your thoughts here..."></textarea>
 
-	<div class="flex flex-row space-x-2">
-		<button on:click={() => updateNote()} class="w-full mt-6 {buttonClasses}">{updateButtonText}</button>
+		{#if noteModifiedAt !== null}
+			<div id="notes-last-modified" class="text-xs mt-4">Modified {noteModifiedAt}.</div>
+		{/if}
+	</div>
+
+	<div class="flex flex-row space-x-2 flex-shrink-0 mt-4">
+		<button on:click={() => updateNote()} class="w-full {buttonClasses}">
+			{updateButtonText}
+		</button>
 
 		{#if showDeleteButton}
-			<button on:click={() => showConfirm('Are you sure you want to reset this note? This action cannot be undone.', 'notesModal', () => resetNote())} class="w-fit mt-6 {buttonClasses}">
+			<button on:click={() => showConfirm('Are you sure you want to reset this note? This action cannot be undone.', 'notesModal', () => resetNote())} class="w-fit {buttonClasses}">
 				<span><Trash size={5} /></span>
 			</button>
 		{/if}

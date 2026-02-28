@@ -19,7 +19,6 @@ import {
 	__lastRead,
 	__wordTooltip,
 	__userBookmarks,
-	__autoScrollSpeed,
 	__wakeLockEnabled,
 	__userNotes,
 	__quizCorrectAnswers,
@@ -29,10 +28,11 @@ import {
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
 	__homepageExtrasPanelVisible,
-	__downloadedDataInfo,
 	__wideWesbiteLayoutEnabled,
-	__signLanguageModeEnabled
+	__signLanguageModeEnabled,
+	__offlineModeSettings
 } from '$utils/stores';
+import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -53,6 +53,10 @@ export function updateSettings(props) {
 			if (props.preventStoreUpdate) return;
 			userSettings.displaySettings.fontType = props.value;
 			trackEvent = true;
+
+			// Toggle in offline mode settings
+			toggleDownloadedDataSetting(userSettings.offlineModeSettings, 'fontTypes', props.value);
+
 			break;
 
 		// for display types
@@ -103,6 +107,10 @@ export function updateSettings(props) {
 			__wordTranslation.set(props.value);
 			userSettings.translations.word = props.value;
 			trackEvent = true;
+
+			// Toggle in offline mode settings
+			toggleDownloadedDataSetting(userSettings.offlineModeSettings, 'wordTranslations', props.value);
+
 			break;
 
 		// for word transliteration
@@ -110,6 +118,10 @@ export function updateSettings(props) {
 			__wordTransliteration.set(props.value);
 			userSettings.transliteration.word = props.value;
 			trackEvent = true;
+
+			// Toggle in offline mode settings
+			toggleDownloadedDataSetting(userSettings.offlineModeSettings, 'wordTransliterations', props.value);
+
 			break;
 
 		// for verse translations
@@ -122,6 +134,9 @@ export function updateSettings(props) {
 			// update the verse translations
 			userSettings.translations.verse_v1 = verseTranslations;
 			__verseTranslations.set(verseTranslations);
+
+			// Toggle in offline mode settings
+			toggleDownloadedDataSetting(userSettings.offlineModeSettings, 'verseTranslations', props.value);
 
 			break;
 
@@ -225,12 +240,6 @@ export function updateSettings(props) {
 			}
 			break;
 
-		// for auto scroll
-		case 'autoScrollSpeed':
-			__autoScrollSpeed.set(props.value);
-			userSettings.displaySettings.autoScrollSpeed = props.value;
-			break;
-
 		// for toggling wakeLock
 		case 'wakeLockEnabled':
 			__wakeLockEnabled.set(props.value);
@@ -276,12 +285,6 @@ export function updateSettings(props) {
 			userSettings.displaySettings.homepageExtrasPanelVisible = props.value;
 			break;
 
-		// for offline data settings
-		case 'downloadedDataInfo':
-			__downloadedDataInfo.set(props.value);
-			userSettings.downloadedDataInfo = props.value;
-			break;
-
 		// for toggling website wide layout
 		case 'wideWesbiteLayoutEnabled':
 			__wideWesbiteLayoutEnabled.set(props.value);
@@ -292,6 +295,12 @@ export function updateSettings(props) {
 		case 'signLanguageModeEnabled':
 			__signLanguageModeEnabled.set(props.value);
 			userSettings.displaySettings.signLanguageModeEnabled = props.value;
+			break;
+
+		// for offline mode settings
+		case 'offlineModeSettings':
+			__offlineModeSettings.set(props.value);
+			userSettings.offlineModeSettings = props.value;
 			break;
 
 		// for increasing/decreasing font sizes
@@ -331,4 +340,32 @@ export function updateSettings(props) {
 	// update the settings back into localStorage and global store
 	__userSettings.set(JSON.stringify(userSettings));
 	localStorage.setItem('userSettings', JSON.stringify(userSettings));
+}
+
+// Toggle downloaded data setting (add if not present, remove if present)
+function toggleDownloadedDataSetting(offlineModeSettings, type, id) {
+	// Check if service worker is registered and downloadedDataSettings exists
+	if (!offlineModeSettings?.serviceWorker?.downloaded || !offlineModeSettings?.downloadedDataSettings) {
+		return;
+	}
+
+	// Ensure the array exists
+	if (!offlineModeSettings.downloadedDataSettings[type]) {
+		offlineModeSettings.downloadedDataSettings[type] = [];
+	}
+
+	const array = offlineModeSettings.downloadedDataSettings[type];
+	const index = array.indexOf(id);
+
+	// If doesn't exist, add it
+	if (index === -1) {
+		array.push(id);
+	}
+
+	// Download all data again as per current user's settings
+	fetchChapterData({ chapter: 1, preventStoreUpdate: true });
+	fetchVerseTranslationData({ preventStoreUpdate: true });
+
+	// Update the store
+	__offlineModeSettings.set(offlineModeSettings);
 }

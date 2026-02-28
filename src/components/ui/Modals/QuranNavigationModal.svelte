@@ -9,7 +9,7 @@
 	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { inview } from 'svelte-inview';
 	import { validateKey } from '$utils/validateKey';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { page } from '$app/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
@@ -58,7 +58,7 @@
 	// Load verse key data externally to reduce bundle size
 	$: if ($__quranNavigationModalVisible || ['mushaf', 'morphology'].includes($__currentPage)) {
 		(async () => {
-			verseKeyData = await fetchAndCacheJson(`${staticEndpoint}/meta/verseKeyData.json?version=2`, 'other');
+			verseKeyData = await fetchAndCacheJson(cdnStaticDataUrls.verseKeyData, 'other');
 		})();
 	}
 

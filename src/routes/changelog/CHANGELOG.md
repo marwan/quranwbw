@@ -1,3 +1,27 @@
+### Feb 22, 2026
+
+- **New Albanian Tafsirs Added:** Two new Albanian-language tafsirs have been added for deeper understanding — **Tafsir Ibn Kathir** and **Tafsir As-Sa'di**, expanding tafsir availability for Albanian-speaking readers.
+
+---
+
+### Feb 18, 2026
+
+- **Offline Mode (Beta):** QuranWBW now includes an optional Offline Mode, currently in beta. This feature allows access to key parts of the website without an internet connection by downloading essential data such as core site files, chapters, and juz, with optional advanced content like Mushaf pages, tafsir, and morphology. As a beta feature, you may encounter bugs or incomplete behavior, but we are actively improving stability, performance, and coverage with ongoing updates. A stable Wi-Fi connection is recommended for larger downloads.
+
+---
+
+### Feb 11, 2026
+
+- **Advanced Tajweed & Syllables Transliteration:** Added two new word-by-word transliterations — **Advanced Tajweed** and **Syllables** — along with one new verse-by-verse transliteration (**Advanced Tajweed**). Existing transliterations have also been updated with improvements and fixes for better accuracy and readability.
+
+---
+
+### Feb 6, 2026
+
+- **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur’an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
+
+---
+
 ### Nov 10, 2025
 
 - **Improved Homepage Bookmarks & Notes Management:** The homepage bookmarks and notes sections have been redesigned with a new 3-dot menu for easier control. Previously, items could only be deleted using an “X” icon. Now, bookmarks include a “Delete” option, while notes offer both “Edit” and “Delete” — all accessible directly from the homepage.

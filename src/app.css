@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "Uthmani-Hafs";
-  src: url("../fonts/qcf-uthmanic-digital.woff2") format("woff2");
+  src: url("/fonts/qcf-uthmanic-digital.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: "Uthmani-Hafs-Bold";
-  src: url("../fonts/qcf-uthmanic-digital-Bold.woff2") format("woff2");
+  src: url("/fonts/qcf-uthmanic-digital-Bold.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -20,7 +20,7 @@
 
 @font-face {
   font-family: "IndoPak";
-  src: url("../fonts/AlQuranNeov5x1.woff2") format("woff2");
+  src: url("/fonts/AlQuranNeo5x2.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -28,7 +28,7 @@
 
 @font-face {
   font-family: "Nastaleeq-Hafs";
-  src: url("../fonts/Nastaleeq_COLOR-Regular.woff2") format("woff2");
+  src: url("/fonts/Nastaleeq_COLOR-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -36,7 +36,7 @@
 
 @font-face {
   font-family: "Nastaleeq-Hafs-Bold";
-  src: url("../fonts/NastaleeqB_COLOR-Regular.woff2") format("woff2");
+  src: url("/fonts/NastaleeqB_COLOR-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -44,7 +44,7 @@
 
 @font-face {
   font-family: "Indonesian-Misbah";
-  src: url("../fonts/LPMQIsepMisbah-Regular.woff2") format("woff2");
+  src: url("/fonts/LPMQIsepMisbah-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -52,7 +52,7 @@
 
 @font-face {
   font-family: "Arabic-Sign-Language";
-  src: url("../fonts/LPMQ-MSI-ISYARAT.woff2") format("woff2");
+  src: url("/fonts/LPMQ-MSI-ISYARAT.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -60,7 +60,7 @@
 
 @font-face {
   font-family: "chapter-icons";
-  src: url("../fonts/surahs_v4-Regular.woff2") format("woff2");
+  src: url("/fonts/surahs_v4-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -68,7 +68,7 @@
 
 @font-face {
   font-family: "tajweed-rules";
-  src: url("../fonts/QCF4_TajweedRules-Regular.woff2") format("woff2");
+  src: url("/fonts/QCF4_TajweedRules-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -76,7 +76,7 @@
 
 @font-face {
   font-family: "urdu";
-  src: url("../fonts/Mehr-Nastaliq.ttf") format("truetype");
+  src: url("/fonts/Mehr-Nastaliq.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -84,15 +84,7 @@
 
 @font-face {
   font-family: "sindhi";
-  src: url("../fonts/MBLateefi.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "lexicon";
-  src: url("../fonts/lexicon.ttf") format("truetype");
+  src: url("/fonts/MBLateefi.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -100,7 +92,15 @@
 
 @font-face {
   font-family: "juz-icons";
-  src: url("../fonts/juz_names-Regular.woff2") format("woff2");
+  src: url("/fonts/juz_names-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "noto-serif";
+  src: url("/fonts/NotoSerif-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -125,7 +125,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("../images/bg-image.png");
+  background-image: url("/images/bg-image.png");
   background-position: center center;
   background-size: cover;
   opacity: 0.5;
@@ -290,6 +290,10 @@ svg {
 .font-Arabic-Sign-Language {
   font-family: "Arabic-Sign-Language";
   unicode-bidi: plaintext;
+}
+
+.font-serif {
+  font-family: "noto-serif";
 }
 
 .direction-rtl {
@@ -469,53 +473,6 @@ svg {
 * - Triggered when font type is 2 or 3 with dark themes
 */
 .hafs-palette-firefox-dark { font-palette: --palette0; }
-
-/* for lexicon modal because the data is fetched externally and it has it's own classes */
-#lexiconModal .entryFree {
-  padding-bottom: 2rem;
-  line-height: 2rem;
-}
-
-#lexiconModal .entryFree::after {
-  content: '';
-  display: block;
-  position: relative;
-  top: 1rem;
-  width: 50%;
-  left: 25%;
-  border-top: 1px solid black;
-}
-
-#lexiconModal .hi {
-  font-weight: 500;
-}
-
-#lexiconModal .pageHeading {
-  display: none;
-  font-size: 2rem;
-}
-
-#lexiconModal .Arabic {
-  font-family: 'lexicon';
-  font-weight: 500;
-  direction: rtl;
-  font-size: 24px;
-  padding-right: 0.5rem;
-  padding-left: 0.5rem;
-}
-
-#lexiconModal .itype {
-  font-weight: 600;
-}
-
-#lexiconModal .itype::after {
-  content: ': ';
-}
-
-#lexiconModal .orthdal {
-  display: none;
-  color: rgb(0, 255, 0);
-}
 
 #notes-value {
   resize: none;

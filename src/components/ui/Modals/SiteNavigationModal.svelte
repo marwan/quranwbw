@@ -1,6 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Settings from '$svgs/Settings.svelte';
+	import Topics from '$svgs/Topics.svelte';
 	import TajweedRules from '$svgs/TajweedRules.svelte';
 	import Supplication from '$svgs/Supplication.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
@@ -9,107 +10,129 @@
 	import Puzzle from '$svgs/Puzzle.svelte';
 	import About from '$svgs/About.svelte';
 	import Changelog from '$svgs/Changelog.svelte';
+	import Offline from '$svgs/Offline.svelte';
 	import LegacySite from '$svgs/LegacySite.svelte';
 	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
+	import { isUserOnline } from '$utils/offlineModeHandler';
 
 	const linkClasses = `w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const linkTextClasses = 'text-xs md:text-sm text-left w-[-webkit-fill-available] truncate';
+
+	let userOnline = true; // assume online by default to avoid hiding links; will be updated after an explicit network check
+	let networkCheckPerformed = false;
+
+	async function checkNetwork() {
+		networkCheckPerformed = false;
+		userOnline = await isUserOnline();
+		networkCheckPerformed = true;
+	}
+
+	// Run check only when modal opens
+	$: if ($__siteNavigationModalVisible) checkNetwork();
 
 	// hide the modal when page changes
 	$: if ($__currentPage) __siteNavigationModalVisible.set(false);
 </script>
 
-<Modal id="siteNavigationModal" bind:open={$__siteNavigationModalVisible} transitionParams={getModalTransition('basic')} size="xs" class="rounded-3xl" bodyClass="p-6" center outsideclose>
-	<div class="flex flex-col space-y-4">
-		<!-- modals / popups -->
-		<div class="flex flex-col space-y-2">
-			<div class="font-semibold">Navigate</div>
-			<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
-				<!-- Search -->
-				<a href="/search" class={linkClasses}>
-					<Search2 size={4} />
-					<span class={linkTextClasses}>Search</span>
-				</a>
+<Modal id="siteNavigationModal" bind:open={$__siteNavigationModalVisible} transitionParams={getModalTransition('basic')} size="xs" class="rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" center outsideclose>
+	<h3 id="modal-title" class="mb-2 text-md font-semibold flex-shrink-0">Navigate</h3>
 
-				<!-- settings modal -->
-				<button
-					on:click={() => {
-						__siteNavigationModalVisible.set(false);
-						__settingsDrawerHidden.set(false);
-					}}
-					class={linkClasses}
-				>
-					<Settings size={4} />
-					<span class={linkTextClasses}>Settings</span>
-				</button>
+	<div class="flex-1 min-h-0 overflow-y-auto">
+		<div class="flex flex-col space-y-4">
+			<!-- modals / popups -->
+			<div class="flex flex-col space-y-2">
+				<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
+					<!-- Search -->
+					{#if networkCheckPerformed && userOnline}
+						<a href="/search" class={linkClasses}>
+							<Search2 size={4} />
+							<span class={linkTextClasses}>Search</span>
+						</a>
+					{/if}
 
-				<!-- Bookmarks -->
-				<a href="/bookmarks" class={linkClasses}>
-					<Bookmark size={4} />
-					<span class={linkTextClasses}>Bookmarks</span>
-				</a>
+					<!-- settings modal -->
+					<button
+						on:click={() => {
+							__siteNavigationModalVisible.set(false);
+							__settingsDrawerHidden.set(false);
+						}}
+						class={linkClasses}
+					>
+						<Settings size={4} />
+						<span class={linkTextClasses}>Settings</span>
+					</button>
 
-				<!-- tajweed rules modal -->
-				<button
-					on:click={() => {
-						__siteNavigationModalVisible.set(false);
-						__tajweedRulesModalVisible.set(true);
-					}}
-					class={linkClasses}
-					data-umami-event="Tajweed Modal Button"
-				>
-					<TajweedRules size={4} />
-					<span class={linkTextClasses}>{term('tajweed')} Rules</span>
-				</button>
+					<!-- topics page link -->
+					<a href="/topics" class={linkClasses}>
+						<Topics size={4} />
+						<span class={linkTextClasses}>Topics</span>
+					</a>
 
-				<!-- Supplications -->
-				<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
-					<Supplication size={4} />
-					<span class={linkTextClasses}>{term('supplications')}</span>
-				</a>
+					<!-- Bookmarks -->
+					<a href="/bookmarks" class={linkClasses}>
+						<Bookmark size={4} />
+						<span class={linkTextClasses}>Bookmarks</span>
+					</a>
 
-				<!-- Morphology -->
-				<a href="/morphology?word=1:1:1" class={linkClasses}>
-					<Morphology size={4} />
-					<span class={linkTextClasses}>Morphology</span>
-				</a>
+					<!-- tajweed rules modal -->
+					<button
+						on:click={() => {
+							__siteNavigationModalVisible.set(false);
+							__tajweedRulesModalVisible.set(true);
+						}}
+						class={linkClasses}
+						data-umami-event="Tajweed Modal Button"
+					>
+						<TajweedRules size={4} />
+						<span class={linkTextClasses}>{term('tajweed')} Rules</span>
+					</button>
 
-				<!-- Guess The Word -->
-				<a href="/games/guess-the-word" class={linkClasses}>
-					<Puzzle size={4} />
-					<span class={linkTextClasses}>Word Game</span>
-				</a>
+					<!-- Supplications -->
+					<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
+						<Supplication size={4} />
+						<span class={linkTextClasses}>{term('supplications')}</span>
+					</a>
 
-				<!-- changelog -->
-				<a href="/changelog" class={linkClasses}>
-					<Changelog size={4} />
-					<span class={linkTextClasses}>Changelog</span>
-				</a>
+					<!-- Morphology -->
+					<a href="/morphology?word=1:1:1" class={linkClasses}>
+						<Morphology size={4} />
+						<span class={linkTextClasses}>Morphology</span>
+					</a>
 
-				<!-- legacy site link -->
-				<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
-					<LegacySite size={4} />
-					<span class={linkTextClasses}>Old Website</span>
-				</a>
+					<!-- Guess The Word -->
+					<a href="/games/guess-the-word" class={linkClasses}>
+						<Puzzle size={4} />
+						<span class={linkTextClasses}>Word Game</span>
+					</a>
 
-				<!-- About -->
-				<a href="/about" class={linkClasses}>
-					<About size={4} />
-					<span class={linkTextClasses}>About</span>
-				</a>
+					<!-- changelog -->
+					<a href="/changelog" class={linkClasses}>
+						<Changelog size={4} />
+						<span class={linkTextClasses}>Changelog</span>
+					</a>
 
-				<!-- download modal -->
-				<!-- <button
-					on:click={() => {
-						__siteNavigationModalVisible.set(false);
-						__downloadModalVisible.set(true);
-					}}
-					class={linkClasses}
-				>
-					<span class={linkTextClasses}>Offline Mode</span>
-				</button> -->
+					<!-- About -->
+					<a href="/about" class={linkClasses}>
+						<About size={4} />
+						<span class={linkTextClasses}>About</span>
+					</a>
+
+					<!-- Offline Mode page -->
+					<a href="/offline" class={linkClasses}>
+						<Offline size={4} />
+						<span class={linkTextClasses}>Offline Mode (Beta)</span>
+					</a>
+
+					<!-- legacy site link -->
+					{#if networkCheckPerformed && userOnline}
+						<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
+							<LegacySite size={4} />
+							<span class={linkTextClasses}>Old Website</span>
+						</a>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>

@@ -1,4 +1,5 @@
 <script>
+	import '../app.css';
 	import '$utils/checkURLParameters';
 	import '$utils/keyDownHandler';
 	import '$utils/devTools';
@@ -19,7 +20,7 @@
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
 
-	import { __userSettings, __websiteOnline, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
+	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbar } from '$utils/toggleNavbar';
 	import { resetAudioSettings } from '$utils/audioController';
@@ -27,7 +28,6 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
-	// import { checkAndRegisterServiceWorker } from '$utils/serviceWorker';
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
@@ -66,7 +66,6 @@
 			if (!wakeLock) {
 				try {
 					wakeLock = await navigator.wakeLock.request('screen');
-					console.log('Wake lock enabled');
 				} catch (error) {
 					console.warn(error);
 				}
@@ -75,7 +74,6 @@
 			if (wakeLock) {
 				await wakeLock.release();
 				wakeLock = null;
-				console.log('Wake lock disabled');
 			}
 		}
 	})();
@@ -97,16 +95,6 @@
 	document.body.onscroll = () => {
 		debounce(toggleNavbar, 0);
 	};
-
-	// Update online status
-	window.addEventListener('online', () => {
-		__websiteOnline.set(true);
-	});
-
-	// Update offline status
-	window.addEventListener('offline', () => {
-		__websiteOnline.set(false);
-	});
 
 	// Mushaf Page Handling
 	$: if ($__currentPage === 'mushaf') {
@@ -190,12 +178,9 @@
 			// Save back to localStorage
 			localStorage.setItem(storageKey, JSON.stringify(data));
 		} catch (error) {
-			console.error('Error tracking website version:', error);
+			console.warn(error);
 		}
 	})();
-
-	// Service Worker
-	// checkAndRegisterServiceWorker();
 </script>
 
 <div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
