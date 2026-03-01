@@ -83,7 +83,7 @@
 				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
 			</div> -->
 			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __menuDrawerHidden.set(false)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
-			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __settingsDrawerHidden.set(false)}><SettingsFilled size={5} /><span class="hidden md:block">Settings</span></button>
+			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __settingsDrawerHidden.set(false)}><span class="hidden md:block">Settings</span><SettingsFilled size={5} /></button>
 		</div>
 	</div>
 
