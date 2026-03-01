@@ -6,6 +6,9 @@
 
 	import VerseOptionsDropdown from '$display/verses/VerseOptionsDropdown.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
+	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
+	import Play from '$svgs/Play.svelte';
+	import Morphology from '$svgs/Morphology.svelte';
 	import { goto } from '$app/navigation';
 	import { selectableDisplays, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
 	import { supplicationsFromQuran } from '$data/quranMeta';
@@ -21,6 +24,8 @@
 	const arabicWords = value.words.arabic;
 	const transliterationWords = value.words.transliteration;
 	const translationWords = value.words.translation;
+
+	const buttonClasses = `inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 rounded-3xl focus:shadow-outline print:hidden ${window.theme('hover')}`;
 
 	// fix for Ba'da Ma Ja'aka for page 254
 	// since it's just a cosmetic change, there's no need of changing it at database level
@@ -176,6 +181,7 @@
 			`.trim()}
 			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}
 		>
+			<!-- arabic word -->
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 				<!-- Everything except Mushaf fonts -->
 				{#if ![2, 3].includes($__fontType)}
@@ -203,6 +209,30 @@
 				</div>
 			{/if}
 		</div>
+		<Dropdown trigger="hover" placement="top" class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr">
+			<div class="py-2 px-4 text-xs font-semibold text-left">
+				Word
+				{wordKey}
+			</div>
+
+			<div class="flex flex-row space-x-2">
+				<button on:click={() => console.log()} class={buttonClasses} aria-label="Play">
+					<Play />
+				</button>
+
+				<button on:click={() => console.log()} class={buttonClasses} aria-label="Morphology">
+					<Morphology />
+				</button>
+
+				<button on:click={() => console.log()} class={buttonClasses} aria-label="Play">
+					<Play />
+				</button>
+
+				<button on:click={() => console.log()} class={buttonClasses} aria-label="Morphology">
+					<Morphology />
+				</button>
+			</div>
+		</Dropdown>
 
 		<!-- word tooltip -->
 		{#if $__wordTooltip > 1}

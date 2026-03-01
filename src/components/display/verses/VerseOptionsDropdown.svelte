@@ -28,7 +28,6 @@
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
 
 	// Component state
-	let dropdownOpen = false;
 	let subMenuVisible = false;
 
 	// Computed values
@@ -161,7 +160,7 @@
 				];
 </script>
 
-<Dropdown bind:open={dropdownOpen} class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr">
+<Dropdown trigger="hover" class="px-2 mr-2 my-2 w-max text-left font-sans direction-ltr">
 	<div class="py-2 px-4 text-xs font-semibold text-left">
 		{term('verse')}
 		{$__verseKey}

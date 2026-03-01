@@ -126,7 +126,7 @@
 				</div>
 			</button>
 			<VerseOptionsDropdown page={value.meta.page} />
-			<Tooltip triggeredBy="#verse-options-{verse}" arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Options</Tooltip>
+			<!-- <Tooltip triggeredBy="#verse-options-{verse}" arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Options</Tooltip> -->
 		</div>
 	</div>
 

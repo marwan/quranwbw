@@ -50,7 +50,7 @@
 		none: ''
 	};
 	let divClass;
-	$: divClass = twMerge(bgColors[color], textColors[color], rounded && 'rounded-3xl', ``, borderColors[color], shadow && 'shadow-md', $$props.class);
+	$: divClass = twMerge(bgColors[color], textColors[color], rounded && 'rounded-3xl', ``, borderColors[color], $$props.class);
 </script>
 
 {#if transition && open}

@@ -1,12 +1,14 @@
 <script>
 	import Popper from '../utils/Popper.svelte';
 	export let title = '';
-	export let defaultClass = 'py-2 px-3';
+	export let defaultClass = `py-2 px-3`;
+
+	const popoverClasses = `border ${window.theme('border')}` + $$props.class;
 </script>
 
-<Popper activeContent border shadow rounded {...$$restProps} class={$$props.class} on:show>
+<Popper rounded {...$$restProps} class={popoverClasses} on:show>
 	{#if $$slots.title || title}
-		<div class="py-2 px-3 rounded-t-md border-b {window.theme('border')}">
+		<div class="py-2 px-3">
 			<slot name="title">
 				<h3 class="font-semibold">{title}</h3>
 			</slot>

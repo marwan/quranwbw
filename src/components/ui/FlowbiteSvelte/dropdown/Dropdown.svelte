@@ -16,7 +16,7 @@
 	export let classHeader = undefined;
 	export let footerClass = 'py-1 overflow-hidden rounded-b-lg';
 	export let classFooter = undefined;
-	export let activeClass = 'text-primary-700 hover:text-primary-900';
+	export let activeClass = '';
 	export let classActive = undefined;
 	let activeCls = twMerge(activeClass, classActive);
 	setContext('DropdownType', { activeClass: activeCls });
