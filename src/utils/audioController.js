@@ -5,7 +5,73 @@ import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
-import { getAudioUrl, prefetchAudio } from '$utils/audioCache';
+
+// Audio Cache
+const AUDIO_CACHE_NAME = 'quranwbw-audio-cache';
+
+async function getAudioCache() {
+	return await caches.open(AUDIO_CACHE_NAME);
+}
+
+async function getCachedAudioUrl(url) {
+	try {
+		const cache = await getAudioCache();
+		const cachedResponse = await cache.match(url);
+
+		if (cachedResponse) {
+			const blob = await cachedResponse.clone().blob();
+			return URL.createObjectURL(blob);
+		}
+
+		return null;
+	} catch (error) {
+		console.warn('[AudioCache] Error getting cached audio:', error);
+		return null;
+	}
+}
+
+async function fetchAndCacheAudio(url) {
+	try {
+		const response = await fetch(url);
+
+		if (!response.ok) {
+			throw new Error(`Failed to fetch audio: ${response.status}`);
+		}
+
+		const cache = await getAudioCache();
+		await cache.put(url, response.clone());
+
+		const blob = await response.blob();
+		return URL.createObjectURL(blob);
+	} catch (error) {
+		console.warn('[AudioCache] Error fetching/caching audio:', error);
+		return url;
+	}
+}
+
+export async function getAudioUrl(url) {
+	const cachedUrl = await getCachedAudioUrl(url);
+	if (cachedUrl) {
+		console.log('[AudioCache] Using cached audio:', url);
+		return cachedUrl;
+	}
+
+	console.log('[AudioCache] Fetching and caching audio:', url);
+	return await fetchAndCacheAudio(url);
+}
+
+export async function prefetchAudio(url) {
+	try {
+		const cache = await getAudioCache();
+		const cached = await cache.match(url);
+		if (!cached) {
+			fetchAndCacheAudio(url).catch(() => {});
+		}
+	} catch (error) {
+		// Silently ignore prefetch errors
+	}
+}
+
 
 // Getting the audio element
 let audio = document.querySelector('#player');
