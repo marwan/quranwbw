@@ -9,6 +9,7 @@ import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 let audio = document.querySelector('#player'); // Getting the audio element
 let lastPlayedKey = null;
 let lastBlobUrl = null;
+let activeAudioRequestId = 0;
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -37,7 +38,22 @@ export async function playVerseAudio(props) {
 	// Prefetch next audio file
 	getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false);
 
-	audio.src = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`);
+	const requestId = ++activeAudioRequestId;
+	const audioUrl = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`);
+
+	if (requestId !== activeAudioRequestId) {
+		if (audioUrl?.startsWith('blob:')) {
+			URL.revokeObjectURL(audioUrl);
+		}
+		return;
+	}
+
+	if (lastBlobUrl) {
+		URL.revokeObjectURL(lastBlobUrl);
+	}
+
+	lastBlobUrl = audioUrl?.startsWith('blob:') ? audioUrl : null;
+	audio.src = audioUrl;
 	audio.currentTime = 0;
 	audio.load();
 	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
@@ -121,7 +137,22 @@ export async function playWordAudio(props) {
 	// Prefetch next audio file
 	getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false);
 
-	audio.src = await getAudioUrl(`${wordsAudioURL}/${currentWordFileName}?version=2`);
+	const requestId = ++activeAudioRequestId;
+	const audioUrl = await getAudioUrl(`${wordsAudioURL}/${currentWordFileName}?version=2`);
+
+	if (requestId !== activeAudioRequestId) {
+		if (audioUrl?.startsWith('blob:')) {
+			URL.revokeObjectURL(audioUrl);
+		}
+		return;
+	}
+
+	if (lastBlobUrl) {
+		URL.revokeObjectURL(lastBlobUrl);
+	}
+
+	lastBlobUrl = audioUrl?.startsWith('blob:') ? audioUrl : null;
+	audio.src = audioUrl;
 	audio.currentTime = 0;
 	audio.load();
 	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
@@ -183,6 +214,13 @@ export function resetAudioSettings(props) {
 
 		if (props?.location === 'end') {
 			window.versesToPlayArray = [];
+		}
+
+		activeAudioRequestId++;
+
+		if (lastBlobUrl) {
+			URL.revokeObjectURL(lastBlobUrl);
+			lastBlobUrl = null;
 		}
 
 		__audioSettings.set(audioSettings);
@@ -443,15 +481,7 @@ async function getAudioUrl(url, returnBlob = true) {
 		if (!returnBlob) return;
 
 		const blob = await response.blob();
-
-		// Free memory from previous Blob URL
-		if (lastBlobUrl) {
-			URL.revokeObjectURL(lastBlobUrl);
-		}
-
-		lastBlobUrl = URL.createObjectURL(blob);
-
-		return lastBlobUrl;
+		return URL.createObjectURL(blob);
 	} catch (error) {
 		console.warn('[AudioCache] Error:', error);
 		return url;
