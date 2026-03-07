@@ -17,7 +17,7 @@
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled, __divisionsActiveTab, __extrasActiveTab } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -35,34 +35,47 @@
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 	const currentHour = new Date().getHours();
 
-	let divisionsSortIsAscending = true;
-	let chapterListOrder = [...quranMetaData];
-	let juzListOrder = [...juzMeta];
+	let chapterListOrder = [];
+	let juzListOrder = [];
+	let homepageLayoutPreferences = $__homepageLayoutPreferences;
 
-	$: divisionsActiveTab = $__divisionsActiveTab || 1;
-	$: extrasActiveTab = $__extrasActiveTab || 1;
+	$: divisionsActiveTab = homepageLayoutPreferences.divisionsActiveTab ?? 1;
+	$: extrasActiveTab = homepageLayoutPreferences.extrasActiveTab ?? 1;
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 
-	// Toggles the sort order for divisions (ascending/descending) and updates the chapter and juz lists accordingly.
-	function sortDivisions() {
-		divisionsSortIsAscending = !divisionsSortIsAscending;
-		chapterListOrder = divisionsSortIsAscending ? [...quranMetaData] : [...quranMetaData].reverse();
-		juzListOrder = divisionsSortIsAscending ? [...juzMeta] : [...juzMeta].reverse();
+	// Persist homepage layout preferences whenever they change
+	$: if (homepageLayoutPreferences) updateSettings({ type: 'homepageLayoutPreferences', value: homepageLayoutPreferences });
+
+	// Initialize chapter and juz list order based on saved sort preference
+	$: {
+		const ascending = homepageLayoutPreferences?.divisionsSortIsAscending ?? true;
+		chapterListOrder = ascending ? [...quranMetaData] : [...quranMetaData].reverse();
+		juzListOrder = ascending ? [...juzMeta] : [...juzMeta].reverse();
 	}
 
-	// Updates the active tab for the specified section (divisions or extras) and persists the selected tab in user settings.
-	function changeTabs(tabName, tabNumber) {
-		if (tabName === 'divisionsActiveTab') {
-			$__divisionsActiveTab = tabNumber;
-		} else if (tabName === 'extrasActiveTab') {
-			$__extrasActiveTab = tabNumber;
-		}
+	// Toggles the sort order for divisions (ascending/descending) and updates the chapter and juz lists accordingly.
+	function sortDivisions() {
+		const newValue = !homepageLayoutPreferences.divisionsSortIsAscending;
 
-		updateSettings({ type: tabName, value: tabNumber });
+		homepageLayoutPreferences = {
+			...homepageLayoutPreferences,
+			divisionsSortIsAscending: newValue
+		};
+
+		chapterListOrder = newValue ? [...quranMetaData] : [...quranMetaData].reverse();
+		juzListOrder = newValue ? [...juzMeta] : [...juzMeta].reverse();
+	}
+
+	// Updates the active tab and triggers reactivity by replacing the preferences object
+	function changeTabs(tabName, tabNumber) {
+		homepageLayoutPreferences = {
+			...homepageLayoutPreferences,
+			[tabName]: tabNumber
+		};
 	}
 
 	let chapterDataLoaded = false;
@@ -159,7 +172,7 @@
 
 		<div id="extras-tabs" class="flex items-center justify-between">
 			<div class="flex flex-row justify-center">
-				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!$__homepageExtrasPanelVisible && disabledClasses}">
+				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!homepageLayoutPreferences.extrasPanelVisible && disabledClasses}">
 					<button on:click={() => changeTabs('extrasActiveTab', 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
 						<span>Bookmarks</span>
 						<span>{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
@@ -172,19 +185,13 @@
 				</div>
 			</div>
 
-			<button
-				class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}"
-				on:click={() => {
-					updateSettings({ type: 'homepageExtrasPanelVisible', value: !$__homepageExtrasPanelVisible });
-				}}
-				data-umami-event="Toggle Panel Button"
-			>
-				<svelte:component this={$__homepageExtrasPanelVisible ? EyeCrossed : Eye} size={4} />
+			<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => (homepageLayoutPreferences.extrasPanelVisible = !homepageLayoutPreferences.extrasPanelVisible)} data-umami-event="Toggle Panel Button">
+				<svelte:component this={homepageLayoutPreferences.extrasPanelVisible ? EyeCrossed : Eye} size={4} />
 			</button>
-			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{$__homepageExtrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
+			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.extrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
 		</div>
 
-		<div id="extras-panel" class="mb-4 pt-1 {$__homepageExtrasPanelVisible ? 'block' : 'hidden'}">
+		<div id="extras-panel" class="mb-4 pt-1 {homepageLayoutPreferences.extrasPanelVisible ? 'block' : 'hidden'}">
 			<!-- bookmarks tab -->
 			<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 				<UserBookmarks {cardGridClasses} {cardInnerClasses} />
@@ -226,9 +233,9 @@
 				</div>
 
 				<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
-					<svelte:component this={divisionsSortIsAscending ? SortDescending : SortAscending} size={4} />
+					<svelte:component this={homepageLayoutPreferences.divisionsSortIsAscending ? SortDescending : SortAscending} size={4} />
 				</button>
-				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.divisionsSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
 			</div>
 		</div>
 
