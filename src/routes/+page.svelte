@@ -52,22 +52,24 @@
 
 	// Initialize chapter and juz list order based on saved sort preference
 	$: {
-		const ascending = homepageLayoutPreferences?.divisionsSortIsAscending ?? true;
-		chapterListOrder = ascending ? [...quranMetaData] : [...quranMetaData].reverse();
-		juzListOrder = ascending ? [...juzMeta] : [...juzMeta].reverse();
+		const chaptersAscending = homepageLayoutPreferences?.chaptersSortIsAscending ?? true;
+		const juzAscending = homepageLayoutPreferences?.juzSortIsAscending ?? true;
+
+		chapterListOrder = chaptersAscending ? [...quranMetaData] : [...quranMetaData].reverse();
+		juzListOrder = juzAscending ? [...juzMeta] : [...juzMeta].reverse();
 	}
 
-	// Toggles the sort order for divisions (ascending/descending) and updates the chapter and juz lists accordingly.
+	// Toggles sort order for the active division tab
 	function sortDivisions() {
-		const newValue = !homepageLayoutPreferences.divisionsSortIsAscending;
+		const isChapters = divisionsActiveTab === 1;
+		const key = isChapters ? 'chaptersSortIsAscending' : 'juzSortIsAscending';
+		const data = isChapters ? quranMetaData : juzMeta;
+		const newValue = !homepageLayoutPreferences[key];
 
-		homepageLayoutPreferences = {
-			...homepageLayoutPreferences,
-			divisionsSortIsAscending: newValue
-		};
+		homepageLayoutPreferences = { ...homepageLayoutPreferences, [key]: newValue };
 
-		chapterListOrder = newValue ? [...quranMetaData] : [...quranMetaData].reverse();
-		juzListOrder = newValue ? [...juzMeta] : [...juzMeta].reverse();
+		const sorted = newValue ? [...data] : [...data].reverse();
+		isChapters ? (chapterListOrder = sorted) : (juzListOrder = sorted);
 	}
 
 	// Updates the active tab and triggers reactivity by replacing the preferences object
@@ -233,9 +235,9 @@
 				</div>
 
 				<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
-					<svelte:component this={homepageLayoutPreferences.divisionsSortIsAscending ? SortDescending : SortAscending} size={4} />
+					<svelte:component this={divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? SortDescending : SortAscending) : homepageLayoutPreferences.juzSortIsAscending ? SortDescending : SortAscending} size={4} />
 				</button>
-				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.divisionsSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending') : homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
 			</div>
 		</div>
 

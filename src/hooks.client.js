@@ -22,7 +22,8 @@ export const defaultSettings = {
 			extrasPanelVisible: true,
 			divisionsActiveTab: 1, // chapters tab
 			extrasActiveTab: 1, // bookmarks
-			divisionsSortIsAscending: true
+			chaptersSortIsAscending: true,
+			juzSortIsAscending: true
 		}
 	},
 	translations: {
