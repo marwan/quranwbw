@@ -21,7 +21,7 @@ export const defaultSettings = {
 		homepageLayoutPreferences: {
 			extrasPanelVisible: true,
 			divisionsActiveTab: 1, // chapters tab
-			extrasActiveTab: 1, // bookmarks
+			extrasActiveTab: 1, // bookmarks tab
 			chaptersSortIsAscending: true,
 			juzSortIsAscending: true
 		}
