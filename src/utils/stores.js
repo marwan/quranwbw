@@ -56,7 +56,9 @@ let __currentPage,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
-	__offlineModeSettings;
+	__offlineModeSettings,
+	__divisionsActiveTab,
+	__extrasActiveTab;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -215,6 +217,12 @@ if (browser) {
 
 	// to store all the offline mode settings
 	__offlineModeSettings = writable(userSettings.offlineModeSettings);
+
+	// visibiliy of the divisions tab on homepage (chapter or juz)
+	__divisionsActiveTab = writable(userSettings.displaySettings.divisionsActiveTab);
+
+	// visibiliy of the extras tab on homepage (bookmarks, notes or suggestions)
+	__extrasActiveTab = writable(userSettings.displaySettings.extrasActiveTab);
 }
 
 export {
@@ -273,5 +281,7 @@ export {
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
-	__offlineModeSettings
+	__offlineModeSettings,
+	__divisionsActiveTab,
+	__extrasActiveTab
 };

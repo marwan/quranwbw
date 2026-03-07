@@ -17,7 +17,7 @@
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __homepageExtrasPanelVisible, __wideWesbiteLayoutEnabled, __divisionsActiveTab, __extrasActiveTab } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -35,22 +35,34 @@
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 	const currentHour = new Date().getHours();
 
-	let divisionsActiveTab = 1; // Default to chapters tab
-	let extrasActiveTab = 1; // Default to bookmarks
 	let divisionsSortIsAscending = true;
 	let chapterListOrder = [...quranMetaData];
 	let juzListOrder = [...juzMeta];
 
+	$: divisionsActiveTab = $__divisionsActiveTab || 1;
+	$: extrasActiveTab = $__extrasActiveTab || 1;
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 
+	// Toggles the sort order for divisions (ascending/descending) and updates the chapter and juz lists accordingly.
 	function sortDivisions() {
 		divisionsSortIsAscending = !divisionsSortIsAscending;
 		chapterListOrder = divisionsSortIsAscending ? [...quranMetaData] : [...quranMetaData].reverse();
 		juzListOrder = divisionsSortIsAscending ? [...juzMeta] : [...juzMeta].reverse();
+	}
+
+	// Updates the active tab for the specified section (divisions or extras) and persists the selected tab in user settings.
+	function changeTabs(tabName, tabNumber) {
+		if (tabName === 'divisionsActiveTab') {
+			$__divisionsActiveTab = tabNumber;
+		} else if (tabName === 'extrasActiveTab') {
+			$__extrasActiveTab = tabNumber;
+		}
+
+		updateSettings({ type: tabName, value: tabNumber });
 	}
 
 	let chapterDataLoaded = false;
@@ -148,15 +160,15 @@
 		<div id="extras-tabs" class="flex items-center justify-between">
 			<div class="flex flex-row justify-center">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!$__homepageExtrasPanelVisible && disabledClasses}">
-					<button on:click={() => (extrasActiveTab = 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
+					<button on:click={() => changeTabs('extrasActiveTab', 1)} class="{extrasActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
 						<span>Bookmarks</span>
 						<span>{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
 					</button>
-					<button on:click={() => (extrasActiveTab = 2)} class="{extrasActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Notes Tab Button">
+					<button on:click={() => changeTabs('extrasActiveTab', 2)} class="{extrasActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Notes Tab Button">
 						<span>Notes</span>
 						<span>{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 					</button>
-					<button on:click={() => (extrasActiveTab = 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
+					<button on:click={() => changeTabs('extrasActiveTab', 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
 				</div>
 			</div>
 
@@ -205,10 +217,10 @@
 		<div id="quran-division-tabs" class="mt-4">
 			<div class="flex flex-row items-center justify-between">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
-					<button on:click={() => (divisionsActiveTab = 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
+					<button on:click={() => changeTabs('divisionsActiveTab', 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
 						<span>{term('chapters')}</span>
 					</button>
-					<button on:click={() => (divisionsActiveTab = 2)} class="{divisionsActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Juz Tab Button">
+					<button on:click={() => changeTabs('divisionsActiveTab', 2)} class="{divisionsActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Juz Tab Button">
 						<span>{term('juzs')}</span>
 					</button>
 				</div>

@@ -18,7 +18,9 @@ export const defaultSettings = {
 			verseTranslationText: 'text-sm'
 		},
 		wideWesbiteLayoutEnabled: false,
-		signLanguageModeEnabled: false
+		signLanguageModeEnabled: false,
+		divisionsActiveTab: 1, // chapters tab
+		extrasActiveTab: 1 // bookmarks
 	},
 	translations: {
 		word: 1,

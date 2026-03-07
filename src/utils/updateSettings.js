@@ -30,7 +30,9 @@ import {
 	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__offlineModeSettings
+	__offlineModeSettings,
+	__divisionsActiveTab,
+	__extrasActiveTab
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
@@ -301,6 +303,18 @@ export function updateSettings(props) {
 		case 'offlineModeSettings':
 			__offlineModeSettings.set(props.value);
 			userSettings.offlineModeSettings = props.value;
+			break;
+
+		// for homepage's divisions tab
+		case 'divisionsActiveTab':
+			__divisionsActiveTab.set(props.value);
+			userSettings.displaySettings.divisionsActiveTab = props.value;
+			break;
+
+		// for homepage's extras tab
+		case 'extrasActiveTab':
+			__extrasActiveTab.set(props.value);
+			userSettings.displaySettings.extrasActiveTab = props.value;
 			break;
 
 		// for increasing/decreasing font sizes
