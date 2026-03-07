@@ -419,7 +419,7 @@ async function fetchTimestampData() {
 // Fetch audio and cache it.
 // If returnBlob=true → return Blob URL for playback
 // If returnBlob=false → only cache (used for prefetching)
-export async function getAudioUrl(url, returnBlob = true) {
+async function getAudioUrl(url, returnBlob = true) {
 	try {
 		const cache = await caches.open('quranwbw-audio-cache');
 
