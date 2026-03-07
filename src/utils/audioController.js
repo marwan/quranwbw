@@ -6,76 +6,9 @@ import { selectableReciters, selectableTranslationReciters, selectablePlaybackSp
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-// Audio Cache
-const AUDIO_CACHE_NAME = 'quranwbw-audio-cache';
-
-async function getAudioCache() {
-	return await caches.open(AUDIO_CACHE_NAME);
-}
-
-async function getCachedAudioUrl(url) {
-	try {
-		const cache = await getAudioCache();
-		const cachedResponse = await cache.match(url);
-
-		if (cachedResponse) {
-			const blob = await cachedResponse.clone().blob();
-			return URL.createObjectURL(blob);
-		}
-
-		return null;
-	} catch (error) {
-		console.warn('[AudioCache] Error getting cached audio:', error);
-		return null;
-	}
-}
-
-async function fetchAndCacheAudio(url) {
-	try {
-		const response = await fetch(url);
-
-		if (!response.ok) {
-			throw new Error(`Failed to fetch audio: ${response.status}`);
-		}
-
-		const cache = await getAudioCache();
-		await cache.put(url, response.clone());
-
-		const blob = await response.blob();
-		return URL.createObjectURL(blob);
-	} catch (error) {
-		console.warn('[AudioCache] Error fetching/caching audio:', error);
-		return url;
-	}
-}
-
-export async function getAudioUrl(url) {
-	const cachedUrl = await getCachedAudioUrl(url);
-	if (cachedUrl) {
-		console.log('[AudioCache] Using cached audio:', url);
-		return cachedUrl;
-	}
-
-	console.log('[AudioCache] Fetching and caching audio:', url);
-	return await fetchAndCacheAudio(url);
-}
-
-export async function prefetchAudio(url) {
-	try {
-		const cache = await getAudioCache();
-		const cached = await cache.match(url);
-		if (!cached) {
-			fetchAndCacheAudio(url).catch(() => {});
-		}
-	} catch (error) {
-		// Silently ignore prefetch errors
-	}
-}
-
-
-// Getting the audio element
-let audio = document.querySelector('#player');
+let audio = document.querySelector('#player'); // Getting the audio element
 let lastPlayedKey = null;
+let lastBlobUrl = null;
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -101,7 +34,8 @@ export async function playVerseAudio(props) {
 	const currentVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse).padStart(3, '0')}.mp3`;
 	const nextVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse + 1).padStart(3, '0')}.mp3`;
 
-	prefetchAudio(`${reciterAudioUrl}/${nextVerseFileName}`);
+	// Prefetch next audio file
+	getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false);
 
 	audio.src = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`);
 	audio.currentTime = 0;
@@ -184,7 +118,8 @@ export async function playWordAudio(props) {
 	const nextWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
 	const currentAudioType = audioSettings.audioType;
 
-	prefetchAudio(`${wordsAudioURL}/${nextWordFileName}?version=2`);
+	// Prefetch next audio file
+	getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false);
 
 	audio.src = await getAudioUrl(`${wordsAudioURL}/${currentWordFileName}?version=2`);
 	audio.currentTime = 0;
@@ -479,6 +414,48 @@ export function prepareVersesToPlay(key) {
 // Fetch timestamps for word-by-word highlighting
 async function fetchTimestampData() {
 	return await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
+}
+
+// Fetch audio and cache it.
+// If returnBlob=true → return Blob URL for playback
+// If returnBlob=false → only cache (used for prefetching)
+export async function getAudioUrl(url, returnBlob = true) {
+	try {
+		const cache = await caches.open('quranwbw-audio-cache');
+
+		let response = await cache.match(url);
+
+		// Fetch if not cached
+		if (!response) {
+			console.log('[AudioCache] Fetching:', url);
+			response = await fetch(url);
+
+			if (!response.ok) {
+				throw new Error(`Failed to fetch audio: ${response.status}`);
+			}
+
+			await cache.put(url, response.clone());
+		} else {
+			console.log('[AudioCache] Using cached:', url);
+		}
+
+		// For prefetching we stop here
+		if (!returnBlob) return;
+
+		const blob = await response.blob();
+
+		// Free memory from previous Blob URL
+		if (lastBlobUrl) {
+			URL.revokeObjectURL(lastBlobUrl);
+		}
+
+		lastBlobUrl = URL.createObjectURL(blob);
+
+		return lastBlobUrl;
+	} catch (error) {
+		console.warn('[AudioCache] Error:', error);
+		return url;
+	}
 }
 
 function scrollElementIntoView(id) {
