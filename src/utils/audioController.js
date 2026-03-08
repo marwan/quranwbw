@@ -6,8 +6,6 @@ import { selectableReciters, selectableTranslationReciters, selectablePlaybackSp
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-const mergedWordsAudioURL = 'https://quranwbw-word-audios-merged.pages.dev/audios';
-
 let audio = document.querySelector('#player'); // Getting the audio element
 let lastPlayedKey = null;
 let currentChapter = null;
@@ -108,26 +106,14 @@ export async function playVerseAudio(props) {
 	__audioSettings.set(audioSettings);
 }
 
-// Fetches and caches the full merged audio file for a chapter so the service worker
-// can serve byte-range requests locally, enabling accurate word-level seeking
-async function precacheWordAudio(chapterNumber) {
-	const url = `${mergedWordsAudioURL}/${chapterNumber}/${chapterNumber}.mp3`;
-	const cache = await caches.open('quranwbw-word-audios');
-	const existing = await cache.match(url);
-	if (!existing) {
-		console.log(`[Audio] Caching chapter ${chapterNumber} audio...`);
-		const response = await fetch(url);
-		await cache.put(url, response);
-		console.log(`[Audio] Chapter ${chapterNumber} cached.`);
-	}
-}
-
 // Plays a single word's audio from the merged chapter file using start/end timestamps.
 // If playAllWords is set, it chains through all words in the verse one by one.
 export async function playWordAudio(props) {
 	if (!(await checkOnlineAndAlert())) return;
 
 	resetAudioSettings();
+
+	const mergedWordsAudioURL = 'https://marwan.github.io/quranwbw-word-audios-merged/audios';
 
 	const audioSettings = get(__audioSettings);
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
@@ -140,10 +126,6 @@ export async function playWordAudio(props) {
 	const [startMs, endMs] = timestamps[wordKey];
 
 	console.log('playing word', '-', `${wordChapter}:${wordVerse}:${wordNumber}`, `[${startMs}ms → ${endMs}ms]`);
-
-	// Pre-cache the full chapter audio file via service worker before attempting playback
-	// This ensures byte-range seeking works locally without relying on the remote server
-	await precacheWordAudio(wordChapter);
 
 	// Clear any existing listeners from a previous playback session
 	audio.ontimeupdate = null;
@@ -189,9 +171,10 @@ export async function playWordAudio(props) {
 	}
 
 	if (currentChapter !== wordChapter) {
-		// New chapter — update the src and wait for the file to be ready before seeking
+		// New chapter — update the src with media fragment hint for faster seeking
+		// The #t= hint tells the browser to start buffering from this position
 		currentChapter = wordChapter;
-		audio.src = `${mergedWordsAudioURL}/${wordChapter}/${wordChapter}.mp3`;
+		audio.src = `${mergedWordsAudioURL}/${wordChapter}/${wordChapter}.mp3#t=${startMs / 1000}`;
 		audio.oncanplay = function () {
 			audio.oncanplay = null;
 			playFromTimestamp();

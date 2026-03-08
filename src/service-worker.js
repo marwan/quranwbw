@@ -334,7 +334,7 @@ self.addEventListener('fetch', (event) => {
 	}
 
 	// Handle merged audio range requests
-	if (url.hostname.includes('quranwbw-word-audios-merged.pages.dev') && url.pathname.endsWith('.mp3')) {
+	if (url.pathname.endsWith('.mp3')) {
 		event.respondWith(
 			(async () => {
 				const cache = await caches.open(cacheNames.wordAudioFiles);
