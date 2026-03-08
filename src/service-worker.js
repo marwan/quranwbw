@@ -28,7 +28,8 @@ const cacheNames = {
 	juzData: 'quranwbw-juz-data', // Juz routes and data
 	mushafData: 'quranwbw-mushaf-data', // Mushaf pages and fonts
 	morphologyData: 'quranwbw-morphology-data', // Morphology data files
-	tafsirData: 'quranwbw-tafsir-data' // Tafsir data files
+	tafsirData: 'quranwbw-tafsir-data', // Tafsir data files
+	wordAudioFiles: 'quranwbw-word-audios' // Word audio files
 };
 
 // Files we should never cache (the service worker itself and its settings)
@@ -330,6 +331,54 @@ self.addEventListener('fetch', (event) => {
 	// Ignore non-GET requests, excluded files, and connectivity checks
 	if (event.request.method !== 'GET' || stuffNotToCache.some((excluded) => url.pathname.includes(excluded)) || url.hostname === 'www.gstatic.com') {
 		return;
+	}
+
+	// Handle merged audio range requests
+	if (url.hostname.includes('quranwbw-word-audios-merged.pages.dev') && url.pathname.endsWith('.mp3')) {
+		event.respondWith(
+			(async () => {
+				const cache = await caches.open('quran-merged-audio');
+				const rangeHeader = event.request.headers.get('Range');
+				const cacheKey = url.origin + url.pathname; // strip any #t= fragment
+
+				// Check if full file is already cached
+				let cachedFull = await cache.match(cacheKey);
+
+				if (!cachedFull) {
+					// Fetch and cache the full file (no range header)
+					console.log('[SW] Downloading and caching merged audio:', url.pathname);
+					const fullResponse = await fetch(cacheKey);
+					if (!fullResponse.ok) return fullResponse;
+					await cache.put(cacheKey, fullResponse.clone());
+					cachedFull = await cache.match(cacheKey);
+				}
+
+				// No range requested, return full file
+				if (!rangeHeader) {
+					return cachedFull;
+				}
+
+				// Serve byte range from cached file
+				const fileBuffer = await cachedFull.arrayBuffer();
+				const fileSize = fileBuffer.byteLength;
+
+				const [, rangeStart, rangeEnd] = rangeHeader.match(/bytes=(\d*)-(\d*)/);
+				const start = rangeStart ? parseInt(rangeStart) : 0;
+				const end = rangeEnd ? parseInt(rangeEnd) : fileSize - 1;
+
+				return new Response(fileBuffer.slice(start, end + 1), {
+					status: 206,
+					statusText: 'Partial Content',
+					headers: {
+						'Content-Type': 'audio/mpeg',
+						'Content-Length': String(end - start + 1),
+						'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+						'Accept-Ranges': 'bytes'
+					}
+				});
+			})()
+		);
+		return; // stop here, don't fall through to the rest of the fetch handler
 	}
 
 	event.respondWith(

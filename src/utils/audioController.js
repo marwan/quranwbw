@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { quranMetaData } from '$data/quranMeta';
 import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __keysToFetch, __displayType, __verseWordBlocks } from '$utils/stores';
-import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
+import { staticEndpoint } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
@@ -106,7 +106,21 @@ export async function playVerseAudio(props) {
 	__audioSettings.set(audioSettings);
 }
 
-// Function to play word audio
+let currentChapter = null;
+const mergedWordsAudioURL = 'https://quranwbw-word-audios-merged.pages.dev';
+
+async function precacheWordAudio(chapterNumber) {
+	const url = `${mergedWordsAudioURL}/${chapterNumber}/${chapterNumber}.mp3`;
+	const cache = await caches.open('quranwbw-word-audios');
+	const existing = await cache.match(url);
+	if (!existing) {
+		console.log(`[Audio] Caching chapter ${chapterNumber} audio...`);
+		const response = await fetch(url);
+		await cache.put(url, response);
+		console.log(`[Audio] Chapter ${chapterNumber} cached.`);
+	}
+}
+
 export async function playWordAudio(props) {
 	if (!(await checkOnlineAndAlert())) return;
 
@@ -114,34 +128,74 @@ export async function playWordAudio(props) {
 
 	const audioSettings = get(__audioSettings);
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
-	const currentWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber).padStart(3, '0')}.mp3`;
-	const nextWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
 	const currentAudioType = audioSettings.audioType;
 
-	// Prefetch the next word audio
-	fetch(`${wordsAudioURL}/${nextWordFileName}?version=2`);
+	const wordKey = `${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber).padStart(3, '0')}`;
+	const url = `${mergedWordsAudioURL}/${wordChapter}/timestamp_${wordChapter}.json`;
+	const timestamps = await fetch(url).then((r) => r.json());
+	const [startMs, endMs] = timestamps[wordKey];
 
-	audio.src = `${wordsAudioURL}/${currentWordFileName}?version=2`;
-	audio.currentTime = 0;
-	audio.load();
-	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
-	audio.play();
+	console.log('playing word', '-', `${wordChapter}:${wordVerse}:${wordNumber}`, `[${startMs}ms → ${endMs}ms]`);
+
+	// Ensure the chapter audio is cached before we try to play
+	await precacheWordAudio(wordChapter);
+
+	audio.ontimeupdate = null;
+	audio.onseeked = null;
+	audio.oncanplay = null;
+
+	function playFromTimestamp() {
+		audio.onseeked = function () {
+			console.log('onseeked fired, currentTime:', audio.currentTime);
+			audio.onseeked = null;
+			audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
+			audio.play();
+
+			audio.ontimeupdate = function () {
+				if (audio.currentTime >= endMs / 1000) {
+					audio.ontimeupdate = null;
+					audio.pause();
+
+					if (props.playAllWords && wordNumber < getWordsInVerse(`${wordChapter}:${wordVerse}`)) {
+						playWordAudio({ key: `${wordChapter}:${wordVerse}:${wordNumber + 1}`, playAllWords: true });
+						return;
+					}
+
+					resetAudioSettings({ location: 'end' });
+					audioSettings.audioType = currentAudioType;
+				}
+			};
+		};
+
+		function attemptSeek() {
+			audio.currentTime = startMs / 1000;
+			console.log('currentTime set to:', audio.currentTime, 'expected:', startMs / 1000);
+			if (Math.abs(audio.currentTime - startMs / 1000) > 0.5) {
+				console.log('seek failed, retrying...');
+				setTimeout(attemptSeek, 200);
+			}
+		}
+
+		attemptSeek();
+	}
+
+	if (currentChapter !== wordChapter) {
+		currentChapter = wordChapter;
+		audio.src = `${mergedWordsAudioURL}/${wordChapter}/${wordChapter}.mp3`;
+		audio.oncanplay = function () {
+			console.log('oncanplay fired, currentTime:', audio.currentTime);
+			audio.oncanplay = null;
+			playFromTimestamp();
+		};
+		audio.load();
+	} else {
+		playFromTimestamp();
+	}
 
 	audioSettings.isPlaying = true;
 	audioSettings.audioType = 'word';
 	audioSettings.playingKey = `${wordChapter}:${wordVerse}`;
-	audioSettings.playingWordKey = `${props.key}`;
-
-	// For debugging purposes, needs not be removed
-	console.log('playing word', '-', audioSettings.playingWordKey);
-
-	audio.onended = function () {
-		if (props.playAllWords && wordNumber < getWordsInVerse(audioSettings.playingKey)) {
-			return playWordAudio({ key: `${wordChapter}:${wordVerse}:${wordNumber + 1}`, playAllWords: true });
-		}
-		resetAudioSettings({ location: 'end' });
-		audioSettings.audioType = currentAudioType;
-	};
+	audioSettings.playingWordKey = `${wordChapter}:${wordVerse}:${wordNumber}`;
 
 	__audioSettings.set(audioSettings);
 }
