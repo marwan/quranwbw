@@ -337,7 +337,7 @@ self.addEventListener('fetch', (event) => {
 	if (url.hostname.includes('quranwbw-word-audios-merged.pages.dev') && url.pathname.endsWith('.mp3')) {
 		event.respondWith(
 			(async () => {
-				const cache = await caches.open('quran-merged-audio');
+				const cache = await caches.open(cacheNames.wordAudioFiles);
 				const rangeHeader = event.request.headers.get('Range');
 				const cacheKey = url.origin + url.pathname; // strip any #t= fragment
 
