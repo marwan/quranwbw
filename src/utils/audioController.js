@@ -107,7 +107,7 @@ export async function playVerseAudio(props) {
 }
 
 let currentChapter = null;
-const mergedWordsAudioURL = 'https://quranwbw-word-audios-merged.pages.dev';
+const mergedWordsAudioURL = 'https://quranwbw-word-audios-merged.pages.dev/audios';
 
 async function precacheWordAudio(chapterNumber) {
 	const url = `${mergedWordsAudioURL}/${chapterNumber}/${chapterNumber}.mp3`;
