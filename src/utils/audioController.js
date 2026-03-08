@@ -6,9 +6,11 @@ import { selectableReciters, selectableTranslationReciters, selectablePlaybackSp
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-// Getting the audio element
-let audio = document.querySelector('#player');
+const mergedWordsAudioURL = 'https://quranwbw-word-audios-merged.pages.dev/audios';
+
+let audio = document.querySelector('#player'); // Getting the audio element
 let lastPlayedKey = null;
+let currentChapter = null;
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -106,9 +108,8 @@ export async function playVerseAudio(props) {
 	__audioSettings.set(audioSettings);
 }
 
-let currentChapter = null;
-const mergedWordsAudioURL = 'https://quranwbw-word-audios-merged.pages.dev/audios';
-
+// Fetches and caches the full merged audio file for a chapter so the service worker
+// can serve byte-range requests locally, enabling accurate word-level seeking
 async function precacheWordAudio(chapterNumber) {
 	const url = `${mergedWordsAudioURL}/${chapterNumber}/${chapterNumber}.mp3`;
 	const cache = await caches.open('quranwbw-word-audios');
@@ -121,6 +122,8 @@ async function precacheWordAudio(chapterNumber) {
 	}
 }
 
+// Plays a single word's audio from the merged chapter file using start/end timestamps.
+// If playAllWords is set, it chains through all words in the verse one by one.
 export async function playWordAudio(props) {
 	if (!(await checkOnlineAndAlert())) return;
 
@@ -130,6 +133,7 @@ export async function playWordAudio(props) {
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
 	const currentAudioType = audioSettings.audioType;
 
+	// Build the timestamp key e.g. "002_002_006" and fetch its start/end milliseconds
 	const wordKey = `${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber).padStart(3, '0')}`;
 	const url = `${mergedWordsAudioURL}/${wordChapter}/timestamp_${wordChapter}.json`;
 	const timestamps = await fetch(url).then((r) => r.json());
@@ -137,25 +141,30 @@ export async function playWordAudio(props) {
 
 	console.log('playing word', '-', `${wordChapter}:${wordVerse}:${wordNumber}`, `[${startMs}ms → ${endMs}ms]`);
 
-	// Ensure the chapter audio is cached before we try to play
+	// Pre-cache the full chapter audio file via service worker before attempting playback
+	// This ensures byte-range seeking works locally without relying on the remote server
 	await precacheWordAudio(wordChapter);
 
+	// Clear any existing listeners from a previous playback session
 	audio.ontimeupdate = null;
 	audio.onseeked = null;
 	audio.oncanplay = null;
 
+	// Seeks to the word's start position and plays until its end position
 	function playFromTimestamp() {
+		// Wait for the seek to complete before starting playback
 		audio.onseeked = function () {
-			console.log('onseeked fired, currentTime:', audio.currentTime);
 			audio.onseeked = null;
 			audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
 			audio.play();
 
+			// Poll playback position and stop exactly at the word's end timestamp
 			audio.ontimeupdate = function () {
 				if (audio.currentTime >= endMs / 1000) {
 					audio.ontimeupdate = null;
 					audio.pause();
 
+					// If playing all words in a verse, chain to the next word
 					if (props.playAllWords && wordNumber < getWordsInVerse(`${wordChapter}:${wordVerse}`)) {
 						playWordAudio({ key: `${wordChapter}:${wordVerse}:${wordNumber + 1}`, playAllWords: true });
 						return;
@@ -167,11 +176,11 @@ export async function playWordAudio(props) {
 			};
 		};
 
+		// Attempt to seek to the word's start position
+		// Retries every 200ms if the seek fails (e.g. buffer not yet available)
 		function attemptSeek() {
 			audio.currentTime = startMs / 1000;
-			console.log('currentTime set to:', audio.currentTime, 'expected:', startMs / 1000);
 			if (Math.abs(audio.currentTime - startMs / 1000) > 0.5) {
-				console.log('seek failed, retrying...');
 				setTimeout(attemptSeek, 200);
 			}
 		}
@@ -180,15 +189,16 @@ export async function playWordAudio(props) {
 	}
 
 	if (currentChapter !== wordChapter) {
+		// New chapter — update the src and wait for the file to be ready before seeking
 		currentChapter = wordChapter;
 		audio.src = `${mergedWordsAudioURL}/${wordChapter}/${wordChapter}.mp3`;
 		audio.oncanplay = function () {
-			console.log('oncanplay fired, currentTime:', audio.currentTime);
 			audio.oncanplay = null;
 			playFromTimestamp();
 		};
 		audio.load();
 	} else {
+		// Same chapter already loaded — seek and play directly
 		playFromTimestamp();
 	}
 
