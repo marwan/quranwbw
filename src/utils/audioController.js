@@ -113,6 +113,9 @@ export async function playWordAudio(props) {
 
 	resetAudioSettings();
 
+	// trim end of each word to avoid bleed into the next
+	const wordAudioEndBufferMs = 100;
+
 	const mergedWordsAudioURL = 'https://marwan.github.io/quranwbw-word-audios-merged/audios';
 
 	const audioSettings = get(__audioSettings);
@@ -142,7 +145,7 @@ export async function playWordAudio(props) {
 
 			// Poll playback position and stop exactly at the word's end timestamp
 			audio.ontimeupdate = function () {
-				if (audio.currentTime >= endMs / 1000) {
+				if (audio.currentTime >= (endMs - wordAudioEndBufferMs) / 1000) {
 					audio.ontimeupdate = null;
 					audio.pause();
 
