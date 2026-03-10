@@ -116,7 +116,7 @@ export async function playWordAudio(props) {
 	// trim end of each word to avoid bleed into the next
 	const wordAudioEndBufferMs = 100;
 
-	const mergedWordsAudioURL = 'https://marwan.github.io/quranwbw-word-audios-merged/audios';
+	const mergedWordsAudioURL = 'https://word-audios.quranwbw.com/audios';
 
 	const audioSettings = get(__audioSettings);
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
