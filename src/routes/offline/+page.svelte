@@ -17,14 +17,15 @@
 	import { getMushafWordFontLink, isIOSorMac } from '$utils/getMushafWordFontLink';
 	import { term } from '$utils/terminologies';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
-	import { clearDexieTable } from '$utils/dexie';
+	import { clearDexieTable, cacheTableMap } from '$utils/dexie';
+	import { unzipSync } from 'fflate';
 
 	// Common messages
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
 	const mismatchMessage = 'Settings changed. Re-download to ensure offline access works correctly.';
 
 	// Chapter and Quran pages count
-	const totalChapters = 114;
+	const totalChapters = 3;
 	const totalPages = 604;
 
 	// Track download state
@@ -35,6 +36,7 @@
 	let isDownloadingMushaf = false;
 	let isDownloadingMorphology = false;
 	let isDownloadingTafsir = false;
+	let isDownloadingWordAudio = false;
 	let showAdvancedDownloadOptions = false;
 	let downloadProgressPercentage = 0;
 
@@ -45,6 +47,7 @@
 	ensureOfflineSettingsStructure('mushafData');
 	ensureOfflineSettingsStructure('morphologyData');
 	ensureOfflineSettingsStructure('tafsirData');
+	ensureOfflineSettingsStructure('wordAudioData');
 	ensureOfflineSettingsStructure('downloadedDataSettings', {
 		fontTypes: [],
 		wordTranslations: [],
@@ -63,6 +66,7 @@
 	$: isMushafDataDownloaded = offlineModeSettings?.mushafData?.downloaded ?? false;
 	$: isMorphologyDataDownloaded = offlineModeSettings?.morphologyData?.downloaded ?? false;
 	$: isTafsirDataDownloaded = offlineModeSettings?.tafsirData?.downloaded ?? false;
+	$: isWordAudioDataDownloaded = offlineModeSettings?.wordAudioData?.downloaded ?? false;
 
 	// Check if any offline data has been downloaded
 	$: hasAnyOfflineData = isServiceWorkerRegistered || isChapterDataDownloaded || isJuzDataDownloaded || isMushafDataDownloaded || isMorphologyDataDownloaded || isTafsirDataDownloaded;
@@ -71,7 +75,7 @@
 	$: if (hasAnyOfflineData) showAdvancedDownloadOptions = true;
 
 	// Track if ANY download is in progress
-	$: isDownloading = isRegistering || isDownloadingEssential || isDownloadingChapter || isDownloadingJuz || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir;
+	$: isDownloading = isRegistering || isDownloadingEssential || isDownloadingChapter || isDownloadingJuz || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir || isDownloadingWordAudio;
 
 	// Check for specific data type mismatches (reactive to all relevant stores)
 	$: mismatchStatus = getOfflineSettingsMismatch($__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir, $__offlineModeSettings);
@@ -143,6 +147,18 @@
 			onDownload: handleDownloadTafsirData,
 			onDelete: () => handleDeleteSpecificData('tafsir_data', 'tafsirData'),
 			onRedownload: () => handleRedownloadData('tafsirData')
+		},
+		{
+			id: 'wordAudioData',
+			title: 'Word Audio Data',
+			dataSizeInMB: 400,
+			description: `These files allow you to listen to word-by-word audio for all 114 ${term('chapters')} offline.`,
+			isDataDownloaded: isWordAudioDataDownloaded,
+			isDownloading: isDownloadingWordAudio,
+			showMismatchBanner: false,
+			onDownload: handleDownloadWordAudioData,
+			onDelete: () => handleDeleteWordAudioData(),
+			onRedownload: () => handleRedownloadData('wordAudioData')
 		}
 	];
 
@@ -545,6 +561,11 @@
 					await handleDownloadTafsirData();
 					break;
 
+				case 'wordAudioData':
+					await handleDeleteWordAudioData();
+					await handleDownloadWordAudioData();
+					break;
+
 				case 'essentialData':
 					await handleDeleteEssentialData();
 					await handleDownloadEssentialData();
@@ -827,6 +848,97 @@
 		}
 	}
 
+	// Downloads word-by-word audio for all 114 chapters by fetching per-chapter ZIP files,
+	// extracting them, and storing each audio blob in the Dexie `word_audios` table.
+	async function handleDownloadWordAudioData() {
+		if (!(await checkOnlineAndAlert())) return;
+
+		isDownloadingWordAudio = true;
+		downloadProgressPercentage = 0;
+
+		ensureOfflineSettingsStructure('wordAudioData', {
+			downloaded: false,
+			downloadedAt: null
+		});
+
+		try {
+			const table = cacheTableMap.word_audios;
+			const totalStepsInDownloadProgress = totalChapters;
+			let completedStepsInDownloadProgress = 0;
+
+			for (let chapter = 1; chapter <= totalChapters; chapter++) {
+				// 1. Download ZIP for chapter
+				const zipUrl = `https://word-audios.quranwbw.com/zips/${chapter}.zip`;
+				const response = await fetch(zipUrl);
+
+				if (!response.ok) throw new Error(`Failed to download ZIP: ${zipUrl}`);
+
+				const zipBuffer = await response.arrayBuffer();
+
+				// 2. Extract ZIP contents
+				const files = unzipSync(new Uint8Array(zipBuffer));
+				const entries = Object.entries(files);
+
+				// 3. Store audio blobs in Dexie in batches of 50 for performance
+				let batch = [];
+
+				for (const [filename, data] of entries) {
+					batch.push({
+						key: `/${chapter}/${filename}`, // unique key per audio file
+						chapter: Number(chapter), // indexed for fast chapter lookups
+						audio: new Blob([data], { type: 'audio/mpeg' })
+					});
+
+					if (batch.length === 50) {
+						await table.bulkPut(batch);
+						batch = [];
+					}
+				}
+
+				// Flush any remaining files in the last partial batch
+				if (batch.length > 0) await table.bulkPut(batch);
+
+				// 4. Update progress after each chapter
+				completedStepsInDownloadProgress++;
+				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+			}
+
+			updateOfflineSettingsStructure('wordAudioData', {
+				downloaded: true,
+				downloadedAt: new Date().toISOString()
+			});
+
+			window.umami?.track('Word Audio Data Download');
+		} catch (error) {
+			console.warn(error);
+			showAlert(errorAlertMessage, '');
+		} finally {
+			isDownloadingWordAudio = false;
+			downloadProgressPercentage = 100;
+		}
+	}
+
+	// Delete all word audio data from Dexie
+	async function handleDeleteWordAudioData() {
+		try {
+			await clearDexieTable('word_audios');
+
+			updateOfflineSettingsStructure('wordAudioData', {
+				downloaded: false,
+				downloadedAt: null
+			});
+
+			await clearDownloadedDataSettingsIfNoOfflineData();
+
+			updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
+
+			window.umami?.track('Word Audio Data Delete');
+		} catch (error) {
+			console.warn(error);
+			showAlert(errorAlertMessage, '');
+		}
+	}
+
 	// Download and cache all essential CDN static data files
 	async function downloadAllCdnStaticData() {
 		try {
@@ -866,6 +978,16 @@
 		} catch (error) {
 			console.warn(error);
 			throw error;
+		}
+	}
+
+	//  Returns how many word-audio rows are cached for a chapter
+	export async function getCachedWordAudioCount(chapter) {
+		try {
+			return await cacheTableMap.word_audios.where('chapter').equals(Number(chapter)).count();
+		} catch (err) {
+			console.error('Failed to count cached word audios:', err);
+			return 0;
 		}
 	}
 

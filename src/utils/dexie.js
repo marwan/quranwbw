@@ -7,6 +7,7 @@ db.version(1).stores({
 	verse_translation_data: 'key',
 	morphology_data: 'key',
 	tafsir_data: 'key',
+	word_audios: 'key,chapter',
 	other_data: 'key'
 });
 
@@ -15,6 +16,7 @@ export const cacheTableMap = {
 	translation: db.verse_translation_data,
 	morphology: db.morphology_data,
 	tafsir: db.tafsir_data,
+	word_audios: db.word_audios,
 	other: db.other_data
 };
 

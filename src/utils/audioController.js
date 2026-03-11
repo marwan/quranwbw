@@ -5,6 +5,7 @@ import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+import { cacheTableMap } from '$utils/dexie';
 
 // Getting the audio element
 let audio = document.querySelector('#player');
@@ -114,15 +115,51 @@ export async function playWordAudio(props) {
 
 	const audioSettings = get(__audioSettings);
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
-	const currentWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber).padStart(3, '0')}.mp3`;
-	const nextWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
+
+	const paddedChapter = String(wordChapter).padStart(3, '0');
+	const paddedVerse = String(wordVerse).padStart(3, '0');
+	const paddedWord = String(wordNumber).padStart(3, '0');
+
+	const fileName = `${paddedChapter}_${paddedVerse}_${paddedWord}.mp3`;
+	const currentWordPath = `${wordChapter}/${fileName}`;
+	const nextWordPath = `${wordChapter}/${paddedChapter}_${paddedVerse}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
+
 	const currentAudioType = audioSettings.audioType;
 
-	// Prefetch the next word audio
-	fetch(`${wordsAudioURL}/${nextWordFileName}?version=2`);
+	/* ------------------------------------
+	   1. Offline-first: check Dexie
+	-------------------------------------*/
+	let audioSrc = null;
 
-	audio.src = `${wordsAudioURL}/${currentWordFileName}?version=2`;
+	try {
+		const record = await cacheTableMap.word_audios.get(`/${wordChapter}/${fileName}`);
+		if (record?.audio) {
+			console.log('FOUND: word audio found in cache, returning it...');
+			audioSrc = URL.createObjectURL(record.audio);
+		}
+	} catch (e) {
+		console.warn('Offline audio lookup failed, falling back to network', e);
+	}
+
+	/* ------------------------------------
+	   2. Fallback to network if needed
+	-------------------------------------*/
+	if (!audioSrc) {
+		console.log('NOT FOUND: word audio not found in cache, checking cdn...');
+		audioSrc = `${wordsAudioURL}/${currentWordPath}?version=2`;
+	}
+
+	/* ------------------------------------
+	   3. Prefetch next word (network only)
+	-------------------------------------*/
+	// fetch(`${wordsAudioURL}/${nextWordPath}?version=2`);
+
+	/* ------------------------------------
+	   4. Play audio
+	-------------------------------------*/
+	audio.src = audioSrc;
 	audio.currentTime = 0;
+
 	audio.load();
 	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
 	audio.play();
@@ -136,9 +173,15 @@ export async function playWordAudio(props) {
 	console.log('playing word', '-', audioSettings.playingWordKey);
 
 	audio.onended = function () {
+		// Cleanup object URL if offline audio was used
+		if (audioSrc.startsWith('blob:')) {
+			URL.revokeObjectURL(audioSrc);
+		}
+
 		if (props.playAllWords && wordNumber < getWordsInVerse(audioSettings.playingKey)) {
 			return playWordAudio({ key: `${wordChapter}:${wordVerse}:${wordNumber + 1}`, playAllWords: true });
 		}
+
 		resetAudioSettings({ location: 'end' });
 		audioSettings.audioType = currentAudioType;
 	};

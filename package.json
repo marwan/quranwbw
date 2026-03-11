@@ -40,6 +40,7 @@
 		"@tailwindcss/typography": "^0.5.16",
 		"dexie": "^4.0.11",
 		"dotenv": "^17.2.1",
+		"fflate": "^0.8.2",
 		"marked": "^15.0.6",
 		"party-js": "^2.2.0",
 		"svelte-inview": "^4.0.2",
