@@ -130,7 +130,6 @@ export async function playWordAudio(props) {
 	try {
 		const record = await cacheTableMap.word_audios.get(`/${wordChapter}/${fileName}`);
 		if (record?.audio) {
-			console.log('FOUND: word audio found in cache, returning it...');
 			audioSrc = URL.createObjectURL(record.audio);
 		}
 	} catch (error) {
@@ -139,7 +138,6 @@ export async function playWordAudio(props) {
 
 	// 2. Fallback to network if needed
 	if (!audioSrc) {
-		console.log('NOT FOUND: word audio not found in cache, checking cdn...');
 		audioSrc = `${wordsAudioURL}/${currentWordPath}?version=${wordAudioVersion}`;
 	}
 
@@ -162,7 +160,7 @@ export async function playWordAudio(props) {
 	audioSettings.playingWordKey = `${props.key}`;
 
 	// For debugging purposes, needs not be removed
-	console.log('playing word', '-', audioSettings.playingWordKey);
+	console.log(`Playing word: ${audioSettings.playingWordKey}`);
 
 	audio.onended = function () {
 		// Cleanup object URL if offline audio was used
