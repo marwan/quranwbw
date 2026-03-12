@@ -115,48 +115,40 @@ export async function playWordAudio(props) {
 
 	const audioSettings = get(__audioSettings);
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
-
 	const paddedChapter = String(wordChapter).padStart(3, '0');
 	const paddedVerse = String(wordVerse).padStart(3, '0');
 	const paddedWord = String(wordNumber).padStart(3, '0');
-
 	const fileName = `${paddedChapter}_${paddedVerse}_${paddedWord}.mp3`;
 	const currentWordPath = `${wordChapter}/${fileName}`;
 	const nextWordPath = `${wordChapter}/${paddedChapter}_${paddedVerse}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
-
 	const currentAudioType = audioSettings.audioType;
+	const wordAudioVersion = 2;
 
-	/* ------------------------------------
-	   1. Offline-first: check Dexie
-	-------------------------------------*/
 	let audioSrc = null;
 
+	// 1. Offline-first: check Dexie
 	try {
 		const record = await cacheTableMap.word_audios.get(`/${wordChapter}/${fileName}`);
 		if (record?.audio) {
 			console.log('FOUND: word audio found in cache, returning it...');
 			audioSrc = URL.createObjectURL(record.audio);
 		}
-	} catch (e) {
-		console.warn('Offline audio lookup failed, falling back to network', e);
+	} catch (error) {
+		console.warn('Offline audio lookup failed, falling back to network', error);
 	}
 
-	/* ------------------------------------
-	   2. Fallback to network if needed
-	-------------------------------------*/
+	// 2. Fallback to network if needed
 	if (!audioSrc) {
 		console.log('NOT FOUND: word audio not found in cache, checking cdn...');
-		audioSrc = `${wordsAudioURL}/${currentWordPath}?version=2`;
+		audioSrc = `${wordsAudioURL}/${currentWordPath}?version=${wordAudioVersion}`;
 	}
 
-	/* ------------------------------------
-	   3. Prefetch next word (network only)
-	-------------------------------------*/
-	// fetch(`${wordsAudioURL}/${nextWordPath}?version=2`);
+	// 3. Prefetch next word if playAllWords is true (network only)
+	if (props.playAllWords) {
+		fetch(`${wordsAudioURL}/${nextWordPath}?version=${wordAudioVersion}`);
+	}
 
-	/* ------------------------------------
-	   4. Play audio
-	-------------------------------------*/
+	// 4. Play audio
 	audio.src = audioSrc;
 	audio.currentTime = 0;
 
