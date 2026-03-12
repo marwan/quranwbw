@@ -165,15 +165,7 @@
 
 						<!-- Buttons -->
 						<div class="pt-4 flex flex-row justify-center space-x-2 text-xs">
-							<button
-								class={buttonClasses}
-								on:click={() =>
-									wordAudioController({
-										key: allData.wordSummaryData.key,
-										chapter: chapter,
-										verse: verse
-									})}>Play Word</button
-							>
+							<button class={buttonClasses} on:click={() => wordAudioController({ key: $__morphologyKey })}>Play Word</button>
 
 							<!-- Show the "goto verse" button if the user in on morphology page -->
 							{#if isMorphologyPage}
