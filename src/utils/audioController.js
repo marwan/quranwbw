@@ -208,16 +208,18 @@ export function showAudioModal(key) {
 export async function wordAudioController(props) {
 	const audioSettings = get(__audioSettings);
 	const reciter = selectableReciters[get(__reciter)];
+	const chapter = +props.key.split(':')[0];
+	const verse = +props.key.split(':')[1];
 
 	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && reciter.wbw) {
 		const timestampData = await fetchTimestampData();
-		const verseTimestamp = timestampData.data[props.chapter][props.verse][reciter.id];
+		const verseTimestamp = timestampData.data[chapter][verse][reciter.id];
 		const wordTimestamp = verseTimestamp.split('|')[props.key.split(':')[2]];
 
 		return (audio.currentTime = wordTimestamp);
 	}
 
-	props.type === 'end' ? showAudioModal(`${props.chapter}:${props.verse}`) : playWordAudio({ key: props.key });
+	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key });
 }
 
 // Highlight words during audio playback based on timestamps
