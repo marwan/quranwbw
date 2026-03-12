@@ -19,6 +19,7 @@
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { clearDexieTable, cacheTableMap } from '$utils/dexie';
 	import { unzipSync } from 'fflate';
+	import { quranMetaData } from '$data/quranMeta';
 
 	// Common messages
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
@@ -151,7 +152,7 @@
 		{
 			id: 'wordAudioData',
 			title: 'Word Audio Data',
-			dataSizeInMB: 400,
+			dataSizeInMB: 450,
 			description: `These files allow you to listen to word-by-word audio for all 114 ${term('chapters')} offline.`,
 			isDataDownloaded: isWordAudioDataDownloaded,
 			isDownloading: isDownloadingWordAudio,
@@ -850,6 +851,8 @@
 
 	// Downloads word-by-word audio for all 114 chapters by fetching per-chapter ZIP files,
 	// extracting them, and storing each audio blob in the Dexie `word_audios` table.
+	// After each chapter, verifies the saved count matches expected word count from quranMetaData.
+	// On any mismatch, rolls back all saved data and alerts the user.
 	async function handleDownloadWordAudioData() {
 		if (!(await checkOnlineAndAlert())) return;
 
@@ -898,7 +901,27 @@
 				// Flush any remaining files in the last partial batch
 				if (batch.length > 0) await table.bulkPut(batch);
 
-				// 4. Update progress after each chapter
+				// 4. Verify saved count matches expected word count for chapter
+				const savedCount = await table.where('chapter').equals(Number(chapter)).count();
+				const expectedCount = quranMetaData[chapter].words;
+
+				if (savedCount !== expectedCount) {
+					console.warn(`Chapter ${chapter}: expected ${expectedCount} words but saved ${savedCount}. Rolling back all word audio data.`);
+
+					// Rollback: delete all saved word audio rows
+					await clearDexieTable('word_audios');
+
+					// Reset offline settings for word audio
+					updateOfflineSettingsStructure('wordAudioData', {
+						downloaded: false,
+						downloadedAt: null
+					});
+
+					showAlert(errorAlertMessage, '');
+					return;
+				}
+
+				// 5. Update progress after each successfully verified chapter
 				completedStepsInDownloadProgress++;
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			}
@@ -911,6 +934,14 @@
 			window.umami?.track('Word Audio Data Download');
 		} catch (error) {
 			console.warn(error);
+
+			// Rollback on any unexpected error too
+			await clearDexieTable('word_audios');
+			updateOfflineSettingsStructure('wordAudioData', {
+				downloaded: false,
+				downloadedAt: null
+			});
+
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingWordAudio = false;
