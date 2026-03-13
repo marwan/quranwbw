@@ -114,21 +114,24 @@ export async function playWordAudio(props) {
 	resetAudioSettings();
 
 	const audioSettings = get(__audioSettings);
+	const currentAudioType = audioSettings.audioType;
+	const wordAudioVersion = 2;
+
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
 	const paddedChapter = String(wordChapter).padStart(3, '0');
 	const paddedVerse = String(wordVerse).padStart(3, '0');
-	const paddedWord = String(wordNumber).padStart(3, '0');
-	const fileName = `${paddedChapter}_${paddedVerse}_${paddedWord}.mp3`;
-	const currentWordPath = `${wordChapter}/${fileName}`;
-	const nextWordPath = `${wordChapter}/${paddedChapter}_${paddedVerse}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
-	const currentAudioType = audioSettings.audioType;
-	const wordAudioVersion = 2;
+
+	const currentFileName = `${paddedChapter}_${paddedVerse}_${String(wordNumber).padStart(3, '0')}.mp3`;
+	const currentWordPath = `${wordChapter}/${currentFileName}`;
+
+	const nextFileName = `${paddedChapter}_${paddedVerse}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
+	const nextWordPath = `${wordChapter}/${nextFileName}`;
 
 	let audioSrc = null;
 
 	// 1. Offline-first: check Dexie
 	try {
-		const record = await cacheTableMap.word_audios.get(`/${wordChapter}/${fileName}`);
+		const record = await cacheTableMap.word_audios.get(`/${wordChapter}/${currentFileName}`);
 		if (record?.audio) {
 			audioSrc = URL.createObjectURL(record.audio);
 		}
@@ -143,7 +146,20 @@ export async function playWordAudio(props) {
 
 	// 3. Prefetch next word if playAllWords is true (network only)
 	if (props.playAllWords) {
-		fetch(`${wordsAudioURL}/${nextWordPath}?version=${wordAudioVersion}`);
+		let nextWordInDexie = false;
+
+		// Offline-first: check Dexie
+		try {
+			const nextRecord = await cacheTableMap.word_audios.get(`/${wordChapter}/${nextFileName}`);
+			nextWordInDexie = !!nextRecord?.audio;
+		} catch (error) {
+			console.warn('Offline next-word lookup failed', error);
+		}
+
+		// Fallback to network if needed
+		if (!nextWordInDexie) {
+			fetch(`${wordsAudioURL}/${nextWordPath}?version=${wordAudioVersion}`);
+		}
 	}
 
 	// 4. Play audio
