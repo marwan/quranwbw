@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { quranMetaData } from '$data/quranMeta';
 import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __keysToFetch, __displayType, __verseWordBlocks } from '$utils/stores';
-import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
+import { staticEndpoint, wordAudioDirectoryMap } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
@@ -118,10 +118,13 @@ export async function playWordAudio(props) {
 	const nextWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
 	const currentAudioType = audioSettings.audioType;
 
-	// Prefetch the next word audio
-	fetch(`${wordsAudioURL}/${nextWordFileName}?version=2`);
+	// Resolve the CDN host URL based on the chapter's directory range
+	const baseURL = `https://word-audios-${wordAudioDirectoryMap.find(({ upTo }) => wordChapter <= upTo).directory}.quranwbw.com`;
 
-	audio.src = `${wordsAudioURL}/${currentWordFileName}?version=2`;
+	// Prefetch the next word audio
+	fetch(`${baseURL}/${nextWordFileName}?version=1`);
+
+	audio.src = `${baseURL}/${currentWordFileName}?version=1`;
 	audio.currentTime = 0;
 	audio.load();
 	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
