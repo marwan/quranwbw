@@ -865,58 +865,53 @@
 		});
 
 		try {
+			const zipFilesDir = `${staticEndpoint}/word-audio-zips`;
 			const table = cacheTableMap.word_audios;
 			const totalStepsInDownloadProgress = totalChapters;
 			let completedStepsInDownloadProgress = 0;
 
 			for (let chapter = 1; chapter <= totalChapters; chapter++) {
-				// 1. Download ZIP for chapter
-				const zipUrl = `https://word-audios.quranwbw.com/zips/${chapter}.zip`;
-				const response = await fetch(zipUrl);
+				// 1. Determine ZIP URLs for chapter (chapter 2 is split into two ZIPs)
+				const zipUrls = chapter === 2 ? [`${zipFilesDir}/2-1.zip`, `${zipFilesDir}/2-2.zip`] : [`${zipFilesDir}/${chapter}.zip`];
 
-				if (!response.ok) throw new Error(`Failed to download ZIP: ${zipUrl}`);
+				// 2. Download, extract, and store all ZIPs for this chapter
+				for (const zipUrl of zipUrls) {
+					const response = await fetch(zipUrl);
 
-				const zipBuffer = await response.arrayBuffer();
+					if (!response.ok) throw new Error(`Failed to download ZIP: ${zipUrl}`);
 
-				// 2. Extract ZIP contents
-				const files = unzipSync(new Uint8Array(zipBuffer));
-				const entries = Object.entries(files);
+					const files = unzipSync(new Uint8Array(await response.arrayBuffer()));
+					const entries = Object.entries(files);
 
-				// 3. Store audio blobs in Dexie in batches of 50 for performance
-				let batch = [];
+					// 3. Store audio blobs in Dexie in batches of 50 for performance
+					let batch = [];
 
-				for (const [filename, data] of entries) {
-					batch.push({
-						key: `/${chapter}/${filename}`, // unique key per audio file
-						chapter: Number(chapter), // indexed for fast chapter lookups
-						audio: new Blob([data], { type: 'audio/mpeg' })
-					});
+					for (const [filename, data] of entries) {
+						batch.push({
+							key: `/${chapter}/${filename}`, // unique key per audio file
+							chapter: Number(chapter), // indexed for fast chapter lookups
+							audio: new Blob([data], { type: 'audio/mpeg' })
+						});
 
-					if (batch.length === 50) {
-						await table.bulkPut(batch);
-						batch = [];
+						if (batch.length === 50) {
+							await table.bulkPut(batch);
+							batch = [];
+						}
 					}
+
+					// Flush any remaining files in the last partial batch
+					if (batch.length > 0) await table.bulkPut(batch);
 				}
 
-				// Flush any remaining files in the last partial batch
-				if (batch.length > 0) await table.bulkPut(batch);
-
-				// 4. Verify saved count matches expected word count for chapter
+				// 4. Verify total saved count across all ZIPs matches expected word count for chapter
 				const savedCount = await table.where('chapter').equals(Number(chapter)).count();
 				const expectedCount = quranMetaData[chapter].words;
 
 				if (savedCount !== expectedCount) {
 					console.warn(`Chapter ${chapter}: expected ${expectedCount} words but saved ${savedCount}. Rolling back all word audio data.`);
 
-					// Rollback: delete all saved word audio rows
 					await clearDexieTable('word_audios');
-
-					// Reset offline settings for word audio
-					updateOfflineSettingsStructure('wordAudioData', {
-						downloaded: false,
-						downloadedAt: null
-					});
-
+					updateOfflineSettingsStructure('wordAudioData', { downloaded: false, downloadedAt: null });
 					showAlert(errorAlertMessage, '');
 					return;
 				}
