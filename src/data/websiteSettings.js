@@ -8,8 +8,6 @@ export const wbwLanguages = 'English, Urdu, Hindi, Indonesian, Bangla, Turkish, 
 
 export const staticEndpoint = 'https://static.quranwbw.com/data/v4';
 
-export const wordsAudioURL = 'https://audios.quranwbw.com/words';
-
 export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4`;
 
 export const chapterHeaderFontLink = `${staticEndpoint}/fonts/Extras/chapter-headers/NeoHeader_COLOR-Regular.woff2?version=12`;
@@ -57,3 +55,12 @@ export const tafsirDataUrls = {
 	1: 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir',
 	2: 'https://static.quranwbw.com/data/v4/tafsirs'
 };
+
+// CDN is split across 5 hosts by chapter range to distribute load
+export const wordAudioDirectoryMap = [
+	{ upTo: 5, directory: 1 },
+	{ upTo: 15, directory: 2 },
+	{ upTo: 30, directory: 3 },
+	{ upTo: 60, directory: 4 },
+	{ upTo: 114, directory: 5 }
+];
