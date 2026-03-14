@@ -70,14 +70,9 @@ The application will typically be accessible at `http://localhost:5173`.
 
 #### Styling with Tailwind CSS
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling. If you make any changes to styles (especially within `.html`, `.svelte` files, or the Tailwind configuration), you’ll need to regenerate the CSS by running:
+This project uses [Tailwind CSS](https://tailwindcss.com/) for styling. All styles are compiled automatically during development and production builds.
 
-```bash
-# Build and regenerate Tailwind CSS
-npm run css
-```
-
-This command will build the updated CSS file, minify it for production, and also live monitor for any further CSS changes so they are compiled automatically.
+You can freely make changes, and Tailwind configuration files without manually rebuilding the CSS — the build system handles compilation, minification, and updates for you behind the scenes.
 
 #### Deployment
 
