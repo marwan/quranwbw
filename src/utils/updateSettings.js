@@ -27,10 +27,10 @@ import {
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__offlineModeSettings
+	__offlineModeSettings,
+	__homepageLayoutPreferences
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
@@ -279,12 +279,6 @@ export function updateSettings(props) {
 			userSettings.displaySettings.wordMorphologyOnClick = props.value;
 			break;
 
-		// for homepage's extras panel
-		case 'homepageExtrasPanelVisible':
-			__homepageExtrasPanelVisible.set(props.value);
-			userSettings.displaySettings.homepageExtrasPanelVisible = props.value;
-			break;
-
 		// for toggling website wide layout
 		case 'wideWesbiteLayoutEnabled':
 			__wideWesbiteLayoutEnabled.set(props.value);
@@ -301,6 +295,12 @@ export function updateSettings(props) {
 		case 'offlineModeSettings':
 			__offlineModeSettings.set(props.value);
 			userSettings.offlineModeSettings = props.value;
+			break;
+
+		// for homepage layout preferences
+		case 'homepageLayoutPreferences':
+			__homepageLayoutPreferences.set(props.value);
+			userSettings.displaySettings.homepageLayoutPreferences = props.value;
 			break;
 
 		// for increasing/decreasing font sizes
