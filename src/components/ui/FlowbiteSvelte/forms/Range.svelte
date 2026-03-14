@@ -27,29 +27,38 @@
 	}
 
 	/**
-	 * Intercepts mousedown on the range input to prevent the browser's default
-	 * "click-to-jump" behaviour, where clicking anywhere on the track instantly
-	 * moves the thumb to that position.
-	 *
-	 * Instead, we only allow the interaction if the click landed within a small
-	 * threshold radius around the current thumb position — i.e. the user must
-	 * click directly on the thumb to drag it.
+	 * Shared logic to check whether a given clientX position is close enough
+	 * to the thumb. If not, prevents the default behaviour (track jump).
 	 */
-	function onMouseDown(e) {
-		const thumbX = getThumbPosition(e.currentTarget);
-		const clickX = e.clientX;
+	function blockIfNotOnThumb(el, clientX, e) {
+		const thumbX = getThumbPosition(el);
 		const threshold = 16; // px — tune this if drag initiation feels too fussy
 
-		if (Math.abs(clickX - thumbX) > threshold) {
-			// Click was on the track, not the thumb — block the jump
+		if (Math.abs(clientX - thumbX) > threshold) {
+			// Click/touch was on the track, not the thumb — block the jump
 			e.preventDefault();
 		}
-		// Click was on/near the thumb — allow default drag behaviour to proceed
+		// Click/touch was on/near the thumb — allow default drag behaviour to proceed
+	}
+
+	/**
+	 * Intercepts mousedown (desktop) to prevent click-to-jump on the track.
+	 */
+	function onMouseDown(e) {
+		blockIfNotOnThumb(e.currentTarget, e.clientX, e);
+	}
+
+	/**
+	 * Intercepts touchstart (mobile) to prevent tap-to-jump on the track.
+	 * Uses the first touch point's clientX.
+	 */
+	function onTouchStart(e) {
+		blockIfNotOnThumb(e.currentTarget, e.touches[0].clientX, e);
 	}
 </script>
 
 <!-- 
 	Range input with drag-only interaction.
-	Clicking the track is disabled; only dragging the thumb changes the value.
+	Clicking/tapping the track is disabled; only dragging the thumb changes the value.
 -->
-<input type="range" bind:value {...$$restProps} class={inputClass} on:mousedown={onMouseDown} on:change on:click on:keydown on:keypress on:keyup />
+<input type="range" bind:value {...$$restProps} class={inputClass} on:mousedown={onMouseDown} on:touchstart={onTouchStart} on:change on:click on:keydown on:keypress on:keyup />
