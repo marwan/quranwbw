@@ -117,14 +117,15 @@ export async function playWordAudio(props) {
 	const currentWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber).padStart(3, '0')}.mp3`;
 	const nextWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
 	const currentAudioType = audioSettings.audioType;
+	const audioVersion = 2;
 
 	// Resolve the CDN host URL based on the chapter's directory range
 	const baseURL = `https://word-audios-${wordAudioDirectoryMap.find(({ upTo }) => wordChapter <= upTo).directory}.quranwbw.com`;
 
 	// Prefetch the next word audio
-	fetch(`${baseURL}/${nextWordFileName}?version=1`);
+	fetch(`${baseURL}/${nextWordFileName}?version=${audioVersion}`);
 
-	audio.src = `${baseURL}/${currentWordFileName}?version=1`;
+	audio.src = `${baseURL}/${currentWordFileName}?version=${audioVersion}}`;
 	audio.currentTime = 0;
 	audio.load();
 	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
