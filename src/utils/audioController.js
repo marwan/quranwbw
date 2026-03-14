@@ -38,6 +38,12 @@ export function pauseOrResumeAudio() {
 		audio.pause();
 		audioSettings.audioIsPaused = true;
 		audioSettings.isPlaying = false;
+
+		// Clear word highlighting when paused
+		audioSettings.playingWordKey = null;
+		document.querySelectorAll('.word').forEach((element) => {
+			element.classList.remove('bg-black/5');
+		});
 	} else {
 		audio.play();
 		audioSettings.audioIsPaused = false;
@@ -51,95 +57,65 @@ export function pauseOrResumeAudio() {
 export function playPreviousVerse() {
 	const audioSettings = get(__audioSettings);
 
-	// Only works when verse audio is playing
-	if (!audioSettings.isPlaying || audioSettings.audioType !== 'verse') return;
+	if ((!audioSettings.isPlaying && !audioSettings.audioIsPaused) || audioSettings.audioType !== 'verse') return;
 
 	if (!window.versesToPlayArray || window.versesToPlayArray.length === 0) return;
 
 	const currentIndex = window.versesToPlayArray.indexOf(audioSettings.playingKey);
 
-	// If we're at the first verse or not found, do nothing
 	if (currentIndex <= 0) {
 		console.log('Already at the first verse');
 		return;
 	}
 
 	const previousKey = window.versesToPlayArray[currentIndex - 1];
-	const [prevChapter] = previousKey.split(':').map(Number);
-	const [currentChapter] = audioSettings.playingKey.split(':').map(Number);
 
-	// If switching chapters, we need to reload the audio file
-	if (prevChapter !== currentChapter) {
-		// Remove current verse tracking listeners temporarily
-		audio.ontimeupdate = null;
-		audio.removeEventListener('timeupdate', wordHighlighter);
-
-		// Play the previous verse (will load new chapter if needed)
-		playVerseAudio({
-			key: previousKey,
-			timesToRepeat: audioSettings.timesToRepeat || 1,
-			language: audioSettings.language || 'arabic'
-		});
-	} else {
-		// Same chapter - seamless transition
-		playVerseAudio({
-			key: previousKey,
-			timesToRepeat: audioSettings.timesToRepeat || 1,
-			language: audioSettings.language || 'arabic'
-		});
-	}
+	playVerseAudio({
+		key: previousKey,
+		timesToRepeat: audioSettings.timesToRepeat || 1,
+		language: audioSettings.language || 'arabic',
+		manualSeek: true // ← NEW: indicates user clicked prev/next
+	});
 }
 
 // Play the next verse in the versesToPlayArray
 export function playNextVerse() {
 	const audioSettings = get(__audioSettings);
 
-	// Only works when verse audio is playing
-	if (!audioSettings.isPlaying || audioSettings.audioType !== 'verse') return;
+	if ((!audioSettings.isPlaying && !audioSettings.audioIsPaused) || audioSettings.audioType !== 'verse') return;
 
 	if (!window.versesToPlayArray || window.versesToPlayArray.length === 0) return;
 
 	const currentIndex = window.versesToPlayArray.indexOf(audioSettings.playingKey);
 
-	// If we're at the last verse or not found, do nothing
 	if (currentIndex === -1 || currentIndex >= window.versesToPlayArray.length - 1) {
 		console.log('Already at the last verse');
 		return;
 	}
 
 	const nextKey = window.versesToPlayArray[currentIndex + 1];
-	const [nextChapter] = nextKey.split(':').map(Number);
-	const [currentChapter] = audioSettings.playingKey.split(':').map(Number);
 
-	// If switching chapters, we need to reload the audio file
-	if (nextChapter !== currentChapter) {
-		// Remove current verse tracking listeners temporarily
-		audio.ontimeupdate = null;
-		audio.removeEventListener('timeupdate', wordHighlighter);
-
-		// Play the next verse (will load new chapter if needed)
-		playVerseAudio({
-			key: nextKey,
-			timesToRepeat: audioSettings.timesToRepeat || 1,
-			language: audioSettings.language || 'arabic'
-		});
-	} else {
-		// Same chapter - seamless transition
-		playVerseAudio({
-			key: nextKey,
-			timesToRepeat: audioSettings.timesToRepeat || 1,
-			language: audioSettings.language || 'arabic'
-		});
-	}
+	playVerseAudio({
+		key: nextKey,
+		timesToRepeat: audioSettings.timesToRepeat || 1,
+		language: audioSettings.language || 'arabic',
+		manualSeek: true // ← NEW: indicates user clicked prev/next
+	});
 }
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
+	console.log('🎵 playVerseAudio called with:', props.key);
+
 	const audioSettings = get(__audioSettings);
 	const [playChapter, playVerse] = props.key.split(':').map(Number);
 	let playBoth = false;
 
 	const isSeamlessContinuation = props.language === 'arabic' && isConsecutiveArabicVerse(props.key);
+	console.log('🔄 isSeamlessContinuation:', isSeamlessContinuation);
+	console.log('🎧 Current audio.src:', audio.src);
+	console.log('⏱️ Current audio.currentTime:', audio.currentTime);
+
 	if (!isSeamlessContinuation) resetAudioSettings();
 
 	// Default language to Arabic
@@ -185,8 +161,11 @@ export async function playVerseAudio(props) {
 			audio.currentTime = verseTiming.timestamp_from / 1000;
 		}
 
-		// Only seek if not a seamless continuation or resuming from pause
-		if (!isSeamlessContinuation && !wasPaused) {
+		// Seek to verse timestamp if:
+		// - Manual navigation (prev/next button clicked), OR
+		// - Not a seamless auto-continuation, OR
+		// - Not resuming from pause
+		if (props.manualSeek || (!isSeamlessContinuation && !wasPaused)) {
 			audio.currentTime = verseTiming.timestamp_from / 1000;
 		}
 
@@ -455,6 +434,7 @@ export function resetAudioSettings(props) {
 
 		__audioSettings.set(audioSettings);
 		audio.removeEventListener('timeupdate', wordHighlighter);
+		audio.removeEventListener('timeupdate', trackAudioProgress);
 
 		document.querySelectorAll('.word').forEach((element) => {
 			element.classList.remove('bg-black/5');
