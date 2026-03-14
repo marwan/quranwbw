@@ -26,7 +26,7 @@
 	const mismatchMessage = 'Settings changed. Re-download to ensure offline access works correctly.';
 
 	// Chapter and Quran pages count
-	const totalChapters = 3;
+	const totalChapters = 114;
 	const totalPages = 604;
 
 	// Track download state
