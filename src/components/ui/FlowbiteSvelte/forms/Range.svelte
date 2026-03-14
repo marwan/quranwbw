@@ -10,12 +10,17 @@
 	let inputClass;
 	$: inputClass = twMerge('w-full rounded-lg appearance-none cursor-pointer', sizes[size] ?? sizes.md, $$props.class);
 
+	// Holds the value at the moment a touch begins, used to revert if the tap wasn't on the thumb
+	let snapshotValue = value;
+
+	// True only when the touch/click originated on the thumb, not the track
+	let thumbEngaged = false;
+
 	/**
-	 * Calculates the pixel X position of the slider thumb on screen.
-	 * Browsers don't expose the thumb position directly, so we derive it
-	 * from the current value, min/max range, and the element's bounding rect.
-	 * A small thumbOffset is subtracted from each side to account for the
-	 * thumb not reaching the very edges of the track.
+	 * Derives the thumb's current pixel X position on screen.
+	 * Browsers don't expose this directly, so we calculate it from the
+	 * current value, the min/max range, and the element's bounding rect.
+	 * thumbOffset accounts for the thumb not reaching the very edges of the track.
 	 */
 	function getThumbPosition(el) {
 		const min = Number(el.min) || 0;
@@ -27,38 +32,41 @@
 	}
 
 	/**
-	 * Shared logic to check whether a given clientX position is close enough
-	 * to the thumb. If not, prevents the default behaviour (track jump).
+	 * Returns true if the given clientX is within 16px of the thumb center.
+	 * The 16px threshold gives enough tolerance for finger-sized touches.
 	 */
-	function blockIfNotOnThumb(el, clientX, e) {
-		const thumbX = getThumbPosition(el);
-		const threshold = 16; // px — tune this if drag initiation feels too fussy
-
-		if (Math.abs(clientX - thumbX) > threshold) {
-			// Click/touch was on the track, not the thumb — block the jump
-			e.preventDefault();
-		}
-		// Click/touch was on/near the thumb — allow default drag behaviour to proceed
+	function isOnThumb(el, clientX) {
+		return Math.abs(clientX - getThumbPosition(el)) <= 16;
 	}
 
 	/**
-	 * Intercepts mousedown (desktop) to prevent click-to-jump on the track.
+	 * On desktop, prevent click-to-jump by blocking mousedown events
+	 * that didn't originate on the thumb.
 	 */
 	function onMouseDown(e) {
-		blockIfNotOnThumb(e.currentTarget, e.clientX, e);
+		thumbEngaged = isOnThumb(e.currentTarget, e.clientX);
+		if (!thumbEngaged) e.preventDefault();
 	}
 
 	/**
-	 * Intercepts touchstart (mobile) to prevent tap-to-jump on the track.
-	 * Uses the first touch point's clientX.
+	 * On mobile, snapshot the current value before the browser has a chance
+	 * to process the touch and potentially jump the thumb to the tapped location.
 	 */
 	function onTouchStart(e) {
-		blockIfNotOnThumb(e.currentTarget, e.touches[0].clientX, e);
+		snapshotValue = value;
+		thumbEngaged = isOnThumb(e.currentTarget, e.touches[0].clientX);
+	}
+
+	/**
+	 * On touch end, if the touch didn't start on the thumb, restore the
+	 * snapshotted value to undo any jump the browser may have applied.
+	 * This is the core of the fix — we can't always prevent the browser
+	 * from jumping, so we correct it after the fact instead.
+	 */
+	function onTouchEnd() {
+		if (!thumbEngaged) value = snapshotValue;
+		thumbEngaged = false;
 	}
 </script>
 
-<!-- 
-	Range input with drag-only interaction.
-	Clicking/tapping the track is disabled; only dragging the thumb changes the value.
--->
-<input type="range" bind:value {...$$restProps} class={inputClass} on:mousedown={onMouseDown} on:touchstart={onTouchStart} on:change on:click on:keydown on:keypress on:keyup />
+<input type="range" bind:value {...$$restProps} class={inputClass} on:mousedown={onMouseDown} on:touchstart={onTouchStart} on:touchend={onTouchEnd} on:change on:click on:keydown on:keypress on:keyup />
