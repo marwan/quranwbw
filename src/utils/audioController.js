@@ -36,12 +36,100 @@ export function pauseOrResumeAudio() {
 	if (!audio.paused) {
 		audio.pause();
 		audioSettings.audioIsPaused = true;
+		audioSettings.isPlaying = false;
 	} else {
 		audio.play();
 		audioSettings.audioIsPaused = false;
+		audioSettings.isPlaying = true;
 	}
 
 	__audioSettings.set(audioSettings);
+}
+
+// Play the previous verse in the versesToPlayArray
+export function playPreviousVerse() {
+	const audioSettings = get(__audioSettings);
+
+	// Only works when verse audio is playing
+	if (!audioSettings.isPlaying || audioSettings.audioType !== 'verse') return;
+
+	if (!window.versesToPlayArray || window.versesToPlayArray.length === 0) return;
+
+	const currentIndex = window.versesToPlayArray.indexOf(audioSettings.playingKey);
+
+	// If we're at the first verse or not found, do nothing
+	if (currentIndex <= 0) {
+		console.log('Already at the first verse');
+		return;
+	}
+
+	const previousKey = window.versesToPlayArray[currentIndex - 1];
+	const [prevChapter] = previousKey.split(':').map(Number);
+	const [currentChapter] = audioSettings.playingKey.split(':').map(Number);
+
+	// If switching chapters, we need to reload the audio file
+	if (prevChapter !== currentChapter) {
+		// Remove current verse tracking listeners temporarily
+		audio.ontimeupdate = null;
+		audio.removeEventListener('timeupdate', wordHighlighter);
+
+		// Play the previous verse (will load new chapter if needed)
+		playVerseAudio({
+			key: previousKey,
+			timesToRepeat: audioSettings.timesToRepeat || 1,
+			language: audioSettings.language || 'arabic'
+		});
+	} else {
+		// Same chapter - seamless transition
+		playVerseAudio({
+			key: previousKey,
+			timesToRepeat: audioSettings.timesToRepeat || 1,
+			language: audioSettings.language || 'arabic'
+		});
+	}
+}
+
+// Play the next verse in the versesToPlayArray
+export function playNextVerse() {
+	const audioSettings = get(__audioSettings);
+
+	// Only works when verse audio is playing
+	if (!audioSettings.isPlaying || audioSettings.audioType !== 'verse') return;
+
+	if (!window.versesToPlayArray || window.versesToPlayArray.length === 0) return;
+
+	const currentIndex = window.versesToPlayArray.indexOf(audioSettings.playingKey);
+
+	// If we're at the last verse or not found, do nothing
+	if (currentIndex === -1 || currentIndex >= window.versesToPlayArray.length - 1) {
+		console.log('Already at the last verse');
+		return;
+	}
+
+	const nextKey = window.versesToPlayArray[currentIndex + 1];
+	const [nextChapter] = nextKey.split(':').map(Number);
+	const [currentChapter] = audioSettings.playingKey.split(':').map(Number);
+
+	// If switching chapters, we need to reload the audio file
+	if (nextChapter !== currentChapter) {
+		// Remove current verse tracking listeners temporarily
+		audio.ontimeupdate = null;
+		audio.removeEventListener('timeupdate', wordHighlighter);
+
+		// Play the next verse (will load new chapter if needed)
+		playVerseAudio({
+			key: nextKey,
+			timesToRepeat: audioSettings.timesToRepeat || 1,
+			language: audioSettings.language || 'arabic'
+		});
+	} else {
+		// Same chapter - seamless transition
+		playVerseAudio({
+			key: nextKey,
+			timesToRepeat: audioSettings.timesToRepeat || 1,
+			language: audioSettings.language || 'arabic'
+		});
+	}
 }
 
 // Function to play verse audio, either one time or multiple times
