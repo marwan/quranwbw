@@ -26,12 +26,29 @@
 	let footnoteText = 'loading...';
 	let footnoteNumber = '...';
 
+	// Toggles a footnote open or closed when its superscript number is clicked
 	async function supClick(event) {
+		const newFootnoteId = +event.getAttribute('foot_note');
+		const newFootnoteChapter = +event.getAttribute('data-chapter');
+		const newFootnoteVerse = +event.getAttribute('data-verse');
+		const newFootnoteTranslation = +event.getAttribute('data-translation');
+
+		const selector = `.footnote-${newFootnoteChapter}-${newFootnoteVerse}-${newFootnoteTranslation}`;
+		const footnoteBlock = document.querySelector(selector);
+		const isCurrentlyOpen = footnoteBlock.classList.contains('block');
+		const isSameFootnote = newFootnoteId === footnoteId && newFootnoteChapter === footnoteChapter && newFootnoteVerse === footnoteVerse && newFootnoteTranslation === footnoteTranslation;
+
+		// Toggle closed if clicking the same open footnote
+		if (isCurrentlyOpen && isSameFootnote) {
+			hideFootnote(newFootnoteChapter, newFootnoteVerse, newFootnoteTranslation, true);
+			return;
+		}
+
 		footnoteText = 'loading...';
-		footnoteId = +event.getAttribute('foot_note');
-		footnoteChapter = +event.getAttribute('data-chapter');
-		footnoteVerse = +event.getAttribute('data-verse');
-		footnoteTranslation = +event.getAttribute('data-translation');
+		footnoteId = newFootnoteId;
+		footnoteChapter = newFootnoteChapter;
+		footnoteVerse = newFootnoteVerse;
+		footnoteTranslation = newFootnoteTranslation;
 		footnoteNumber = +event.innerText;
 
 		const footnotes = $__verseTranslationData?.[footnoteTranslation]?.[`${footnoteChapter}:${footnoteVerse}`]?.footnotes;
@@ -47,7 +64,6 @@
 			const footnoteBlockNumber = footnoteBlock.querySelector('.footnote-header .title .footnote-number');
 			const footnoteBlockText = footnoteBlock.querySelector('.text');
 
-			// Update the footnote number, text, and unhide this verse's footnote block
 			footnoteBlockNumber.innerText = footnoteNumber;
 			footnoteBlockText.innerHTML = footnoteText;
 			footnoteBlock.classList.remove('hidden');
@@ -55,7 +71,9 @@
 		}
 	}
 
-	function hideFootnote(chapter, verse, translation) {
+	// Hides the footnote block for a given chapter, verse, and translation
+	// Optionally resets the tracked footnote ID to allow reopening the same footnote
+	function hideFootnote(chapter, verse, translation, resetId = false) {
 		const selector = `.footnote-${chapter}-${verse}-${translation}`;
 		const footnoteBlocks = document.querySelectorAll(selector);
 
@@ -63,20 +81,23 @@
 			element.classList.remove('block');
 			element.classList.add('hidden');
 		});
+
+		if (resetId) footnoteId = undefined;
 	}
 
+	// Determines if a translation is right-to-left based on its ID
 	function isTranslationRTL(id) {
 		return selectableVerseTranslations[id]?.is_rtl === true;
 	}
 
-	// Function to highlight the searched text in verse text
+	// Highlights occurrences of the search query within verse text using bold tags
 	function highlightSearchedText(searchQuery, verseText) {
 		const regex = new RegExp(`(?<!<[^>]*)\\b(${searchQuery})\\b(?![^<]*>)`, 'gi');
 		const result = verseText.replace(regex, (match) => `<b>${match}</b>`);
 		return result;
 	}
 
-	// Function to modify the verse text
+	// Applies search highlighting and injects footnote sup attributes/styles into verse text
 	function verseTextModifier(verseText, verseTranslationID) {
 		let updatedVerseText = verseText.text;
 
@@ -115,7 +136,7 @@
 								</div>
 
 								<!-- close footnote button -->
-								<button on:click={() => hideFootnote(value.meta.chapter, value.meta.verse, verseTranslationID)} title="Close footnote"><CrossSolid size={6} /></button>
+								<button on:click={() => hideFootnote(value.meta.chapter, value.meta.verse, verseTranslationID, true)} title="Close footnote"><CrossSolid size={6} /></button>
 							</div>
 							<div class="text {isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font}">...</div>
 						</div>

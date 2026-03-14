@@ -6,6 +6,7 @@
 	export let margin = '';
 	export let inline = false;
 	export let delay = 200;
+	export let hideMessages = false;
 
 	let message = '';
 	let visible = false;
@@ -55,7 +56,7 @@
 			<path clip-rule="evenodd" d="M15.165 8.53a.5.5 0 01-.404.58A7 7 0 1023 16a.5.5 0 011 0 8 8 0 11-9.416-7.874.5.5 0 01.58.404z" fill={window.theme('icon')} fill-rule="evenodd" />
 		</svg>
 
-		{#if message}
+		{#if !hideMessages && message}
 			<p class="text-xs mt-2">{message}</p>
 		{/if}
 	</div>

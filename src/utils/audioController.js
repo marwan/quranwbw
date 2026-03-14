@@ -6,6 +6,7 @@ import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __au
 import { wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 // import { fetchAndCacheJson } from '$utils/fetchData';
+import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 // Hardcoded reciter ID for chapter-based audio (will be made dynamic later)
 const CHAPTER_AUDIO_RECITER_ID = 7;
@@ -337,6 +338,8 @@ export async function playVerseAudio(props) {
 
 // Function to play word audio
 export async function playWordAudio(props) {
+	if (!(await checkOnlineAndAlert())) return;
+
 	resetAudioSettings();
 
 	const audioSettings = get(__audioSettings);
@@ -473,6 +476,8 @@ export function showAudioModal(key) {
 export async function wordAudioController(props) {
 	const audioSettings = get(__audioSettings);
 	const reciter = selectableReciters[get(__reciter)];
+	const chapter = +props.key.split(':')[0];
+	const verse = +props.key.split(':')[1];
 
 	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && reciter.wbw) {
 		const timestampData = audioSettings.currentChapterTimestamps;
@@ -500,7 +505,7 @@ export async function wordAudioController(props) {
 		return;
 	}
 
-	props.type === 'end' ? showAudioModal(`${props.chapter}:${props.verse}`) : playWordAudio({ key: props.key });
+	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key });
 }
 
 // Highlight words during audio playback based on timestamps

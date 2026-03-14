@@ -9,38 +9,27 @@
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { term } from '$utils/terminologies';
 	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { tafsirDataUrls } from '$data/websiteSettings';
 
 	let tafsirData;
 
-	// we have all the tafsirs on first endpoint and Tafheem Ul Quran (urdu) on second
-	const tafsirUrls = {
-		1: 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir',
-		2: 'https://static.quranwbw.com/data/v4/tafsirs'
-	};
-
 	$: selectedTafirId = $__verseTafsir || 30;
+	$: selectedTafsir = selectableTafsirs[selectedTafirId];
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
-	$: if ($__tafsirModalVisible) {
-		tafsirData = loadTafsirData();
-	}
-
-	// Function to load Tafsir data
-	async function loadTafsirData() {
-		try {
-			const selectedTafsir = selectableTafsirs[selectedTafirId];
-			return await fetchAndCacheJson(`${tafsirUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
-		} catch (error) {
-			console.warn(error);
-			return [];
+	$: {
+		if ($__tafsirModalVisible) {
+			tafsirData = (async () => {
+				return await fetchAndCacheJson(`${tafsirDataUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
+			})();
 		}
 	}
 
 	// CSS classes for Tafsir text based on selected Tafsir language
 	$: tafsirTextClasses = `
 		flex flex-col space-y-4
-		${['Arabic', 'Urdu'].includes(selectableTafsirs[selectedTafirId].language) && 'direction-rtl text-lg'}
-		${selectableTafsirs[selectedTafirId].font}
+		${['Arabic', 'Urdu'].includes(selectedTafsir.language) && 'direction-rtl text-lg'}
+		${selectedTafsir.font}
 	`;
 
 	// Scroll to top if verse changes
@@ -53,6 +42,11 @@
 		} catch (error) {
 			console.warn(error);
 		}
+	}
+
+	// Replaces each newline (\n) with a configurable number of <br /> tags for HTML rendering
+	function formatTafsir(text) {
+		return text.replace(/\n/g, '<br />'.repeat(selectedTafsir?.brPerNewline || 2));
 	}
 </script>
 
@@ -83,7 +77,7 @@
 						<div class={tafsirTextClasses}>
 							{#each Object.entries(data.ayahs) as [_, tafsir]}
 								{#if tafsir.surah === chapter && tafsir.ayah === verse}
-									{@html tafsir.text.replace(/[\n]/g, '<br /><br />')}
+									{@html formatTafsir(tafsir.text)}
 								{/if}
 							{/each}
 						</div>
@@ -96,9 +90,13 @@
 	</div>
 
 	<svelte:fragment slot="footer">
-		<div class="grid grid-cols-2 gap-4 w-full">
-			<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>Previous {term('verse')}</button>
-			<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>Next {term('verse')}</button>
-		</div>
+		{#key verse}
+			{#await tafsirData then}
+				<div class="grid grid-cols-2 gap-4 w-full">
+					<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>Previous {term('verse')}</button>
+					<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>Next {term('verse')}</button>
+				</div>
+			{/await}
+		{/key}
 	</svelte:fragment>
 </Modal>

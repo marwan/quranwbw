@@ -30,6 +30,7 @@ function generateThemes() {
 			bgSecondary: `bg-[${color2}]`,
 			bgSecondaryLight: `bg-[${color2}]/5`,
 			bgSecondaryDark: `bg-[${color2}]/15`,
+			bgSecondaryExtraDark: `bg-[${color2}]/20`,
 			text: `text-[${color3 !== undefined ? color3 : color2}]`,
 			textSecondary: `text-[${color2}]`,
 			textBgColor: `text-[${color1}]`,

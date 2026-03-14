@@ -12,7 +12,7 @@
 	import { goto } from '$app/navigation';
 	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
@@ -112,7 +112,7 @@
 	async function fetchVersesByPage(page) {
 		try {
 			// Fetch keys for the given page
-			const keysData = await fetchAndCacheJson(`${staticEndpoint}/meta/keysInPage.json?version=2`, 'other');
+			const keysData = await fetchAndCacheJson(cdnStaticDataUrls.keysInPage, 'other');
 			const keysInPage = keysData[page];
 
 			// Parse keys into chapters and verses
@@ -142,7 +142,7 @@
 						}
 					});
 				} catch (error) {
-					console.warn(`Error fetching Chapter ${chapter}:`, error);
+					console.warn(error);
 				}
 			});
 
@@ -162,7 +162,7 @@
 
 			return { verses: sortedVerses };
 		} catch (error) {
-			console.warn('Error fetching data:', error);
+			console.warn(error);
 			return { verses: {} };
 		}
 	}

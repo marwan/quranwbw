@@ -52,10 +52,11 @@ let __currentPage,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__verseWordBlocks;
+	__verseWordBlocks,
+	__offlineModeSettings,
+	__homepageLayoutPreferences;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -200,9 +201,6 @@ if (browser) {
 	// what happens when a user clicks on a word
 	__wordMorphologyOnClick = writable(userSettings.displaySettings.wordMorphologyOnClick);
 
-	// visibiliy of the extras panel on homepage (bookmarks, notes, etc...)
-	__homepageExtrasPanelVisible = writable(userSettings.displaySettings.homepageExtrasPanelVisible);
-
 	// to store the website wide layout option
 	__wideWesbiteLayoutEnabled = writable(userSettings.displaySettings.wideWesbiteLayoutEnabled);
 
@@ -211,6 +209,12 @@ if (browser) {
 
 	// to store the visibility state of word blocks per verse
 	__verseWordBlocks = writable({});
+
+	// to store all the offline mode settings
+	__offlineModeSettings = writable(userSettings.offlineModeSettings);
+
+	// to store all the homepage layout preferences like active tabs, sort order, etc...
+	__homepageLayoutPreferences = writable(userSettings.displaySettings.homepageLayoutPreferences);
 }
 
 export {
@@ -265,8 +269,9 @@ export {
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__verseWordBlocks
+	__verseWordBlocks,
+	__offlineModeSettings,
+	__homepageLayoutPreferences
 };

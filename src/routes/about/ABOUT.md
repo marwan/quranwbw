@@ -41,6 +41,7 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 - [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/) for the copyrighted Isep Misbah Fonts[5].
 - M Zamroni Ahbab for the Arabic Sign Language font[6].
 - [Understand Quran Academy](https://understandquran.com/) for the Advanced Tajweed and Syllables transliteration data[7].
+- [Uthman Agolli](https://www.youtube.com/@uthman.agolli) for his valuable work on the Albanian translation of Tafsir Ibn Kathir and Tafsir As-Sa'di, with special thanks to brother Samir Nurshaba and brother Erand for sharing this data with us.
 
 All data used on this website belongs to their respective owners and authors. Permission must be obtained from them before copying any content.
 

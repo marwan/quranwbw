@@ -61,11 +61,6 @@
 
 				const fontUrl = fontMap[fontType];
 				if (fontUrl) preloadFont(fontUrl);
-
-				// Preload Bismillah for all types except 4 and 6 (IndoPak)
-				if (![4, 6].includes(fontType)) {
-					preloadFont(`${baseFontUrl}/QCF_Bismillah_COLOR-Regular-v2.woff2`);
-				}
 			}
 		</script>
 
@@ -74,7 +69,6 @@
 		<link crossorigin="anonymous" rel="manifest" href="%sveltekit.assets%/manifest.json?v=2" />
 		<link crossorigin="anonymous" rel="icon" type="image/png" href="%sveltekit.assets%/images/favicon.png?v=2" />
 		<link crossorigin="anonymous" href="%sveltekit.assets%/images/apple-touch-icon.png?v=2" rel="apple-touch-icon" />
-		<link crossorigin="anonymous" rel="stylesheet" href="%sveltekit.assets%/css/global.css?version=88" />
 
 		<!-- 
 		If the user's browser do not support Optional chaining (?.), redirect to old v3 website
@@ -117,6 +111,7 @@
 							bgSecondary: 'bg-[#b1901f]',
 							bgSecondaryLight: 'bg-[#b1901f]/5',
 							bgSecondaryDark: 'bg-[#b1901f]/15',
+							bgSecondaryExtraDark: 'bg-[#b1901f]/20',
 							text: 'text-[#000000]',
 							textSecondary: 'text-[#b1901f]',
 							textBgColor: 'text-[#FFFFFF]',
@@ -138,6 +133,7 @@
 							bgSecondary: 'bg-[#000000]',
 							bgSecondaryLight: 'bg-[#000000]/5',
 							bgSecondaryDark: 'bg-[#000000]/15',
+							bgSecondaryExtraDark: 'bg-[#000000]/20',
 							text: 'text-[#000000]',
 							textSecondary: 'text-[#000000]',
 							textBgColor: 'text-[#FFFFFF]',
@@ -159,6 +155,7 @@
 							bgSecondary: 'bg-[#000000]',
 							bgSecondaryLight: 'bg-[#000000]/5',
 							bgSecondaryDark: 'bg-[#000000]/15',
+							bgSecondaryExtraDark: 'bg-[#000000]/20',
 							text: 'text-[#000000]',
 							textSecondary: 'text-[#000000]',
 							textBgColor: 'text-[#e1e1e1]',
@@ -180,6 +177,7 @@
 							bgSecondary: 'bg-[#553c0f]',
 							bgSecondaryLight: 'bg-[#553c0f]/5',
 							bgSecondaryDark: 'bg-[#553c0f]/15',
+							bgSecondaryExtraDark: 'bg-[#553c0f]/20',
 							text: 'text-[#553c0f]',
 							textSecondary: 'text-[#553c0f]',
 							textBgColor: 'text-[#e9e3d7]',
@@ -201,6 +199,7 @@
 							bgSecondary: 'bg-[#dca54c]',
 							bgSecondaryLight: 'bg-[#dca54c]/5',
 							bgSecondaryDark: 'bg-[#dca54c]/15',
+							bgSecondaryExtraDark: 'bg-[#dca54c]/20',
 							text: 'text-[#dca54c]',
 							textSecondary: 'text-[#dca54c]',
 							textBgColor: 'text-[#20161f]',
@@ -222,6 +221,7 @@
 							bgSecondary: 'bg-[#c2c2c2]',
 							bgSecondaryLight: 'bg-[#c2c2c2]/5',
 							bgSecondaryDark: 'bg-[#c2c2c2]/15',
+							bgSecondaryExtraDark: 'bg-[#c2c2c2]/20',
 							text: 'text-[#c2c2c2]',
 							textSecondary: 'text-[#c2c2c2]',
 							textBgColor: 'text-[#02021b]',
@@ -243,6 +243,7 @@
 							bgSecondary: 'bg-[#dddddd]',
 							bgSecondaryLight: 'bg-[#dddddd]/5',
 							bgSecondaryDark: 'bg-[#dddddd]/15',
+							bgSecondaryExtraDark: 'bg-[#dddddd]/20',
 							text: 'text-[#dddddd]',
 							textSecondary: 'text-[#dddddd]',
 							textBgColor: 'text-[#001617]',
@@ -264,6 +265,7 @@
 							bgSecondary: 'bg-[#dddddd]',
 							bgSecondaryLight: 'bg-[#dddddd]/5',
 							bgSecondaryDark: 'bg-[#dddddd]/15',
+							bgSecondaryExtraDark: 'bg-[#dddddd]/20',
 							text: 'text-[#dddddd]',
 							textSecondary: 'text-[#dddddd]',
 							textBgColor: 'text-[#000000]',
@@ -285,6 +287,7 @@
 							bgSecondary: 'bg-[#dca54c]',
 							bgSecondaryLight: 'bg-[#dca54c]/5',
 							bgSecondaryDark: 'bg-[#dca54c]/15',
+							bgSecondaryExtraDark: 'bg-[#dca54c]/20',
 							text: 'text-[#dca54c]',
 							textSecondary: 'text-[#dca54c]',
 							textBgColor: 'text-[#09090b]',
@@ -304,7 +307,7 @@
 
 					return themes[id][type] || '';
 				} catch (error) {
-					console.warn('An error occurred while fetching the theme:', error);
+					console.warn(error);
 					return '';
 				}
 			}

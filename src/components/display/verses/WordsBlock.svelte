@@ -69,11 +69,7 @@
 			__verseKey.set(props.key);
 
 			if (props.type === 'word') {
-				wordAudioController({
-					key: props.key,
-					chapter: +props.key.split(':')[0],
-					verse: +props.key.split(':')[1]
-				});
+				wordAudioController({ key: props.key });
 			} else if (props.type === 'end') {
 				if (!displayIsContinuous) {
 					updateSettings({

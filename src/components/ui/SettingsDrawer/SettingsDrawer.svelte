@@ -54,20 +54,21 @@
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-	// Components mapping for individual settings
+	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {
-		'website-theme': WebsiteThemeSelector,
-		'display-type': DisplayTypeSelector,
-		'word-tooltip': WordTooltipSelector,
-		'quran-font': QuranFontSelector,
-		'word-translation': WordTranslationSelector,
-		'word-transliteration': WordTransliterationSelector,
-		'verse-translation': VerseTranslationSelector,
-		'verse-transliteration': VerseTransliterationSelector,
-		'verse-tafsir': VerseTafsirSelector,
-		'verse-reciter': VerseReciterSelector,
-		'verse-play-button': VersePlayButtonSelector
+		'website-theme': [WebsiteThemeSelector, false],
+		'display-type': [DisplayTypeSelector, false],
+		'word-tooltip': [WordTooltipSelector, false],
+		'quran-font': [QuranFontSelector, false],
+		'word-translation': [WordTranslationSelector, false],
+		'word-transliteration': [WordTransliterationSelector, false],
+		'verse-translation': [VerseTranslationSelector, false],
+		'verse-transliteration': [VerseTransliterationSelector, false],
+		'verse-tafsir': [VerseTafsirSelector, true],
+		'verse-reciter': [VerseReciterSelector, true],
+		'verse-play-button': [VersePlayButtonSelector, true]
 	};
 
 	// Transition parameters for drawer
@@ -128,20 +129,24 @@
 
 		// Scroll to last known position
 		setTimeout(() => {
-			try {
-				document.getElementById('settings-drawer').scrollTop = mainSettingsScrollPos;
-			} catch (error) {
-				console.warn(error);
+			const element = document.getElementById('settings-drawer');
+			if (element) {
+				element.scrollTop = mainSettingsScrollPos;
 			}
 		}, 0);
 	}
 
 	// Navigate to an individual setting component
-	function gotoIndividualSetting(type) {
+	async function gotoIndividualSetting(type) {
+		// For certain settings, check internet connection first
+		if (individualSettingsComponents[type][1] === true) {
+			if (!(await checkOnlineAndAlert())) return;
+		}
+
 		mainSettingsScrollPos = document.getElementById('settings-drawer').scrollTop;
 		showAllSettings = false;
 		showIndividualSetting = true;
-		individualSettingsComponent = individualSettingsComponents[type];
+		individualSettingsComponent = individualSettingsComponents[type][0];
 
 		// Scroll to the individual setting view
 		setTimeout(() => {
@@ -559,13 +564,13 @@
 					<div id="reset-setting-button" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Reset Settings</span>
-							<button class="text-sm space-x-2 {buttonClasses}" on:click={() => showConfirm('Are you sure you want to reset settings? This action cannot be reversed.', 'settings-drawer', () => resetSettings())}>
+							<button class="text-sm space-x-2 {buttonClasses}" on:click={() => showConfirm('This action will permanently erase all locally stored data for this website, including settings, bookmarks, notes, offline files, and cache. This cannot be undone.', 'settings-drawer', () => resetSettings())}>
 								<ResetSettings />
 								<span>Reset</span>
 							</button>
 							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>
-						<p class={settingsDescriptionClasses}>Reset all website settings to default without affecting your bookmarks or notes.</p>
+						<p class={settingsDescriptionClasses}>Resets the website to a clean state by removing all saved settings, bookmarks, notes, offline data, and cached files from this device.</p>
 					</div>
 				</div>
 			</div>

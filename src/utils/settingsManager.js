@@ -37,7 +37,7 @@ function decodeSettings(encoded) {
 		const reversed = atob(encoded).split('').reverse().join('');
 		return JSON.parse(reversed);
 	} catch (error) {
-		console.error(error);
+		console.warn(error);
 		throw new Error('Invalid settings file');
 	}
 }
@@ -80,7 +80,7 @@ export function importSettings(file) {
 			location.reload();
 		} catch (error) {
 			showAlert('Something went wrong while importing the file.', 'settings-drawer');
-			console.error(error);
+			console.warn(error);
 		}
 	};
 	reader.readAsText(file);
