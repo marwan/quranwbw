@@ -58,9 +58,9 @@ export const tafsirDataUrls = {
 
 // CDN is split across 5 hosts by chapter range to distribute load
 export const wordAudioDirectoryMap = [
-	{ upTo: 5, directory: '1-5' },
-	{ upTo: 15, directory: '6-15' },
-	{ upTo: 30, directory: '16-30' },
-	{ upTo: 60, directory: '31-60' },
-	{ upTo: 114, directory: '61-114' }
+	{ upTo: 5, directory: 1 },
+	{ upTo: 15, directory: 2 },
+	{ upTo: 30, directory: 3 },
+	{ upTo: 60, directory: 4 },
+	{ upTo: 114, directory: 5 }
 ];
