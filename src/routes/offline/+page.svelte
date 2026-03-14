@@ -26,7 +26,7 @@
 	const mismatchMessage = 'Settings changed. Re-download to ensure offline access works correctly.';
 
 	// Chapter and Quran pages count
-	const totalChapters = 114;
+	const totalChapters = 3;
 	const totalPages = 604;
 
 	// Track download state
@@ -865,14 +865,14 @@
 		});
 
 		try {
-			const zipFilesDir = `${staticEndpoint}/word-audio-zips`;
+			const zipFilesUrl = 'https://word-audios-zips.quranwbw.com';
 			const table = cacheTableMap.word_audios;
 			const totalStepsInDownloadProgress = totalChapters;
 			let completedStepsInDownloadProgress = 0;
 
 			for (let chapter = 1; chapter <= totalChapters; chapter++) {
 				// 1. Determine ZIP URLs for chapter (chapter 2 is split into two ZIPs)
-				const zipUrls = chapter === 2 ? [`${zipFilesDir}/2-1.zip`, `${zipFilesDir}/2-2.zip`] : [`${zipFilesDir}/${chapter}.zip`];
+				const zipUrls = chapter === 2 ? [`${zipFilesUrl}/2-1.zip`, `${zipFilesUrl}/2-2.zip`] : [`${zipFilesUrl}/${chapter}.zip`];
 
 				// 2. Download, extract, and store all ZIPs for this chapter
 				for (const zipUrl of zipUrls) {
