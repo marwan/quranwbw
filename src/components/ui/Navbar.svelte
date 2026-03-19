@@ -77,6 +77,7 @@
 
 	function toggleFavoriteChapter(event) {
 		event.stopPropagation();
+		window.umami.track('Favorite Surah Button');
 		updateSettings({ type: 'userFavoriteChapters', key: $__chapterNumber });
 	}
 
