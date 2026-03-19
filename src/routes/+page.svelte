@@ -15,16 +15,17 @@
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
+	import UserFavoriteChapters from '$display/UserFavoriteChapters.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
+	import NumberStar from '$display/NumberStar.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userFavoriteChapters, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
-	const svgData = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const continueReadingButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
@@ -45,6 +46,7 @@
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
+	$: totalFavoriteChapters = $__userFavoriteChapters.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 
 	// Persist homepage layout preferences whenever they change
@@ -184,6 +186,10 @@
 						<span>{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 					</button>
 					<button on:click={() => changeTabs('extrasActiveTab', 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
+					<button on:click={() => changeTabs('extrasActiveTab', 4)} class="{extrasActiveTab === 4 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Favorites Tab Button">
+						<span>Favorites</span>
+						<span>{totalFavoriteChapters > 0 ? `(${totalFavoriteChapters})` : ''}</span>
+					</button>
 				</div>
 			</div>
 
@@ -218,6 +224,11 @@
 
 					<div class="px-2 text-xs opacity-70">Suggestions listed here are based on the most frequently read chapters and verses by muslim audience, as well as virtues derived from Hadiths. While some Hadiths highlighting these virtues may be considered weak by some scholars, using them for beneficial knowledge is also a widely accepted opinion.</div>
 				</div>
+			</div>
+
+			<!-- favorites tab -->
+			<div class="space-y-12 {extrasActiveTab === 4 ? 'block' : 'hidden'}" id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorites-tab">
+				<UserFavoriteChapters {cardGridClasses} {cardInnerClasses} />
 			</div>
 		</div>
 
@@ -265,11 +276,7 @@
 									<div class="{cardInnerClasses} flex-row text-center items-center">
 										<div class="flex flex-row space-x-2">
 											<div class="flex items-center">
-												<!-- number star -->
-												<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-													{@html svgData}
-													<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{id}</text>
-												</svg>
+												<NumberStar value={id} />
 											</div>
 
 											<div class="text-left">
@@ -324,11 +331,7 @@
 								<div class="{cardInnerClasses} flex-row text-center items-center">
 									<div class="flex flex-row space-x-2">
 										<div class="flex items-center">
-											<!-- number star -->
-											<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-												{@html svgData}
-												<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{juz.juz}</text>
-											</svg>
+											<NumberStar value={juz.juz} />
 										</div>
 
 										<div class="text-left">

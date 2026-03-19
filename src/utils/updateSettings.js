@@ -19,6 +19,7 @@ import {
 	__lastRead,
 	__wordTooltip,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__wakeLockEnabled,
 	__userNotes,
 	__quizCorrectAnswers,
@@ -198,6 +199,21 @@ export function updateSettings(props) {
 			}
 
 			__userBookmarks.set(userBookmarks);
+			break;
+
+		case 'userFavoriteChapters':
+			const chapterKey = props.key;
+			let userFavoriteChapters = userSettings['userFavoriteChapters'];
+
+			if (props.override) {
+				userSettings.userFavoriteChapters = chapterKey;
+				userFavoriteChapters = chapterKey;
+			} else {
+				userFavoriteChapters.includes(chapterKey) ? (userFavoriteChapters = userFavoriteChapters.filter((x) => x !== chapterKey)) : userFavoriteChapters.push(chapterKey);
+				userSettings.userFavoriteChapters = userFavoriteChapters;
+			}
+
+			__userFavoriteChapters.set(userFavoriteChapters);
 			break;
 
 		case 'userNotes':

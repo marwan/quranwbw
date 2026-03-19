@@ -10,6 +10,7 @@ let __currentPage,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -87,6 +88,9 @@ if (browser) {
 
 	// to store the user bookmarks
 	__userBookmarks = writable(userSettings.userBookmarks);
+
+	// to store the user's favorite chapters
+	__userFavoriteChapters = writable(userSettings.userFavoriteChapters);
 
 	// to store the font type - Uthmani, IndoPak, etc...
 	__fontType = writable(userSettings.displaySettings.fontType);
@@ -227,6 +231,7 @@ export {
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
