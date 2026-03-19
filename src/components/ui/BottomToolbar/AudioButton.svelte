@@ -3,26 +3,18 @@
 	import Pause from '$svgs/Pause.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { __audioSettings } from '$utils/stores';
-	import { playVerseAudio, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
+	import { playButtonHandler, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// quick play from first verse of page till the max chapter verses
 	async function audioHandler() {
 		if (!(await checkOnlineAndAlert())) return;
 
-		$__audioSettings.language = 'arabic';
-		$__audioSettings.playBoth = false;
-
 		if ($__audioSettings.isPlaying) {
 			resetAudioSettings({ location: 'end' });
 		} else {
 			setVersesToPlay({ allVersesOnPage: true });
-
-			playVerseAudio({
-				key: `${window.versesToPlayArray[0]}`,
-				timesToRepeat: 1,
-				language: 'arabic'
-			});
+			playButtonHandler();
 		}
 	}
 </script>

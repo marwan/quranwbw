@@ -358,7 +358,7 @@ function getWordsInVerse(key) {
 }
 
 // Handler for verse play button and the play button in audio modal
-export function playButtonHandler(key) {
+export function playButtonHandler(key = null) {
 	const { audioType, timesToRepeat, language } = get(__audioSettings);
 	if (audioType === 'verse') {
 		playVerseAudio({
