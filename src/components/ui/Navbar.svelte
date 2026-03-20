@@ -2,13 +2,10 @@
 	import Menu from '$svgs/Menu.svelte';
 	import Home from '$svgs/Home.svelte';
 	import ChevronDown from '$svgs/ChevronDown.svelte';
-	import Star from '$svgs/Star.svelte';
-	import StarFilled from '$svgs/StarFilled.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled, __userFavoriteChapters } from '$utils/stores';
+	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
-	import { updateSettings } from '$utils/updateSettings';
 	import Mecca from '$svgs/Mecca.svelte';
 	import Madinah from '$svgs/Madinah.svelte';
 
@@ -18,8 +15,6 @@
 	let mushafChapters = [];
 	let mushafJuz = '...';
 	let mushafChapterInfo = [];
-	const centerButtonClasses = `flex items-center p-3 text-sm w-auto rounded-3xl ${window.theme('hoverBorder')} ${window.theme('hover')}`;
-	const iconButtonClasses = `inline-flex items-center justify-center rounded-full p-3 ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 
 	// Classes for the navbar
 	$: navbarClasses = `${window.theme('bgMain')} border-b ${window.theme('border')} fixed w-full z-20 top-0 left-0 print:hidden ${$__currentPage === 'home' ? 'hidden' : 'block'}`;
@@ -49,7 +44,6 @@
 
 	// Calculate the scroll progress percentage for the current chapter
 	$: chapterProgress = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
-	$: isFavoriteChapter = $__userFavoriteChapters.includes($__chapterNumber);
 
 	// Get the chapter name for the navbar
 	$: {
@@ -74,17 +68,6 @@
 			console.warn(error);
 		}
 	}
-
-	function toggleFavoriteChapter(event) {
-		event.stopPropagation();
-		window.umami.track('Favorite Surah Button');
-		updateSettings({ type: 'userFavoriteChapters', key: $__chapterNumber });
-	}
-
-	function openQuranNavigationModal() {
-		window.umami?.track('Quran Navigation Modal Button');
-		__quranNavigationModalVisible.set(true);
-	}
 </script>
 
 <nav id="navbar" class={navbarClasses}>
@@ -94,39 +77,38 @@
 			<span class="text-xs pl-2 hidden md:block">Home</span>
 		</a>
 
-		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl {window.theme('hoverBorder')} {window.theme('hover')}" on:click={openQuranNavigationModal}>
+		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl {window.theme('hoverBorder')} {window.theme('hover')}" on:click={() => __quranNavigationModalVisible.set(true)}>
 			<!-- display the chapter name on chapter page -->
 			{#if $__currentPage === 'chapter'}
-				<button type="button" class={iconButtonClasses} aria-label={isFavoriteChapter ? 'Remove surah from favorites' : 'Add surah to favorites'} on:click={toggleFavoriteChapter}>
-					<svelte:component this={isFavoriteChapter ? StarFilled : Star} size={3.5} />
-				</button>
-				<button class={centerButtonClasses} on:click={openQuranNavigationModal}>
-					<span>{@html navbarChapterName}</span>
-					<ChevronDown />
-				</button>
-			{:else}
-				<button class={centerButtonClasses} on:click={openQuranNavigationModal}>
-					<!-- display only the page name for mushaf page -->
-					{#if $__currentPage === 'mushaf'}
-						Page {$__pageNumber}
-						<ChevronDown />
-						<!-- display only the juz number for juz page -->
-					{:else if $__currentPage === 'juz'}
-						{document.title.split(' - ')[0]}
-						<ChevronDown />
-						<!-- display Quranic+supplication term for supplications page -->
-					{:else if $__currentPage === 'supplications'}
-						Quranic {term('supplications')}
-						<!-- display only the page name for non-chapter page -->
-					{:else}
-						{$__currentPage[0].toUpperCase() + $__currentPage.slice(1)}
+				{@html navbarChapterName}
+				<ChevronDown />
+			{/if}
 
-						<!-- if it's the morphology page, show morphology key as well -->
-						{#if $__currentPage === 'morphology'}
-							{$__morphologyKey}
-						{/if}
-					{/if}
-				</button>
+			<!-- display only the page name for mushaf page -->
+			{#if $__currentPage === 'mushaf'}
+				Page {$__pageNumber}
+				<ChevronDown />
+			{/if}
+
+			<!-- display only the juz number for juz page -->
+			{#if $__currentPage === 'juz'}
+				{document.title.split(' - ')[0]}
+				<ChevronDown />
+			{/if}
+
+			<!-- display Quranic+supplication term for supplications page -->
+			{#if $__currentPage === 'supplications'}
+				Quranic {term('supplications')}
+			{/if}
+
+			<!-- display only the page name for non-chapter page -->
+			{#if !['chapter', 'mushaf', 'supplications', 'juz'].includes($__currentPage)}
+				{$__currentPage[0].toUpperCase() + $__currentPage.slice(1)}
+
+				<!-- if it's the morphology page, show morphology key as well -->
+				{#if $__currentPage === 'morphology'}
+					{$__morphologyKey}
+				{/if}
 			{/if}
 		</button>
 

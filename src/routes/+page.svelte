@@ -21,7 +21,7 @@
 	import UserNotes from '$display/UserNotes.svelte';
 	import NumberStar from '$display/NumberStar.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userFavoriteChapters, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -49,7 +49,6 @@
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
-	$: totalFavoriteChapters = $__userFavoriteChapters.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 
 	// Persist homepage layout preferences whenever they change
@@ -200,10 +199,6 @@
 						<span>{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 					</button>
 					<button on:click={() => changeTabs('extrasActiveTab', 3)} class={extrasActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
-					<button on:click={() => changeTabs('extrasActiveTab', 4)} class="{extrasActiveTab === 4 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Favorites Tab Button">
-						<span>Favorites</span>
-						<span>{totalFavoriteChapters > 0 ? `(${totalFavoriteChapters})` : ''}</span>
-					</button>
 				</div>
 			</div>
 
@@ -256,10 +251,6 @@
 							<StarFilled size={4} />
 						{:else}
 							<Star size={4} />
-						{/if}
-
-						{#if totalFavoriteChapters > 0}
-							<span>({totalFavoriteChapters})</span>
 						{/if}
 					</button>
 					<button on:click={() => changeTabs('divisionsActiveTab', 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
