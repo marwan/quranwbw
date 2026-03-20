@@ -7,6 +7,8 @@
 	import SortDescending from '$svgs/SortDescending.svelte';
 	import Eye from '$svgs/Eye.svelte';
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
+	import StarFilled from '$svgs/StarFilled.svelte';
+	import Star from '$svgs/Star.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import Menu from '$svgs/Menu.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
@@ -42,6 +44,7 @@
 
 	$: divisionsActiveTab = homepageLayoutPreferences.divisionsActiveTab ?? 1;
 	$: extrasActiveTab = homepageLayoutPreferences.extrasActiveTab ?? 1;
+	$: showDivisionSort = [1, 2].includes(divisionsActiveTab);
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
@@ -63,6 +66,8 @@
 
 	// Toggles sort order for the active division tab
 	function sortDivisions() {
+		if (!showDivisionSort) return;
+
 		const isChapters = divisionsActiveTab === 1;
 		const key = isChapters ? 'chaptersSortIsAscending' : 'juzSortIsAscending';
 		const data = isChapters ? quranMetaData : juzMeta;
@@ -104,7 +109,16 @@
 	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">
 			<div>
-				<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __quranNavigationModalVisible.set(true)}><Search2Bold size={4} /><span class="hidden md:block">Search</span></button>
+				<button
+					class="{topButtonClasses} !py-4 md:bg-transparent"
+					on:click={() => {
+						window.umami?.track('Homepage Search Button');
+						__quranNavigationModalVisible.set(true);
+					}}
+				>
+					<Search2Bold size={4} />
+					<span class="hidden md:block">Search</span>
+				</button>
 				<a href="/topics" class="{topButtonClasses} !py-4 md:bg-transparent"><TopicsBold size={4} /><span class="hidden md:block">Topics</span></a>
 				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
 				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page/${$__lastRead.page}` : '/page/1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
@@ -237,6 +251,17 @@
 		<div id="quran-division-tabs" class="mt-4">
 			<div class="flex flex-row items-center justify-between">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
+					<button id="favorite-chapters-tab" on:click={() => changeTabs('divisionsActiveTab', 3)} class="{divisionsActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center" data-umami-event="Favorite Chapters Tab Button" aria-label="Favorite surahs" title="Favorite surahs">
+						{#if divisionsActiveTab === 3}
+							<StarFilled size={4} />
+						{:else}
+							<Star size={4} />
+						{/if}
+
+						{#if totalFavoriteChapters > 0}
+							<span>({totalFavoriteChapters})</span>
+						{/if}
+					</button>
 					<button on:click={() => changeTabs('divisionsActiveTab', 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
 						<span>{term('chapters')}</span>
 					</button>
@@ -245,10 +270,12 @@
 					</button>
 				</div>
 
-				<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
-					<svelte:component this={divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? SortDescending : SortAscending) : homepageLayoutPreferences.juzSortIsAscending ? SortDescending : SortAscending} size={4} />
-				</button>
-				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending') : homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+				{#if showDivisionSort}
+					<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
+						<svelte:component this={divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? SortDescending : SortAscending) : homepageLayoutPreferences.juzSortIsAscending ? SortDescending : SortAscending} size={4} />
+					</button>
+					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending') : homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+				{/if}
 			</div>
 		</div>
 
@@ -350,6 +377,13 @@
 							</a>
 						{/each}
 					</div>
+				</div>
+			{/if}
+
+			<!-- favorites tab -->
+			{#if divisionsActiveTab === 3}
+				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
+					<UserFavoriteChapters {cardGridClasses} {cardInnerClasses} />
 				</div>
 			{/if}
 		</div>

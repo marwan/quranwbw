@@ -82,6 +82,7 @@
 	}
 
 	function openQuranNavigationModal() {
+		window.umami?.track('Quran Navigation Modal Button');
 		__quranNavigationModalVisible.set(true);
 	}
 </script>
@@ -93,7 +94,7 @@
 			<span class="text-xs pl-2 hidden md:block">Home</span>
 		</a>
 
-		<div class="flex items-center gap-2">
+		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl {window.theme('hoverBorder')} {window.theme('hover')}" on:click={openQuranNavigationModal}>
 			<!-- display the chapter name on chapter page -->
 			{#if $__currentPage === 'chapter'}
 				<button type="button" class={iconButtonClasses} aria-label={isFavoriteChapter ? 'Remove surah from favorites' : 'Add surah to favorites'} on:click={toggleFavoriteChapter}>
@@ -127,7 +128,7 @@
 					{/if}
 				</button>
 			{/if}
-		</div>
+		</button>
 
 		<button class="flex flex-row items-center p-3 cursor-pointer rounded-3xl {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" type="button" aria-label="Menu" on:click={() => __siteNavigationModalVisible.set(true)}>
 			<span class="text-xs pr-2 hidden md:block">Menu</span>

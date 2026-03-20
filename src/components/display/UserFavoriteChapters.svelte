@@ -2,11 +2,11 @@
 	import { quranMetaData } from '$data/quranMeta';
 	import NumberStar from '$display/NumberStar.svelte';
 	import ScrollableFadeContainer from '$display/ScrollableFadeContainer.svelte';
-	import { __userFavoriteChapters } from '$utils/stores';
+	import { __favoriteSurahsModalVisible, __userFavoriteChapters } from '$utils/stores';
+	import { buttonClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import Mecca from '$svgs/Mecca.svelte';
 	import Madinah from '$svgs/Madinah.svelte';
-	import Star from '$svgs/Star.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 
 	export let cardGridClasses;
@@ -15,12 +15,15 @@
 	$: hasFavorites = $__userFavoriteChapters.length > 0;
 </script>
 
+<div class="flex justify-start items-center px-2 pb-4">
+	<button class="text-sm {buttonClasses}" on:click={() => __favoriteSurahsModalVisible.set(true)}>Edit Favorites</button>
+</div>
+
 <ScrollableFadeContainer containerId="favorite-cards">
 	{#if !hasFavorites}
 		<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
 			<span>
-				You haven't favorited any {term('chapters')} yet! Start by clicking on the
-				<Star classes="inline mt-[-4px]" /> icon next to a surah name while reading in surah view.
+				You haven't favorited any {term('chapters')} yet! Click the Edit Favorites button to add them here.
 			</span>
 		</div>
 	{:else}

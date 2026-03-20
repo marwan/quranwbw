@@ -18,6 +18,7 @@
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
+	import FavoriteSurahsModal from '$ui/Modals/FavoriteSurahsModal.svelte';
 
 	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
@@ -193,6 +194,7 @@
 	<VerseTranslationModal />
 	<MorphologyModal />
 	<CopyShareVerseModal />
+	<FavoriteSurahsModal />
 	<ConfirmationAlertModal />
 
 	{#key $page.url.pathname}
