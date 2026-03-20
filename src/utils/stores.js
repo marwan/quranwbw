@@ -10,6 +10,7 @@ let __currentPage,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -42,6 +43,7 @@ let __currentPage,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
+	__favoriteSurahsModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
@@ -87,6 +89,9 @@ if (browser) {
 
 	// to store the user bookmarks
 	__userBookmarks = writable(userSettings.userBookmarks);
+
+	// to store the user's favorite chapters
+	__userFavoriteChapters = writable(userSettings.userFavoriteChapters);
 
 	// to store the font type - Uthmani, IndoPak, etc...
 	__fontType = writable(userSettings.displaySettings.fontType);
@@ -165,6 +170,7 @@ if (browser) {
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
+	__favoriteSurahsModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
 		type: null,
@@ -227,6 +233,7 @@ export {
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -259,6 +266,7 @@ export {
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
+	__favoriteSurahsModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,

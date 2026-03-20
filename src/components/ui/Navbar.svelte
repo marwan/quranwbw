@@ -68,6 +68,11 @@
 			console.warn(error);
 		}
 	}
+
+	function openQuranNavigationModal() {
+		window.umami?.track('Quran Navigation Modal Button');
+		__quranNavigationModalVisible.set(true);
+	}
 </script>
 
 <nav id="navbar" class={navbarClasses}>
@@ -77,7 +82,7 @@
 			<span class="text-xs pl-2 hidden md:block">Home</span>
 		</a>
 
-		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl {window.theme('hoverBorder')} {window.theme('hover')}" on:click={() => __quranNavigationModalVisible.set(true)}>
+		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl {window.theme('hoverBorder')} {window.theme('hover')}" on:click={openQuranNavigationModal}>
 			<!-- display the chapter name on chapter page -->
 			{#if $__currentPage === 'chapter'}
 				{@html navbarChapterName}

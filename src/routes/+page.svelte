@@ -7,6 +7,8 @@
 	import SortDescending from '$svgs/SortDescending.svelte';
 	import Eye from '$svgs/Eye.svelte';
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
+	import StarFilled from '$svgs/StarFilled.svelte';
+	import Star from '$svgs/Star.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import Menu from '$svgs/Menu.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
@@ -15,16 +17,17 @@
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
+	import UserFavoriteChapters from '$display/UserFavoriteChapters.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
+	import NumberStar from '$display/NumberStar.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userFavoriteChapters, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
-	const svgData = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const continueReadingButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
@@ -41,10 +44,12 @@
 
 	$: divisionsActiveTab = homepageLayoutPreferences.divisionsActiveTab ?? 1;
 	$: extrasActiveTab = homepageLayoutPreferences.extrasActiveTab ?? 1;
+	$: showDivisionSort = [1, 2].includes(divisionsActiveTab);
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
+	$: totalFavoriteChapters = $__userFavoriteChapters.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 
 	// Persist homepage layout preferences whenever they change
@@ -61,6 +66,8 @@
 
 	// Toggles sort order for the active division tab
 	function sortDivisions() {
+		if (!showDivisionSort) return;
+
 		const isChapters = divisionsActiveTab === 1;
 		const key = isChapters ? 'chaptersSortIsAscending' : 'juzSortIsAscending';
 		const data = isChapters ? quranMetaData : juzMeta;
@@ -102,7 +109,16 @@
 	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">
 			<div>
-				<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __quranNavigationModalVisible.set(true)}><Search2Bold size={4} /><span class="hidden md:block">Search</span></button>
+				<button
+					class="{topButtonClasses} !py-4 md:bg-transparent"
+					on:click={() => {
+						window.umami?.track('Homepage Search Button');
+						__quranNavigationModalVisible.set(true);
+					}}
+				>
+					<Search2Bold size={4} />
+					<span class="hidden md:block">Search</span>
+				</button>
 				<a href="/topics" class="{topButtonClasses} !py-4 md:bg-transparent"><TopicsBold size={4} /><span class="hidden md:block">Topics</span></a>
 				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
 				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page/${$__lastRead.page}` : '/page/1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
@@ -226,6 +242,17 @@
 		<div id="quran-division-tabs" class="mt-4">
 			<div class="flex flex-row items-center justify-between">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
+					<button id="favorite-chapters-tab" on:click={() => changeTabs('divisionsActiveTab', 3)} class="{divisionsActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center" data-umami-event="Favorite Chapters Tab Button" aria-label="Favorite surahs" title="Favorite surahs">
+						{#if divisionsActiveTab === 3}
+							<StarFilled size={4} />
+						{:else}
+							<Star size={4} />
+						{/if}
+
+						{#if totalFavoriteChapters > 0}
+							<span>({totalFavoriteChapters})</span>
+						{/if}
+					</button>
 					<button on:click={() => changeTabs('divisionsActiveTab', 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
 						<span>{term('chapters')}</span>
 					</button>
@@ -234,10 +261,12 @@
 					</button>
 				</div>
 
-				<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
-					<svelte:component this={divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? SortDescending : SortAscending) : homepageLayoutPreferences.juzSortIsAscending ? SortDescending : SortAscending} size={4} />
-				</button>
-				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending') : homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+				{#if showDivisionSort}
+					<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
+						<svelte:component this={divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? SortDescending : SortAscending) : homepageLayoutPreferences.juzSortIsAscending ? SortDescending : SortAscending} size={4} />
+					</button>
+					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending') : homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+				{/if}
 			</div>
 		</div>
 
@@ -265,11 +294,7 @@
 									<div class="{cardInnerClasses} flex-row text-center items-center">
 										<div class="flex flex-row space-x-2">
 											<div class="flex items-center">
-												<!-- number star -->
-												<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-													{@html svgData}
-													<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{id}</text>
-												</svg>
+												<NumberStar value={id} />
 											</div>
 
 											<div class="text-left">
@@ -324,11 +349,7 @@
 								<div class="{cardInnerClasses} flex-row text-center items-center">
 									<div class="flex flex-row space-x-2">
 										<div class="flex items-center">
-											<!-- number star -->
-											<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-												{@html svgData}
-												<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{juz.juz}</text>
-											</svg>
+											<NumberStar value={juz.juz} />
 										</div>
 
 										<div class="text-left">
@@ -347,6 +368,13 @@
 							</a>
 						{/each}
 					</div>
+				</div>
+			{/if}
+
+			<!-- favorites tab -->
+			{#if divisionsActiveTab === 3}
+				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
+					<UserFavoriteChapters {cardGridClasses} {cardInnerClasses} />
 				</div>
 			{/if}
 		</div>
