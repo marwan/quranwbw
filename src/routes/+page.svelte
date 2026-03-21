@@ -20,6 +20,7 @@
 	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
+	import { hizbMeta } from '$data/hizbMeta';
 	import { term } from '$utils/terminologies';
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
@@ -37,10 +38,11 @@
 
 	let chapterListOrder = [];
 	let juzListOrder = [];
+	let hizbListOrder = [];
 	let homepageLayoutPreferences = $__homepageLayoutPreferences;
 
-	$: divisionsActiveTab = homepageLayoutPreferences.divisionsActiveTab ?? 1;
-	$: extrasActiveTab = homepageLayoutPreferences.extrasActiveTab ?? 1;
+	$: divisionsActiveTab = homepageLayoutPreferences?.divisionsActiveTab ?? 1;
+	$: extrasActiveTab = homepageLayoutPreferences?.extrasActiveTab ?? 1;
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
@@ -50,27 +52,45 @@
 	// Persist homepage layout preferences whenever they change
 	$: if (homepageLayoutPreferences) updateSettings({ type: 'homepageLayoutPreferences', value: homepageLayoutPreferences });
 
-	// Initialize chapter and juz list order based on saved sort preference
+	// Initialize chapter, juz, and hizb list order based on saved sort preference
 	$: {
 		const chaptersAscending = homepageLayoutPreferences?.chaptersSortIsAscending ?? true;
 		const juzAscending = homepageLayoutPreferences?.juzSortIsAscending ?? true;
+		const hizbAscending = homepageLayoutPreferences?.hizbSortIsAscending ?? true;
 
 		chapterListOrder = chaptersAscending ? [...quranMetaData] : [...quranMetaData].reverse();
 		juzListOrder = juzAscending ? [...juzMeta] : [...juzMeta].reverse();
+		hizbListOrder = hizbAscending ? [...hizbMeta] : [...hizbMeta].reverse();
 	}
 
 	// Toggles sort order for the active division tab
 	function sortDivisions() {
-		const isChapters = divisionsActiveTab === 1;
-		const key = isChapters ? 'chaptersSortIsAscending' : 'juzSortIsAscending';
-		const data = isChapters ? quranMetaData : juzMeta;
+		const divisionConfig = {
+			1: {
+				key: 'chaptersSortIsAscending',
+				data: quranMetaData,
+				set: (sorted) => (chapterListOrder = sorted)
+			},
+			2: {
+				key: 'juzSortIsAscending',
+				data: juzMeta,
+				set: (sorted) => (juzListOrder = sorted)
+			},
+			3: {
+				key: 'hizbSortIsAscending',
+				data: hizbMeta,
+				set: (sorted) => (hizbListOrder = sorted)
+			}
+		};
+
+		const { key, data, set } = divisionConfig[divisionsActiveTab];
 		const newValue = !homepageLayoutPreferences[key];
 
 		homepageLayoutPreferences = { ...homepageLayoutPreferences, [key]: newValue };
-
-		const sorted = newValue ? [...data] : [...data].reverse();
-		isChapters ? (chapterListOrder = sorted) : (juzListOrder = sorted);
+		set(newValue ? [...data] : [...data].reverse());
 	}
+
+	$: activeDivisionSortIsAscending = divisionsActiveTab === 1 ? (homepageLayoutPreferences?.chaptersSortIsAscending ?? true) : divisionsActiveTab === 2 ? (homepageLayoutPreferences?.juzSortIsAscending ?? true) : (homepageLayoutPreferences?.hizbSortIsAscending ?? true);
 
 	// Updates the active tab and triggers reactivity by replacing the preferences object
 	function changeTabs(tabName, tabNumber) {
@@ -232,12 +252,15 @@
 					<button on:click={() => changeTabs('divisionsActiveTab', 2)} class="{divisionsActiveTab === 2 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Juz Tab Button">
 						<span>{term('juzs')}</span>
 					</button>
+					<button on:click={() => changeTabs('divisionsActiveTab', 3)} class="{divisionsActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Hizb Tab Button">
+						<span>{term('hizb')}</span>
+					</button>
 				</div>
 
 				<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
-					<svelte:component this={divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? SortDescending : SortAscending) : homepageLayoutPreferences.juzSortIsAscending ? SortDescending : SortAscending} size={4} />
+					<svelte:component this={activeDivisionSortIsAscending ? SortDescending : SortAscending} size={4} />
 				</button>
-				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending') : homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{activeDivisionSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
 			</div>
 		</div>
 
@@ -343,6 +366,51 @@
 									</div>
 
 									<div class="juz-icons justify-items-end text-xl md:text-2xl" style="color: {window.theme('icon')}">{juz.icon}</div>
+								</div>
+							</a>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+			<!-- hizb tab -->
+			{#if divisionsActiveTab === 3}
+				<div id="hizb-tab-panel" role="tabpanel" aria-labelledby="hizb-tab">
+					{#if lastReadExists && $__lastRead.hizb}
+						{@const lastReadChapter = $__lastRead.chapter}
+						{@const lastReadVerse = $__lastRead.verse}
+						{@const lastReadHizb = $__lastRead.hizb}
+						<a href="/hizb/{lastReadHizb}?startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Hizb Button')}>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span>
+								Continue Reading: {term('hizb')}
+								{lastReadHizb}, {lastReadChapter}:{lastReadVerse}
+							</span>
+						</a>
+					{/if}
+
+					<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+						{#each hizbListOrder as hizb}
+							<a href="/hizb/{hizb.hizb}">
+								<div class="{cardInnerClasses} flex-row text-center items-center">
+									<div class="flex flex-row space-x-2">
+										<div class="flex items-center">
+											<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
+												{@html svgData}
+												<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{hizb.hizb}</text>
+											</svg>
+										</div>
+
+										<div class="text-left">
+											<div class="flex flex-row items-center space-x-1 justify-start truncate">
+												<div>{term('hizb')} {hizb.hizb}</div>
+											</div>
+
+											<div class="block text-xs truncate opacity-70">
+												{hizb.from} - {hizb.to}
+											</div>
+										</div>
+									</div>
 								</div>
 							</a>
 						{/each}

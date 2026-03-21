@@ -80,7 +80,7 @@
 </script>
 
 <!-- chapter page -->
-{#if ['chapter', 'juz'].includes($__currentPage)}
+{#if ['chapter', 'juz', 'hizb'].includes($__currentPage)}
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
 		<div style="font-family: bismillah" class={chapterBismillahClasses}>
 			<!-- uthmani fonts -->

@@ -34,6 +34,7 @@ export async function fetchChapterData(props) {
 			verse: parseInt(verseStr, 10),
 			page: null,
 			juz: null,
+			hizb: null,
 			words: arabicWords.length
 		};
 
@@ -43,6 +44,7 @@ export async function fetchChapterData(props) {
 				verse: parseInt(verseStr, 10),
 				page: meta.page,
 				juz: meta.juz,
+				hizb: meta.hizb,
 				words: meta.words
 			},
 			words: {

@@ -232,7 +232,7 @@ export function updateSettings(props) {
 
 		// for last read
 		case 'lastRead':
-			if (['chapter', 'mushaf', 'juz'].includes(get(__currentPage))) {
+			if (['chapter', 'mushaf', 'juz', 'hizb'].includes(get(__currentPage))) {
 				const data = props.value;
 				data['currentPage'] = get(__currentPage);
 				__lastRead.set(data);

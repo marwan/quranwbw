@@ -222,7 +222,7 @@
 		{#if showLoadPreviousVerseButton}
 			{@const previousKey = keysArray[getIndexOfKey(keyToStartWith) - 1]}
 			<div class={loadPrevNextVerseButtons}>
-				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {term('juz')}</button>
+				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {term($__currentPage === 'hizb' ? 'hizb' : 'juz')}</button>
 				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>Previous {term('verse')}</button>
 			</div>
 		{/if}
@@ -232,8 +232,8 @@
 				{@const key = keysArray[index]}
 				{@const value = dataMap[key]}
 
-				<!-- Only show Bismillah when its the Juz page -->
-				{#if $__currentPage === 'juz' && +key.split(':')[1] === 1}
+				<!-- Only show chapter header and Bismillah when on a division page -->
+				{#if ['juz', 'hizb'].includes($__currentPage) && +key.split(':')[1] === 1}
 					{@const chapter = +key.split(':')[0]}
 					<div class="mt-4">
 						<ChapterHeader {chapter} />

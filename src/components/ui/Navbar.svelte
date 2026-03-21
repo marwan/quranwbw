@@ -90,8 +90,8 @@
 				<ChevronDown />
 			{/if}
 
-			<!-- display only the juz number for juz page -->
-			{#if $__currentPage === 'juz'}
+			<!-- display only the division title for juz/hizb page -->
+			{#if ['juz', 'hizb'].includes($__currentPage)}
 				{document.title.split(' - ')[0]}
 				<ChevronDown />
 			{/if}
@@ -102,7 +102,7 @@
 			{/if}
 
 			<!-- display only the page name for non-chapter page -->
-			{#if !['chapter', 'mushaf', 'supplications', 'juz'].includes($__currentPage)}
+			{#if !['chapter', 'mushaf', 'supplications', 'juz', 'hizb'].includes($__currentPage)}
 				{$__currentPage[0].toUpperCase() + $__currentPage.slice(1)}
 
 				<!-- if it's the morphology page, show morphology key as well -->

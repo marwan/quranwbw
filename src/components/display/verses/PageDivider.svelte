@@ -2,6 +2,7 @@
 	export let key;
 
 	import { pageNumberKeys, juzNumberKeys } from '$data/quranMeta';
+	import { hizbNumberKeys } from '$data/hizbMeta';
 	import { __currentPage, __displayType } from '$utils/stores';
 	import { selectableDisplays } from '$data/options';
 	import { term } from '$utils/terminologies';
@@ -13,29 +14,33 @@
 		${window.theme('hoverBorder')}
 		${window.theme('bgSecondaryLight')}
 	`;
+
+	$: dividerItems = [];
+
+	$: if (['chapter', 'juz', 'hizb'].includes($__currentPage)) {
+		const items = [];
+		const pageIndex = pageNumberKeys.indexOf(key);
+		const juzIndex = juzNumberKeys.indexOf(key);
+		const hizbIndex = hizbNumberKeys.indexOf(key);
+
+		if (pageIndex > -1) items.push(`Page ${pageIndex + 1}`);
+		if (juzIndex > -1) items.push(`${term('juz')} ${juzIndex + 1}`);
+		if (hizbIndex > -1) items.push(`${term('hizb')} ${hizbIndex + 1}`);
+
+		dividerItems = items;
+	} else {
+		dividerItems = [];
+	}
 </script>
 
-<!-- if the current key is the start of a page or juz  -->
-{#if ['chapter', 'juz'].includes($__currentPage)}
-	{@const isPage = pageNumberKeys.includes(key)}
-	{@const isJuz = juzNumberKeys.includes(key)}
-
-	{#if isPage || isJuz}
-		<div class={dividerClasses}>
-			{#if isPage}
-				{@const pageIndex = pageNumberKeys.indexOf(key) + 1}
-				Page {pageIndex}
-			{/if}
-
-			{#if isPage && isJuz}
+<!-- if the current key is the start of a page, juz, or hizb -->
+{#if dividerItems.length > 0}
+	<div class={dividerClasses}>
+		{#each dividerItems as item, index}
+			<span>{item}</span>
+			{#if index < dividerItems.length - 1}
 				<span class="px-1 opacity-70">/</span>
 			{/if}
-
-			{#if isJuz}
-				{@const juzIndex = juzNumberKeys.indexOf(key) + 1}
-				{term('juz')}
-				{juzIndex}
-			{/if}
-		</div>
-	{/if}
+		{/each}
+	</div>
 {/if}

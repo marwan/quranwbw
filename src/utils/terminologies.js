@@ -12,6 +12,7 @@ export const englishTerms = {
 		tajweed: 'Pronunciation',
 		juz: 'Part (Juz)',
 		juzs: 'Parts (Juz)',
+		hizb: 'Half Part (Hizb)',
 		meccan: 'Meccan',
 		medinan: 'Medinan'
 	},
@@ -25,6 +26,7 @@ export const englishTerms = {
 		tajweed: 'Tajweed',
 		juz: 'Juz',
 		juzs: 'Juz',
+		hizb: 'Hizb',
 		meccan: 'Makki',
 		medinan: 'Madani'
 	}
