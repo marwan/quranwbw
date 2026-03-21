@@ -17,15 +17,14 @@
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
-	import UserFavoriteChapters from '$display/UserFavoriteChapters.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
 	import NumberStar from '$display/NumberStar.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteSurahsModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
-	import { disabledClasses } from '$data/commonClasses';
+	import { disabledClasses, buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
@@ -50,6 +49,7 @@
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
+	$: hasFavorites = $__userFavoriteChapters.length > 0;
 
 	// Persist homepage layout preferences whenever they change
 	$: if (homepageLayoutPreferences) updateSettings({ type: 'homepageLayoutPreferences', value: homepageLayoutPreferences });
@@ -234,11 +234,6 @@
 					<div class="px-2 text-xs opacity-70">Suggestions listed here are based on the most frequently read chapters and verses by muslim audience, as well as virtues derived from Hadiths. While some Hadiths highlighting these virtues may be considered weak by some scholars, using them for beneficial knowledge is also a widely accepted opinion.</div>
 				</div>
 			</div>
-
-			<!-- favorites tab -->
-			<div class="space-y-12 {extrasActiveTab === 4 ? 'block' : 'hidden'}" id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorites-tab">
-				<UserFavoriteChapters {cardGridClasses} {cardInnerClasses} />
-			</div>
 		</div>
 
 		<div class="border-b {window.theme('border')}"></div>
@@ -373,8 +368,53 @@
 
 			<!-- favorites tab -->
 			{#if divisionsActiveTab === 3}
+				<div class="flex justify-start items-center px-2 pb-4">
+					<button class="text-sm {buttonClasses}" on:click={() => __favoriteSurahsModalVisible.set(true)}>Edit Favorites</button>
+				</div>
+
 				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
-					<UserFavoriteChapters {cardGridClasses} {cardInnerClasses} />
+					{#if !hasFavorites}
+						<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
+							<span>
+								You haven't favorited any {term('chapters')} yet! Click the Edit Favorites button to add them here.
+							</span>
+						</div>
+					{:else}
+						<div>
+							<div class="{cardGridClasses} grid-cols-1">
+								{#each $__userFavoriteChapters as id (id)}
+									<a href="/{id}">
+										<div class="{cardInnerClasses} flex-row text-center items-center">
+											<div class="flex flex-row space-x-2">
+												<div class="flex items-center">
+													<NumberStar value={id} />
+												</div>
+
+												<div class="text-left">
+													<div class="flex flex-row items-center space-x-1 justify-start truncate">
+														<div>{quranMetaData[id].transliteration}</div>
+														<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
+														<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
+													</div>
+
+													<div class="block text-xs truncate opacity-70">
+														{quranMetaData[id].translation}
+													</div>
+
+													<div class="block text-xs opacity-70">
+														{quranMetaData[id].verses}
+														{term('verses')}
+													</div>
+												</div>
+											</div>
+
+											<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+										</div>
+									</a>
+								{/each}
+							</div>
+						</div>
+					{/if}
 				</div>
 			{/if}
 		</div>
