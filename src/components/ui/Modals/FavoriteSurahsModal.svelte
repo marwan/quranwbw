@@ -9,7 +9,7 @@
 	import { selectedRadioOrCheckboxClasses, individualCheckboxClasses } from '$data/commonClasses';
 
 	function toggleFavoriteChapter(chapterId) {
-		window.umami?.track('Favorite Surah Button');
+		window.umami?.track('Add Surah To Favorite');
 		updateSettings({ type: 'userFavoriteChapters', key: chapterId });
 	}
 </script>
