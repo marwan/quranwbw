@@ -43,13 +43,16 @@
 
 	$: divisionsActiveTab = homepageLayoutPreferences.divisionsActiveTab ?? 1;
 	$: extrasActiveTab = homepageLayoutPreferences.extrasActiveTab ?? 1;
-	$: showDivisionSort = [1, 2].includes(divisionsActiveTab);
+	$: showDivisionSort = [1, 2, 3].includes(divisionsActiveTab);
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 	$: hasFavorites = $__userFavoriteChapters.length > 0;
+	$: favoritesSortIsAscending = homepageLayoutPreferences.favoritesSortIsAscending ?? true;
+	$: sortedFavoriteChapters = favoritesSortIsAscending ? [...$__userFavoriteChapters].sort((a, b) => a - b) : [...$__userFavoriteChapters].sort((a, b) => b - a);
+	$: lastReadInFavorites = lastReadExists && $__userFavoriteChapters.includes($__lastRead.chapter);
 
 	// Persist homepage layout preferences whenever they change
 	$: if (homepageLayoutPreferences) updateSettings({ type: 'homepageLayoutPreferences', value: homepageLayoutPreferences });
@@ -68,14 +71,21 @@
 		if (!showDivisionSort) return;
 
 		const isChapters = divisionsActiveTab === 1;
-		const key = isChapters ? 'chaptersSortIsAscending' : 'juzSortIsAscending';
-		const data = isChapters ? quranMetaData : juzMeta;
-		const newValue = !homepageLayoutPreferences[key];
+		const isJuz = divisionsActiveTab === 2;
+		const isFavorites = divisionsActiveTab === 3;
 
-		homepageLayoutPreferences = { ...homepageLayoutPreferences, [key]: newValue };
-
-		const sorted = newValue ? [...data] : [...data].reverse();
-		isChapters ? (chapterListOrder = sorted) : (juzListOrder = sorted);
+		if (isChapters) {
+			const newValue = !homepageLayoutPreferences.chaptersSortIsAscending;
+			homepageLayoutPreferences = { ...homepageLayoutPreferences, chaptersSortIsAscending: newValue };
+			chapterListOrder = newValue ? [...quranMetaData] : [...quranMetaData].reverse();
+		} else if (isJuz) {
+			const newValue = !homepageLayoutPreferences.juzSortIsAscending;
+			homepageLayoutPreferences = { ...homepageLayoutPreferences, juzSortIsAscending: newValue };
+			juzListOrder = newValue ? [...juzMeta] : [...juzMeta].reverse();
+		} else if (isFavorites) {
+			const newValue = !homepageLayoutPreferences.favoritesSortIsAscending;
+			homepageLayoutPreferences = { ...homepageLayoutPreferences, favoritesSortIsAscending: newValue };
+		}
 	}
 
 	// Updates the active tab and triggers reactivity by replacing the preferences object
@@ -258,9 +268,17 @@
 
 				{#if showDivisionSort}
 					<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
-						<svelte:component this={divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? SortDescending : SortAscending) : homepageLayoutPreferences.juzSortIsAscending ? SortDescending : SortAscending} size={4} />
+						<svelte:component this={divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? SortDescending : SortAscending) : divisionsActiveTab === 2 ? (homepageLayoutPreferences.juzSortIsAscending ? SortDescending : SortAscending) : favoritesSortIsAscending ? SortDescending : SortAscending} size={4} />
 					</button>
-					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{divisionsActiveTab === 1 ? (homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending') : homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">
+						{#if divisionsActiveTab === 1}
+							{homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}
+						{:else if divisionsActiveTab === 2}
+							{homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}
+						{:else}
+							{favoritesSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}
+						{/if}
+					</Tooltip>
 				{/if}
 			</div>
 		</div>
@@ -367,54 +385,63 @@
 			{/if}
 
 			<!-- favorites tab -->
+			<!-- favorites tab -->
 			{#if divisionsActiveTab === 3}
-				<div class="flex justify-start items-center px-2 pb-4">
-					<button class="text-sm {buttonClasses}" on:click={() => __favoriteSurahsModalVisible.set(true)}>Edit Favorites</button>
-				</div>
-
 				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
-					{#if !hasFavorites}
-						<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
-							<span>
-								You haven't favorited any {term('chapters')} yet! Click the Edit Favorites button to add them here.
+					{#if lastReadInFavorites}
+						{@const lastReadChapter = $__lastRead.chapter}
+						{@const lastReadVerse = $__lastRead.verse}
+						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="truncate">
+								Continue Reading:
+								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
 							</span>
+						</a>
+					{/if}
+
+					{#if !hasFavorites}
+						<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2 mb-4">
+							<span>You haven't favorited any {term('chapters')} yet! Click the button below to add them here.</span>
 						</div>
 					{:else}
-						<div>
-							<div class="{cardGridClasses} grid-cols-1">
-								{#each $__userFavoriteChapters as id (id)}
-									<a href="/{id}">
-										<div class="{cardInnerClasses} flex-row text-center items-center">
-											<div class="flex flex-row space-x-2">
-												<div class="flex items-center">
-													<NumberStar value={id} />
-												</div>
-
-												<div class="text-left">
-													<div class="flex flex-row items-center space-x-1 justify-start truncate">
-														<div>{quranMetaData[id].transliteration}</div>
-														<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
-														<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
-													</div>
-
-													<div class="block text-xs truncate opacity-70">
-														{quranMetaData[id].translation}
-													</div>
-
-													<div class="block text-xs opacity-70">
-														{quranMetaData[id].verses}
-														{term('verses')}
-													</div>
-												</div>
+						<div class="{cardGridClasses} grid-cols-1">
+							{#each sortedFavoriteChapters as id (id)}
+								<a href="/{id}">
+									<div class="{cardInnerClasses} flex-row text-center items-center">
+										<div class="flex flex-row space-x-2">
+											<div class="flex items-center">
+												<NumberStar value={id} />
 											</div>
 
-											<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+											<div class="text-left">
+												<div class="flex flex-row items-center space-x-1 justify-start truncate">
+													<div>{quranMetaData[id].transliteration}</div>
+													<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
+													<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
+												</div>
+
+												<div class="block text-xs truncate opacity-70">
+													{quranMetaData[id].translation}
+												</div>
+
+												<div class="block text-xs opacity-70">
+													{quranMetaData[id].verses}
+													{term('verses')}
+												</div>
+											</div>
 										</div>
-									</a>
-								{/each}
-							</div>
+
+										<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+									</div>
+								</a>
+							{/each}
 						</div>
 					{/if}
+
+					<div class="flex justify-center items-center pt-4">
+						<button class="text-sm {buttonClasses}" on:click={() => __favoriteSurahsModalVisible.set(true)}>Edit Favorites</button>
+					</div>
 				</div>
 			{/if}
 		</div>
