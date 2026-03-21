@@ -20,9 +20,9 @@
 <ScrollableFadeContainer containerId="note-cards" onScrollAction={handleScroll}>
 	{#if !hasNotes}
 		<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2">
-			<span>
+			<span class="leading-relaxed">
 				You haven't saved any notes yet! Start jotting down your thoughts by clicking the
-				<Notes classes="inline mt-[-4px]" /> icon. It's like creating your own personal treasure chest of wisdom.
+				<Notes classes="inline mt-[-4px] mx-1" /> icon. It's like creating your own personal treasure chest of wisdom.
 			</span>
 		</div>
 	{:else}

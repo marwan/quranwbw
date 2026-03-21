@@ -218,7 +218,7 @@
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.extrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
 		</div>
 
-		<div id="extras-panel" class="mb-4 pt-1 {homepageLayoutPreferences.extrasPanelVisible ? 'block' : 'hidden'}">
+		<div id="extras-panel" class="mb-4 pt-2 {homepageLayoutPreferences.extrasPanelVisible ? 'block' : 'hidden'}">
 			<!-- bookmarks tab -->
 			<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 				<UserBookmarks {cardGridClasses} {cardInnerClasses} />
@@ -283,7 +283,7 @@
 			</div>
 		</div>
 
-		<div id="quran-divisions-panel" class="mb-6">
+		<div id="quran-divisions-panel" class="mb-6 pt-2">
 			<!-- chapters tab -->
 			{#if divisionsActiveTab === 1}
 				<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
