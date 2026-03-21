@@ -24,7 +24,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
-	import { disabledClasses, buttonClasses } from '$data/commonClasses';
+	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
@@ -388,7 +388,7 @@
 			<!-- favorites tab -->
 			{#if divisionsActiveTab === 3}
 				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
-					<div class="flex flex-row space-x-2 mb-2">
+					<div class="flex flex-row space-x-2 text-sm mb-2">
 						<!-- Edit Favorites button  -->
 						<button class="{topButtonClasses} truncate w-full" on:click={() => __favoriteSurahsModalVisible.set(true)}>
 							<Star size]{5} />
