@@ -294,7 +294,8 @@
 						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span class="truncate">
-								Continue Reading:
+								<span class="md:hidden">Continue:</span>
+								<span class="hidden md:inline-block">Continue Reading:</span>
 								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
 							</span>
 						</a>
@@ -391,7 +392,11 @@
 						<!-- Edit Favorites button  -->
 						<button class="{topButtonClasses} truncate w-full" on:click={() => __favoriteSurahsModalVisible.set(true)}>
 							<Star size]{5} />
-							<span>Edit Favorites</span>
+							{#if !hasFavorites}
+								<span>Add Favorite <span class="hidden md:inline-block">{term('chapters')}</span></span>
+							{:else}
+								<span>Edit Favorite <span class="hidden md:inline-block">{term('chapters')}</span></span>
+							{/if}
 						</button>
 
 						<!-- Continue Reading button -->
@@ -401,51 +406,45 @@
 							<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
 								<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 								<span class="truncate">
-									Continue Reading:
+									<span class="hidden md:inline-block">Continue Reading:</span>
 									{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
 								</span>
 							</a>
 						{/if}
 					</div>
 
-					{#if !hasFavorites}
-						<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2 mb-4">
-							<span>You haven't favorited any {term('chapters')} yet! Click the button below to add them here.</span>
-						</div>
-					{:else}
-						<div class="{cardGridClasses} grid-cols-1">
-							{#each sortedFavoriteChapters as id (id)}
-								<a href="/{id}">
-									<div class="{cardInnerClasses} flex-row text-center items-center">
-										<div class="flex flex-row space-x-2">
-											<div class="flex items-center">
-												<NumberStar value={id} />
-											</div>
-
-											<div class="text-left">
-												<div class="flex flex-row items-center space-x-1 justify-start truncate">
-													<div>{quranMetaData[id].transliteration}</div>
-													<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
-													<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
-												</div>
-
-												<div class="block text-xs truncate opacity-70">
-													{quranMetaData[id].translation}
-												</div>
-
-												<div class="block text-xs opacity-70">
-													{quranMetaData[id].verses}
-													{term('verses')}
-												</div>
-											</div>
+					<div class="{cardGridClasses} grid-cols-1">
+						{#each sortedFavoriteChapters as id (id)}
+							<a href="/{id}">
+								<div class="{cardInnerClasses} flex-row text-center items-center">
+									<div class="flex flex-row space-x-2">
+										<div class="flex items-center">
+											<NumberStar value={id} />
 										</div>
 
-										<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+										<div class="text-left">
+											<div class="flex flex-row items-center space-x-1 justify-start truncate">
+												<div>{quranMetaData[id].transliteration}</div>
+												<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
+												<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
+											</div>
+
+											<div class="block text-xs truncate opacity-70">
+												{quranMetaData[id].translation}
+											</div>
+
+											<div class="block text-xs opacity-70">
+												{quranMetaData[id].verses}
+												{term('verses')}
+											</div>
+										</div>
 									</div>
-								</a>
-							{/each}
-						</div>
-					{/if}
+
+									<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+								</div>
+							</a>
+						{/each}
+					</div>
 				</div>
 			{/if}
 		</div>
