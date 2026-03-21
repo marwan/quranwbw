@@ -390,8 +390,8 @@
 				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
 					<div class="flex flex-row space-x-2 text-sm mb-2">
 						<!-- Edit Favorites button  -->
-						<button class="{topButtonClasses} truncate w-full" on:click={() => __favoriteSurahsModalVisible.set(true)}>
-							<Star size]{5} />
+						<button class="{topButtonClasses} truncate w-full min-h-[54px] md:min-h-[58px]" on:click={() => __favoriteSurahsModalVisible.set(true)}>
+							<Star size={5} />
 							{#if !hasFavorites}
 								<span>Add Favorite <span class="hidden md:inline-block">{term('chapters')}</span></span>
 							{:else}
