@@ -385,20 +385,28 @@
 			{/if}
 
 			<!-- favorites tab -->
-			<!-- favorites tab -->
 			{#if divisionsActiveTab === 3}
 				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
-					{#if lastReadInFavorites}
-						{@const lastReadChapter = $__lastRead.chapter}
-						{@const lastReadVerse = $__lastRead.verse}
-						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
-							<span class="truncate">
-								Continue Reading:
-								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
-							</span>
-						</a>
-					{/if}
+					<div class="flex flex-row space-x-2 mb-2">
+						<!-- Edit Favorites button  -->
+						<button class="{topButtonClasses} truncate w-full" on:click={() => __favoriteSurahsModalVisible.set(true)}>
+							<Star size]{5} />
+							<span>Edit Favorites</span>
+						</button>
+
+						<!-- Continue Reading button -->
+						{#if lastReadInFavorites}
+							{@const lastReadChapter = $__lastRead.chapter}
+							{@const lastReadVerse = $__lastRead.verse}
+							<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
+								<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+								<span class="truncate">
+									Continue Reading:
+									{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
+								</span>
+							</a>
+						{/if}
+					</div>
 
 					{#if !hasFavorites}
 						<div class="flex flex-row justify-start text-xs md:text-sm opacity-70 px-2 mb-4">
@@ -438,10 +446,6 @@
 							{/each}
 						</div>
 					{/if}
-
-					<div class="flex justify-center items-center pt-4">
-						<button class="text-sm {buttonClasses}" on:click={() => __favoriteSurahsModalVisible.set(true)}>Edit Favorites</button>
-					</div>
 				</div>
 			{/if}
 		</div>
