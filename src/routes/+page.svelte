@@ -9,16 +9,17 @@
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
 	import StarFilled from '$svgs/StarFilled.svelte';
 	import Star from '$svgs/Star.svelte';
-	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import Menu from '$svgs/Menu.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
 	import MorphologyBold from '$svgs/MorphologyBold.svelte';
 	import TopicsBold from '$svgs/TopicsBold.svelte';
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
+	import Edit2 from '$svgs/Edit2.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
 	import NumberStar from '$display/NumberStar.svelte';
+	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
 	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteSurahsModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
@@ -52,7 +53,6 @@
 	$: hasFavorites = $__userFavoriteChapters.length > 0;
 	$: favoritesSortIsAscending = homepageLayoutPreferences.favoritesSortIsAscending ?? true;
 	$: sortedFavoriteChapters = favoritesSortIsAscending ? [...$__userFavoriteChapters].sort((a, b) => a - b) : [...$__userFavoriteChapters].sort((a, b) => b - a);
-	$: lastReadInFavorites = lastReadExists && $__userFavoriteChapters.includes($__lastRead.chapter);
 
 	// Persist homepage layout preferences whenever they change
 	$: if (homepageLayoutPreferences) updateSettings({ type: 'homepageLayoutPreferences', value: homepageLayoutPreferences });
@@ -391,26 +391,9 @@
 					<div class="flex flex-row space-x-2 text-sm mb-2">
 						<!-- Edit Favorites button  -->
 						<button class="{topButtonClasses} truncate w-full min-h-[54px] md:min-h-[58px]" on:click={() => __favoriteSurahsModalVisible.set(true)}>
-							<Star size={5} />
-							{#if !hasFavorites}
-								<span>Add Favorite <span class="hidden md:inline-block">{term('chapters')}</span></span>
-							{:else}
-								<span>Edit Favorite <span class="hidden md:inline-block">{term('chapters')}</span></span>
-							{/if}
+							<Edit2 size={4} />
+							<span>{hasFavorites ? 'Manage' : 'Add Your'} Favorite {term('chapters')}</span>
 						</button>
-
-						<!-- Continue Reading button -->
-						{#if lastReadInFavorites}
-							{@const lastReadChapter = $__lastRead.chapter}
-							{@const lastReadVerse = $__lastRead.verse}
-							<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
-								<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
-								<span class="truncate">
-									<span class="hidden md:inline-block">Continue Reading:</span>
-									{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
-								</span>
-							</a>
-						{/if}
 					</div>
 
 					<div class="{cardGridClasses} grid-cols-1">
