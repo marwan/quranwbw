@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Settings from '$svgs/Settings.svelte';
 	import Topics from '$svgs/Topics.svelte';
@@ -12,6 +13,7 @@
 	import Changelog from '$svgs/Changelog.svelte';
 	import Offline from '$svgs/Offline.svelte';
 	import LegacySite from '$svgs/LegacySite.svelte';
+	import { disabledClasses } from '$data/commonClasses';
 	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
@@ -20,16 +22,28 @@
 	const linkClasses = `w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const linkTextClasses = 'text-xs md:text-sm text-left w-[-webkit-fill-available] truncate';
 
-	let userOnline = true; // assume online by default to avoid hiding links; will be updated after an explicit network check
-	let networkCheckPerformed = false;
+	let userOnline = typeof navigator === 'undefined' ? true : navigator.onLine;
 
 	async function checkNetwork() {
-		networkCheckPerformed = false;
 		userOnline = await isUserOnline();
-		networkCheckPerformed = true;
 	}
 
-	// Run check only when modal opens
+	onMount(() => {
+		const syncOnlineStatus = () => {
+			userOnline = navigator.onLine;
+		};
+
+		window.addEventListener('online', syncOnlineStatus);
+		window.addEventListener('offline', syncOnlineStatus);
+		checkNetwork();
+
+		return () => {
+			window.removeEventListener('online', syncOnlineStatus);
+			window.removeEventListener('offline', syncOnlineStatus);
+		};
+	});
+
+	// Refresh network status when modal opens without changing the tile layout.
 	$: if ($__siteNavigationModalVisible) checkNetwork();
 
 	// hide the modal when page changes
@@ -45,12 +59,10 @@
 			<div class="flex flex-col space-y-2">
 				<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
 					<!-- Search -->
-					{#if networkCheckPerformed && userOnline}
-						<a href="/search" class={linkClasses}>
-							<Search2 size={4} />
-							<span class={linkTextClasses}>Search</span>
-						</a>
-					{/if}
+					<a href="/search" class={`${linkClasses} ${!userOnline ? disabledClasses : ''}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1}>
+						<Search2 size={4} />
+						<span class={linkTextClasses}>Search</span>
+					</a>
 
 					<!-- settings modal -->
 					<button
@@ -126,12 +138,18 @@
 					</a>
 
 					<!-- legacy site link -->
-					{#if networkCheckPerformed && userOnline}
-						<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
-							<LegacySite size={4} />
-							<span class={linkTextClasses}>Old Website</span>
-						</a>
-					{/if}
+					<a
+						href="https://old.quranwbw.com/"
+						target="_blank"
+						rel="noopener noreferrer"
+						class={`${linkClasses} ${!userOnline ? disabledClasses : ''}`}
+						aria-disabled={!userOnline}
+						tabindex={userOnline ? undefined : -1}
+						data-umami-event="Legacy Site Button"
+					>
+						<LegacySite size={4} />
+						<span class={linkTextClasses}>Old Website</span>
+					</a>
 				</div>
 			</div>
 		</div>
