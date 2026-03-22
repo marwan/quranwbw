@@ -389,7 +389,7 @@
 						</a>
 					{/if}
 
-					<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+					<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
 						{#each hizbListOrder as hizb}
 							<a href="/hizb/{hizb.hizb}">
 								<div class="{cardInnerClasses} flex-row text-center items-center">
