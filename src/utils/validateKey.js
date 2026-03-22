@@ -35,6 +35,7 @@ function handleNumericKey(key, results) {
 	}
 	if (key >= 1 && key <= 604) results.page = key; // Maps key to page if valid
 	if (key >= 1 && key <= 30) results.juz = key; // Maps key to juz if valid
+	if (key >= 1 && key <= 60) results.hizb = key; // Maps key to hizb if valid
 }
 
 // Checks if the search term contains special characters (e.g., colon, dash, dot)
@@ -52,8 +53,19 @@ async function handleSpecialCharKey(key, results) {
 // Processes string search terms by splitting and validating them, mapping to results accordingly
 async function handleStringKey(key, results) {
 	const keySplit = key.split(' ');
-
-	if (keySplit.length === 2 && isValidVerseKey(formatVerseKey(keySplit))) {
+	const isLength2 = keySplit.length === 2;
+	const keySplit0Lower = keySplit[0].toLowerCase();
+	const keySplit1Num = +keySplit[1];
+	
+	if (isLength2 && keySplit0Lower === 'hizb' && isNumeric(keySplit[1]) && keySplit1Num >= 1 && keySplit1Num <= 60) {
+		results.hizb = keySplit1Num;
+	} else if (isLength2 && keySplit0Lower === 'juz' && isNumeric(keySplit[1]) && keySplit1Num >= 1 && keySplit1Num <= 30) {
+		results.juz = keySplit1Num;
+	} else if (isLength2 && keySplit0Lower === 'page' && isNumeric(keySplit[1]) && keySplit1Num >= 1 && keySplit1Num <= 604) {
+		results.page = keySplit1Num;
+	} else if (isLength2 && ['surah', 'chapter'].includes(keySplit0Lower) && isNumeric(keySplit[1]) && keySplit1Num >= 1 && keySplit1Num <= 114) {
+		results.chapter = keySplit1Num;
+	} else if (isLength2 && isValidVerseKey(formatVerseKey(keySplit))) {
 		results.key = formatVerseKey(keySplit); // Formats and validates as verse key
 	} else if (keySplit.length === 3 && (await isValidWordKey(formatWordKey(keySplit)))) {
 		results.word = formatWordKey(keySplit); // Formats and validates as word key
