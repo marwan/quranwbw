@@ -54,6 +54,7 @@ export const defaultSettings = {
 	},
 	lastRead: {},
 	userBookmarks: [],
+	userFavoriteChapters: [],
 	userNotes: {},
 	chapter: 1,
 	offlineModeSettings: {}

@@ -19,6 +19,7 @@ import {
 	__lastRead,
 	__wordTooltip,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__wakeLockEnabled,
 	__userNotes,
 	__quizCorrectAnswers,
@@ -198,6 +199,29 @@ export function updateSettings(props) {
 			}
 
 			__userBookmarks.set(userBookmarks);
+			break;
+
+		case 'userFavoriteChapters':
+			const chapterKey = props.key;
+			let userFavoriteChapters = userSettings['userFavoriteChapters'];
+
+			if (props.override) {
+				// Directly replace the entire favorites list (e.g. on initial load or bulk update)
+				userSettings.userFavoriteChapters = chapterKey;
+				userFavoriteChapters = chapterKey;
+			} else {
+				// Toggle: remove the chapter if already favorited, add it if not
+				if (userFavoriteChapters.includes(chapterKey)) {
+					userFavoriteChapters = userFavoriteChapters.filter((x) => x !== chapterKey);
+					window.umami?.track('Remove Chapter From Favorites');
+				} else {
+					userFavoriteChapters.push(chapterKey);
+					window.umami?.track('Add Chapter To Favorites');
+				}
+				userSettings.userFavoriteChapters = userFavoriteChapters;
+			}
+
+			__userFavoriteChapters.set(userFavoriteChapters);
 			break;
 
 		case 'userNotes':
