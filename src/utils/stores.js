@@ -43,7 +43,7 @@ let __currentPage,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__favoriteSurahsModalVisible,
+	__favoriteChaptersModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
@@ -170,7 +170,7 @@ if (browser) {
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
-	__favoriteSurahsModalVisible = writable(false);
+	__favoriteChaptersModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
 		type: null,
@@ -266,7 +266,7 @@ export {
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
-	__favoriteSurahsModalVisible,
+	__favoriteChaptersModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,

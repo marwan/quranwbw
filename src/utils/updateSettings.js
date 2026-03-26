@@ -211,7 +211,13 @@ export function updateSettings(props) {
 				userFavoriteChapters = chapterKey;
 			} else {
 				// Toggle: remove the chapter if already favorited, add it if not
-				userFavoriteChapters.includes(chapterKey) ? (userFavoriteChapters = userFavoriteChapters.filter((x) => x !== chapterKey)) : userFavoriteChapters.push(chapterKey);
+				if (userFavoriteChapters.includes(chapterKey)) {
+					userFavoriteChapters = userFavoriteChapters.filter((x) => x !== chapterKey);
+					window.umami?.track('Remove Chapter From Favorites');
+				} else {
+					userFavoriteChapters.push(chapterKey);
+					window.umami?.track('Add Chapter To Favorites');
+				}
 				userSettings.userFavoriteChapters = userFavoriteChapters;
 			}
 

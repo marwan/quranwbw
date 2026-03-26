@@ -19,7 +19,7 @@
 	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteSurahsModalVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -249,12 +249,8 @@
 		<div id="quran-division-tabs" class="mt-4">
 			<div class="flex flex-row items-center justify-between">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
-					<button id="favorite-chapters-tab" on:click={() => changeTabs('divisionsActiveTab', 3)} class="{divisionsActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center" data-umami-event="Favorite Chapters Tab Button" aria-label="Favorite surahs" title="Favorite surahs">
-						{#if divisionsActiveTab === 3}
-							<StarFilled size={4} />
-						{:else}
-							<Star size={4} />
-						{/if}
+					<button id="favorite-chapters-tab" on:click={() => changeTabs('divisionsActiveTab', 3)} class="{divisionsActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center" data-umami-event="Favorite Chapters Tab Button" aria-label={`Favorite ${term('chapters')}`} title={`Favorite ${term('chapters')}`}>
+						<svelte:component this={divisionsActiveTab === 3 ? StarFilled : Star} size={4} />
 					</button>
 					<button on:click={() => changeTabs('divisionsActiveTab', 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
 						<span>{term('chapters')}</span>
@@ -338,7 +334,7 @@
 				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
 					<div class="flex flex-row space-x-2 text-sm mb-2">
 						<!-- Edit Favorites button  -->
-						<button class="{topButtonClasses} truncate w-full min-h-[54px] md:min-h-[58px]" on:click={() => __favoriteSurahsModalVisible.set(true)}>
+						<button class="{topButtonClasses} truncate w-full min-h-[54px] md:min-h-[58px]" on:click={() => __favoriteChaptersModalVisible.set(true)}>
 							<Edit2 size={4} />
 							<span>{hasFavorites ? 'Manage' : 'Add Your'} Favorite {term('chapters')}</span>
 						</button>
