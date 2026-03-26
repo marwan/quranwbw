@@ -22,31 +22,37 @@
 	const linkClasses = `w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const linkTextClasses = 'text-xs md:text-sm text-left w-[-webkit-fill-available] truncate';
 
+	// Default to online; fall back gracefully if navigator is unavailable (e.g. SSR)
 	let userOnline = typeof navigator === 'undefined' ? true : navigator.onLine;
 
+	// Performs a real network check (not just navigator.onLine) via the utility
 	async function checkNetwork() {
 		userOnline = await isUserOnline();
 	}
 
 	onMount(() => {
+		// Keep userOnline in sync with browser online/offline events
 		const syncOnlineStatus = () => {
 			userOnline = navigator.onLine;
 		};
 
 		window.addEventListener('online', syncOnlineStatus);
 		window.addEventListener('offline', syncOnlineStatus);
+
+		// Run an actual connectivity check on mount
 		checkNetwork();
 
+		// Cleanup listeners when the component is destroyed
 		return () => {
 			window.removeEventListener('online', syncOnlineStatus);
 			window.removeEventListener('offline', syncOnlineStatus);
 		};
 	});
 
-	// Refresh network status when modal opens without changing the tile layout.
+	// Re-check network each time the navigation modal opens, so offline-gated tiles reflect the latest status without re-rendering the layout
 	$: if ($__siteNavigationModalVisible) checkNetwork();
 
-	// hide the modal when page changes
+	// Automatically close the navigation modal whenever the user navigates to a new page
 	$: if ($__currentPage) __siteNavigationModalVisible.set(false);
 </script>
 
@@ -59,7 +65,7 @@
 			<div class="flex flex-col space-y-2">
 				<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
 					<!-- Search -->
-					<a href="/search" class={`${linkClasses} ${!userOnline ? disabledClasses : ''}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1}>
+					<a href="/search" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1}>
 						<Search2 size={4} />
 						<span class={linkTextClasses}>Search</span>
 					</a>
@@ -138,15 +144,7 @@
 					</a>
 
 					<!-- legacy site link -->
-					<a
-						href="https://old.quranwbw.com/"
-						target="_blank"
-						rel="noopener noreferrer"
-						class={`${linkClasses} ${!userOnline ? disabledClasses : ''}`}
-						aria-disabled={!userOnline}
-						tabindex={userOnline ? undefined : -1}
-						data-umami-event="Legacy Site Button"
-					>
+					<a href="https://old.quranwbw.com/" target="_blank" rel="noopener noreferrer" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1} data-umami-event="Legacy Site Button">
 						<LegacySite size={4} />
 						<span class={linkTextClasses}>Old Website</span>
 					</a>
