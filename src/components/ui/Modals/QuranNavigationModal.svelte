@@ -6,7 +6,7 @@
 	import Search from '$svgs/Search.svelte';
 	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
-	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled, __userFavoriteChapters } from '$utils/stores';
+	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { inview } from 'svelte-inview';
 	import { validateKey } from '$utils/validateKey';
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
@@ -123,19 +123,6 @@
 									<span>{@html '&#10230'}</span>
 									<a href="/{lastReadChapter}/{lastReadVerse}" class={linkTextClasses}>{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}</a>
 								</div>
-							</div>
-						{/if}
-
-						<!-- Favorites: only shown when the user has at least one favorited chapter -->
-						{#if $__userFavoriteChapters.length > 0}
-							<div id="favorites-links" class="py-2 space-y-2">
-								<span class="text-xs font-semibold pt-2">Favorites</span>
-								{#each $__userFavoriteChapters as chapterId}
-									<div class={linkClasses}>
-										<span>{@html '&#10230'}</span>
-										<a href="/{chapterId}" class={linkTextClasses}>{quranMetaData[chapterId].transliteration} ({quranMetaData[chapterId].translation})</a>
-									</div>
-								{/each}
 							</div>
 						{/if}
 
