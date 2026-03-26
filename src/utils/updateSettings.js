@@ -206,9 +206,11 @@ export function updateSettings(props) {
 			let userFavoriteChapters = userSettings['userFavoriteChapters'];
 
 			if (props.override) {
+				// Directly replace the entire favorites list (e.g. on initial load or bulk update)
 				userSettings.userFavoriteChapters = chapterKey;
 				userFavoriteChapters = chapterKey;
 			} else {
+				// Toggle: remove the chapter if already favorited, add it if not
 				userFavoriteChapters.includes(chapterKey) ? (userFavoriteChapters = userFavoriteChapters.filter((x) => x !== chapterKey)) : userFavoriteChapters.push(chapterKey);
 				userSettings.userFavoriteChapters = userFavoriteChapters;
 			}

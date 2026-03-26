@@ -302,9 +302,7 @@
 					<div class="{cardGridClasses} grid-cols-1">
 						{#each chapterListOrder as { id }, _}
 							{#if id > 0}
-								{#if id > 0}
-									<QuranDivisionCard type="chapter" {id} {cardInnerClasses} />
-								{/if}
+								<QuranDivisionCard type="chapter" {id} {cardInnerClasses} />
 							{/if}
 						{/each}
 					</div>
