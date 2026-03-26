@@ -1,8 +1,6 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Quran from '$svgs/Quran.svelte';
-	import Mecca from '$svgs/Mecca.svelte';
-	import Madinah from '$svgs/Madinah.svelte';
 	import SortAscending from '$svgs/SortAscending.svelte';
 	import SortDescending from '$svgs/SortDescending.svelte';
 	import Eye from '$svgs/Eye.svelte';
@@ -18,7 +16,7 @@
 	import Edit2 from '$svgs/Edit2.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
-	import NumberStar from '$display/NumberStar.svelte';
+	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
 	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteSurahsModalVisible } from '$utils/stores';
@@ -304,37 +302,9 @@
 					<div class="{cardGridClasses} grid-cols-1">
 						{#each chapterListOrder as { id }, _}
 							{#if id > 0}
-								<a href="/{id}">
-									<div class="{cardInnerClasses} flex-row text-center items-center">
-										<div class="flex flex-row space-x-2">
-											<div class="flex items-center">
-												<NumberStar value={id} />
-											</div>
-
-											<div class="text-left">
-												<!-- chapter name and icon -->
-												<div class="flex flex-row items-center space-x-1 justify-start truncate">
-													<div>{quranMetaData[id].transliteration}</div>
-													<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
-													<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
-												</div>
-
-												<!-- chapter translation -->
-												<div class="block text-xs truncate opacity-70">
-													{quranMetaData[id].translation}
-												</div>
-
-												<!-- chapter verses -->
-												<div class="block text-xs opacity-70">
-													{quranMetaData[id].verses}
-													{term('verses')}
-												</div>
-											</div>
-										</div>
-
-										<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
-									</div>
-								</a>
+								{#if id > 0}
+									<QuranDivisionCard type="chapter" {id} {cardInnerClasses} />
+								{/if}
 							{/if}
 						{/each}
 					</div>
@@ -359,27 +329,7 @@
 
 					<div class="{cardGridClasses} grid-cols-1">
 						{#each juzListOrder as juz}
-							<a href="/juz/{juz.juz}">
-								<div class="{cardInnerClasses} flex-row text-center items-center">
-									<div class="flex flex-row space-x-2">
-										<div class="flex items-center">
-											<NumberStar value={juz.juz} />
-										</div>
-
-										<div class="text-left">
-											<div class="flex flex-row items-center space-x-1 justify-start truncate">
-												<div>{juz.name}</div>
-											</div>
-
-											<div class="block text-xs truncate opacity-70">
-												{juz.from} - {juz.to}
-											</div>
-										</div>
-									</div>
-
-									<div class="juz-icons justify-items-end text-xl md:text-2xl" style="color: {window.theme('icon')}">{juz.icon}</div>
-								</div>
-							</a>
+							<QuranDivisionCard type="juz" {juz} {cardInnerClasses} />
 						{/each}
 					</div>
 				</div>
@@ -398,34 +348,7 @@
 
 					<div class="{cardGridClasses} grid-cols-1">
 						{#each sortedFavoriteChapters as id (id)}
-							<a href="/{id}">
-								<div class="{cardInnerClasses} flex-row text-center items-center">
-									<div class="flex flex-row space-x-2">
-										<div class="flex items-center">
-											<NumberStar value={id} />
-										</div>
-
-										<div class="text-left">
-											<div class="flex flex-row items-center space-x-1 justify-start truncate">
-												<div>{quranMetaData[id].transliteration}</div>
-												<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
-												<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
-											</div>
-
-											<div class="block text-xs truncate opacity-70">
-												{quranMetaData[id].translation}
-											</div>
-
-											<div class="block text-xs opacity-70">
-												{quranMetaData[id].verses}
-												{term('verses')}
-											</div>
-										</div>
-									</div>
-
-									<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
-								</div>
-							</a>
+							<QuranDivisionCard type="chapter" {id} {cardInnerClasses} />
 						{/each}
 					</div>
 				</div>
