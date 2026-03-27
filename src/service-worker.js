@@ -25,7 +25,6 @@ const cacheNames = {
 	core: `quranwbw-cache-${version}`, // Core website files (versioned)
 	config: 'quranwbw-config', // User preferences (survives across versions)
 	chapterData: 'quranwbw-chapter-data', // Chapter routes and data
-	juzData: 'quranwbw-juz-data', // Juz routes and data
 	mushafData: 'quranwbw-mushaf-data', // Mushaf pages and fonts
 	morphologyData: 'quranwbw-morphology-data', // Morphology data files
 	tafsirData: 'quranwbw-tafsir-data' // Tafsir data files

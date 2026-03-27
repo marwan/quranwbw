@@ -492,7 +492,7 @@
 
 		try {
 			const coreSteps = isServiceWorkerRegistered ? 0 : 4;
-			const totalStepsInDownloadProgress = coreSteps + totalPages * 2 + 1 + 1;
+			const totalStepsInDownloadProgress = coreSteps + totalPages + 1 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Ensure core is downloaded first
@@ -501,11 +501,8 @@
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			});
 
+			// Download all fonts
 			for (let page = 1; page <= totalPages; page++) {
-				await cacheUrlToCache(`/page?id=${page}`, 'quranwbw-mushaf-data');
-				completedStepsInDownloadProgress++;
-				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
 				await cacheUrlToCache(getMushafWordFontLink(page), 'quranwbw-mushaf-data');
 				completedStepsInDownloadProgress++;
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
