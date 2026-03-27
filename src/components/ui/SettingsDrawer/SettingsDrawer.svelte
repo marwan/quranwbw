@@ -56,6 +56,9 @@
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
+	// e.g. "abc1234 (2024-01-01 12:00:00)" -> ["abc1234", "(2024-01-01 12:00:00)"]
+	const buildVersionSplit = __APP_VERSION__.split(' ');
+
 	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {
 		'website-theme': [WebsiteThemeSelector, false],
@@ -233,7 +236,7 @@
 							<div class="block">Theme</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('website-theme')}>{selectableThemes[$__websiteTheme].name}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>An assortment of website themes to please your vision.</p>
+						<p class={settingsDescriptionClasses}>Change the color scheme of the website.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -244,7 +247,7 @@
 							<div class="block">Display Type</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('display-type')}>{selectableDisplays[$__displayType].displayName}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>Different {term('verse')} layouts that you can choose from.</p>
+						<p class={settingsDescriptionClasses}>Choose how {term('verses')} are laid out on the page.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -255,7 +258,7 @@
 							<div class="block">Word Tooltip</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('word-tooltip')}>{selectableTooltipOptions[$__wordTooltip].name}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>Choose what is displayed when you hover a word.</p>
+						<p class={settingsDescriptionClasses}>What appears when you hover over an Arabic word.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -270,7 +273,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Toggle the word translation which is shown below the Arabic word.</p>
+						<p class={settingsDescriptionClasses}>Show or hide the translation beneath each Arabic word.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -284,7 +287,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Toggle the word transliteration which is shown below the Arabic word.</p>
+						<p class={settingsDescriptionClasses}>Show or hide the romanized pronunciation beneath each Arabic word.</p>
 					</div>
 
 					<!-- prevent sleep toggle, only show if the browser supports it  -->
@@ -300,7 +303,7 @@
 									<div class={toggleBtnClasses}></div>
 								</label>
 							</div>
-							<p class={settingsDescriptionClasses}>Enabling this option will prevent your screen from dimming or sleeping. Please note that you will need to manually enable this option for each session.</p>
+							<p class={settingsDescriptionClasses}>Keep your screen on while reading. Must be re-enabled each session.</p>
 						</div>
 					{/if}
 
@@ -315,7 +318,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width). Best for larger screens.</p>
+						<p class={settingsDescriptionClasses}>Expand the content area to fill wider screens.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -329,7 +332,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Enable this to switch the Quran view to Arabic Sign Language mode. The Indonesian Isep Misbah Digital font will be used, and some options will be disabled.</p>
+						<p class={settingsDescriptionClasses}>Display verses in Arabic Sign Language using the Isep Misbah Digital font. Some settings will be unavailable in this mode.</p>
 					</div>
 				</div>
 			</div>
@@ -345,7 +348,7 @@
 							<div class="block">Quran Font</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
+						<p class={settingsDescriptionClasses}>Pick a Quranic script style that matches your preferred mushaf or region.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')} {settingsDrawerOpacity}"></div>
@@ -400,7 +403,7 @@
 							<div class="block">Word Translation</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('word-translation')}>{selectableWordTranslations[$__wordTranslation].language}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>Word translation which will be displaced under the Arabic word text.</p>
+						<p class={settingsDescriptionClasses}>The language used for the translation shown beneath each word.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -411,7 +414,7 @@
 							<div class="block">Word Transliteration</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('word-transliteration')}>{selectableWordTransliterations[wordTransliterationKey].language}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>Word transliteration of various types.</p>
+						<p class={settingsDescriptionClasses}>The romanization style used beneath each Arabic word.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -422,7 +425,7 @@
 							<div class="block">{term('verse')} Translation</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-translation')}>{$__verseTranslations.length - totalVerseTransliterationsSelected} selected</button>
 						</div>
-						<p class={settingsDescriptionClasses}>{term('verse')} translations from multiple authors and languages.</p>
+						<p class={settingsDescriptionClasses}>Choose one or more full {term('verse')} translations by author or language.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -433,7 +436,7 @@
 							<div class="block">{term('verse')} Transliteration</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-transliteration')}>{totalVerseTransliterationsSelected} selected</button>
 						</div>
-						<p class={settingsDescriptionClasses}>{term('verse')} transliteration of various types.</p>
+						<p class={settingsDescriptionClasses}>Choose a full {term('verse')} romanization style.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -444,7 +447,7 @@
 							<div class="block">{term('tafsir')}</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-tafsir')}>{selectableTafsirs[$__verseTafsir].name}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>{term('verse')} {term('tafsir')} from multiple authors and languages.</p>
+						<p class={settingsDescriptionClasses}>Select a commentary to read when you open a {term('verse')}'s {term('tafsir')}.</p>
 					</div>
 				</div>
 			</div>
@@ -460,7 +463,7 @@
 							<div class="block">{term('verse')} Reciter</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-reciter')}>{selectableReciters[$__reciter].reciter}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>The reciter's voice that will play when you choose to listen to an {term('verse')}.</p>
+						<p class={settingsDescriptionClasses}>Choose whose voice plays when you listen to a {term('verse')}.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -483,7 +486,7 @@
 							<div class="block">{term('verse')} Play Button</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-play-button')}>{selectableVersePlayButtonOptions[$__playButtonsFunctionality.verse].name}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>Select what happens when you click on the play button for a {term('verse')}.</p>
+						<p class={settingsDescriptionClasses}>Control what happens when you press play on a {term('verse')}.</p>
 					</div>
 				</div>
 			</div>
@@ -502,7 +505,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Switch between the English and Arabic terminologies used on the website.</p>
+						<p class={settingsDescriptionClasses}>Use English terms (e.g. 'chapter', 'verse') instead of Arabic ones (e.g. 'surah', 'ayah').</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -516,7 +519,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Show/hide the non-{term('supplications')} words in the {term('supplications')} page.</p>
+						<p class={settingsDescriptionClasses}>Show or hide the words that aren't part of a {term('supplication')} on the {term('supplications')} page.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -530,7 +533,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Show morphology on word click, instead of playing audio.</p>
+						<p class={settingsDescriptionClasses}>Open morphology details when tapping a word, rather than playing its audio.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -555,7 +558,7 @@
 								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 							</div>
 						</div>
-						<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>
+						<p class={settingsDescriptionClasses}>Save your preferences to a file or restore them from a previous backup.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
@@ -570,15 +573,14 @@
 							</button>
 							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>
-						<p class={settingsDescriptionClasses}>Resets the website to a clean state by removing all saved settings, bookmarks, notes, offline data, and cached files from this device.</p>
+						<p class={settingsDescriptionClasses}>Erase all settings, bookmarks, notes, and cached data from this device. This cannot be undone.</p>
 					</div>
 				</div>
 			</div>
 
 			<!-- website build version & timestamp -->
 			<div class="flex flex-col justify-center border-t {window.theme('border')} py-6 space-y-4 text-center {settingsDrawerOpacity}">
-				<!-- svelte-ignore missing-declaration -->
-				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
+				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{buildVersionSplit[0]}">Build {buildVersionSplit[0]} ({buildVersionSplit[1].slice(1)})</a>
 			</div>
 		</div>
 	{/if}
