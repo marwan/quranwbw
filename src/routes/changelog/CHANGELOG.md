@@ -1,3 +1,15 @@
+### Mar 26, 2026
+
+- **Chapter Favorites:** You can now add any chapter to your favorites. A new favorites tab has been added to the homepage, where you can easily select which surahs to add or remove from your favorites list for quick access.
+
+---
+
+### Mar 14, 2026
+
+- **Homepage Tabs & Sorting Persistence:** The selected homepage tab (Chapters, Juz, etc.) is now remembered and persisted, along with its sort order for each tab. After refreshing or revisiting the site, your previously selected tab and sorting preferences will no longer reset to defaults.
+
+---
+
 ### Feb 22, 2026
 
 - **New Albanian Tafsirs Added:** Two new Albanian-language tafsirs have been added for deeper understanding — **Tafsir Ibn Kathir** and **Tafsir As-Sa'di**, expanding tafsir availability for Albanian-speaking readers.

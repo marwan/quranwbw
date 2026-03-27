@@ -1,23 +1,25 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Quran from '$svgs/Quran.svelte';
-	import Mecca from '$svgs/Mecca.svelte';
-	import Madinah from '$svgs/Madinah.svelte';
 	import SortAscending from '$svgs/SortAscending.svelte';
 	import SortDescending from '$svgs/SortDescending.svelte';
 	import Eye from '$svgs/Eye.svelte';
 	import EyeCrossed from '$svgs/EyeCrossed.svelte';
-	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
+	import StarFilled from '$svgs/StarFilled.svelte';
+	import Star from '$svgs/Star.svelte';
 	import Menu from '$svgs/Menu.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
 	import MorphologyBold from '$svgs/MorphologyBold.svelte';
 	import TopicsBold from '$svgs/TopicsBold.svelte';
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
+	import Edit2 from '$svgs/Edit2.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
+	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
+	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, mostRead } from '$data/quranMeta';
 	import { hizbMeta } from '$data/hizbMeta';
@@ -25,7 +27,6 @@
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
-	const svgData = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
 	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const continueReadingButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
@@ -43,11 +44,15 @@
 
 	$: divisionsActiveTab = homepageLayoutPreferences?.divisionsActiveTab ?? 1;
 	$: extrasActiveTab = homepageLayoutPreferences?.extrasActiveTab ?? 1;
+	$: showDivisionSort = [1, 2, 3].includes(divisionsActiveTab);
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
+	$: hasFavorites = $__userFavoriteChapters.length > 0;
+	$: favoritesSortIsAscending = homepageLayoutPreferences.favoritesSortIsAscending ?? true;
+	$: sortedFavoriteChapters = favoritesSortIsAscending ? [...$__userFavoriteChapters].sort((a, b) => a - b) : [...$__userFavoriteChapters].sort((a, b) => b - a);
 
 	// Persist homepage layout preferences whenever they change
 	$: if (homepageLayoutPreferences) updateSettings({ type: 'homepageLayoutPreferences', value: homepageLayoutPreferences });
@@ -77,20 +82,20 @@
 				set: (sorted) => (juzListOrder = sorted)
 			},
 			3: {
+				key: 'favoritesSortIsAscending',
+				set: () => {}
+			},
+			4: {
 				key: 'hizbSortIsAscending',
 				data: hizbMeta,
 				set: (sorted) => (hizbListOrder = sorted)
 			}
 		};
-
 		const { key, data, set } = divisionConfig[divisionsActiveTab];
 		const newValue = !homepageLayoutPreferences[key];
-
 		homepageLayoutPreferences = { ...homepageLayoutPreferences, [key]: newValue };
-		set(newValue ? [...data] : [...data].reverse());
+		if (data) set(newValue ? [...data] : [...data].reverse());
 	}
-
-	$: activeDivisionSortIsAscending = divisionsActiveTab === 1 ? (homepageLayoutPreferences?.chaptersSortIsAscending ?? true) : divisionsActiveTab === 2 ? (homepageLayoutPreferences?.juzSortIsAscending ?? true) : (homepageLayoutPreferences?.hizbSortIsAscending ?? true);
 
 	// Updates the active tab and triggers reactivity by replacing the preferences object
 	function changeTabs(tabName, tabNumber) {
@@ -122,7 +127,16 @@
 	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">
 			<div>
-				<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __quranNavigationModalVisible.set(true)}><Search2Bold size={4} /><span class="hidden md:block">Search</span></button>
+				<button
+					class="{topButtonClasses} !py-4 md:bg-transparent"
+					on:click={() => {
+						window.umami?.track('Homepage Search Button');
+						__quranNavigationModalVisible.set(true);
+					}}
+				>
+					<Search2Bold size={4} />
+					<span class="hidden md:block">Search</span>
+				</button>
 				<a href="/topics" class="{topButtonClasses} !py-4 md:bg-transparent"><TopicsBold size={4} /><span class="hidden md:block">Topics</span></a>
 				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
 				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page/${$__lastRead.page}` : '/page/1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
@@ -213,7 +227,7 @@
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.extrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
 		</div>
 
-		<div id="extras-panel" class="mb-4 pt-1 {homepageLayoutPreferences.extrasPanelVisible ? 'block' : 'hidden'}">
+		<div id="extras-panel" class="mb-4 pt-2 {homepageLayoutPreferences.extrasPanelVisible ? 'block' : 'hidden'}">
 			<!-- bookmarks tab -->
 			<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === 1 ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
 				<UserBookmarks {cardGridClasses} {cardInnerClasses} />
@@ -246,6 +260,9 @@
 		<div id="quran-division-tabs" class="mt-4">
 			<div class="flex flex-row items-center justify-between">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
+					<button id="favorite-chapters-tab" on:click={() => changeTabs('divisionsActiveTab', 3)} class="{divisionsActiveTab === 3 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center" data-umami-event="Favorite Chapters Tab Button" aria-label={`Favorite ${term('chapters')}`} title={`Favorite ${term('chapters')}`}>
+						<svelte:component this={divisionsActiveTab === 3 ? StarFilled : Star} size={4} />
+					</button>
 					<button on:click={() => changeTabs('divisionsActiveTab', 1)} class="{divisionsActiveTab === 1 ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
 						<span>{term('chapters')}</span>
 					</button>
@@ -257,14 +274,43 @@
 					</button>
 				</div>
 
-				<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
-					<svelte:component this={activeDivisionSortIsAscending ? SortDescending : SortAscending} size={4} />
-				</button>
-				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{activeDivisionSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}</Tooltip>
+				{#if showDivisionSort}
+					<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
+						<svelte:component
+							this={divisionsActiveTab === 1
+								? homepageLayoutPreferences.chaptersSortIsAscending
+									? SortDescending
+									: SortAscending
+								: divisionsActiveTab === 2
+									? homepageLayoutPreferences.juzSortIsAscending
+										? SortDescending
+										: SortAscending
+									: divisionsActiveTab === 3
+										? homepageLayoutPreferences.favoritesSortIsAscending
+											? SortDescending
+											: SortAscending
+										: homepageLayoutPreferences.hizbSortIsAscending
+											? SortDescending
+											: SortAscending}
+							size={4}
+						/>
+					</button>
+					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">
+						{#if divisionsActiveTab === 1}
+							{homepageLayoutPreferences.chaptersSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}
+						{:else if divisionsActiveTab === 2}
+							{homepageLayoutPreferences.juzSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}
+						{:else if divisionsActiveTab === 3}
+							{homepageLayoutPreferences.hizbSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}
+						{:else}
+							{homepageLayoutPreferences.favoritesSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}
+						{/if}
+					</Tooltip>
+				{/if}
 			</div>
 		</div>
 
-		<div id="quran-divisions-panel" class="mb-6">
+		<div id="quran-divisions-panel" class="mb-6 pt-2">
 			<!-- chapters tab -->
 			{#if divisionsActiveTab === 1}
 				<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
@@ -275,7 +321,8 @@
 						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span class="truncate">
-								Continue Reading:
+								<span class="md:hidden">Continue:</span>
+								<span class="hidden md:inline-block">Continue Reading:</span>
 								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
 							</span>
 						</a>
@@ -284,41 +331,7 @@
 					<div class="{cardGridClasses} grid-cols-1">
 						{#each chapterListOrder as { id }, _}
 							{#if id > 0}
-								<a href="/{id}">
-									<div class="{cardInnerClasses} flex-row text-center items-center">
-										<div class="flex flex-row space-x-2">
-											<div class="flex items-center">
-												<!-- number star -->
-												<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-													{@html svgData}
-													<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{id}</text>
-												</svg>
-											</div>
-
-											<div class="text-left">
-												<!-- chapter name and icon -->
-												<div class="flex flex-row items-center space-x-1 justify-start truncate">
-													<div>{quranMetaData[id].transliteration}</div>
-													<div><svelte:component this={quranMetaData[id].revelation === 1 ? Mecca : Madinah} /></div>
-													<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{quranMetaData[id].revelation === 1 ? term('meccan') : term('medinan')} revelation</Tooltip>
-												</div>
-
-												<!-- chapter translation -->
-												<div class="block text-xs truncate opacity-70">
-													{quranMetaData[id].translation}
-												</div>
-
-												<!-- chapter verses -->
-												<div class="block text-xs opacity-70">
-													{quranMetaData[id].verses}
-													{term('verses')}
-												</div>
-											</div>
-										</div>
-
-										<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
-									</div>
-								</a>
+								<QuranDivisionCard type="chapter" {id} {cardInnerClasses} />
 							{/if}
 						{/each}
 					</div>
@@ -343,31 +356,26 @@
 
 					<div class="{cardGridClasses} grid-cols-1">
 						{#each juzListOrder as juz}
-							<a href="/juz/{juz.juz}">
-								<div class="{cardInnerClasses} flex-row text-center items-center">
-									<div class="flex flex-row space-x-2">
-										<div class="flex items-center">
-											<!-- number star -->
-											<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-												{@html svgData}
-												<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{juz.juz}</text>
-											</svg>
-										</div>
+							<QuranDivisionCard type="juz" {juz} {cardInnerClasses} />
+						{/each}
+					</div>
+				</div>
+			{/if}
 
-										<div class="text-left">
-											<div class="flex flex-row items-center space-x-1 justify-start truncate">
-												<div>{juz.name}</div>
-											</div>
+			<!-- favorites tab -->
+			{#if divisionsActiveTab === 3}
+				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
+					<div class="flex flex-row space-x-2 text-sm mb-2">
+						<!-- Edit Favorites button  -->
+						<button class="{topButtonClasses} truncate w-full min-h-[54px] md:min-h-[58px]" on:click={() => __favoriteChaptersModalVisible.set(true)}>
+							<Edit2 size={4} />
+							<span>{hasFavorites ? 'Manage' : 'Add Your'} Favorite {term('chapters')}</span>
+						</button>
+					</div>
 
-											<div class="block text-xs truncate opacity-70">
-												{juz.from} - {juz.to}
-											</div>
-										</div>
-									</div>
-
-									<div class="juz-icons justify-items-end text-xl md:text-2xl" style="color: {window.theme('icon')}">{juz.icon}</div>
-								</div>
-							</a>
+					<div class="{cardGridClasses} grid-cols-1">
+						{#each sortedFavoriteChapters as id (id)}
+							<QuranDivisionCard type="chapter" {id} {cardInnerClasses} />
 						{/each}
 					</div>
 				</div>
@@ -391,28 +399,7 @@
 
 					<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
 						{#each hizbListOrder as hizb}
-							<a href="/hizb/{hizb.hizb}">
-								<div class="{cardInnerClasses} flex-row text-center items-center">
-									<div class="flex flex-row space-x-2">
-										<div class="flex items-center">
-											<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
-												{@html svgData}
-												<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{hizb.hizb}</text>
-											</svg>
-										</div>
-
-										<div class="text-left">
-											<div class="flex flex-row items-center space-x-1 justify-start truncate">
-												<div>{term('hizb')} {hizb.hizb}</div>
-											</div>
-
-											<div class="block text-xs truncate opacity-70">
-												{hizb.from} - {hizb.to}
-											</div>
-										</div>
-									</div>
-								</div>
-							</a>
+							<QuranDivisionCard type="hizb" {hizb} {cardInnerClasses} />
 						{/each}
 					</div>
 				</div>
