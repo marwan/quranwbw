@@ -16,20 +16,19 @@
 	const juzNumber = data.juz;
 	let juzKeysData;
 
-	__pageURL.set(1);
-
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
 		juzKeysData = (async () => {
 			try {
 				const data = await fetchAndCacheJson(cdnStaticDataUrls.keysInJuz, 'other');
-				return data[juzNumber];
+				return data[juzNumber] ?? '';
 			} catch (error) {
 				console.warn(error);
-				return [];
+				return '';
 			}
 		})();
 	}
 
+	__pageURL.set(1);
 	__currentPage.set('juz');
 </script>
 
@@ -38,9 +37,13 @@
 {#await juzKeysData}
 	<Spinner />
 {:then juzKeys}
-	<div id="individual-verses-block">
-		<FullVersesDisplay keys={juzKeys.toString()} />
-	</div>
+	{#if juzKeys.length > 0}
+		<div id="individual-verses-block">
+			<FullVersesDisplay keys={juzKeys.toString()} />
+		</div>
+	{:else}
+		<ErrorLoadingData />
+	{/if}
 {:catch error}
 	<ErrorLoadingData {error} />
 {/await}

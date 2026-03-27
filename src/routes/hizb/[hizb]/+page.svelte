@@ -13,14 +13,12 @@
 	// only allow display type 1 & 2, and don't save the layout in settings
 	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
 
-	const hizbNumber = Number(data.hizb);
-	const isValidHizb = Number.isInteger(hizbNumber) && hizbNumber >= 1 && hizbNumber <= 60;
+	const hizbNumber = data.hizb;
 	let hizbKeysData;
 
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
 		hizbKeysData = (async () => {
 			try {
-				if (!isValidHizb) return '';
 				const data = await fetchAndCacheJson(cdnStaticDataUrls.keysInHizb, 'other');
 				return data[hizbNumber] ?? '';
 			} catch (error) {
@@ -39,12 +37,12 @@
 {#await hizbKeysData}
 	<Spinner />
 {:then hizbKeys}
-	{#if isValidHizb && hizbKeys.length > 0}
+	{#if hizbKeys.length > 0}
 		<div id="individual-verses-block">
 			<FullVersesDisplay keys={hizbKeys} />
 		</div>
 	{:else}
-		<ErrorLoadingData error={new Error('Invalid hizb number')} />
+		<ErrorLoadingData />
 	{/if}
 {:catch error}
 	<ErrorLoadingData {error} />
