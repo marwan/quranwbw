@@ -13,7 +13,7 @@
 
 	$: isJuz = type === 'juz';
 	$: starValue = isJuz ? juz.juz : id;
-	$: href = isJuz ? `/juz/${juz.juz}` : `/${id}`;
+	$: href = isJuz ? `/juz?id=${juz.juz}` : `/${id}`;
 </script>
 
 <a {href}>

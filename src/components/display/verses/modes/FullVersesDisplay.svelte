@@ -145,7 +145,9 @@
 	}
 
 	function gotoPreviousVerse(previousKey) {
-		goto(`?startKey=${previousKey}`, { replaceState: false });
+		const url = new URL(window.location.href);
+		url.searchParams.set('startKey', previousKey);
+		goto(url.pathname + url.search, { replaceState: false });
 		__pageURL.set(Math.random());
 	}
 

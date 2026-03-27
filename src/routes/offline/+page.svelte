@@ -381,7 +381,7 @@
 			});
 
 			// Download juz data
-			const juzRoutes = Array.from({ length: 30 }, (_, i) => `/juz/${i + 1}`);
+			const juzRoutes = Array.from({ length: 30 }, (_, i) => `/juz?id=${i + 1}`);
 			for (const route of juzRoutes) {
 				await cacheUrlToCache(route, 'quranwbw-juz-data');
 				completedStepsInDownloadProgress++;
@@ -633,7 +633,7 @@
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			});
 
-			const juzRoutes = Array.from({ length: totalJuz }, (_, i) => `/juz/${i + 1}`);
+			const juzRoutes = Array.from({ length: totalJuz }, (_, i) => `/juz?id=${i + 1}`);
 			for (const route of juzRoutes) {
 				await cacheUrlToCache(route, 'quranwbw-juz-data');
 				completedStepsInDownloadProgress++;
