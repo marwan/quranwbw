@@ -289,7 +289,7 @@
 						<span>{term('juzs')}</span>
 					</button>
 					<button on:click={() => changeTabs('divisionsActiveTab', hizbTab)} class="{divisionsActiveTab === hizbTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Hizb Tab Button">
-						<span>{term('hizb')}</span>
+						<span>{term('hizbs')}</span>
 					</button>
 				</div>
 

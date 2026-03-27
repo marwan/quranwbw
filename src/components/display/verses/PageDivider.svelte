@@ -39,7 +39,7 @@
 		{#each dividerItems as item, index}
 			<span>{item}</span>
 			{#if index < dividerItems.length - 1}
-				<span class="px-1 opacity-70">/</span>
+				<span class="px-1 opacity-30">&#8226;</span>
 			{/if}
 		{/each}
 	</div>

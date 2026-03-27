@@ -1,4 +1,10 @@
-### Mar 26, 2026
+### Mar 28, 2026
+
+- **Hizb (Half Part) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur’an by half parts. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.
+
+---
+
+### Mar 27, 2026
 
 - **Chapter Favorites:** You can now add any chapter to your favorites. A new favorites tab has been added to the homepage, where you can easily select which surahs to add or remove from your favorites list for quick access.
 
