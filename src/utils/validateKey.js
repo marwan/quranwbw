@@ -56,21 +56,28 @@ async function handleStringKey(key, results) {
 	const isLength2 = keySplit.length === 2;
 	const keySplit0Lower = keySplit[0].toLowerCase();
 	const keySplit1Num = +keySplit[1];
-	
+
 	if (isLength2 && keySplit0Lower === 'hizb' && isNumeric(keySplit[1]) && keySplit1Num >= 1 && keySplit1Num <= 60) {
+		// e.g. "hizb 5" → navigate to hizb 5
 		results.hizb = keySplit1Num;
 	} else if (isLength2 && keySplit0Lower === 'juz' && isNumeric(keySplit[1]) && keySplit1Num >= 1 && keySplit1Num <= 30) {
+		// e.g. "juz 3" → navigate to juz 3
 		results.juz = keySplit1Num;
 	} else if (isLength2 && keySplit0Lower === 'page' && isNumeric(keySplit[1]) && keySplit1Num >= 1 && keySplit1Num <= 604) {
+		// e.g. "page 120" → navigate to mushaf page 120
 		results.page = keySplit1Num;
 	} else if (isLength2 && ['surah', 'chapter'].includes(keySplit0Lower) && isNumeric(keySplit[1]) && keySplit1Num >= 1 && keySplit1Num <= 114) {
+		// e.g. "surah 2" or "chapter 2" → navigate to chapter 2
 		results.chapter = keySplit1Num;
 	} else if (isLength2 && isValidVerseKey(formatVerseKey(keySplit))) {
-		results.key = formatVerseKey(keySplit); // Formats and validates as verse key
+		// e.g. "2 255" → navigate to verse 2:255
+		results.key = formatVerseKey(keySplit);
 	} else if (keySplit.length === 3 && (await isValidWordKey(formatWordKey(keySplit)))) {
-		results.word = formatWordKey(keySplit); // Formats and validates as word key
+		// e.g. "2 255 1" → navigate to the 1st word of verse 2:255
+		results.word = formatWordKey(keySplit);
 	} else if (key.length > 2) {
-		results.chapters = findChapters(key); // Finds chapters matching the search term
+		// e.g. "baqarah" → search for chapters matching the name
+		results.chapters = findChapters(key);
 	}
 }
 
