@@ -683,7 +683,7 @@
 			});
 
 			for (let page = 1; page <= totalPages; page++) {
-				await cacheUrlToCache(`/page/${page}`, 'quranwbw-mushaf-data');
+				await cacheUrlToCache(`/page?id=${page}`, 'quranwbw-mushaf-data');
 				completedStepsInDownloadProgress++;
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 

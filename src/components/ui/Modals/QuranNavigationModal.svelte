@@ -168,12 +168,12 @@
 										{#if key === 'chapter'}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/page/{startPageOfChapters[value]}" class={linkTextClasses}>{term('chapter')} {value} ({quranMetaData[value].transliteration})</a>
+												<a href="/page?id={startPageOfChapters[value]}" class={linkTextClasses}>{term('chapter')} {value} ({quranMetaData[value].transliteration})</a>
 											</div>
 										{:else if key === 'page'}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/page/{value}" class={linkTextClasses}>Page {value}</a>
+												<a href="/page?id={value}" class={linkTextClasses}>Page {value}</a>
 											</div>
 										{/if}
 
@@ -182,12 +182,12 @@
 											{#if key === 'juz'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/page/{verseKeyData[juzMeta[value - 1].from].page}" class={linkTextClasses}>{term('juz')} {value}</a>
+													<a href="/page?id={verseKeyData[juzMeta[value - 1].from].page}" class={linkTextClasses}>{term('juz')} {value}</a>
 												</div>
 											{:else if key === 'key'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/page/{verseKeyData[value].page}" class={linkTextClasses}>{quranMetaData[value.split(':')[0]].transliteration}, {term('verse')} {value.split(':')[1]} (Page {verseKeyData[value].page})</a>
+													<a href="/page?id={verseKeyData[value].page}" class={linkTextClasses}>{quranMetaData[value.split(':')[0]].transliteration}, {term('verse')} {value.split(':')[1]} (Page {verseKeyData[value].page})</a>
 												</div>
 											{/if}
 										{/await}
@@ -206,7 +206,7 @@
 
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/page/{value}" class={linkTextClasses}>Mushaf Page {value} ({quranMetaData[pageNumberKeys[value - 1].split(':')[0]].transliteration})</a>
+												<a href="/page?id={value}" class={linkTextClasses}>Mushaf Page {value} ({quranMetaData[pageNumberKeys[value - 1].split(':')[0]].transliteration})</a>
 											</div>
 										{:else if key === 'juz'}
 											{@const [juzChapter, juzVerse] = juzMeta[value - 1]['from'].split(':').map(Number)}
@@ -274,7 +274,7 @@
 						<ul id="navbar-chapter-list" class="grow basis-1/2 overflow-y-scroll">
 							{#each { length: maxItemsToLoad } as _, chapter}
 								<li>
-									<a href={$__currentPage === 'mushaf' ? `/page/${startPageOfChapters[chapter + 1]}` : `/${chapter + 1}`}>
+									<a href={$__currentPage === 'mushaf' ? `/page?id=${startPageOfChapters[chapter + 1]}` : `/${chapter + 1}`}>
 										<div class="{listItemClasses} {$__currentPage === 'chapter' ? (chapter + 1 === $__chapterNumber ? `${window.theme('bgSecondaryLight')}` : null) : null}">
 											{chapter + 1}. {quranMetaData[chapter + 1].transliteration}
 

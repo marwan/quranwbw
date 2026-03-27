@@ -153,7 +153,7 @@
 				]
 			: [
 					{
-						href: `/page/${page}`,
+						href: `/page?id=${page}`,
 						icon: Book,
 						text: 'Mushaf Mode',
 						analyticsEvent: 'Mushaf Mode Button'

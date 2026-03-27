@@ -150,7 +150,7 @@
 		const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 		const linkMap = {
 			quran_chapter: [`${term('chapter')} ${quranMetaData[item.processedId]?.transliteration} (${item.processedId})`, `${baseUrl}/${item.processedId}`],
-			quran_page: [`Page ${item.processedId}`, `${baseUrl}/page/${item.processedId}`],
+			quran_page: [`Page ${item.processedId}`, `${baseUrl}/page?id=${item.processedId}`],
 			quran_juz: [`Juz ${item.processedId}`, `${baseUrl}/juz?id=${item.processedId}`],
 			quran_range: [`${item.processedId}`, `${baseUrl}/${item.processedId}`]
 		};

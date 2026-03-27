@@ -33,7 +33,7 @@
 	const centeredPageLines = ['1:9', '1:10', '1:11', '1:12', '1:13', '1:14', '1:15', '2:10', '2:11', '2:12', '2:13', '2:14', '2:15', '255:2', '528:9', '534:6', '545:6', '586:1', '593:2', '594:5', '600:10', '602:5', '602:11', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
 	// Set the page number
-	$: page = +data.page;
+	$: page = +data.id;
 
 	// Prefetch adjacent pages for better UX
 	$: if ([2, 3].includes($__fontType)) {
@@ -169,8 +169,8 @@
 
 	// Event listeners for swipe gestures
 	$: if (pageBlock) {
-		pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
-		pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
+		pageBlock.addEventListener('swiped-left', () => goto(`/page?id=${page === 1 ? 1 : page - 1}`, { replaceState: false }));
+		pageBlock.addEventListener('swiped-right', () => goto(`/page?id=${page === 604 ? 604 : page + 1}`, { replaceState: false }));
 	}
 
 	// Only allow continuous normal mode, without saving the setting
