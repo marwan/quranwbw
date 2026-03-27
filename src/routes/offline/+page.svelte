@@ -3,10 +3,7 @@
 	import Download from '$svgs/Download.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import Refresh from '$svgs/Refresh.svelte';
-	import Eye from '$svgs/Eye.svelte';
-	import EyeCrossed from '$svgs/EyeCrossed.svelte';
 	import Info from '$svgs/Info.svelte';
-	import Spinner from '$svgs/Spinner.svelte';
 	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, checkOnlineAndAlert } from '$utils/offlineModeHandler';
@@ -29,19 +26,15 @@
 
 	// Track download state
 	let isRegistering = false;
-	let isDownloadingEssential = false;
 	let isDownloadingChapter = false;
-	let isDownloadingJuz = false;
 	let isDownloadingMushaf = false;
 	let isDownloadingMorphology = false;
 	let isDownloadingTafsir = false;
-	let showAdvancedDownloadOptions = false;
 	let downloadProgressPercentage = 0;
 
 	// Initialize structures on component load
 	ensureOfflineSettingsStructure('serviceWorker');
 	ensureOfflineSettingsStructure('chapterData');
-	ensureOfflineSettingsStructure('juzData');
 	ensureOfflineSettingsStructure('mushafData');
 	ensureOfflineSettingsStructure('morphologyData');
 	ensureOfflineSettingsStructure('tafsirData');
@@ -59,19 +52,12 @@
 	// Reactive variables for basic checks
 	$: isServiceWorkerRegistered = offlineModeSettings?.serviceWorker?.downloaded ?? false;
 	$: isChapterDataDownloaded = offlineModeSettings?.chapterData?.downloaded ?? false;
-	$: isJuzDataDownloaded = offlineModeSettings?.juzData?.downloaded ?? false;
 	$: isMushafDataDownloaded = offlineModeSettings?.mushafData?.downloaded ?? false;
 	$: isMorphologyDataDownloaded = offlineModeSettings?.morphologyData?.downloaded ?? false;
 	$: isTafsirDataDownloaded = offlineModeSettings?.tafsirData?.downloaded ?? false;
 
-	// Check if any offline data has been downloaded
-	$: hasAnyOfflineData = isServiceWorkerRegistered || isChapterDataDownloaded || isJuzDataDownloaded || isMushafDataDownloaded || isMorphologyDataDownloaded || isTafsirDataDownloaded;
-
-	// Auto-enable advanced options if any data is downloaded
-	$: if (hasAnyOfflineData) showAdvancedDownloadOptions = true;
-
 	// Track if ANY download is in progress
-	$: isDownloading = isRegistering || isDownloadingEssential || isDownloadingChapter || isDownloadingJuz || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir;
+	$: isDownloading = isRegistering || isDownloadingChapter || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir;
 
 	// Check for specific data type mismatches (reactive to all relevant stores)
 	$: mismatchStatus = getOfflineSettingsMismatch($__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir, $__offlineModeSettings);
@@ -92,18 +78,6 @@
 			onDownload: handleDownloadChaptersData,
 			onDelete: () => handleDeleteSpecificData('quranwbw-chapter-data', 'chapterData'),
 			onRedownload: () => handleRedownloadData('chapterData')
-		},
-		{
-			id: 'juzData',
-			title: `${term('juzs')} Data`,
-			dataSizeInMB: 20,
-			description: `These files allow you to read all 30 Quran ${term('juzs')} offline. The downloaded content is based on your selected settings, such as font style, translations, and transliterations.`,
-			isDataDownloaded: isJuzDataDownloaded,
-			isDownloading: isDownloadingJuz,
-			showMismatchBanner: false,
-			onDownload: handleDownloadJuzData,
-			onDelete: () => handleDeleteSpecificData('quranwbw-juz-data', 'juzData'),
-			onRedownload: () => handleRedownloadData('juzData')
 		},
 		{
 			id: 'mushafData',
@@ -344,100 +318,6 @@
 		await downloadChapterHeaderFont();
 	}
 
-	// Download essential data (core + chapter + juz)
-	async function handleDownloadEssentialData() {
-		if (!(await checkOnlineAndAlert())) return;
-
-		isDownloadingEssential = true;
-		downloadProgressPercentage = 0;
-
-		try {
-			// Total steps: 4 (core) + 114 (chapters) + 1 (chapter data) + 30 (juz) + 1 (juz data) + 1 buffer
-			const coreSteps = isServiceWorkerRegistered ? 0 : 4;
-			const totalStepsInDownloadProgress = coreSteps + totalChapters + 1 + 30 + 1 + 1;
-			let completedStepsInDownloadProgress = 0;
-
-			// Ensure core is downloaded
-			await ensureCoreDataDownloaded(() => {
-				completedStepsInDownloadProgress++;
-				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-			});
-
-			// Download chapter data
-			const chapterRoutes = Array.from({ length: totalChapters }, (_, i) => `/${i + 1}`);
-			for (const route of chapterRoutes) {
-				await cacheUrlToCache(route, 'quranwbw-chapter-data');
-				completedStepsInDownloadProgress++;
-				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-			}
-
-			await downloadChapterAndVerseTranslationData({});
-			completedStepsInDownloadProgress++;
-			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			updateOfflineSettingsStructure('chapterData', {
-				downloaded: true,
-				downloadedAt: new Date().toISOString()
-			});
-
-			// Download juz data
-			const juzRoutes = Array.from({ length: 30 }, (_, i) => `/juz?id=${i + 1}`);
-			for (const route of juzRoutes) {
-				await cacheUrlToCache(route, 'quranwbw-juz-data');
-				completedStepsInDownloadProgress++;
-				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-			}
-
-			await downloadChapterAndVerseTranslationData({});
-			completedStepsInDownloadProgress++;
-			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			updateOfflineSettingsStructure('juzData', {
-				downloaded: true,
-				downloadedAt: new Date().toISOString()
-			});
-
-			window.umami?.track('Essential Data Download');
-		} catch (error) {
-			console.warn(error);
-			showAlert(errorAlertMessage, '');
-		} finally {
-			isDownloadingEssential = false;
-			downloadProgressPercentage = 100;
-		}
-	}
-
-	// Delete essential data (core + chapter + juz)
-	async function handleDeleteEssentialData() {
-		try {
-			// Delete chapter data
-			await deleteSpecificCache('quranwbw-chapter-data');
-			await clearDexieTable('quranwbw-chapter-data');
-			updateOfflineSettingsStructure('chapterData', {
-				downloaded: false,
-				downloadedAt: null
-			});
-
-			// Delete juz data
-			await deleteSpecificCache('quranwbw-juz-data');
-			await clearDexieTable('quranwbw-juz-data');
-			updateOfflineSettingsStructure('juzData', {
-				downloaded: false,
-				downloadedAt: null
-			});
-
-			// Delete core data
-			await unregisterServiceWorkerAndClearCache();
-			offlineModeSettings = {};
-			updateSettings({ type: 'offlineModeSettings', value: offlineModeSettings });
-
-			window.umami?.track('Essential Data Delete');
-		} catch (error) {
-			console.warn(error);
-			showAlert(errorAlertMessage, '');
-		}
-	}
-
 	// Delete specific cache data
 	async function handleDeleteSpecificData(cacheName, objectName) {
 		try {
@@ -459,10 +339,9 @@
 					break;
 				}
 
-				case 'chapterData':
-				case 'juzData': {
+				case 'chapterData': {
 					// Clear shared text-related data only if both are deleted
-					if (!isChapterDataDownloaded && !isJuzDataDownloaded) {
+					if (!isChapterDataDownloaded) {
 						downloadedDataSettings.fontTypes = [];
 						downloadedDataSettings.wordTranslations = [];
 						downloadedDataSettings.wordTransliterations = [];
@@ -525,11 +404,6 @@
 					await handleDownloadChaptersData();
 					break;
 
-				case 'juzData':
-					await handleDeleteSpecificData('quranwbw-juz-data', 'juzData');
-					await handleDownloadJuzData();
-					break;
-
 				case 'mushafData':
 					await handleDeleteSpecificData('quranwbw-mushaf-data', 'mushafData');
 					await handleDownloadMushafData();
@@ -543,11 +417,6 @@
 				case 'tafsirData':
 					await handleDeleteSpecificData('tafsir_data', 'tafsirData');
 					await handleDownloadTafsirData();
-					break;
-
-				case 'essentialData':
-					await handleDeleteEssentialData();
-					await handleDownloadEssentialData();
 					break;
 			}
 
@@ -605,56 +474,6 @@
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingChapter = false;
-			downloadProgressPercentage = 100;
-		}
-	}
-
-	// Cache all 30 juz routes and download juz data
-	async function handleDownloadJuzData() {
-		if (!(await checkOnlineAndAlert())) return;
-
-		isDownloadingJuz = true;
-		downloadProgressPercentage = 0;
-
-		ensureOfflineSettingsStructure('juzData', {
-			downloaded: false,
-			downloadedAt: null
-		});
-
-		try {
-			const totalJuz = 30;
-			const coreSteps = isServiceWorkerRegistered ? 0 : 4;
-			const totalStepsInDownloadProgress = coreSteps + totalJuz + 1 + 1;
-			let completedStepsInDownloadProgress = 0;
-
-			// Ensure core is downloaded first
-			await ensureCoreDataDownloaded(() => {
-				completedStepsInDownloadProgress++;
-				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-			});
-
-			const juzRoutes = Array.from({ length: totalJuz }, (_, i) => `/juz?id=${i + 1}`);
-			for (const route of juzRoutes) {
-				await cacheUrlToCache(route, 'quranwbw-juz-data');
-				completedStepsInDownloadProgress++;
-				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-			}
-
-			await downloadChapterAndVerseTranslationData({});
-			completedStepsInDownloadProgress++;
-			updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
-
-			updateOfflineSettingsStructure('juzData', {
-				downloaded: true,
-				downloadedAt: new Date().toISOString()
-			});
-
-			window.umami?.track('Juz Data Download');
-		} catch (error) {
-			console.warn(error);
-			showAlert(errorAlertMessage, '');
-		} finally {
-			isDownloadingJuz = false;
 			downloadProgressPercentage = 100;
 		}
 	}
@@ -883,61 +702,8 @@
 		</p>
 	</div>
 
-	<!-- Basic Data Download Option and Advanced Data Download Toggle -->
-	<div class="my-8 flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0 overflow-auto">
-		<!-- Basic Data Download -->
-		<div class="flex flex-col flex-1 space-y-2 text-sm {isDownloading && !isDownloadingEssential && disabledClasses}">
-			<div class="flex flex-row justify-between">
-				<div>
-					<span class={window.theme('textSecondary')}>Essential Offline Data</span>
-					<span class="opacity-70"> (~{dataSections[0].dataSizeInMB + dataSections[1].dataSizeInMB} MB)</span>
-				</div>
-				<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">Recommended</span>
-			</div>
-
-			<div class="flex flex-col flex-1 space-y-4">
-				<div class="text-sm mb-auto">
-					This will download the essential files needed to use the website offline. It includes the main website files, all 114 {term('chapters')}, and all 30 {term('juzs')}.
-				</div>
-
-				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={isServiceWorkerRegistered && isChapterDataDownloaded && isJuzDataDownloaded ? showConfirm('This will delete the essential offline data.', '', handleDeleteEssentialData) : handleDownloadEssentialData} disabled={isDownloading}>
-					{#if isServiceWorkerRegistered && isChapterDataDownloaded && isJuzDataDownloaded}
-						<Trash size={4} />
-						<span>Delete</span>
-					{:else if isDownloadingEssential}
-						<Spinner size="5" inline={true} hideMessages={true} />
-						<span>{downloadProgressPercentage}%</span>
-					{:else}
-						<Download size={4} />
-						<span>Download</span>
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		<!-- Vertical divider -->
-		<div class="hidden md:block w-px {window.theme('bgSecondaryExtraDark')}"></div>
-
-		<!-- Advanced Data Download Toggle -->
-		<div class="flex flex-col flex-1 space-y-2 text-sm">
-			<div class={window.theme('textSecondary')}>Advanced Data Download</div>
-
-			<div class="flex flex-col flex-1 space-y-4">
-				<div class="text-sm mb-auto">
-					This section lets you choose exactly what you want to download. You can download or remove specific data like {term('chapters')}, {term('juzs')}, Mushaf pages,
-					{term('tafsir')}, or Morphology, based on your needs.
-				</div>
-
-				<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={() => (showAdvancedDownloadOptions = !showAdvancedDownloadOptions)} disabled={isDownloading}>
-					<svelte:component this={showAdvancedDownloadOptions ? EyeCrossed : Eye} size={4} />
-					<span>{showAdvancedDownloadOptions ? 'Disable Options' : 'Enable Options'}</span>
-				</button>
-			</div>
-		</div>
-	</div>
-
 	<!-- Individual Download Options -->
-	<div class="my-6 flex flex-col space-y-4 overflow-auto {!showAdvancedDownloadOptions && disabledClasses}">
+	<div class="my-6 flex flex-col space-y-4 overflow-auto">
 		{#each dataSections as section, index}
 			<!-- Data Section -->
 			<div class="flex flex-col space-y-2 text-sm {(isDownloading && !section.isDownloading) || (section.isSectionDisabled && section.isSectionDisabled()) ? disabledClasses : ''}">
