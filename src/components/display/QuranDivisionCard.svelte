@@ -6,9 +6,9 @@
 	import { term } from '$utils/terminologies';
 
 	export let type = 'chapter'; // 'chapter' | 'juz' | 'hizb'
-	export let id; // chapter number (for chapter/favorites)
-	export let juz; // juz object with .juz, .name, .from, .to, .icon
-	export let hizb; // hizb object with .hizb, .from, .to
+	export let id = null; // chapter number (for chapter/favorites)
+	export let juz = null; // juz object with .juz, .name, .from, .to, .icon
+	export let hizb = null; // hizb object with .hizb, .from, .to
 
 	const numberStarSvgPath = `<path class="opacity-15" d="M21.77,8.948a1.238,1.238,0,0,1-.7-1.7,3.239,3.239,0,0,0-4.315-4.316,1.239,1.239,0,0,1-1.7-.7,3.239,3.239,0,0,0-6.1,0,1.238,1.238,0,0,1-1.7.7A3.239,3.239,0,0,0,2.934,7.249a1.237,1.237,0,0,1-.7,1.7,3.24,3.24,0,0,0,0,6.1,1.238,1.238,0,0,1,.705,1.7A3.238,3.238,0,0,0,7.25,21.066a1.238,1.238,0,0,1,1.7.7,3.239,3.239,0,0,0,6.1,0,1.238,1.238,0,0,1,1.7-.7,3.239,3.239,0,0,0,4.316-4.315,1.239,1.239,0,0,1,.7-1.7,3.239,3.239,0,0,0,0-6.1Z" />`;
 
