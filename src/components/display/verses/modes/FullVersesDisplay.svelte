@@ -222,7 +222,7 @@
 		{#if showLoadPreviousVerseButton}
 			{@const previousKey = keysArray[getIndexOfKey(keyToStartWith) - 1]}
 			<div class={loadPrevNextVerseButtons}>
-				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {term($__currentPage === 'hizb' ? 'hizb' : 'juz')}</button>
+				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {$__currentPage === 'hizb' ? term('hizb') : term('juz')}</button>
 				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>Previous {term('verse')}</button>
 			</div>
 		{/if}
