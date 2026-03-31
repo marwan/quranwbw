@@ -540,14 +540,14 @@ export const selectableVerseTranslations = {
 		resource_id: 1,
 		resource_name: 'Transliteration (Simple Tajweed)',
 		language_id: 11115,
-		version: 2,
+		version: 3,
 		displayOrder: 2
 	},
 	3: {
 		resource_id: 3,
 		resource_name: 'Transliteration (Syllables)',
 		language_id: 11115,
-		version: 2,
+		version: 3,
 		displayOrder: 4,
 		font: 'font-serif'
 	},
@@ -562,7 +562,7 @@ export const selectableVerseTranslations = {
 		resource_id: 4,
 		resource_name: 'Transliteration (Advanced Tajweed)',
 		language_id: 11115,
-		version: 1,
+		version: 2,
 		displayOrder: 3,
 		font: 'font-serif'
 	},
@@ -782,18 +782,18 @@ export const selectableWordTransliterations = {
 	2: {
 		id: 2,
 		language: 'Transliteration (Simple Tajweed)',
-		version: 1
+		version: 2
 	},
 	3: {
 		id: 3,
 		language: 'Transliteration (Advanced Tajweed)',
-		version: 1,
+		version: 2,
 		font: 'font-serif'
 	},
 	4: {
 		id: 4,
 		language: 'Transliteration (Syllables)',
-		version: 1,
+		version: 2,
 		font: 'font-serif'
 	}
 };
