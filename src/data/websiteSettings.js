@@ -20,7 +20,6 @@ export const cdnStaticDataUrls = {
 	tajweedRules: `${staticEndpoint}/tajweed/tajweed-rules.json?version=3`,
 	keysInJuz: `${staticEndpoint}/meta/keysInJuz.json?version=1`,
 	keysInHizb: `${staticEndpoint}/meta/keysInHizb.json?version=1`,
-	keysInPage: `${staticEndpoint}/meta/keysInPage.json?version=2`,
 	quranTopics: `${staticEndpoint}/others/quran-topics.json?version=1`
 };
 
