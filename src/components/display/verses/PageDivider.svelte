@@ -1,8 +1,7 @@
 <script>
 	export let key;
 
-	import { pageNumberKeys, juzNumberKeys } from '$data/quranMeta';
-	import { hizbNumberKeys } from '$data/hizbMeta';
+	import { pageNumberKeys, juzNumberKeys, hizbNumberKeys } from '$data/quranMeta';
 	import { __currentPage, __displayType } from '$utils/stores';
 	import { selectableDisplays } from '$data/options';
 	import { term } from '$utils/terminologies';
@@ -17,6 +16,8 @@
 
 	$: dividerItems = [];
 
+	// Computes the divider label items (page, juz, hizb numbers) for a given key
+	// when the current view is chapter, juz, or hizb — otherwise clears them.
 	$: if (['chapter', 'juz', 'hizb'].includes($__currentPage)) {
 		const items = [];
 		const pageIndex = pageNumberKeys.indexOf(key);

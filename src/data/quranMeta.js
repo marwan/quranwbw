@@ -798,250 +798,105 @@ export const pageNumberKeys = [
 	'112:1'
 ];
 
-export const juzNumberKeys = ['1:1', '2:142', '2:253', '3:93', '4:24', '4:148', '5:82', '6:111', '7:88', '8:41', '9:93', '11:6', '12:53', '15:1', '17:1', '18:75', '21:1', '23:1', '25:21', '27:56', '29:46', '33:31', '36:28', '39:32', '41:47', '46:1', '51:31', '58:1', '67:1', '78:1'];
-
 export const juzMeta = [
-	{
-		juz: 1,
-		from: '1:1',
-		to: '2:141',
-		chapters: [1, 2],
-		name: 'Alif Lam Meem',
-		icon: ''
-	},
-	{
-		juz: 2,
-		from: '2:142',
-		to: '2:252',
-		chapters: [2],
-		name: 'Sayaqool',
-		icon: ''
-	},
-	{
-		juz: 3,
-		from: '2:253',
-		to: '3:92',
-		chapters: [2, 3],
-		name: 'Tilkal Rusul',
-		icon: ''
-	},
-	{
-		juz: 4,
-		from: '3:93',
-		to: '4:23',
-		chapters: [3, 4],
-		name: 'Lan Tana Loo',
-		icon: ''
-	},
-	{
-		juz: 5,
-		from: '4:24',
-		to: '4:147',
-		chapters: [4],
-		name: 'Wal Mohsanat',
-		icon: ''
-	},
-	{
-		juz: 6,
-		from: '4:148',
-		to: '5:81',
-		chapters: [4, 5],
-		name: 'La Yuhibbullah',
-		icon: ''
-	},
-	{
-		juz: 7,
-		from: '5:82',
-		to: '6:110',
-		chapters: [5, 6],
-		name: 'Wa Iza Samiu',
-		icon: ''
-	},
-	{
-		juz: 8,
-		from: '6:111',
-		to: '7:87',
-		chapters: [6, 7],
-		name: 'Wa Lau Annana',
-		icon: ''
-	},
-	{
-		juz: 9,
-		from: '7:88',
-		to: '8:40',
-		chapters: [7, 8],
-		name: 'Qalal Malao',
-		icon: ''
-	},
-	{
-		juz: 10,
-		from: '8:41',
-		to: '9:92',
-		chapters: [8, 9],
-		name: "Wa A'lamu",
-		icon: ''
-	},
-	{
-		juz: 11,
-		from: '9:93',
-		to: '11:5',
-		chapters: [9, 10, 11],
-		name: 'Yatazeroon',
-		icon: ''
-	},
-	{
-		juz: 12,
-		from: '11:6',
-		to: '12:52',
-		chapters: [11, 12],
-		name: "Wama Min Da'abat",
-		icon: ''
-	},
-	{
-		juz: 13,
-		from: '12:53',
-		to: '14:52',
-		chapters: [12, 13, 14],
-		name: 'Wa Ma Ubrioo',
-		icon: ''
-	},
-	{
-		juz: 14,
-		from: '15:1',
-		to: '16:128',
-		chapters: [15, 16],
-		name: 'Rubama',
-		icon: ''
-	},
-	{
-		juz: 15,
-		from: '17:1',
-		to: '18:74',
-		chapters: [17, 18],
-		name: 'Subhanallazi',
-		icon: ''
-	},
-	{
-		juz: 16,
-		from: '18:75',
-		to: '20:135',
-		chapters: [18, 19, 20],
-		name: 'Qal Alam',
-		icon: ''
-	},
-	{
-		juz: 17,
-		from: '21:1',
-		to: '22:78',
-		chapters: [21, 22],
-		name: 'Aqtarabo',
-		icon: ''
-	},
-	{
-		juz: 18,
-		from: '23:1',
-		to: '25:20',
-		chapters: [23, 24, 25],
-		name: 'Qadd Aflaha',
-		icon: ''
-	},
-	{
-		juz: 19,
-		from: '25:21',
-		to: '27:55',
-		chapters: [25, 26, 27],
-		name: 'Wa Qalallazina',
-		icon: ''
-	},
-	{
-		juz: 20,
-		from: '27:56',
-		to: '29:45',
-		chapters: [27, 28, 29],
-		name: "A'man Khalaq",
-		icon: ''
-	},
-	{
-		juz: 21,
-		from: '29:46',
-		to: '33:30',
-		chapters: [29, 30, 31, 32, 33],
-		name: 'Utlu Ma Oohi',
-		icon: ''
-	},
-	{
-		juz: 22,
-		from: '33:31',
-		to: '36:27',
-		chapters: [33, 34, 35, 36],
-		name: 'Wa Manyaqnut',
-		icon: ''
-	},
-	{
-		juz: 23,
-		from: '36:28',
-		to: '39:31',
-		chapters: [36, 37, 38, 39],
-		name: 'Wa Mali',
-		icon: ''
-	},
-	{
-		juz: 24,
-		from: '39:32',
-		to: '41:46',
-		chapters: [39, 40, 41],
-		name: 'Faman Azlam',
-		icon: ''
-	},
-	{
-		juz: 25,
-		from: '41:47',
-		to: '45:37',
-		chapters: [41, 42, 43, 44, 45],
-		name: 'Elahe Yuruddo',
-		icon: ''
-	},
-	{
-		juz: 26,
-		from: '46:1',
-		to: '51:30',
-		chapters: [46, 47, 48, 49, 50, 51],
-		name: "Ha'a Meem",
-		icon: ''
-	},
-	{
-		juz: 27,
-		from: '51:31',
-		to: '57:29',
-		chapters: [51, 52, 53, 54, 55, 56, 57],
-		name: 'Qala Fama Khatbukum',
-		icon: ''
-	},
-	{
-		juz: 28,
-		from: '58:1',
-		to: '66:12',
-		chapters: [58, 59, 60, 61, 62, 63, 64, 65, 66],
-		name: 'Qadd Sami Allah',
-		icon: ''
-	},
-	{
-		juz: 29,
-		from: '67:1',
-		to: '77:50',
-		chapters: [67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77],
-		name: 'Tabarakallazi',
-		icon: ''
-	},
-	{
-		juz: 30,
-		from: '78:1',
-		to: '114:6',
-		chapters: [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114],
-		name: "Amma Yatasa'aloon",
-		icon: ''
-	}
+	{ juz: 1, from: '1:1', to: '2:141', name: 'Alif Lam Meem', icon: '' },
+	{ juz: 2, from: '2:142', to: '2:252', name: 'Sayaqool', icon: '' },
+	{ juz: 3, from: '2:253', to: '3:92', name: 'Tilkal Rusul', icon: '' },
+	{ juz: 4, from: '3:93', to: '4:23', name: 'Lan Tana Loo', icon: '' },
+	{ juz: 5, from: '4:24', to: '4:147', name: 'Wal Mohsanat', icon: '' },
+	{ juz: 6, from: '4:148', to: '5:81', name: 'La Yuhibbullah', icon: '' },
+	{ juz: 7, from: '5:82', to: '6:110', name: 'Wa Iza Samiu', icon: '' },
+	{ juz: 8, from: '6:111', to: '7:87', name: 'Wa Lau Annana', icon: '' },
+	{ juz: 9, from: '7:88', to: '8:40', name: 'Qalal Malao', icon: '' },
+	{ juz: 10, from: '8:41', to: '9:92', name: "Wa A'lamu", icon: '' },
+	{ juz: 11, from: '9:93', to: '11:5', name: 'Yatazeroon', icon: '' },
+	{ juz: 12, from: '11:6', to: '12:52', name: "Wama Min Da'abat", icon: '' },
+	{ juz: 13, from: '12:53', to: '14:52', name: 'Wa Ma Ubrioo', icon: '' },
+	{ juz: 14, from: '15:1', to: '16:128', name: 'Rubama', icon: '' },
+	{ juz: 15, from: '17:1', to: '18:74', name: 'Subhanallazi', icon: '' },
+	{ juz: 16, from: '18:75', to: '20:135', name: 'Qal Alam', icon: '' },
+	{ juz: 17, from: '21:1', to: '22:78', name: 'Aqtarabo', icon: '' },
+	{ juz: 18, from: '23:1', to: '25:20', name: 'Qadd Aflaha', icon: '' },
+	{ juz: 19, from: '25:21', to: '27:55', name: 'Wa Qalallazina', icon: '' },
+	{ juz: 20, from: '27:56', to: '29:45', name: "A'man Khalaq", icon: '' },
+	{ juz: 21, from: '29:46', to: '33:30', name: 'Utlu Ma Oohi', icon: '' },
+	{ juz: 22, from: '33:31', to: '36:27', name: 'Wa Manyaqnut', icon: '' },
+	{ juz: 23, from: '36:28', to: '39:31', name: 'Wa Mali', icon: '' },
+	{ juz: 24, from: '39:32', to: '41:46', name: 'Faman Azlam', icon: '' },
+	{ juz: 25, from: '41:47', to: '45:37', name: 'Elahe Yuruddo', icon: '' },
+	{ juz: 26, from: '46:1', to: '51:30', name: "Ha'a Meem", icon: '' },
+	{ juz: 27, from: '51:31', to: '57:29', name: 'Qala Fama Khatbukum', icon: '' },
+	{ juz: 28, from: '58:1', to: '66:12', name: 'Qadd Sami Allah', icon: '' },
+	{ juz: 29, from: '67:1', to: '77:50', name: 'Tabarakallazi', icon: '' },
+	{ juz: 30, from: '78:1', to: '114:6', name: "Amma Yatasa'aloon", icon: '' }
 ];
+
+export const juzNumberKeys = juzMeta.map((item) => item.from);
+
+export const hizbMeta = [
+	{ hizb: 1, from: '1:1', to: '2:74' },
+	{ hizb: 2, from: '2:75', to: '2:141' },
+	{ hizb: 3, from: '2:142', to: '2:202' },
+	{ hizb: 4, from: '2:203', to: '2:252' },
+	{ hizb: 5, from: '2:253', to: '3:14' },
+	{ hizb: 6, from: '3:15', to: '3:92' },
+	{ hizb: 7, from: '3:93', to: '3:170' },
+	{ hizb: 8, from: '3:171', to: '4:23' },
+	{ hizb: 9, from: '4:24', to: '4:87' },
+	{ hizb: 10, from: '4:88', to: '4:147' },
+	{ hizb: 11, from: '4:148', to: '5:26' },
+	{ hizb: 12, from: '5:27', to: '5:81' },
+	{ hizb: 13, from: '5:82', to: '6:35' },
+	{ hizb: 14, from: '6:36', to: '6:110' },
+	{ hizb: 15, from: '6:111', to: '6:165' },
+	{ hizb: 16, from: '7:1', to: '7:87' },
+	{ hizb: 17, from: '7:88', to: '7:170' },
+	{ hizb: 18, from: '7:171', to: '8:40' },
+	{ hizb: 19, from: '8:41', to: '9:33' },
+	{ hizb: 20, from: '9:34', to: '9:92' },
+	{ hizb: 21, from: '9:93', to: '10:25' },
+	{ hizb: 22, from: '10:26', to: '11:5' },
+	{ hizb: 23, from: '11:6', to: '11:83' },
+	{ hizb: 24, from: '11:84', to: '12:52' },
+	{ hizb: 25, from: '12:53', to: '13:18' },
+	{ hizb: 26, from: '13:19', to: '14:52' },
+	{ hizb: 27, from: '15:1', to: '16:50' },
+	{ hizb: 28, from: '16:51', to: '16:128' },
+	{ hizb: 29, from: '17:1', to: '17:98' },
+	{ hizb: 30, from: '17:99', to: '18:74' },
+	{ hizb: 31, from: '18:75', to: '19:98' },
+	{ hizb: 32, from: '20:1', to: '20:135' },
+	{ hizb: 33, from: '21:1', to: '21:112' },
+	{ hizb: 34, from: '22:1', to: '22:78' },
+	{ hizb: 35, from: '23:1', to: '24:20' },
+	{ hizb: 36, from: '24:21', to: '25:20' },
+	{ hizb: 37, from: '25:21', to: '26:110' },
+	{ hizb: 38, from: '26:111', to: '27:55' },
+	{ hizb: 39, from: '27:56', to: '28:50' },
+	{ hizb: 40, from: '28:51', to: '29:45' },
+	{ hizb: 41, from: '29:46', to: '31:21' },
+	{ hizb: 42, from: '31:22', to: '33:30' },
+	{ hizb: 43, from: '33:31', to: '34:23' },
+	{ hizb: 44, from: '34:24', to: '36:27' },
+	{ hizb: 45, from: '36:28', to: '37:144' },
+	{ hizb: 46, from: '37:145', to: '39:31' },
+	{ hizb: 47, from: '39:32', to: '40:40' },
+	{ hizb: 48, from: '40:41', to: '41:46' },
+	{ hizb: 49, from: '41:47', to: '43:23' },
+	{ hizb: 50, from: '43:24', to: '45:37' },
+	{ hizb: 51, from: '46:1', to: '48:17' },
+	{ hizb: 52, from: '48:18', to: '51:30' },
+	{ hizb: 53, from: '51:31', to: '54:55' },
+	{ hizb: 54, from: '55:1', to: '57:29' },
+	{ hizb: 55, from: '58:1', to: '61:14' },
+	{ hizb: 56, from: '62:1', to: '66:12' },
+	{ hizb: 57, from: '67:1', to: '71:28' },
+	{ hizb: 58, from: '72:1', to: '77:50' },
+	{ hizb: 59, from: '78:1', to: '86:17' },
+	{ hizb: 60, from: '87:1', to: '114:6' }
+];
+
+export const hizbNumberKeys = hizbMeta.map((item) => item.from);
 
 export const mostRead = [
 	{ id: 1, chapter: 2, verses: 'Verse 255', title: "Whoever recites the 'verse of the Throne' after every prescribed prayer, there will be nothing standing between him and entry into Paradise but his death.", url: '/2?startVerse=255' },
