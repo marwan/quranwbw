@@ -1,30 +1,38 @@
 import { quranMetaData, pageNumberKeys, juzMeta, hizbMeta } from '$data/quranMeta';
 
+// Generates a map of verse keys for each segment of the Quran.
+// Each key in the returned object is a segment number (juz, hizb, or page),
+// and its value is a comma-separated string of all "chapter:verse" keys in that segment.
 export function getSegmentKeys(type = 'juz') {
-	// Build a lookup: surahId -> verse count
-	const verseCounts = {};
-	for (const surah of quranMetaData) {
-		if (surah.id > 0) verseCounts[surah.id] = surah.verses;
+	// Build a lookup of chapter number -> total verse count
+	const verseCountByChapter = {};
+	for (const chapter of quranMetaData) {
+		if (chapter.id > 0) verseCountByChapter[chapter.id] = chapter.verses;
 	}
 
-	function parseKey(str) {
-		const [s, v] = str.split(':').map(Number);
-		return [s, v];
+	// Parse a "chapter:verse" string into a [chapterNumber, verseNumber] tuple
+	function parseVerseKey(key) {
+		const [chapter, verse] = key.split(':').map(Number);
+		return [chapter, verse];
 	}
 
-	function buildKeys(startSurah, startVerse, endSurah, endVerse) {
+	// Build a comma-separated string of all verse keys from start (inclusive) to end (exclusive)
+	function buildVerseKeys(startChapter, startVerse, endChapter, endVerse) {
 		const keys = [];
-		let s = startSurah;
-		let v = startVerse;
+		let currentChapter = startChapter;
+		let currentVerse = startVerse;
 
-		while (s < endSurah || (s === endSurah && v < endVerse)) {
-			keys.push(`${s}:${v}`);
-			const totalVerses = verseCounts[s];
-			if (v < totalVerses) {
-				v++;
+		while (currentChapter < endChapter || (currentChapter === endChapter && currentVerse < endVerse)) {
+			keys.push(`${currentChapter}:${currentVerse}`);
+
+			const totalVerses = verseCountByChapter[currentChapter];
+			if (currentVerse < totalVerses) {
+				// Move to next verse in the same chapter
+				currentVerse++;
 			} else {
-				s++;
-				v = 1;
+				// Move to the first verse of the next chapter
+				currentChapter++;
+				currentVerse = 1;
 			}
 		}
 
@@ -34,18 +42,20 @@ export function getSegmentKeys(type = 'juz') {
 	const result = {};
 
 	if (type === 'page') {
+		// Each entry in pageNumberKeys is the starting verse of that page
 		for (let i = 0; i < pageNumberKeys.length; i++) {
-			const [startSurah, startVerse] = parseKey(pageNumberKeys[i]);
+			const [startChapter, startVerse] = parseVerseKey(pageNumberKeys[i]);
 
-			let endSurah, endVerse;
+			// End boundary is the start of the next page, or end of Quran for the last page
+			let endChapter, endVerse;
 			if (i < pageNumberKeys.length - 1) {
-				[endSurah, endVerse] = parseKey(pageNumberKeys[i + 1]);
+				[endChapter, endVerse] = parseVerseKey(pageNumberKeys[i + 1]);
 			} else {
-				endSurah = 114;
-				endVerse = 7;
+				endChapter = 114;
+				endVerse = 7; // Exclusive, so 114:6 is the last verse included
 			}
 
-			result[i + 1] = buildKeys(startSurah, startVerse, endSurah, endVerse);
+			result[i + 1] = buildVerseKeys(startChapter, startVerse, endChapter, endVerse);
 		}
 	} else {
 		const meta = type === 'juz' ? juzMeta : hizbMeta;
@@ -53,21 +63,20 @@ export function getSegmentKeys(type = 'juz') {
 
 		for (let i = 0; i < meta.length; i++) {
 			const segment = meta[i];
-			const [startSurah, startVerse] = parseKey(segment.from);
+			const [startChapter, startVerse] = parseVerseKey(segment.from);
 
-			let endSurah, endVerse;
+			// End boundary is the start of the next segment, or end of Quran for the last segment
+			let endChapter, endVerse;
 			if (i < meta.length - 1) {
-				[endSurah, endVerse] = parseKey(meta[i + 1].from);
+				[endChapter, endVerse] = parseVerseKey(meta[i + 1].from);
 			} else {
-				endSurah = 114;
-				endVerse = 7;
+				endChapter = 114;
+				endVerse = 7; // Exclusive, so 114:6 is the last verse included
 			}
 
-			result[segment[segmentKey]] = buildKeys(startSurah, startVerse, endSurah, endVerse);
+			result[segment[segmentKey]] = buildVerseKeys(startChapter, startVerse, endChapter, endVerse);
 		}
 	}
 
 	return result;
 }
-
-window.getSegmentKeys = getSegmentKeys;
