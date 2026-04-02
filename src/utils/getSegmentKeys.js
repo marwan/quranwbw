@@ -4,6 +4,8 @@ import { quranMetaData, pageNumberKeys, juzMeta, hizbMeta } from '$data/quranMet
 // Each key in the returned object is a segment number (juz, hizb, or page),
 // and its value is a comma-separated string of all "chapter:verse" keys in that segment.
 export function getSegmentKeys(type = 'juz') {
+	console.time(`getSegmentKeys(${type})`);
+
 	// Build a lookup of chapter number -> total verse count
 	const verseCountByChapter = {};
 	for (const chapter of quranMetaData) {
@@ -27,10 +29,8 @@ export function getSegmentKeys(type = 'juz') {
 
 			const totalVerses = verseCountByChapter[currentChapter];
 			if (currentVerse < totalVerses) {
-				// Move to next verse in the same chapter
 				currentVerse++;
 			} else {
-				// Move to the first verse of the next chapter
 				currentChapter++;
 				currentVerse = 1;
 			}
@@ -42,17 +42,15 @@ export function getSegmentKeys(type = 'juz') {
 	const result = {};
 
 	if (type === 'page') {
-		// Each entry in pageNumberKeys is the starting verse of that page
 		for (let i = 0; i < pageNumberKeys.length; i++) {
 			const [startChapter, startVerse] = parseVerseKey(pageNumberKeys[i]);
 
-			// End boundary is the start of the next page, or end of Quran for the last page
 			let endChapter, endVerse;
 			if (i < pageNumberKeys.length - 1) {
 				[endChapter, endVerse] = parseVerseKey(pageNumberKeys[i + 1]);
 			} else {
 				endChapter = 114;
-				endVerse = 7; // Exclusive, so 114:6 is the last verse included
+				endVerse = 7;
 			}
 
 			result[i + 1] = buildVerseKeys(startChapter, startVerse, endChapter, endVerse);
@@ -65,18 +63,22 @@ export function getSegmentKeys(type = 'juz') {
 			const segment = meta[i];
 			const [startChapter, startVerse] = parseVerseKey(segment.from);
 
-			// End boundary is the start of the next segment, or end of Quran for the last segment
 			let endChapter, endVerse;
 			if (i < meta.length - 1) {
 				[endChapter, endVerse] = parseVerseKey(meta[i + 1].from);
 			} else {
 				endChapter = 114;
-				endVerse = 7; // Exclusive, so 114:6 is the last verse included
+				endVerse = 7;
 			}
 
 			result[segment[segmentKey]] = buildVerseKeys(startChapter, startVerse, endChapter, endVerse);
 		}
 	}
 
+	console.timeEnd(`getSegmentKeys(${type})`);
+	console.log(`getSegmentKeys(${type}) → ${Object.keys(result).length} segments`);
+
 	return result;
 }
+
+window.getSegmentKeys = getSegmentKeys;
