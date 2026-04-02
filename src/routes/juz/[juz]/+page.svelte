@@ -6,9 +6,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __displayType, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
-	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { term } from '$utils/terminologies';
-	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 
 	// only allow display type 1 & 2, and don't save the layout in settings
@@ -20,13 +18,8 @@
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
 		juzKeysData = (async () => {
 			try {
-				const data1 = await fetchAndCacheJson(cdnStaticDataUrls.keysInJuz, 'other');
-				// return data[juzNumber] ?? '';
-				console.log(data1[juzNumber]);
-
-				const data2 = await getSegmentKeys('juz');
-				console.log(data2[juzNumber]);
-				return data2[juzNumber] ?? '';
+				const data = await getSegmentKeys('juz');
+				return data[juzNumber] ?? '';
 			} catch (error) {
 				console.warn(error);
 				return '';

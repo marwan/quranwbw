@@ -110,8 +110,9 @@
 	 */
 	async function fetchVersesByPage(page) {
 		try {
-			// Generate keys for the given page
-			const keysInPage = getSegmentKeys('page')[page];
+			// Get keys for the given page
+			const data = await getSegmentKeys('page');
+			const keysInPage = data[page];
 
 			// Parse keys into chapters and verses
 			const chaptersWithVerses = {};
