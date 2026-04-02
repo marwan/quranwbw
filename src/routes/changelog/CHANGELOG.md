@@ -1,6 +1,6 @@
-### Mar 28, 2026
+### Apr 3, 2026
 
-- **Hizb (Half Part) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur’an by half parts. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.
+- **Hizb (Division) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur'an by divisions. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.
 
 ---
 
@@ -36,7 +36,7 @@
 
 ### Feb 6, 2026
 
-- **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur’an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
+- **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur'an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
 
 ---
 

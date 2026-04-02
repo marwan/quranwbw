@@ -38,7 +38,7 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 - Abdul Aziz Korejo and [Dr. Usama Nonnenmacher](https://drusaman.github.io/), his family and others for their contributions to Sindhi word-by-word Quran translation[4].
 - Ustadh Jahja Hondozi for the Albanian word-by-word translation.
 - [Kalimat](https://www.kalimat.dev/) for their AI powered semantic search API.
-- [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/) for the copyrighted Isep Misbah Fonts[5].
+- [Lajnah Pentashihan Mushaf Al-Qur'an](https://lajnah.kemenag.go.id/) for the copyrighted Isep Misbah Fonts[5].
 - M Zamroni Ahbab for the Arabic Sign Language font[6].
 - [Understand Quran Academy](https://understandquran.com/) for the Advanced Tajweed and Syllables transliteration data[7].
 - [Uthman Agolli](https://www.youtube.com/@uthman.agolli) for his valuable work on the Albanian translation of Tafsir Ibn Kathir and Tafsir As-Sa'di, with special thanks to brother Samir Nurshaba and brother Erand for sharing this data with us.
@@ -55,8 +55,8 @@ All data used on this website belongs to their respective owners and authors. Pe
 
 [4] _Special thanks to Bro. Sulayman Jamali for lending the Sindhi translation of Quran by Abdul Maalik Mayman, Bro. Abdul Aziz Korejo for digitalization of Sindhi translation, [Brother Usama Nonnenmacher](https://drusaman.github.io/), his parents and father-in-law Umar Farooq Quddusi and his sister for their contributions as a team to Sindhi word-by-word Quran translation._
 
-[5] _The Isep Misbah Fonts are copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for these fonts was prepared by [Ayman Siddiqui](https://zoopernet.com)._
+[5] _The Isep Misbah Fonts are copyrighted by [Lajnah Pentashihan Mushaf Al-Qur'an](https://lajnah.kemenag.go.id/). The word-by-word compilation for these fonts was prepared by [Ayman Siddiqui](https://zoopernet.com)._
 
-[6] _The Arabic Sign Language font was designed by M Zamroni Ahbab and is copyrighted by [Lajnah Pentashihan Mushaf Al-Qur’an](https://lajnah.kemenag.go.id/). The word-by-word compilation for this font was prepared by [Ayman Siddiqui](https://zoopernet.com)._
+[6] _The Arabic Sign Language font was designed by M Zamroni Ahbab and is copyrighted by [Lajnah Pentashihan Mushaf Al-Qur'an](https://lajnah.kemenag.go.id/). The word-by-word compilation for this font was prepared by [Ayman Siddiqui](https://zoopernet.com)._
 
 [7] _The Advanced Tajweed and Syllables transliteration content is published by [Understand Quran Academy](https://understandquran.com/), Hyderabad, India. The original work was authored by Shaikh M. A. H. Eliyasee, with enhancements and compilation by Abul Bashar, Tareq Maghrabi, Naseer Imtiaz, Mrs. & Mr. Waseem A. Khan, and Abdulazeez Abdulraheem. The original transliteration data was contributed by Shaikh AbdulGhafoor Parekh and Aisha Fozia. Web publishing was carried out by Muhammad Mujtaba Shareef and Waseem Khan, while Unicode conversion and word-by-word compilation were performed by [Ayman Siddiqui](https://zoopernet.com), Rania Siddiqua, and Syeda Amena._

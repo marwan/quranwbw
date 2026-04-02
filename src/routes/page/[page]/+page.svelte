@@ -102,7 +102,7 @@
 
 	/**
 	 * This function retrieves and processes Quranic verses for a given page number.
-	 * It extracts the specific chapters and verses required for the given page.
+	 * It first gets the specific verse keys required for the given page.
 	 * After identifying the necessary chapters, it fetches their complete data
 	 * and filters out only the requested verses. The function then ensures that the verses
 	 * are sorted in ascending order based on chapter and verse numbers before returning
