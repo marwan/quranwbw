@@ -9,6 +9,7 @@
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { term } from '$utils/terminologies';
 	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { getSegmentKeys } from '$utils/getSegmentKeys';
 
 	// only allow display type 1 & 2, and don't save the layout in settings
 	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
@@ -19,8 +20,13 @@
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
 		juzKeysData = (async () => {
 			try {
-				const data = await fetchAndCacheJson(cdnStaticDataUrls.keysInJuz, 'other');
-				return data[juzNumber] ?? '';
+				const data1 = await fetchAndCacheJson(cdnStaticDataUrls.keysInJuz, 'other');
+				// return data[juzNumber] ?? '';
+				console.log(data1[juzNumber]);
+
+				const data2 = await getSegmentKeys('juz');
+				console.log(data2[juzNumber]);
+				return data2[juzNumber] ?? '';
 			} catch (error) {
 				console.warn(error);
 				return '';
@@ -39,7 +45,7 @@
 {:then juzKeys}
 	{#if juzKeys.length > 0}
 		<div id="individual-verses-block">
-			<FullVersesDisplay keys={juzKeys.toString()} />
+			<FullVersesDisplay keys={juzKeys} />
 		</div>
 	{:else}
 		<ErrorLoadingData />

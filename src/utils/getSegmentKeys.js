@@ -3,22 +3,19 @@ import { quranMetaData, pageNumberKeys, juzMeta, hizbMeta } from '$data/quranMet
 // Generates a map of verse keys for each segment of the Quran.
 // Each key in the returned object is a segment number (juz, hizb, or page),
 // and its value is a comma-separated string of all "chapter:verse" keys in that segment.
-export function getSegmentKeys(type = 'juz') {
+export async function getSegmentKeys(type = 'juz') {
 	console.time(`getSegmentKeys(${type})`);
 
-	// Build a lookup of chapter number -> total verse count
 	const verseCountByChapter = {};
 	for (const chapter of quranMetaData) {
 		if (chapter.id > 0) verseCountByChapter[chapter.id] = chapter.verses;
 	}
 
-	// Parse a "chapter:verse" string into a [chapterNumber, verseNumber] tuple
 	function parseVerseKey(key) {
 		const [chapter, verse] = key.split(':').map(Number);
 		return [chapter, verse];
 	}
 
-	// Build a comma-separated string of all verse keys from start (inclusive) to end (exclusive)
 	function buildVerseKeys(startChapter, startVerse, endChapter, endVerse) {
 		const keys = [];
 		let currentChapter = startChapter;
@@ -77,6 +74,10 @@ export function getSegmentKeys(type = 'juz') {
 
 	console.timeEnd(`getSegmentKeys(${type})`);
 	console.log(`getSegmentKeys(${type}) → ${Object.keys(result).length} segments`);
+
+	// Yield to the browser's event loop before resolving, mimicking network async behaviour.
+	// This ensures URL params (like startKey) are fully processed before FullVersesDisplay mounts.
+	await new Promise((resolve) => setTimeout(resolve, 0));
 
 	return result;
 }

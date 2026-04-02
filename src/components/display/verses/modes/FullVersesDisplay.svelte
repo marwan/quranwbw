@@ -1,6 +1,8 @@
 <script>
 	export let keys, startIndex, endIndex;
 
+	console.log({ keys, startIndex, endIndex });
+
 	import Spinner from '$svgs/Spinner.svelte';
 	import WordByWord from '$display/layouts/WordByWord.svelte';
 	import Normal from '$display/layouts/Normal.svelte';
