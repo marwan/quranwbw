@@ -229,10 +229,8 @@
 				When the current verse is the first verse of a new chapter (e.g. X:1),
 				a chapter header is rendered immediately after these buttons.
 				The chapter header applies negative margins, which overlap this area
-				and make the buttons partially unclickable.
-
-				To counteract that layout overlap, we re-add bottom padding here
-				so the buttons remain fully clickable.
+				and make the buttons partially unclickable. To counteract that layout overlap, 
+				we re-add bottom padding here so the buttons remain fully clickable.
 			-->
 			<div class="{loadPrevNextVerseButtons} {isNextVerseFirst && 'pb-12'}">
 				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>
