@@ -220,10 +220,26 @@
 		<ErrorLoadingData error={fetchError} />
 	{:else}
 		{#if showLoadPreviousVerseButton}
-			{@const previousKey = keysArray[getIndexOfKey(keyToStartWith) - 1]}
-			<div class={loadPrevNextVerseButtons}>
-				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {term('juz')}</button>
-				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>Previous {term('verse')}</button>
+			{@const currentIndex = getIndexOfKey(keyToStartWith)}
+			{@const previousKey = keysArray[currentIndex - 1]}
+			{@const currentFirstKey = keysArray[currentIndex]}
+			{@const isNextVerseFirst = currentFirstKey && Number(currentFirstKey.split(':')[1]) === 1}
+
+			<!--
+				When the current verse is the first verse of a new chapter (e.g. X:1),
+				a chapter header is rendered immediately after these buttons.
+				The chapter header applies negative margins, which overlap this area
+				and make the buttons partially unclickable. To counteract that layout overlap, 
+				we re-add bottom padding here so the buttons remain fully clickable.
+			-->
+			<div class="{loadPrevNextVerseButtons} {isNextVerseFirst && 'pb-12'}">
+				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>
+					Start of {$__currentPage === 'hizb' ? term('hizb') : term('juz')}
+				</button>
+
+				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>
+					Previous {term('verse')}
+				</button>
 			</div>
 		{/if}
 
