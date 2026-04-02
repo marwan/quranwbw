@@ -4,8 +4,6 @@ import { quranMetaData, pageNumberKeys, juzMeta, hizbMeta } from '$data/quranMet
 // Each key in the returned object is a segment number (juz, hizb, or page),
 // and its value is a comma-separated string of all "chapter:verse" keys in that segment.
 export async function getSegmentKeys(type = 'juz') {
-	console.time(`getSegmentKeys(${type})`);
-
 	const verseCountByChapter = {};
 	for (const chapter of quranMetaData) {
 		if (chapter.id > 0) verseCountByChapter[chapter.id] = chapter.verses;
@@ -72,14 +70,9 @@ export async function getSegmentKeys(type = 'juz') {
 		}
 	}
 
-	console.timeEnd(`getSegmentKeys(${type})`);
-	console.log(`getSegmentKeys(${type}) → ${Object.keys(result).length} segments`);
-
 	// Yield to the browser's event loop before resolving, mimicking network async behaviour.
 	// This ensures URL params (like startKey) are fully processed before FullVersesDisplay mounts.
 	await new Promise((resolve) => setTimeout(resolve, 0));
 
 	return result;
 }
-
-window.getSegmentKeys = getSegmentKeys;

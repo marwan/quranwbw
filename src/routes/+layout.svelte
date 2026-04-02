@@ -4,8 +4,6 @@
 	import '$utils/keyDownHandler';
 	import '$utils/devTools';
 	import '$utils/generateThemes';
-	import '$utils/getSegmentKeys';
-
 	import Navbar from '$ui/Navbar.svelte';
 	import SettingsDrawer from '$ui/SettingsDrawer/SettingsDrawer.svelte';
 	import BottomToolbar from '$ui/BottomToolbar/BottomToolbar.svelte';
