@@ -6,9 +6,8 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __displayType, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
-	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { term } from '$utils/terminologies';
-	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { getSegmentKeys } from '$utils/getSegmentKeys';
 
 	// only allow display type 1 & 2, and don't save the layout in settings
 	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
@@ -19,7 +18,7 @@
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
 		hizbKeysData = (async () => {
 			try {
-				const data = await fetchAndCacheJson(cdnStaticDataUrls.keysInHizb, 'other');
+				const data = await getSegmentKeys('hizb');
 				return data[hizbNumber] ?? '';
 			} catch (error) {
 				console.warn(error);
