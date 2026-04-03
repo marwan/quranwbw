@@ -1,4 +1,4 @@
-import { quranMetaData, pageNumberKeys, juzMeta, hizbMeta } from '$data/quranMeta';
+import { quranMetaData, pageNumberKeys, juzNumberKeys, hizbNumberKeys } from '$data/quranMeta';
 
 // Generates a map of verse keys for each segment of the Quran.
 // Each key in the returned object is a segment number (juz, hizb, or page),
@@ -48,50 +48,28 @@ export async function getSegmentKeys(type = 'juz') {
 		return keys.join(',');
 	}
 
+	// Pick the correct flat array of starting verse keys based on type
+	// All three are the same shape: ['1:1', '2:1', ...] — one entry per segment
+	const startingKeys = type === 'juz' ? juzNumberKeys : type === 'hizb' ? hizbNumberKeys : pageNumberKeys;
+
 	// The final result object: { segmentNumber: 'chapter:verse,...' }
 	const result = {};
 
-	if (type === 'page') {
-		// pageNumberKeys is a flat array where each entry is the starting verse of that page
-		// e.g. ['1:1', '2:1', '2:6', ...] for pages 1, 2, 3, ...
-		for (let i = 0; i < pageNumberKeys.length; i++) {
-			const [startChapter, startVerse] = parseVerseKey(pageNumberKeys[i]);
+	for (let i = 0; i < startingKeys.length; i++) {
+		const [startChapter, startVerse] = parseVerseKey(startingKeys[i]);
 
-			// End boundary is the start of the next page (exclusive),
-			// or 114:7 for the last page (making 114:6 the last included verse)
-			let endChapter, endVerse;
-			if (i < pageNumberKeys.length - 1) {
-				[endChapter, endVerse] = parseVerseKey(pageNumberKeys[i + 1]);
-			} else {
-				endChapter = 114;
-				endVerse = 7;
-			}
-
-			// Page numbers are 1-based, so use i + 1 as the key
-			result[i + 1] = buildVerseKeys(startChapter, startVerse, endChapter, endVerse);
+		// End boundary is the start of the next segment (exclusive),
+		// or 114:7 for the last segment (making 114:6 the last included verse)
+		let endChapter, endVerse;
+		if (i < startingKeys.length - 1) {
+			[endChapter, endVerse] = parseVerseKey(startingKeys[i + 1]);
+		} else {
+			endChapter = 114;
+			endVerse = 7;
 		}
-	} else {
-		// For juz and hizb, use their respective meta arrays
-		// segmentKey is the property name used as the result key ('juz' or 'hizb')
-		const meta = type === 'juz' ? juzMeta : hizbMeta;
-		const segmentKey = type === 'juz' ? 'juz' : 'hizb';
 
-		for (let i = 0; i < meta.length; i++) {
-			const segment = meta[i];
-			const [startChapter, startVerse] = parseVerseKey(segment.from);
-
-			// End boundary is the start of the next segment (exclusive),
-			// or 114:7 for the last segment (making 114:6 the last included verse)
-			let endChapter, endVerse;
-			if (i < meta.length - 1) {
-				[endChapter, endVerse] = parseVerseKey(meta[i + 1].from);
-			} else {
-				endChapter = 114;
-				endVerse = 7;
-			}
-
-			result[segment[segmentKey]] = buildVerseKeys(startChapter, startVerse, endChapter, endVerse);
-		}
+		// Segment numbers are 1-based, so use i + 1 as the key
+		result[i + 1] = buildVerseKeys(startChapter, startVerse, endChapter, endVerse);
 	}
 
 	// Yield to the browser's event loop before resolving, mimicking network async behaviour.
