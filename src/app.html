@@ -105,20 +105,15 @@
 
 			// Checkbox styles (CSS vars can't be used inside url(), so we inject once on load)
 			const themeAccentMap = {
-				1: '#b1901f',
-				2: '#000000',
-				3: '#000000',
-				4: '#553c0f',
-				5: '#dca54c',
-				6: '#c2c2c2',
-				7: '#dddddd',
-				8: '#dddddd',
-				9: '#dca54c',
-				10: '#dddddd',
-				11: '#ffd6a7',
-				12: '#826a5c',
-				13: '#343300',
-				14: '#4c566a'
+				1: '#b1901f' /* Golden Glint */,
+				2: '#000000' /* Classic Light */,
+				3: '#000000' /* Silver Lining */,
+				4: '#553c0f' /* Vintage Sepia */,
+				5: '#dca54c' /* Mocha Night */,
+				6: '#c2c2c2' /* Midnight Blue */,
+				7: '#dddddd' /* Forest Green */,
+				8: '#dddddd' /* Oled Black */,
+				9: '#dca54c' /* Dark Luxury */
 			};
 
 			const accentHex = themeAccentMap[currentTheme] ?? '#000000';
