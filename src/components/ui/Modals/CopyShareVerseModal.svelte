@@ -10,7 +10,7 @@
 	import { selectableVerseTranslations } from '$data/options';
 
 	// CSS classes for radio buttons
-	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5`;
+	const radioClasses = 'inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';
 
 	// Options
 	let copyType = 1;

@@ -7,7 +7,7 @@
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { staticEndpoint } from '$data/websiteSettings';
 
-	$: reciterImageClasses = `rounded-full size-10`;
+	$: reciterImageClasses = 'rounded-full size-10';
 </script>
 
 <div class="grid gap-3 w-full">

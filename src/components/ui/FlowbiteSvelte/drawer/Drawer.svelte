@@ -15,7 +15,7 @@
 	export let bgOpacity = 'bg-opacity-75';
 	export let placement = 'left';
 	export let id = 'drawer-example';
-	export let divClass = `overflow-y-auto z-50 p-4 bg-theme-bg`;
+	export let divClass = 'overflow-y-auto z-50 p-4 bg-theme-bg';
 	export let transitionParams = {};
 	export let transitionType = 'fly';
 	function multiple(node, params) {

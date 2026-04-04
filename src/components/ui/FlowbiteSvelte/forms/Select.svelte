@@ -5,8 +5,8 @@
 	export let placeholder = 'Choose option ...';
 	export let underline = false;
 	export let size = 'md';
-	export let defaultClass = `border border-theme-accent/20 rounded-lg focus:border-theme-accent focus:ring-theme-accent`;
-	export let underlineClass = `bg-transparent border-0 border-b-2 border-theme-accent/20 appearance-none focus:border-theme-accent focus:ring-theme-accent peer`;
+	export let defaultClass = 'border border-theme-accent/20 rounded-lg focus:border-theme-accent focus:ring-theme-accent';
+	export let underlineClass = 'bg-transparent border-0 border-b-2 border-theme-accent/20 appearance-none focus:border-theme-accent focus:ring-theme-accent peer';
 	const common = 'block w-full';
 	const sizes = {
 		sm: 'text-sm p-2',

@@ -10,7 +10,7 @@
 	const activeUrlStore = writable('');
 	export let activeUrl = '';
 	export let open = false;
-	export let containerClass = `divide-y z-[19] border border-theme-accent/20`;
+	export let containerClass = 'divide-y z-[19] border border-theme-accent/20';
 	export let classContainer = undefined;
 	export let headerClass = 'py-1 overflow-hidden rounded-t-lg';
 	export let classHeader = undefined;

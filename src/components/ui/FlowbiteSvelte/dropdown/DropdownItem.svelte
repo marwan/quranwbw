@@ -2,7 +2,7 @@
 	import Wrapper from '../utils/Wrapper.svelte';
 	import { twMerge } from 'tailwind-merge';
 	import { getContext } from 'svelte';
-	export let defaultClass = `font-medium py-2 px-4 text-sm hover:bg-theme-accent/5`;
+	export let defaultClass = 'font-medium py-2 px-4 text-sm hover:bg-theme-accent/5';
 	export let href = undefined;
 	export let activeClass = undefined;
 	// export let active: boolean = false;

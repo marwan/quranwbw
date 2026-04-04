@@ -18,8 +18,8 @@
 
 	// CSS classes
 	const linkClasses = 'flex flex-row space-x-2 items-center';
-	const linkTextClasses = `px-4 py-2 rounded-3xl border border-theme-accent/20 hover:bg-theme-accent/5 w-fit text-sm`;
-	const listItemClasses = `py-2 px-2 text-sm w-full text-left font-normal rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5`;
+	const linkTextClasses = 'px-4 py-2 rounded-3xl border border-theme-accent/20 hover:bg-theme-accent/5 w-fit text-sm';
+	const listItemClasses = 'py-2 px-2 text-sm w-full text-left font-normal rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5';
 
 	let maxChaptersLoaded = false;
 	let maxVersesLoaded = false;

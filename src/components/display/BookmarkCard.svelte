@@ -18,7 +18,7 @@
 
 	let dropdownOpen = false;
 	let buttonElement;
-	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5`;
+	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 	let hasMounted = false;
 	let previousOpen = dropdownOpen;
 	let previousForceClose = forceClose;

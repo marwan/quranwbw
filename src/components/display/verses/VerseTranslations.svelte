@@ -17,7 +17,7 @@
 	const params = new URLSearchParams(window.location.search);
 	const searchQuery = params.get('query') === null ? '' : params.get('query');
 
-	const footnoteSupClasses = `ml-1 mt-1 px-2 py-1 rounded-full font-semibold cursor-pointer system-font border border-transparent hover:border-theme-accent bg-theme-accent/5`;
+	const footnoteSupClasses = 'ml-1 mt-1 px-2 py-1 rounded-full font-semibold cursor-pointer system-font border border-transparent hover:border-theme-accent bg-theme-accent/5';
 
 	let footnoteId;
 	let footnoteChapter;

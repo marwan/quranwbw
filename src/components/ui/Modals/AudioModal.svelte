@@ -17,8 +17,8 @@
 	import { defaultSettings } from '$src/hooks.client';
 
 	// CSS classes for radio buttons
-	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5`;
-	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5`;
+	const radioClasses = 'inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';
+	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;

@@ -26,10 +26,10 @@
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
-	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5`;
-	const continueReadingButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5`;
+	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
+	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
-	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5 hover:bg-theme-accent/5`;
+	const cardInnerClasses = 'flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5 hover:bg-theme-accent/5';
 	const commontabClasses = 'px-2 md:px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
 	const tabDefaultBorder = `${commontabClasses} border-transparent`;
 	const tabActiveBorder = `${commontabClasses} border-theme-accent/20`;
