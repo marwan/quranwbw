@@ -8,8 +8,8 @@ export default {
 		extend: {
 			colors: {
 				...colors,
-				lightGray: '#ebebeb',
-				// These two entries cover ALL themes
+
+				// These three entries cover ALL themes
 				theme: {
 					bg: 'rgb(var(--theme-bg-rgb) / <alpha-value>)',
 					accent: 'rgb(var(--theme-accent-rgb) / <alpha-value>)',
