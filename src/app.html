@@ -85,35 +85,59 @@
 			}
 		</script>
 
-		<!-- Themes related stuff... putting all this here to ensure there is no white-flash -->
-		<script>
-			const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-			const usersTheme = userSettings ? +userSettings.displaySettings.websiteTheme : 1;
-		</script>
-
 		<!-- set the website theme - we put this code here to avoid the white flash and making people go blind -->
 		<script>
-			// Declare the theme variable
 			let currentTheme;
 
 			try {
-				// Try to retrieve the user settings from localStorage and parse the JSON string
 				const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-
-				// Check if displaySettings and websiteTheme exist in the parsed object
 				if (userSettings && userSettings.displaySettings && userSettings.displaySettings.websiteTheme !== undefined) {
 					currentTheme = userSettings.displaySettings.websiteTheme;
 				} else {
-					// Default theme in case the properties don't exist
 					currentTheme = 1;
 				}
 			} catch (error) {
-				// If there's an error during JSON parsing or any other issue, fallback to default theme
 				currentTheme = 1;
 			}
 
 			// Apply the theme class to the document's root element
 			document.documentElement.classList += `theme-${currentTheme} bg-theme-bg`;
+
+			// Checkbox styles (CSS vars can't be used inside url(), so we inject once on load)
+			const themeAccentMap = {
+				1: '#b1901f',
+				2: '#000000',
+				3: '#000000',
+				4: '#553c0f',
+				5: '#dca54c',
+				6: '#c2c2c2',
+				7: '#dddddd',
+				8: '#dddddd',
+				9: '#dca54c',
+				10: '#dddddd',
+				11: '#ffd6a7',
+				12: '#826a5c',
+				13: '#343300',
+				14: '#4c566a'
+			};
+
+			const accentHex = themeAccentMap[currentTheme] ?? '#000000';
+			const accentNoHash = accentHex.substring(1);
+
+			const style = document.createElement('style');
+			style.textContent = `
+				[type='checkbox'], [type='checkbox']:checked {
+					background-color: transparent !important;
+					border-color: ${accentHex} !important;
+				}
+				[type='checkbox']:checked {
+					background-color: transparent !important;
+					border-color: ${accentHex} !important;
+					background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23${accentNoHash}'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>") !important;
+				}
+			`;
+
+			document.head.appendChild(style);
 		</script>
 
 		<!-- Umami -->

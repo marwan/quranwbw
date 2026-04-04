@@ -3,27 +3,29 @@
 @tailwind utilities;
 
 html.theme-1 {
-  --theme-bg-rgb:      255 255 255;
-  --theme-bg-hex:      #FFFFFF;
-  --theme-accent-rgb:  177 144 31;
-  --theme-accent-hex:  #b1901f;
-  --theme-text-rgb:    0 0 0;        /* color3 = #000000 */
-  --theme-text-hex:    #000000;
-  --theme-palette-normal:  --palette3;
+  --theme-bg-rgb: 255 255 255;
+  --theme-bg-hex:#FFFFFF;
+  --theme-accent-rgb: 177 144 31;
+  --theme-accent-hex:#b1901f;
+  --theme-text-rgb: 0 0 0;
+  --theme-text-hex:#000000;
+  --theme-palette-normal: --palette3;
   --theme-palette-tajweed: --palette0;
-  --theme-palette-header:  --palette7;
+  --theme-palette-header: --palette7;
+  --theme-palette-colored-fonts: --palette4;
 }
 
 html.theme-5 {
-  --theme-bg-rgb:      32 22 31;
-  --theme-bg-hex:      #20161f;
-  --theme-accent-rgb:  220 165 76;
-  --theme-accent-hex:  #dca54c;
-  --theme-text-rgb:    220 165 76;   /* no color3, so same as accent */
-  --theme-text-hex:    #dca54c;
-  --theme-palette-normal:  --palette4;
+  --theme-bg-rgb: 32 22 31;
+  --theme-bg-hex: #20161f;
+  --theme-accent-rgb: 220 165 76;
+  --theme-accent-hex:#dca54c;
+  --theme-text-rgb: 220 165 76;
+  --theme-text-hex:#dca54c;
+  --theme-palette-normal: --palette4;
   --theme-palette-tajweed: --palette1;
-  --theme-palette-header:  --palette9;
+  --theme-palette-header: --palette9;
+  --theme-palette-colored-fonts: --palette5;
 }
 
 @font-face {
@@ -411,15 +413,7 @@ svg {
 }
 
 /* Uthmani Hafs NEO Fonts - Normal Palettes */
-.theme-1 .colored-fonts { font-palette: --palette4; } /* Golden Glint */
-.theme-2 .colored-fonts { font-palette: --palette0; } /* Classic Light */
-.theme-3 .colored-fonts { font-palette: --palette3; } /* Silver Lining */
-.theme-4 .colored-fonts { font-palette: --palette2; } /* Vintage Sepia */
-.theme-5 .colored-fonts { font-palette: --palette5; } /* Mocha Night */
-.theme-6 .colored-fonts { font-palette: --palette1; } /* Midnight Blue */
-.theme-7 .colored-fonts { font-palette: --palette1; } /* Forest Green */
-.theme-8 .colored-fonts { font-palette: --palette1; } /* Oled Black */
-.theme-9 .colored-fonts { font-palette: --palette5; } /* Dark Luxury */
+.colored-fonts { font-palette: var(--theme-palette-colored-fonts); }
 
 /* Uthmani V4 and Uthmani Hafs NEO Fonts - Normal Palettes */
 .theme-palette-normal { font-palette: var(--theme-palette-normal); }
