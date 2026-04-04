@@ -25,7 +25,7 @@
 
 	// Constants
 	const mushafFontTypes = [2, 3];
-	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
+	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5`;
 
 	// Component state
 	let dropdownOpen = false;

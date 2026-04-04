@@ -208,9 +208,9 @@
 			<!-- page number -->
 			<div class="max-w-3xl md:max-w-[40rem] mx-auto justify-center text-sm">
 				<div class="flex items-center">
-					<div class="flex-1 border-t-2 {window.theme('border')}"></div>
+					<div class="flex-1 border-t-2 border-theme-accent/20"></div>
 					<span class="px-3">{page}</span>
-					<div class="flex-1 border-t-2 {window.theme('border')}"></div>
+					<div class="flex-1 border-t-2 border-theme-accent/20"></div>
 				</div>
 			</div>
 		</div>
@@ -222,7 +222,7 @@
 <!-- only show the minimize minimal mode button when it is enabled -->
 {#if $__mushafMinimalModeEnabled}
 	<div class="flex justify-center -mt-12 pb-16">
-		<button class="w-fit flex flex-row space-x-2 py-3 px-3 rounded-xl items-center cursor-pointer {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={toggleMushafMinimalMode} data-umami-event="Mushaf Minimal Mode Button">
+		<button class="w-fit flex flex-row space-x-2 py-3 px-3 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={toggleMushafMinimalMode} data-umami-event="Mushaf Minimal Mode Button">
 			<Minimize size={3} />
 		</button>
 		<Tooltip arrow={false} type="light" class="z-30 hidden md:block font-normal">Minimal Mode</Tooltip>

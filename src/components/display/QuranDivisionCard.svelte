@@ -21,9 +21,9 @@
 		<div class="flex flex-row space-x-2">
 			<!-- number star -->
 			<div class="flex items-center">
-				<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill={window.theme('icon')} viewBox="0 0 24 24">
+				<svg class="w-10 h-10 rounded-full flex items-center justify-center" fill="var(--theme-accent-hex)" viewBox="0 0 24 24">
 					{@html numberStarSvgPath}
-					<text x="50%" y="53%" text-anchor="middle" stroke={window.theme('icon')} stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{starValue}</text>
+					<text x="50%" y="53%" text-anchor="middle" stroke="var(--theme-accent-hex)" stroke-width="0.5px" dy=".3em" class="text" style="font-size: 7px;">{starValue}</text>
 				</svg>
 			</div>
 
@@ -54,9 +54,9 @@
 
 		<!-- right side icon -->
 		{#if isJuz}
-			<div class="juz-icons justify-items-end text-xl md:text-2xl" style="color: {window.theme('icon')}">{juz.icon}</div>
+			<div class="juz-icons justify-items-end text-xl md:text-2xl" style="color: var(--theme-accent-hex)">{juz.icon}</div>
 		{:else}
-			<div class="chapter-icons justify-items-end text-5xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[id].icon};`}</div>
+			<div class="chapter-icons justify-items-end text-5xl" style="color: var(--theme-accent-hex)">{@html `&#xE9${quranMetaData[id].icon};`}</div>
 		{/if}
 	</div>
 </a>

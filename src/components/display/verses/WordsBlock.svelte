@@ -85,7 +85,7 @@
 	// Common classes for words and end icons
 	$: wordAndEndIconCommonClasses = `
 		hover:cursor-pointer
-		${window.theme('hover')}
+		hover:bg-theme-accent/5
 		${$__displayType === 1 ? 'text-center flex flex-col' : 'inline-flex flex-col'}
 		${selectableDisplays[$__displayType].layout === 'wbw' ? 'p-3' : [2, 3].includes($__fontType) ? ($__currentPage === 'mushaf' ? 'p-0' : 'px-0 py-1') : 'p-1'}
 		${exampleVerse && '!p-0'}
@@ -136,7 +136,7 @@
 	$: endIconClasses = `
 		rounded-lg 
 		${wordAndEndIconCommonClasses}
-		${$__websiteTheme === 1 && `${window.theme('textSecondary')}`}
+		${$__websiteTheme === 1 && `text-theme-accent`}
 	`;
 
 	// Classes for word translation and transliteration
@@ -167,7 +167,7 @@
 			id={wordKey}
 			class={`
 				word rounded-lg ${wordAndEndIconCommonClasses} text-center print:break-inside-avoid
-				${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? window.theme('bgSecondaryDark') : ''}
+				${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? 'bg-theme-accent/15' : ''}
 				${$__currentPage === 'supplications' && word + 1 < (supplicationsFromQuran[key] || 0) ? ($__hideNonDuaPart ? 'hidden' : 'opacity-30') : ''}
 			`.trim()}
 			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}

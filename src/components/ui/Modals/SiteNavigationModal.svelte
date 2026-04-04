@@ -19,7 +19,7 @@
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { isUserOnline } from '$utils/offlineModeHandler';
 
-	const linkClasses = `w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
+	const linkClasses = `w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5`;
 	const linkTextClasses = 'text-xs md:text-sm text-left w-[-webkit-fill-available] truncate';
 
 	// Default to online; fall back gracefully if navigator is unavailable (e.g. SSR)

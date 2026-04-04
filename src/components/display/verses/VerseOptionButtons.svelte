@@ -19,10 +19,10 @@
 
 	const chapter = parseInt(key.split(':')[0], 10);
 	const verse = parseInt(key.split(':')[1], 10);
-	const buttonClasses = `inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 rounded-3xl focus:shadow-outline print:hidden ${window.theme('hover')}`;
+	const buttonClasses = `inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 rounded-3xl focus:shadow-outline print:hidden hover:bg-theme-accent/5`;
 
 	// For chapter page, just show the key, else show the complete chapter transliteration & key
-	$: verseKeyClasses = `${buttonClasses} w-fit px-4 font-medium ${window.theme('textSecondary')} ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
+	$: verseKeyClasses = `${buttonClasses} w-fit px-4 font-medium text-theme-accent border border-transparent hover:border-theme-accent bg-theme-accent/5`;
 
 	// Update userBookmarks whenever the __userSettings changes
 	$: userBookmarks = JSON.parse($__userSettings).userBookmarks;

@@ -10,5 +10,5 @@
 
 <!-- Show the bottom border in all cases except when on the 'juz' page AND it is the last verse -->
 {#if !($__currentPage === 'juz' && isLastVerse)}
-	<div class="border-b {window.theme('border')}"></div>
+	<div class="border-b border-theme-accent/20"></div>
 {/if}

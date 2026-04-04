@@ -889,10 +889,10 @@
 		<div class="flex flex-col flex-1 space-y-2 text-sm {isDownloading && !isDownloadingEssential && disabledClasses}">
 			<div class="flex flex-row justify-between">
 				<div>
-					<span class={window.theme('textSecondary')}>Essential Offline Data</span>
+					<span class="text-theme-accent">Essential Offline Data</span>
 					<span class="opacity-70"> (~{dataSections[0].dataSizeInMB + dataSections[1].dataSizeInMB} MB)</span>
 				</div>
-				<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">Recommended</span>
+				<span class="px-2 py-1 rounded-full text-xs h-max text-theme-accent bg-theme-accent/5">Recommended</span>
 			</div>
 
 			<div class="flex flex-col flex-1 space-y-4">
@@ -916,11 +916,11 @@
 		</div>
 
 		<!-- Vertical divider -->
-		<div class="hidden md:block w-px {window.theme('bgSecondaryExtraDark')}"></div>
+		<div class="hidden md:block w-px bg-theme-accent/20"></div>
 
 		<!-- Advanced Data Download Toggle -->
 		<div class="flex flex-col flex-1 space-y-2 text-sm">
-			<div class={window.theme('textSecondary')}>Advanced Data Download</div>
+			<div class="text-theme-accent">Advanced Data Download</div>
 
 			<div class="flex flex-col flex-1 space-y-4">
 				<div class="text-sm mb-auto">
@@ -942,13 +942,13 @@
 			<!-- Data Section -->
 			<div class="flex flex-col space-y-2 text-sm {(isDownloading && !section.isDownloading) || (section.isSectionDisabled && section.isSectionDisabled()) ? disabledClasses : ''}">
 				<div>
-					<span class={window.theme('textSecondary')}>{section.title}</span>
+					<span class="text-theme-accent">{section.title}</span>
 					<span class="opacity-70"> (~{section.dataSizeInMB} MB)</span>
 				</div>
 
 				<!-- Mismatch banner with re-download button -->
 				{#if section.isDataDownloaded && section.showMismatchBanner}
-					<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-start text-sm {window.theme('bgSecondaryLight')}">
+					<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-start text-sm bg-theme-accent/5">
 						<span class="flex-shrink-0 w-5 h-5 mt-1 md:mt-0.5"><Info /></span>
 						<span>{mismatchMessage}</span>
 					</div>
@@ -988,7 +988,7 @@
 
 			<!-- Divider (only between sections, not after the last one) -->
 			{#if index < dataSections.length - 1}
-				<div class="border-b {window.theme('border')}"></div>
+				<div class="border-b border-theme-accent/20"></div>
 			{/if}
 		{/each}
 	</div>

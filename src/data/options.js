@@ -160,39 +160,39 @@ export const selectableThemes = {
 		color2: '#b1901f',
 		color3: '#000000'
 	},
-	2: {
-		id: 2,
-		name: 'Classic Light',
-		palette: 2,
-		color: 'light',
-		paletteNormal: 3,
-		paletteTajweed: 0,
-		paletteHeader: 0,
-		color1: '#FFFFFF',
-		color2: '#000000'
-	},
-	3: {
-		id: 3,
-		name: 'Silver Lining',
-		palette: 1,
-		color: 'light',
-		paletteNormal: 5,
-		paletteTajweed: 2,
-		paletteHeader: 3,
-		color1: '#e1e1e1',
-		color2: '#000000'
-	},
-	4: {
-		id: 4,
-		name: 'Vintage Sepia',
-		palette: 2,
-		color: 'light',
-		paletteNormal: 5,
-		paletteTajweed: 2,
-		paletteHeader: 5,
-		color1: '#e9e3d7',
-		color2: '#553c0f'
-	},
+	// 2: {
+	// 	id: 2,
+	// 	name: 'Classic Light',
+	// 	palette: 2,
+	// 	color: 'light',
+	// 	paletteNormal: 3,
+	// 	paletteTajweed: 0,
+	// 	paletteHeader: 0,
+	// 	color1: '#FFFFFF',
+	// 	color2: '#000000'
+	// },
+	// 3: {
+	// 	id: 3,
+	// 	name: 'Silver Lining',
+	// 	palette: 1,
+	// 	color: 'light',
+	// 	paletteNormal: 5,
+	// 	paletteTajweed: 2,
+	// 	paletteHeader: 3,
+	// 	color1: '#e1e1e1',
+	// 	color2: '#000000'
+	// },
+	// 4: {
+	// 	id: 4,
+	// 	name: 'Vintage Sepia',
+	// 	palette: 2,
+	// 	color: 'light',
+	// 	paletteNormal: 5,
+	// 	paletteTajweed: 2,
+	// 	paletteHeader: 5,
+	// 	color1: '#e9e3d7',
+	// 	color2: '#553c0f'
+	// },
 	5: {
 		id: 5,
 		name: 'Mocha Night',
@@ -203,51 +203,51 @@ export const selectableThemes = {
 		paletteHeader: 5,
 		color1: '#20161f',
 		color2: '#dca54c'
-	},
-	6: {
-		id: 6,
-		name: 'Midnight Blue',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 3,
-		color1: '#02021b',
-		color2: '#c2c2c2'
-	},
-	7: {
-		id: 7,
-		name: 'Forest Green',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 1,
-		color1: '#001617',
-		color2: '#dddddd'
-	},
-	8: {
-		id: 8,
-		name: 'Oled Black',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 1,
-		color1: '#000000',
-		color2: '#dddddd'
-	},
-	9: {
-		id: 9,
-		name: 'Dark Luxury',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 1,
-		color1: '#09090b',
-		color2: '#dca54c'
 	}
+	// 6: {
+	// 	id: 6,
+	// 	name: 'Midnight Blue',
+	// 	palette: 1,
+	// 	color: 'dark',
+	// 	paletteNormal: 4,
+	// 	paletteTajweed: 1,
+	// 	paletteHeader: 3,
+	// 	color1: '#02021b',
+	// 	color2: '#c2c2c2'
+	// },
+	// 7: {
+	// 	id: 7,
+	// 	name: 'Forest Green',
+	// 	palette: 1,
+	// 	color: 'dark',
+	// 	paletteNormal: 4,
+	// 	paletteTajweed: 1,
+	// 	paletteHeader: 1,
+	// 	color1: '#001617',
+	// 	color2: '#dddddd'
+	// },
+	// 8: {
+	// 	id: 8,
+	// 	name: 'Oled Black',
+	// 	palette: 1,
+	// 	color: 'dark',
+	// 	paletteNormal: 4,
+	// 	paletteTajweed: 1,
+	// 	paletteHeader: 1,
+	// 	color1: '#000000',
+	// 	color2: '#dddddd'
+	// },
+	// 9: {
+	// 	id: 9,
+	// 	name: 'Dark Luxury',
+	// 	palette: 1,
+	// 	color: 'dark',
+	// 	paletteNormal: 4,
+	// 	paletteTajweed: 1,
+	// 	paletteHeader: 1,
+	// 	color1: '#09090b',
+	// 	color2: '#dca54c'
+	// }
 };
 
 export const verseTranslationsLanguages = [

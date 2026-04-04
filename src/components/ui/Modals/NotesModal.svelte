@@ -77,7 +77,7 @@
 	</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
-		<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border {window.theme('border')} {window.theme('input')} {window.theme('placeholder')} resize-none" placeholder="Write your thoughts here..."></textarea>
+		<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent placeholder:text-theme-accent/50 resize-none" placeholder="Write your thoughts here..."></textarea>
 
 		{#if noteModifiedAt !== null}
 			<div id="notes-last-modified" class="text-xs mt-4">Modified {noteModifiedAt}.</div>

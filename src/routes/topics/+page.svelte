@@ -101,7 +101,7 @@
 		<div class="my-4">
 			<div class="mx-auto flex flex-wrap justify-center px-2">
 				{#each alphabet as letter}
-					<a href="#{letter}" class="ml-1 mt-1 px-2 py-1 rounded-full cursor-pointer no-underline min-w-[2rem] text-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}">
+					<a href="#{letter}" class="ml-1 mt-1 px-2 py-1 rounded-full cursor-pointer no-underline min-w-[2rem] text-center border border-transparent hover:border-theme-accent bg-theme-accent/5">
 						{letter}
 					</a>
 				{/each}
@@ -111,8 +111,8 @@
 		<!-- Topics Display -->
 		{#if allTopics.length > 0}
 			{#each alphabet as letter}
-				<div id={letter} class="py-6 border-b {window.theme('border')} scroll-mt-4">
-					<h2 class="text-xl font-bold mb-4 {window.theme('textSecondary')}">
+				<div id={letter} class="py-6 border-b border-theme-accent/20 scroll-mt-4">
+					<h2 class="text-xl font-bold mb-4 text-theme-accent">
 						{letter}
 					</h2>
 					{#if groupedTopics[letter] && groupedTopics[letter].length > 0}
@@ -120,7 +120,7 @@
 							{#each groupedTopics[letter] as item}
 								<a href="?id={item.id}" class="block py-2 rounded-md hover:underline text-left" rel="noopener">
 									{item.topic}
-									<span class={window.theme('textSecondary')}>({item.verses.length})</span>
+									<span class="text-theme-accent">({item.verses.length})</span>
 								</a>
 							{/each}
 						</div>
@@ -135,7 +135,7 @@
 
 <!-- Scroll to Top Button -->
 {#if showScrollTop && !selectedTopicId}
-	<button on:click={() => window.scrollTo({ top: 0, behavior: 'auto' })} class="z-20 fixed bottom-6 right-6 p-3 rounded-full transition-opacity duration-300 {window.theme('bgMain')} {window.theme('border')} border" title="Scroll to top" aria-label="Scroll to top">
+	<button on:click={() => window.scrollTo({ top: 0, behavior: 'auto' })} class="z-20 fixed bottom-6 right-6 p-3 rounded-full transition-opacity duration-300 bg-theme-bg border-theme-accent/20 border" title="Scroll to top" aria-label="Scroll to top">
 		<ArrowUp size={5} />
 	</button>
 {/if}
