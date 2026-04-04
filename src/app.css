@@ -2,29 +2,129 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Golden Glint */
 html.theme-1 {
   --theme-bg-rgb: 255 255 255;
-  --theme-bg-hex:#FFFFFF;
+  --theme-bg-hex: #FFFFFF;
   --theme-accent-rgb: 177 144 31;
-  --theme-accent-hex:#b1901f;
+  --theme-accent-hex: #b1901f;
   --theme-text-rgb: 0 0 0;
-  --theme-text-hex:#000000;
+  --theme-text-hex: #000000;
   --theme-palette-normal: --palette3;
   --theme-palette-tajweed: --palette0;
   --theme-palette-header: --palette7;
   --theme-palette-colored-fonts: --palette4;
 }
 
+/* Classic Light */
+html.theme-2 {
+  --theme-bg-rgb: 255 255 255;
+  --theme-bg-hex: #FFFFFF;
+  --theme-accent-rgb: 0 0 0;
+  --theme-accent-hex: #000000;
+  --theme-text-rgb: 0 0 0;
+  --theme-text-hex: #000000;
+  --theme-palette-normal: --palette3;
+  --theme-palette-tajweed: --palette0;
+  --theme-palette-header: --palette0;
+  --theme-palette-colored-fonts: --palette0;
+}
+
+/* Silver Lining */
+html.theme-3 {
+  --theme-bg-rgb: 225 225 225;
+  --theme-bg-hex: #e1e1e1;
+  --theme-accent-rgb: 0 0 0;
+  --theme-accent-hex: #000000;
+  --theme-text-rgb: 0 0 0;
+  --theme-text-hex: #000000;
+  --theme-palette-normal: --palette5;
+  --theme-palette-tajweed: --palette2;
+  --theme-palette-header: --palette8;
+  --theme-palette-colored-fonts: --palette3;
+}
+
+/* Vintage Sepia */
+html.theme-4 {
+  --theme-bg-rgb: 233 227 215;
+  --theme-bg-hex: #e9e3d7;
+  --theme-accent-rgb: 85 60 15;
+  --theme-accent-hex: #553c0f;
+  --theme-text-rgb: 85 60 15;
+  --theme-text-hex: #553c0f;
+  --theme-palette-normal: --palette5;
+  --theme-palette-tajweed: --palette2;
+  --theme-palette-header: --palette5;
+  --theme-palette-colored-fonts: --palette2;
+}
+
+/* Mocha Night */
 html.theme-5 {
   --theme-bg-rgb: 32 22 31;
   --theme-bg-hex: #20161f;
   --theme-accent-rgb: 220 165 76;
-  --theme-accent-hex:#dca54c;
+  --theme-accent-hex: #dca54c;
   --theme-text-rgb: 220 165 76;
-  --theme-text-hex:#dca54c;
+  --theme-text-hex: #dca54c;
   --theme-palette-normal: --palette4;
   --theme-palette-tajweed: --palette1;
   --theme-palette-header: --palette9;
+  --theme-palette-colored-fonts: --palette5;
+}
+
+/* Midnight Blue */
+html.theme-6 {
+  --theme-bg-rgb: 2 2 27;
+  --theme-bg-hex: #02021b;
+  --theme-accent-rgb: 194 194 194;
+  --theme-accent-hex: #c2c2c2;
+  --theme-text-rgb: 194 194 194;
+  --theme-text-hex: #c2c2c2;
+  --theme-palette-normal: --palette4;
+  --theme-palette-tajweed: --palette1;
+  --theme-palette-header: --palette3;
+  --theme-palette-colored-fonts: --palette1;
+}
+
+/* Forest Green */
+html.theme-7 {
+  --theme-bg-rgb: 0 22 23;
+  --theme-bg-hex: #001617;
+  --theme-accent-rgb: 221 221 221;
+  --theme-accent-hex: #dddddd;
+  --theme-text-rgb: 221 221 221;
+  --theme-text-hex: #dddddd;
+  --theme-palette-normal: --palette4;
+  --theme-palette-tajweed: --palette1;
+  --theme-palette-header: --palette1;
+  --theme-palette-colored-fonts: --palette1;
+}
+
+/* Oled Black */
+html.theme-8 {
+  --theme-bg-rgb: 0 0 0;
+  --theme-bg-hex: #000000;
+  --theme-accent-rgb: 221 221 221;
+  --theme-accent-hex: #dddddd;
+  --theme-text-rgb: 221 221 221;
+  --theme-text-hex: #dddddd;
+  --theme-palette-normal: --palette4;
+  --theme-palette-tajweed: --palette1;
+  --theme-palette-header: --palette4;
+  --theme-palette-colored-fonts: --palette1;
+}
+
+/* Dark Luxury */
+html.theme-9 {
+  --theme-bg-rgb: 9 9 11;
+  --theme-bg-hex: #09090b;
+  --theme-accent-rgb: 220 165 76;
+  --theme-accent-hex: #dca54c;
+  --theme-text-rgb: 220 165 76;
+  --theme-text-hex: #dca54c;
+  --theme-palette-normal: --palette4;
+  --theme-palette-tajweed: --palette1;
+  --theme-palette-header: --palette6;
   --theme-palette-colored-fonts: --palette5;
 }
 
