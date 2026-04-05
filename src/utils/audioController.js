@@ -35,24 +35,30 @@ export async function playVerseAudio(props) {
 	const currentVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse).padStart(3, '0')}.mp3`;
 	const nextVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse + 1).padStart(3, '0')}.mp3`;
 
-	// Prefetch next audio file
+	// Prefetch next verse audio in the background so it's ready when needed
 	getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false);
 
+	// Tag this request with a unique ID to detect if a newer request has superseded it
 	const requestId = ++activeAudioRequestId;
 	const audioUrl = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`);
 
+	// If a newer audio request was made while we were awaiting, discard this result
 	if (requestId !== activeAudioRequestId) {
+		// Clean up the blob URL to avoid memory leaks if one was created
 		if (audioUrl?.startsWith('blob:')) {
 			URL.revokeObjectURL(audioUrl);
 		}
 		return;
 	}
 
+	// Release the previous blob URL from memory before switching to the new one
 	if (lastBlobUrl) {
 		URL.revokeObjectURL(lastBlobUrl);
 	}
 
+	// Track the new blob URL so we can revoke it later when moving to the next verse
 	lastBlobUrl = audioUrl?.startsWith('blob:') ? audioUrl : null;
+
 	audio.src = audioUrl;
 	audio.currentTime = 0;
 	audio.load();
@@ -137,21 +143,27 @@ export async function playWordAudio(props) {
 	// Prefetch next audio file
 	getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false);
 
+	// Tag this request with a unique ID to detect if a newer request has superseded it
 	const requestId = ++activeAudioRequestId;
 	const audioUrl = await getAudioUrl(`${wordsAudioURL}/${currentWordFileName}?version=2`);
 
+	// If a newer audio request was made while we were awaiting, discard this result
 	if (requestId !== activeAudioRequestId) {
+		// Clean up the blob URL to avoid memory leaks if one was created
 		if (audioUrl?.startsWith('blob:')) {
 			URL.revokeObjectURL(audioUrl);
 		}
 		return;
 	}
 
+	// Release the previous blob URL from memory before switching to the new one
 	if (lastBlobUrl) {
 		URL.revokeObjectURL(lastBlobUrl);
 	}
 
+	// Track the new blob URL so we can revoke it later when moving to the next word
 	lastBlobUrl = audioUrl?.startsWith('blob:') ? audioUrl : null;
+
 	audio.src = audioUrl;
 	audio.currentTime = 0;
 	audio.load();
@@ -207,25 +219,31 @@ export function resetAudioSettings(props) {
 	try {
 		if (audio === null) audio = document.querySelector('#player');
 
+		// Stop playback and reset position
 		audio.pause();
 		audio.currentTime = 0;
 		audioSettings.isPlaying = false;
 		audioSettings.playingWordKey = null;
 
+		// If reset was triggered at the end of a playlist, clear the verses queue
 		if (props?.location === 'end') {
 			window.versesToPlayArray = [];
 		}
 
+		// Invalidate any in-flight audio requests so they get discarded when they resolve
 		activeAudioRequestId++;
 
+		// Release the current blob URL from memory
 		if (lastBlobUrl) {
 			URL.revokeObjectURL(lastBlobUrl);
 			lastBlobUrl = null;
 		}
 
+		// Persist the updated audio state
 		__audioSettings.set(audioSettings);
-		audio.removeEventListener('timeupdate', wordHighlighter);
 
+		// Stop word highlighting and clear any active highlights
+		audio.removeEventListener('timeupdate', wordHighlighter);
 		document.querySelectorAll('.word').forEach((element) => {
 			element.classList.remove('bg-black/5');
 		});
@@ -456,16 +474,16 @@ async function fetchTimestampData() {
 	return await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
 }
 
-// Fetch audio and cache it.
-// If returnBlob=true → return Blob URL for playback
-// If returnBlob=false → only cache (used for prefetching)
+// Fetch audio and cache it in the Cache API.
+// returnBlob=true  → cache + return a Blob URL for immediate playback
+// returnBlob=false → cache only, no Blob URL returned (used for prefetching)
 async function getAudioUrl(url, returnBlob = true) {
 	try {
 		const cache = await caches.open('quranwbw-audio-cache');
 
 		let response = await cache.match(url);
 
-		// Fetch if not cached
+		// If not cached, fetch from network and store for future use
 		if (!response) {
 			console.log('[AudioCache] Fetching:', url);
 			response = await fetch(url);
@@ -474,17 +492,20 @@ async function getAudioUrl(url, returnBlob = true) {
 				throw new Error(`Failed to fetch audio: ${response.status}`);
 			}
 
+			// Clone before caching since response body can only be consumed once
 			await cache.put(url, response.clone());
 		} else {
 			console.log('[AudioCache] Using cached:', url);
 		}
 
-		// For prefetching we stop here
+		// Prefetch calls stop here — no need to create a Blob URL
 		if (!returnBlob) return;
 
+		// Convert response to a Blob URL so the audio element can play it
 		const blob = await response.blob();
 		return URL.createObjectURL(blob);
 	} catch (error) {
+		// Fall back to the raw URL if anything goes wrong
 		console.warn('[AudioCache] Error:', error);
 		return url;
 	}
