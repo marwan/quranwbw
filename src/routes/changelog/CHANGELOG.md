@@ -1,6 +1,6 @@
-### Apr 3, 2026
+### Apr 5, 2026
 
-- **Hizb (Division) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur'an by divisions. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.
+- **Hizb (Division) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur'an by its 60 Hizb divisions. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.
 
 ---
 
