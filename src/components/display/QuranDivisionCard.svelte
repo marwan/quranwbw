@@ -18,7 +18,7 @@
 	$: isChapter = type === 'chapter';
 
 	$: starValue = isJuz ? juz.juz : isHizb ? hizb.hizb : id;
-	$: href = isJuz ? `/juz?=${juz.juz}` : isHizb ? `/hizb?=${hizb.hizb}` : `/${id}`;
+	$: href = isJuz ? `/juz?id=${juz.juz}` : isHizb ? `/hizb?id=${hizb.hizb}` : `/${id}`;
 </script>
 
 <a {href}>

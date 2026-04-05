@@ -187,7 +187,7 @@
 											{:else if key === 'hizb'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/hizb/{value}" class={linkTextClasses}>{term('hizb')} {value}</a>
+													<a href="/hizb?id={value}" class={linkTextClasses}>{term('hizb')} {value}</a>
 												</div>
 											{:else if key === 'key'}
 												<div class={linkClasses}>
@@ -222,7 +222,7 @@
 										{:else if key === 'hizb'}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/hizb/{value}" class={linkTextClasses}>{term('hizb')} {value}</a>
+												<a href="/hizb?id={value}" class={linkTextClasses}>{term('hizb')} {value}</a>
 											</div>
 										{:else if key === 'key'}
 											{@const [keyChapter, keyVerse] = value.split(':').map(Number)}

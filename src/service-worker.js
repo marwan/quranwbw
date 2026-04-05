@@ -40,7 +40,7 @@ const precacheFiles = [
 ];
 
 // Important pages we want to cache
-const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics', '/juz', '/page'];
+const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics', '/juz', '/hizb', '/page'];
 
 // This flag tracks whether the user has enabled offline mode
 // CRITICAL: This must be loaded from cache on startup!

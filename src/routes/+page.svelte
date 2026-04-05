@@ -381,7 +381,7 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadHizb = $__lastRead.hizb}
-						<a href="/hizb/{lastReadHizb}?startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Hizb Button')}>
+						<a href="/hizb?id={lastReadHizb}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Hizb Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('hizb')}
