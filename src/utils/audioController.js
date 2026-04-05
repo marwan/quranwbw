@@ -36,11 +36,16 @@ export async function playVerseAudio(props) {
 	const nextVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse + 1).padStart(3, '0')}.mp3`;
 
 	// Prefetch next verse audio in the background so it's ready when needed
-	getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false);
+	if (playVerse < quranMetaData[playChapter].verses) {
+		getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false);
+	}
 
 	// Tag this request with a unique ID to detect if a newer request has superseded it
 	const requestId = ++activeAudioRequestId;
 	const audioUrl = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`);
+
+	// If URL is missing (e.g. offline + not cached), abort before touching the player state
+	if (!audioUrl) return;
 
 	// If a newer audio request was made while we were awaiting, discard this result
 	if (requestId !== activeAudioRequestId) {
@@ -130,8 +135,6 @@ export async function playVerseAudio(props) {
 
 // Function to play word audio
 export async function playWordAudio(props) {
-	if (!(await checkOnlineAndAlert())) return;
-
 	resetAudioSettings();
 
 	const audioSettings = get(__audioSettings);
@@ -140,12 +143,17 @@ export async function playWordAudio(props) {
 	const nextWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
 	const currentAudioType = audioSettings.audioType;
 
-	// Prefetch next audio file
-	getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false);
+	// Prefetch next audio file only if there are more words in the verse
+	if (wordNumber < getWordsInVerse(`${wordChapter}:${wordVerse}`)) {
+		getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false);
+	}
 
 	// Tag this request with a unique ID to detect if a newer request has superseded it
 	const requestId = ++activeAudioRequestId;
 	const audioUrl = await getAudioUrl(`${wordsAudioURL}/${currentWordFileName}?version=2`);
+
+	// If URL is missing (e.g. offline + not cached), abort before touching the player state
+	if (!audioUrl) return;
 
 	// If a newer audio request was made while we were awaiting, discard this result
 	if (requestId !== activeAudioRequestId) {
@@ -485,6 +493,9 @@ async function getAudioUrl(url, returnBlob = true) {
 
 		// If not cached, fetch from network and store for future use
 		if (!response) {
+			// Guard against fetching while offline — shows an alert to the user if offline
+			if (!(await checkOnlineAndAlert())) return;
+
 			console.log('[AudioCache] Fetching:', url);
 			response = await fetch(url);
 
