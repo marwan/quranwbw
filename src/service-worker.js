@@ -24,6 +24,7 @@ import { build, files, version } from '$service-worker';
 const cacheNames = {
 	core: `quranwbw-cache-${version}`, // Core website files (versioned)
 	config: 'quranwbw-config', // User preferences (survives across versions)
+	audioData: 'quranwbw-audio-cache', // Audio files (recitations and word audios)
 	chapterData: 'quranwbw-chapter-data', // Chapter routes and data
 	juzData: 'quranwbw-juz-data', // Juz routes and data
 	mushafData: 'quranwbw-mushaf-data', // Mushaf pages and fonts
@@ -298,9 +299,15 @@ self.addEventListener('message', (event) => {
 
 		event.waitUntil(
 			(async () => {
-				// Delete all caches
+				// Delete all caches except the audio cache
 				const keys = await caches.keys();
-				await Promise.all(keys.map((key) => caches.delete(key)));
+				await Promise.all(
+					keys.map((key) => {
+						if (key !== cacheNames.audioData) {
+							return caches.delete(key);
+						}
+					})
+				);
 
 				// Tell the website cache is cleared
 				const clients = await self.clients.matchAll();
