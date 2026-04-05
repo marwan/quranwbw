@@ -12,14 +12,14 @@
 	// only allow display type 1 & 2, and don't save the layout in settings
 	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
 
-	const juzNumber = data.juz;
-	let juzKeysData;
+	const hizbNumber = data.hizb;
+	let hizbKeysData;
 
 	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
-		juzKeysData = (async () => {
+		hizbKeysData = (async () => {
 			try {
-				const data = await getSegmentKeys('juz');
-				return data[juzNumber] ?? '';
+				const data = await getSegmentKeys('hizb');
+				return data[hizbNumber] ?? '';
 			} catch (error) {
 				console.warn(error);
 				return '';
@@ -28,17 +28,17 @@
 	}
 
 	__pageURL.set(1);
-	__currentPage.set('juz');
+	__currentPage.set('hizb');
 </script>
 
-<PageHead title={`${term('juz')} ${juzNumber}`} />
+<PageHead title={`${term('hizb')} ${hizbNumber}`} />
 
-{#await juzKeysData}
+{#await hizbKeysData}
 	<Spinner />
-{:then juzKeys}
-	{#if juzKeys.length > 0}
+{:then hizbKeys}
+	{#if hizbKeys.length > 0}
 		<div id="individual-verses-block">
-			<FullVersesDisplay keys={juzKeys} />
+			<FullVersesDisplay keys={hizbKeys} />
 		</div>
 	{:else}
 		<ErrorLoadingData />

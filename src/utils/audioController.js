@@ -384,7 +384,7 @@ export function prepareVersesToPlay(key) {
 	const [chapter, verse] = key.split(':');
 	const { audioRange, startVerse, endVerse } = get(__audioSettings);
 	const versesInChapter = quranMetaData[chapter].verses;
-	const isSpecialPage = ['supplications', 'bookmarks', 'juz'].includes(get(__currentPage));
+	const isSpecialPage = ['supplications', 'bookmarks', 'juz', 'hizb'].includes(get(__currentPage));
 
 	// Helper function to set verses to play starting from the current key
 	const setPlayFromHere = () => {

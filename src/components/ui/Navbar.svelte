@@ -77,7 +77,7 @@
 			<span class="text-xs pl-2 hidden md:block">Home</span>
 		</a>
 
-		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5" on:click={() => __quranNavigationModalVisible.set(true)}>
+		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5" on:click={() => __quranNavigationModalVisible.set(true)} data-umami-event="Navbar Navigation Button">
 			<!-- display the chapter name on chapter page -->
 			{#if $__currentPage === 'chapter'}
 				{@html navbarChapterName}
@@ -90,8 +90,8 @@
 				<ChevronDown />
 			{/if}
 
-			<!-- display only the juz number for juz page -->
-			{#if $__currentPage === 'juz'}
+			<!-- display only the division title for juz/hizb page -->
+			{#if ['juz', 'hizb'].includes($__currentPage)}
 				{document.title.split(' - ')[0]}
 				<ChevronDown />
 			{/if}
@@ -102,7 +102,7 @@
 			{/if}
 
 			<!-- display only the page name for non-chapter page -->
-			{#if !['chapter', 'mushaf', 'supplications', 'juz'].includes($__currentPage)}
+			{#if !['chapter', 'mushaf', 'supplications', 'juz', 'hizb'].includes($__currentPage)}
 				{$__currentPage[0].toUpperCase() + $__currentPage.slice(1)}
 
 				<!-- if it's the morphology page, show morphology key as well -->
@@ -133,7 +133,7 @@
 			</div>
 			<div class="flex flex-row items-center py-2">
 				<span>{lastReadPage ? `Page ${lastReadPage}` : '...'}</span>
-				<span class="px-1 opacity-70">/</span>
+				<span class="px-1 opacity-30">&#8226;</span>
 				<span>{lastReadJuz ? `${term('juz')} ${lastReadJuz}` : '...'}</span>
 			</div>
 		</div>
@@ -156,7 +156,7 @@
 								{item.name}
 							</span>
 							{#if i < mushafChapterInfo.length - 1}
-								<span class="px-1">/</span>
+								<span class="px-1 opacity-30">&#8226;</span>
 							{/if}
 						{/each}
 					{:else}

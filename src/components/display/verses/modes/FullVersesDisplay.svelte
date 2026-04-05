@@ -233,13 +233,8 @@
 				we re-add bottom padding here so the buttons remain fully clickable.
 			-->
 			<div class="{loadPrevNextVerseButtons} {isNextVerseFirst && 'pb-12'}">
-				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>
-					Start of {$__currentPage === 'hizb' ? term('hizb') : term('juz')}
-				</button>
-
-				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>
-					Previous {term('verse')}
-				</button>
+				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {$__currentPage === 'hizb' ? term('hizb') : term('juz')}</button>
+				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>Previous {term('verse')}</button>
 			</div>
 		{/if}
 
@@ -248,8 +243,8 @@
 				{@const key = keysArray[index]}
 				{@const value = dataMap[key]}
 
-				<!-- Only show Bismillah when its the Juz page -->
-				{#if $__currentPage === 'juz' && +key.split(':')[1] === 1}
+				<!-- Only show chapter header and Bismillah when on a division page -->
+				{#if ['juz', 'hizb'].includes($__currentPage) && +key.split(':')[1] === 1}
 					{@const chapter = +key.split(':')[0]}
 					<div class="mt-4">
 						<ChapterHeader {chapter} />

@@ -219,7 +219,7 @@
 				<span class="text-sm">Range</span>
 				<div class="flex flex-row space-x-2">
 					<!-- play this verse -->
-					<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
+					<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb'].includes($__currentPage) && disabledClasses}">
 						<Radio bind:group={$__audioSettings.audioRange} value="playThisVerse" custom>
 							<div class="{radioClasses} {$__audioSettings.audioRange === 'playThisVerse' && selectedRadioOrCheckboxClasses}">
 								<div class="w-full">This {term('verse')}</div>
@@ -227,7 +227,7 @@
 						</Radio>
 					</div>
 					<!-- play from here -->
-					<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
+					<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb'].includes($__currentPage) && disabledClasses}">
 						<Radio bind:group={$__audioSettings.audioRange} value="playFromHere" custom>
 							<div class="{radioClasses} {$__audioSettings.audioRange === 'playFromHere' && selectedRadioOrCheckboxClasses}">
 								<div class="w-full">From Here</div>
@@ -251,7 +251,7 @@
 					<span class="text-sm">Repeat</span>
 					<div class="flex flex-row space-x-2">
 						<!-- repeat each verse -->
-						<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
+						<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb'].includes($__currentPage) && disabledClasses}">
 							<Radio bind:group={$__audioSettings.repeatType} value="repeatVerse" custom>
 								<div class="{radioClasses} {$__audioSettings.repeatType === 'repeatVerse' && selectedRadioOrCheckboxClasses}">
 									<div class="w-full">Each {term('verse')}</div>
@@ -259,7 +259,7 @@
 							</Radio>
 						</div>
 						<!-- repeat whole range -->
-						<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage) && disabledClasses}">
+						<div class="flex items-center min-w-fit {!['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb'].includes($__currentPage) && disabledClasses}">
 							<Radio bind:group={$__audioSettings.repeatType} value="repeatRange" custom>
 								<div class="{radioClasses} {$__audioSettings.repeatType === 'repeatRange' && selectedRadioOrCheckboxClasses}">
 									<div class="w-full">{term('verse')} Range</div>
