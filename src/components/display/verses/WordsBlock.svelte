@@ -210,8 +210,8 @@
 				{:else if $__wordTooltip === 4}
 					{@html `
 						<div class="flex flex-col">
-							${transliterationWords[word]} 
-							<div class="border-t"></div> 
+							<span>${transliterationWords[word]}</span>
+							<div class="border-t border-theme-accent/20 my-1"></div> 
 							<span class="${selectableWordTranslations[$__wordTranslation].customClasses}">${translationWords[word]}</span>
 						</div>
 					`}

@@ -4,7 +4,7 @@
 	export let type = 'light';
 	export let defaultClass = 'py-2 px-3 text-sm font-medium';
 	const types = {
-		light: `border-theme-accent/20 bg-theme-bg`,
+		light: `border-theme-accent/20 bg-theme-accent/5`,
 		custom: ''
 	};
 	let toolTipClass;
@@ -16,7 +16,7 @@
 	}
 </script>
 
-<Popper rounded shadow {...$$restProps} class={toolTipClass} on:show>
+<Popper rounded {...$$restProps} class={toolTipClass} on:show>
 	<slot />
 </Popper>
 
