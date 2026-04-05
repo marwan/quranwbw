@@ -11,14 +11,21 @@ export const defaultSettings = {
 		englishTerminology: false,
 		hideNonDuaPart: false,
 		wordMorphologyOnClick: false,
-		homepageExtrasPanelVisible: true,
 		fontSizes: {
 			arabicText: window.matchMedia('(min-width: 1280px)').matches || window.matchMedia('(min-width: 1024px)').matches || window.matchMedia('(min-width: 768px)').matches ? 'text-4xl' : 'text-2xl',
 			wordTranslationText: 'text-sm',
 			verseTranslationText: 'text-sm'
 		},
 		wideWesbiteLayoutEnabled: false,
-		signLanguageModeEnabled: false
+		signLanguageModeEnabled: false,
+		homepageLayoutPreferences: {
+			extrasPanelVisible: true,
+			divisionsActiveTab: 1, // chapters tab
+			extrasActiveTab: 1, // bookmarks tab
+			chaptersSortIsAscending: true,
+			juzSortIsAscending: true,
+			hizbSortIsAscending: true
+		}
 	},
 	translations: {
 		word: 1,
@@ -48,6 +55,7 @@ export const defaultSettings = {
 	},
 	lastRead: {},
 	userBookmarks: [],
+	userFavoriteChapters: [],
 	userNotes: {},
 	chapter: 1,
 	offlineModeSettings: {}

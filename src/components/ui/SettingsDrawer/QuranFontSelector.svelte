@@ -36,11 +36,24 @@
 		return isAllowedOnPage && isFontDownloaded;
 	}
 
-	// Helper function to check if a type has any visible fonts
-	function hasVisibleFonts(type) {
-		return Object.entries(selectableFontTypes).some(([fontKey, fontType]) => {
-			return fontType.type === type && shouldShowFontType(fontType, fontKey);
-		});
+	// Helper function to check why a type has no visible fonts
+	function getFontVisibilityStatus(type) {
+		const fontsForType = Object.entries(selectableFontTypes).filter(([_, fontType]) => fontType.type === type);
+
+		const pageAllowedFonts = fontsForType.filter(([_, fontType]) => !fontType.disallowedInPages.includes($__currentPage));
+
+		// If no fonts are allowed on this page regardless of online status
+		if (pageAllowedFonts.length === 0) {
+			return 'not-allowed-on-page';
+		}
+
+		// Some fonts are page-allowed, check if any are visible (considering online/downloaded)
+		const hasVisible = pageAllowedFonts.some(([fontKey, fontType]) => shouldShowFontType(fontType, fontKey));
+
+		if (hasVisible) return 'has-visible';
+
+		// Page-allowed fonts exist but none are visible — must be offline + not downloaded
+		return 'offline-not-downloaded';
 	}
 </script>
 
@@ -50,7 +63,7 @@
 			<div class="flex flex-col space-y-2 pb-6">
 				<div id="font-type" class="text-md font-medium capitalize">{type}</div>
 				<div id="font-list" class="space-y-3">
-					{#if hasVisibleFonts(type)}
+					{#if getFontVisibilityStatus(type) === 'has-visible'}
 						{#each Object.entries(selectableFontTypes).sort((a, b) => a[1].displayOrder - b[1].displayOrder) as [fontKey, fontType]}
 							{#if fontType.type === type && shouldShowFontType(fontType, fontKey)}
 								<Radio name="fontType" bind:group={$__fontType} value={Number(fontKey)} on:change={(event) => updateSettings({ type: 'fontType', value: +event.target.value })} custom>
@@ -64,6 +77,8 @@
 								</Radio>
 							{/if}
 						{/each}
+					{:else if getFontVisibilityStatus(type) === 'not-allowed-on-page'}
+						<p class="text-xs opacity-70">No data available.</p>
 					{:else}
 						<p class="text-xs opacity-70">{dataUnavailableWhileOfflineMessage}</p>
 					{/if}

@@ -34,7 +34,7 @@
 		if ($__audioSettings.isPlaying) return resetAudioSettings({ location: 'end' });
 
 		// For these pages, perform action depending on the play button functionality set by the user
-		if (['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage)) {
+		if (['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb'].includes($__currentPage)) {
 			switch ($__playButtonsFunctionality.verse) {
 				// Play Verse
 				case 1:
@@ -75,11 +75,13 @@
 		<!-- verse key -->
 		<div class="flex flex-row space-x-2">
 			<a href={`/${chapter}?startVerse=${verse}`} class={verseKeyClasses}>
-				{#if $__currentPage === 'chapter'}
-					<div class="text-xs">{key}</div>
-				{:else}
-					<div class="text-xs">{quranMetaData[chapter].transliteration}, {key}</div>
-				{/if}
+				<div class="text-xs">
+					{#if ['chapter', 'juz', 'hizb'].includes($__currentPage)}
+						{key}
+					{:else}
+						{quranMetaData[chapter].transliteration}, {key}
+					{/if}
+				</div>
 			</a>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{term('verse')} {key}</Tooltip>
 		</div>
