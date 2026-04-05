@@ -4,7 +4,7 @@
 	import VerseOptionsDropdown from '$display/verses/VerseOptionsDropdown.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import BookmarkFilled from '$svgs/BookmarkFilled.svelte';
-	import PlaySolid from '$svgs/PlaySolid.svelte';
+	import Play from '$svgs/Play.svelte';
 	import Pause from '$svgs/Pause.svelte';
 	import NotesFilled from '$svgs/NotesFilled.svelte';
 	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
@@ -91,7 +91,7 @@
 			<!-- play verse button -->
 			<button on:click={() => audioHandler(key)} class={buttonClasses} aria-label="Play">
 				<div>
-					<svelte:component this={$__audioSettings.isPlaying && $__audioSettings.playingKey === key ? Pause : PlaySolid} size={3.5} />
+					<svelte:component this={$__audioSettings.isPlaying && $__audioSettings.playingKey === key ? Pause : Play} size={3.5} />
 				</div>
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Play</Tooltip>
