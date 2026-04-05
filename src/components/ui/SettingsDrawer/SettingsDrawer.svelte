@@ -460,7 +460,7 @@
 							<div class="block">{term('verse')} Reciter</div>
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-reciter')}>{selectableReciters[$__reciter].reciter}</button>
 						</div>
-						<p class={settingsDescriptionClasses}>The reciter's voice that will play when you choose to listen to an {term('verse')}.</p>
+						<p class={settingsDescriptionClasses}>The reciter's voice that will play when you choose to listen to a {term('verse')}.</p>
 					</div>
 
 					<div class="border-b {window.theme('border')}"></div>
