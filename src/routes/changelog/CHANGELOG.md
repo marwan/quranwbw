@@ -1,4 +1,10 @@
-### Mar 26, 2026
+### Apr 5, 2026
+
+- **Hizb (Division) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur'an by its 60 Hizb divisions. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.
+
+---
+
+### Mar 27, 2026
 
 - **Chapter Favorites:** You can now add any chapter to your favorites. A new favorites tab has been added to the homepage, where you can easily select which surahs to add or remove from your favorites list for quick access.
 
@@ -30,7 +36,7 @@
 
 ### Feb 6, 2026
 
-- **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur’an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
+- **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur'an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
 
 ---
 

@@ -23,7 +23,8 @@ export const defaultSettings = {
 			divisionsActiveTab: 1, // chapters tab
 			extrasActiveTab: 1, // bookmarks tab
 			chaptersSortIsAscending: true,
-			juzSortIsAscending: true
+			juzSortIsAscending: true,
+			hizbSortIsAscending: true
 		}
 	},
 	translations: {
