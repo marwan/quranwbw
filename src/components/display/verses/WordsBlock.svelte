@@ -211,7 +211,7 @@
 					{@html `
 						<div class="flex flex-col">
 							<span>${transliterationWords[word]}</span>
-							<div class="border-t border-theme-accent/20 my-1"></div> 
+							<div class="border-t border-theme-bg my-1"></div> 
 							<span class="${selectableWordTranslations[$__wordTranslation].customClasses}">${translationWords[word]}</span>
 						</div>
 					`}
