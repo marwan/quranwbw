@@ -4,7 +4,7 @@
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search from '$svgs/Search.svelte';
-	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, mostRead } from '$data/quranMeta';
+	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
 	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { inview } from 'svelte-inview';
@@ -187,7 +187,7 @@
 											{:else if key === 'hizb'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/hizb?id={value}" class={linkTextClasses}>{term('hizb')} {value}</a>
+													<a href="/page?id={verseKeyData[hizbMeta[value - 1].from].page}" class={linkTextClasses}>{term('hizb')} {value}</a>
 												</div>
 											{:else if key === 'key'}
 												<div class={linkClasses}>
@@ -220,9 +220,10 @@
 												<a href="/{juzChapter}/{juzVerse}" class={linkTextClasses}>{term('juz')} {value} ({juzMeta[value - 1].name})</a>
 											</div>
 										{:else if key === 'hizb'}
+											{@const [hizbChapter, hizbVerse] = hizbMeta[value - 1]['from'].split(':').map(Number)}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/hizb?id={value}" class={linkTextClasses}>{term('hizb')} {value}</a>
+												<a href="/{hizbChapter}/{hizbVerse}" class={linkTextClasses}>{term('hizb')} {value}</a>
 											</div>
 										{:else if key === 'key'}
 											{@const [keyChapter, keyVerse] = value.split(':').map(Number)}
