@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-const colors = require('tailwindcss/colors');
+import colors from 'tailwindcss/colors';
+import flowbitePlugin from 'flowbite/plugin';
+import tailwindScrollbar from 'tailwind-scrollbar';
 
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -15,5 +17,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require('flowbite/plugin'), require('tailwind-scrollbar')]
+	plugins: [flowbitePlugin, tailwindScrollbar]
 };
