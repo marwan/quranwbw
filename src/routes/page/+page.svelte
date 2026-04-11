@@ -75,7 +75,7 @@
 			// Stale check — if a newer navigation happened, discard this result
 			if (thisLoadId !== currentLoadId) return;
 
-			// Store parsed data in memory, not only in localStorage
+			// Store parsed data in memory and in localStorage
 			pageDataStore = verseData;
 			localStorage.setItem('pageData', JSON.stringify(verseData));
 
