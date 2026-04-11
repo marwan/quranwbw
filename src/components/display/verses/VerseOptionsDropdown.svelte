@@ -16,7 +16,7 @@
 	import Copy from '$svgs/Copy.svelte';
 	import { showAudioModal } from '$utils/audioController';
 	import { selectableDisplays } from '$data/options';
-	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType, __morphologyKey } from '$utils/stores';
+	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __morphologyKey } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { sineIn } from 'svelte/easing';
@@ -24,7 +24,6 @@
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// Constants
-	const mushafFontTypes = [2, 3];
 	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
 
 	// Component state
@@ -136,7 +135,7 @@
 			text: 'Copy',
 			handler: handleCopy,
 			analyticsEvent: 'Copy Verse Modal Button',
-			show: !mushafFontTypes.includes($__fontType)
+			show: true
 		}
 	];
 
