@@ -490,7 +490,7 @@
 					<div class="border-b {window.theme('border')}"></div>
 
 					<!-- wbw-autoscroll-setting -->
-					<div id="wbw-autoscroll-setting" class={settingsBlockClasses}>
+					<div id="wbw-autoscroll-setting" class="{settingsBlockClasses} {!selectableReciters[$__reciter].wbw && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Auto-Scroll to Highlighted Words</span>
 							<label class="inline-flex items-center cursor-pointer">
