@@ -8,6 +8,8 @@
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { selectableVerseTranslations } from '$data/options';
+	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { cdnStaticDataUrls } from '$data/websiteSettings';
 
 	// CSS classes for radio buttons
 	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
@@ -21,6 +23,7 @@
 	let includeLink = true;
 	let generatedVerseData = '';
 	let websiteLink = '';
+	let fullQuranArabicData;
 
 	// Extract chapter number from verse key
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
@@ -33,18 +36,16 @@
 		generatedVerseData = '';
 	}
 
-	function getVerseArabicText(key) {
+	async function getFullQuranArabicData() {
+		if (fullQuranArabicData) return fullQuranArabicData;
+		fullQuranArabicData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, 'other');
+		return fullQuranArabicData;
+	}
+
+	async function getVerseArabicText(key) {
 		try {
-			const [chapter, verse] = key.split(':').map(Number);
-			const words = document.querySelectorAll(`.verse-${chapter}-${verse} .arabicText`);
-			let wordsArray = [];
-
-			// Join all the words
-			words.forEach((word) => {
-				wordsArray.push(word.innerText);
-			});
-
-			return wordsArray.join(' ');
+			const data = await getFullQuranArabicData();
+			return data?.data?.[key] || key;
 		} catch (error) {
 			console.warn(error);
 			return key;
@@ -99,7 +100,7 @@
 		return output.trim();
 	}
 
-	function advancedCopy(key, textType, includeKey, includeTranslationNames, includeFootNotes, includeLink) {
+	async function advancedCopy(key, textType, includeKey, includeTranslationNames, includeFootNotes, includeLink) {
 		let results = '';
 		const [chapter] = key.split(':');
 
@@ -109,7 +110,7 @@
 		}
 
 		// Get Arabic and/or translation text
-		const arabicText = getVerseArabicText(key);
+		const arabicText = await getVerseArabicText(key);
 		const translationText = getVerseTranslationText(key, includeTranslationNames, includeFootNotes);
 
 		if (textType === 1) {
@@ -133,14 +134,13 @@
 
 	async function processAndCopyVerseData() {
 		if (copyType === 1) {
-			generatedVerseData = getVerseArabicText($__verseKey);
+			generatedVerseData = await getVerseArabicText($__verseKey);
 		} else if (copyType === 2) {
 			generatedVerseData = websiteLink;
 		} else if (copyType === 3) {
-			generatedVerseData = advancedCopy($__verseKey, textType, includeKey, includeTranslationNames, includeFootNotes, includeLink);
+			generatedVerseData = await advancedCopy($__verseKey, textType, includeKey, includeTranslationNames, includeFootNotes, includeLink);
 		}
 
-		console.log(generatedVerseData);
 		navigator.clipboard.writeText(generatedVerseData);
 	}
 
