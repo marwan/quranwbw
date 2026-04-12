@@ -313,7 +313,8 @@ async function wordHighlighter() {
 		// Update the audio settings
 		__audioSettings.set(audioSettings);
 
-		if (audioSettings.playingWordKey && lastPlayedKey !== audioSettings.playingWordKey) {
+		// Scroll to the currently playing word when auto-scroll is enabled and the word changes
+		if (audioSettings.wbwAutoScrollEnabled && audioSettings.playingWordKey && lastPlayedKey !== audioSettings.playingWordKey) {
 			scrollElementIntoView(audioSettings.playingWordKey);
 			lastPlayedKey = audioSettings.playingWordKey;
 		}

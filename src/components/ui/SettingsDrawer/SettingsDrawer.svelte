@@ -39,7 +39,8 @@
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
 		__wideWesbiteLayoutEnabled,
-		__signLanguageModeEnabled
+		__signLanguageModeEnabled,
+		__audioSettings
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -484,6 +485,20 @@
 							<button class={selectorClasses} on:click={() => gotoIndividualSetting('verse-play-button')}>{selectableVersePlayButtonOptions[$__playButtonsFunctionality.verse].name}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Select what happens when you click on the play button for a {term('verse')}.</p>
+					</div>
+
+					<div class="border-b {window.theme('border')}"></div>
+
+					<!-- wbw-autoscroll-setting -->
+					<div id="wbw-autoscroll-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Auto-Scroll to Highlighted Words</span>
+							<label class="inline-flex items-center cursor-pointer">
+								<input type="checkbox" class="sr-only peer" bind:checked={$__audioSettings.wbwAutoScrollEnabled} on:change={() => updateSettings({ type: 'audioSettings', value: $__audioSettings })} data-umami-event="Toggle WBW Auto Scroll" />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Automatically scroll to the highlighted words while listening to the recitation.</p>
 					</div>
 				</div>
 			</div>

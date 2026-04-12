@@ -47,7 +47,8 @@ export const defaultSettings = {
 		timesToRepeat: 1,
 		repeatType: 'repeatVerse',
 		audioDelay: 1, // none
-		savedPlaySettings: {}
+		savedPlaySettings: {},
+		wbwAutoScrollEnabled: false
 	},
 	quiz: {
 		correctAnswers: 0,
