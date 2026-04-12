@@ -4,7 +4,7 @@
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search from '$svgs/Search.svelte';
-	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, mostRead } from '$data/quranMeta';
+	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
 	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled } from '$utils/stores';
 	import { inview } from 'svelte-inview';
@@ -168,12 +168,12 @@
 										{#if key === 'chapter'}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/page/{startPageOfChapters[value]}" class={linkTextClasses}>{term('chapter')} {value} ({quranMetaData[value].transliteration})</a>
+												<a href="/page?id={startPageOfChapters[value]}" class={linkTextClasses}>{term('chapter')} {value} ({quranMetaData[value].transliteration})</a>
 											</div>
 										{:else if key === 'page'}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/page/{value}" class={linkTextClasses}>Page {value}</a>
+												<a href="/page?id={value}" class={linkTextClasses}>Page {value}</a>
 											</div>
 										{/if}
 
@@ -182,17 +182,17 @@
 											{#if key === 'juz'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/page/{verseKeyData[juzMeta[value - 1].from].page}" class={linkTextClasses}>{term('juz')} {value}</a>
+													<a href="/page?id={verseKeyData[juzMeta[value - 1].from].page}" class={linkTextClasses}>{term('juz')} {value}</a>
 												</div>
 											{:else if key === 'hizb'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/hizb/{value}" class={linkTextClasses}>{term('hizb')} {value}</a>
+													<a href="/page?id={verseKeyData[hizbMeta[value - 1].from].page}" class={linkTextClasses}>{term('hizb')} {value}</a>
 												</div>
 											{:else if key === 'key'}
 												<div class={linkClasses}>
 													<span>{@html '&#10230'}</span>
-													<a href="/page/{verseKeyData[value].page}" class={linkTextClasses}>{quranMetaData[value.split(':')[0]].transliteration}, {term('verse')} {value.split(':')[1]} (Page {verseKeyData[value].page})</a>
+													<a href="/page?id={verseKeyData[value].page}" class={linkTextClasses}>{quranMetaData[value.split(':')[0]].transliteration}, {term('verse')} {value.split(':')[1]} (Page {verseKeyData[value].page})</a>
 												</div>
 											{/if}
 										{/await}
@@ -211,7 +211,7 @@
 
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/page/{value}" class={linkTextClasses}>Mushaf Page {value} ({quranMetaData[pageNumberKeys[value - 1].split(':')[0]].transliteration})</a>
+												<a href="/page?id={value}" class={linkTextClasses}>Mushaf Page {value} ({quranMetaData[pageNumberKeys[value - 1].split(':')[0]].transliteration})</a>
 											</div>
 										{:else if key === 'juz'}
 											{@const [juzChapter, juzVerse] = juzMeta[value - 1]['from'].split(':').map(Number)}
@@ -220,9 +220,10 @@
 												<a href="/{juzChapter}/{juzVerse}" class={linkTextClasses}>{term('juz')} {value} ({juzMeta[value - 1].name})</a>
 											</div>
 										{:else if key === 'hizb'}
+											{@const [hizbChapter, hizbVerse] = hizbMeta[value - 1]['from'].split(':').map(Number)}
 											<div class={linkClasses}>
 												<span>{@html '&#10230'}</span>
-												<a href="/hizb/{value}" class={linkTextClasses}>{term('hizb')} {value}</a>
+												<a href="/{hizbChapter}/{hizbVerse}" class={linkTextClasses}>{term('hizb')} {value}</a>
 											</div>
 										{:else if key === 'key'}
 											{@const [keyChapter, keyVerse] = value.split(':').map(Number)}
@@ -284,7 +285,7 @@
 						<ul id="navbar-chapter-list" class="grow basis-1/2 overflow-y-scroll">
 							{#each { length: maxItemsToLoad } as _, chapter}
 								<li>
-									<a href={$__currentPage === 'mushaf' ? `/page/${startPageOfChapters[chapter + 1]}` : `/${chapter + 1}`}>
+									<a href={$__currentPage === 'mushaf' ? `/page?id=${startPageOfChapters[chapter + 1]}` : `/${chapter + 1}`}>
 										<div class="{listItemClasses} {$__currentPage === 'chapter' ? (chapter + 1 === $__chapterNumber ? `bg-theme-accent/5` : null) : null}">
 											{chapter + 1}. {quranMetaData[chapter + 1].transliteration}
 
