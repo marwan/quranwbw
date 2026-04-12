@@ -17,7 +17,7 @@
 			linkDisabled = $__chapterNumber === 1;
 		} else if ($__currentPage === 'mushaf') {
 			// Set properties for mushaf navigation (right to left)
-			linkHref = `page/${$__pageNumber + 1}`;
+			linkHref = `page?id=${$__pageNumber + 1}`;
 			linkText = 'Next Page';
 			linkDisabled = $__pageNumber === 604;
 		}

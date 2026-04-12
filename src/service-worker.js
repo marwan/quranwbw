@@ -26,7 +26,6 @@ const cacheNames = {
 	config: 'quranwbw-config', // User preferences (survives across versions)
 	audioData: 'quranwbw-audio-cache', // Audio files (recitations and word audios)
 	chapterData: 'quranwbw-chapter-data', // Chapter routes and data
-	juzData: 'quranwbw-juz-data', // Juz routes and data
 	mushafData: 'quranwbw-mushaf-data', // Mushaf pages and fonts
 	morphologyData: 'quranwbw-morphology-data', // Morphology data files
 	tafsirData: 'quranwbw-tafsir-data' // Tafsir data files
@@ -42,7 +41,7 @@ const precacheFiles = [
 ];
 
 // Important pages we want to cache
-const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics'];
+const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics', '/juz', '/hizb', '/page'];
 
 // This flag tracks whether the user has enabled offline mode
 // CRITICAL: This must be loaded from cache on startup!

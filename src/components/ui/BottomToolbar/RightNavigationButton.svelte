@@ -17,7 +17,7 @@
 			linkDisabled = $__chapterNumber === 114;
 		} else if ($__currentPage === 'mushaf') {
 			// Set properties for previous page navigation (right to left)
-			linkHref = `page/${$__pageNumber - 1}`;
+			linkHref = `page?id=${$__pageNumber - 1}`;
 			linkText = 'Previous Page';
 			linkDisabled = $__pageNumber === 1;
 		}
