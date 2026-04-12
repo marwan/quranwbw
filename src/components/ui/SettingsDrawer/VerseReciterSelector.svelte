@@ -36,8 +36,14 @@
 							<span>{reciter.reciter}</span>
 						</div>
 
-						{#if reciter.wbw}
-							<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">WBW</span>
+						{#if reciter.tags?.length}
+							<div class="flex flex-row space-x-1">
+								{#each [...reciter.tags].reverse() as tag}
+									<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">
+										{tag.toUpperCase()}
+									</span>
+								{/each}
+							</div>
 						{/if}
 					</div>
 				</Radio>
