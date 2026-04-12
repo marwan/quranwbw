@@ -11,7 +11,8 @@
 	import { fade } from 'svelte/transition';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
+	// Public client-side API key (origin-restricted on API provider side)
+	const kalimatPublicApiKey = import.meta.env.VITE_KALIMAT_PUBLIC_API_KEY;
 
 	const linkClasses = 'w-fit flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const linkTextClasses = 'text-xs md:text-sm text-left w-fit capitalize truncate';
@@ -44,7 +45,7 @@
 		try {
 			const response = await fetch(`https://api.kalimat.dev/search?query=${searchQuery}&numResults=50`, {
 				headers: {
-					'x-api-key': API_KEY
+					'x-api-key': kalimatPublicApiKey
 				}
 			});
 
