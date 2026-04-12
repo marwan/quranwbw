@@ -241,7 +241,7 @@
 	{/if}
 
 	<!-- end icon tooltip -->
-	<Tooltip arrow={false} type="light" class="z-[19] inline-flex font-sans font-normal">
+	<Tooltip arrow={false} type="light" class="z-30 inline-flex font-sans font-normal">
 		End of {key}
 	</Tooltip>
 {/if}

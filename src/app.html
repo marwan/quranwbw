@@ -71,10 +71,10 @@
 		<link crossorigin="anonymous" href="%sveltekit.assets%/images/apple-touch-icon.png?v=2" rel="apple-touch-icon" />
 
 		<!-- 
-		If the user's browser do not support Optional chaining (?.), redirect to old v3 website
-		issue: https://github.com/sveltejs/kit/issues/5209
-		credits: https://stackoverflow.com/a/69935847 
-		caniuse: https://caniuse.com/mdn-javascript_operators_optional_chaining
+			If the user's browser do not support Optional chaining (?.), redirect to old v3 website
+			issue: https://github.com/sveltejs/kit/issues/5209
+			credits: https://stackoverflow.com/a/69935847 
+			caniuse: https://caniuse.com/mdn-javascript_operators_optional_chaining
 		-->
 		<script>
 			try {
@@ -84,6 +84,114 @@
 				window.location.replace('https://old.quranwbw.com');
 			}
 		</script>
+
+		<!--
+			Theme CSS variables defined inline (not in the external stylesheet) so they are
+			available synchronously when the theme script below runs. This is necessary because
+			the theme script reads --theme-accent-rgb via getComputedStyle to inject checkbox
+			styles — external stylesheets are not yet parsed at that point, but inline <style>
+			blocks are parsed synchronously before any following <script> executes.
+		-->
+		<style>
+			/* Golden Glint */
+			html.theme-1 {
+				--theme-bg-rgb: 255 255 255;
+				--theme-accent-rgb: 177 144 31;
+				--theme-text-rgb: 0 0 0;
+				--theme-palette-normal: --palette3;
+				--theme-palette-tajweed: --palette0;
+				--theme-palette-header: --palette7;
+				--theme-palette-colored-fonts: --palette4;
+			}
+
+			/* Classic Light */
+			html.theme-2 {
+				--theme-bg-rgb: 255 255 255;
+				--theme-accent-rgb: 0 0 0;
+				--theme-text-rgb: 0 0 0;
+				--theme-palette-normal: --palette3;
+				--theme-palette-tajweed: --palette0;
+				--theme-palette-header: --palette0;
+				--theme-palette-colored-fonts: --palette0;
+			}
+
+			/* Silver Lining */
+			html.theme-3 {
+				--theme-bg-rgb: 225 225 225;
+				--theme-accent-rgb: 0 0 0;
+				--theme-text-rgb: 0 0 0;
+				--theme-palette-normal: --palette5;
+				--theme-palette-tajweed: --palette2;
+				--theme-palette-header: --palette8;
+				--theme-palette-colored-fonts: --palette3;
+			}
+
+			/* Vintage Sepia */
+			html.theme-4 {
+				--theme-bg-rgb: 233 227 215;
+				--theme-accent-rgb: 85 60 15;
+				--theme-text-rgb: 85 60 15;
+				--theme-palette-normal: --palette5;
+				--theme-palette-tajweed: --palette2;
+				--theme-palette-header: --palette5;
+				--theme-palette-colored-fonts: --palette2;
+			}
+
+			/* Mocha Night */
+			html.theme-5 {
+				--theme-bg-rgb: 32 22 31;
+				--theme-accent-rgb: 220 165 76;
+				--theme-text-rgb: 220 165 76;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette9;
+				--theme-palette-colored-fonts: --palette5;
+			}
+
+			/* Midnight Blue */
+			html.theme-6 {
+				--theme-bg-rgb: 2 2 27;
+				--theme-accent-rgb: 194 194 194;
+				--theme-text-rgb: 194 194 194;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette3;
+				--theme-palette-colored-fonts: --palette1;
+			}
+
+			/* Forest Green */
+			html.theme-7 {
+				--theme-bg-rgb: 0 22 23;
+				--theme-accent-rgb: 221 221 221;
+				--theme-text-rgb: 221 221 221;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette1;
+				--theme-palette-colored-fonts: --palette1;
+			}
+
+			/* Oled Black */
+			html.theme-8 {
+				--theme-bg-rgb: 0 0 0;
+				--theme-accent-rgb: 221 221 221;
+				--theme-text-rgb: 221 221 221;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette4;
+				--theme-palette-colored-fonts: --palette1;
+			}
+
+			/* Dark Luxury */
+			html.theme-9 {
+				--theme-bg-rgb: 9 9 11;
+				--theme-accent-rgb: 220 165 76;
+				--theme-text-rgb: 220 165 76;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette6;
+				--theme-palette-colored-fonts: --palette5;
+			}
+		</style>
 
 		<!-- Set the website theme early to prevent a white flash during initial load -->
 		<script>
@@ -103,32 +211,27 @@
 			// Apply the theme class to the document's root element
 			document.documentElement.classList += `theme-${currentTheme} bg-theme-bg`;
 
-			// Checkbox styles (CSS vars can't be used inside url(), so we inject once on load)
-			const themeAccentMap = {
-				1: '#b1901f' /* Golden Glint */,
-				2: '#000000' /* Classic Light */,
-				3: '#000000' /* Silver Lining */,
-				4: '#553c0f' /* Vintage Sepia */,
-				5: '#dca54c' /* Mocha Night */,
-				6: '#c2c2c2' /* Midnight Blue */,
-				7: '#dddddd' /* Forest Green */,
-				8: '#dddddd' /* Oled Black */,
-				9: '#dca54c' /* Dark Luxury */
-			};
+			// Read accent color from the now-available CSS variables
+			const rgb = getComputedStyle(document.documentElement).getPropertyValue('--theme-accent-rgb').trim().split(' ');
 
-			const accentHex = themeAccentMap[currentTheme] ?? '#000000';
+			const toHex = (n) => parseInt(n).toString(16).padStart(2, '0');
+			const accentHex = `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
 			const accentNoHash = accentHex.substring(1);
 
+			// Inject checkbox styles using the theme accent color.
+			// CSS variables cannot be used inside url() for background-image, so we read
+			// --theme-accent-rgb from the inline <style> above, convert it to hex, and
+			// inject a one-time <style> tag with the correct color baked into the SVG checkmark.
 			const style = document.createElement('style');
 			style.textContent = `
 				[type='checkbox'], [type='checkbox']:checked {
-					background-color: transparent !important;
-					border-color: ${accentHex} !important;
+						background-color: transparent !important;
+						border-color: ${accentHex} !important;
 				}
 				[type='checkbox']:checked {
-					background-color: transparent !important;
-					border-color: ${accentHex} !important;
-					background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23${accentNoHash}'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>") !important;
+						background-color: transparent !important;
+						border-color: ${accentHex} !important;
+						background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23${accentNoHash}'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>") !important;
 				}
 			`;
 
