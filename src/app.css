@@ -5,11 +5,8 @@
 /* Golden Glint */
 html.theme-1 {
   --theme-bg-rgb: 255 255 255;
-  --theme-bg-hex: #FFFFFF;
   --theme-accent-rgb: 177 144 31;
-  --theme-accent-hex: #b1901f;
   --theme-text-rgb: 0 0 0;
-  --theme-text-hex: #000000;
   --theme-palette-normal: --palette3;
   --theme-palette-tajweed: --palette0;
   --theme-palette-header: --palette7;
@@ -19,11 +16,8 @@ html.theme-1 {
 /* Classic Light */
 html.theme-2 {
   --theme-bg-rgb: 255 255 255;
-  --theme-bg-hex: #FFFFFF;
   --theme-accent-rgb: 0 0 0;
-  --theme-accent-hex: #000000;
   --theme-text-rgb: 0 0 0;
-  --theme-text-hex: #000000;
   --theme-palette-normal: --palette3;
   --theme-palette-tajweed: --palette0;
   --theme-palette-header: --palette0;
@@ -33,11 +27,8 @@ html.theme-2 {
 /* Silver Lining */
 html.theme-3 {
   --theme-bg-rgb: 225 225 225;
-  --theme-bg-hex: #e1e1e1;
   --theme-accent-rgb: 0 0 0;
-  --theme-accent-hex: #000000;
   --theme-text-rgb: 0 0 0;
-  --theme-text-hex: #000000;
   --theme-palette-normal: --palette5;
   --theme-palette-tajweed: --palette2;
   --theme-palette-header: --palette8;
@@ -47,11 +38,8 @@ html.theme-3 {
 /* Vintage Sepia */
 html.theme-4 {
   --theme-bg-rgb: 233 227 215;
-  --theme-bg-hex: #e9e3d7;
   --theme-accent-rgb: 85 60 15;
-  --theme-accent-hex: #553c0f;
   --theme-text-rgb: 85 60 15;
-  --theme-text-hex: #553c0f;
   --theme-palette-normal: --palette5;
   --theme-palette-tajweed: --palette2;
   --theme-palette-header: --palette5;
@@ -61,11 +49,8 @@ html.theme-4 {
 /* Mocha Night */
 html.theme-5 {
   --theme-bg-rgb: 32 22 31;
-  --theme-bg-hex: #20161f;
   --theme-accent-rgb: 220 165 76;
-  --theme-accent-hex: #dca54c;
   --theme-text-rgb: 220 165 76;
-  --theme-text-hex: #dca54c;
   --theme-palette-normal: --palette4;
   --theme-palette-tajweed: --palette1;
   --theme-palette-header: --palette9;
@@ -75,11 +60,8 @@ html.theme-5 {
 /* Midnight Blue */
 html.theme-6 {
   --theme-bg-rgb: 2 2 27;
-  --theme-bg-hex: #02021b;
   --theme-accent-rgb: 194 194 194;
-  --theme-accent-hex: #c2c2c2;
   --theme-text-rgb: 194 194 194;
-  --theme-text-hex: #c2c2c2;
   --theme-palette-normal: --palette4;
   --theme-palette-tajweed: --palette1;
   --theme-palette-header: --palette3;
@@ -89,11 +71,8 @@ html.theme-6 {
 /* Forest Green */
 html.theme-7 {
   --theme-bg-rgb: 0 22 23;
-  --theme-bg-hex: #001617;
   --theme-accent-rgb: 221 221 221;
-  --theme-accent-hex: #dddddd;
   --theme-text-rgb: 221 221 221;
-  --theme-text-hex: #dddddd;
   --theme-palette-normal: --palette4;
   --theme-palette-tajweed: --palette1;
   --theme-palette-header: --palette1;
@@ -103,11 +82,8 @@ html.theme-7 {
 /* Oled Black */
 html.theme-8 {
   --theme-bg-rgb: 0 0 0;
-  --theme-bg-hex: #000000;
   --theme-accent-rgb: 221 221 221;
-  --theme-accent-hex: #dddddd;
   --theme-text-rgb: 221 221 221;
-  --theme-text-hex: #dddddd;
   --theme-palette-normal: --palette4;
   --theme-palette-tajweed: --palette1;
   --theme-palette-header: --palette4;
@@ -117,11 +93,8 @@ html.theme-8 {
 /* Dark Luxury */
 html.theme-9 {
   --theme-bg-rgb: 9 9 11;
-  --theme-bg-hex: #09090b;
   --theme-accent-rgb: 220 165 76;
-  --theme-accent-hex: #dca54c;
   --theme-text-rgb: 220 165 76;
-  --theme-text-hex: #dca54c;
   --theme-palette-normal: --palette4;
   --theme-palette-tajweed: --palette1;
   --theme-palette-header: --palette6;
@@ -259,7 +232,7 @@ html.theme-9 {
 }
 
 /* Scrollbar Colors */
-::-webkit-scrollbar-thumb { background: var(--theme-accent-hex); }
+::-webkit-scrollbar-thumb { background: rgb(var(--theme-accent-rgb)); }
 
 /* for some reason, Tailwind applies bottom-right padding to the below elements, so have to manually reset them */
 input, select, textarea {
@@ -614,8 +587,8 @@ svg {
 
 /* Markdown Colors */
 .markdown hr { border-color: rgb(var(--theme-accent-rgb) / 0.2); }
-.markdown a  { color: var(--theme-accent-hex); }
-.markdown h3 { color: var(--theme-accent-hex); }
+.markdown a  { color: rgb(var(--theme-accent-rgb)); }
+.markdown h3 { color: rgb(var(--theme-accent-rgb)); }
 
 /* Firefox-only glyph rendering fix: add a transparent text-shadow with blur equal to font-size.
   This mitigates occasional glyph edge artifacts when drawing Arabic glyphs in Firefox.

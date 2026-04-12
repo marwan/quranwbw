@@ -2,19 +2,8 @@
 	export let size = 'size-24 md:size-32';
 </script>
 
-<svg
-	xmlns:dc="http://purl.org/dc/elements/1.1/"
-	xmlns:cc="http://creativecommons.org/ns#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:svg="http://www.w3.org/2000/svg"
-	xmlns="http://www.w3.org/2000/svg"
-	xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-	xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-	viewBox="0 0 299.74979 293.73068"
-	version="1.1"
-	class={size}
->
-	<g id="layer1" transform="translate(-26.135428,119.50411)">
+<svg viewBox="0 0 299.74979 293.73068" class={size}>
+	<g transform="translate(-26.135428,119.50411)">
 		<path
 			class="fill-theme-accent"
 			style="stroke:none;stroke-width:0.41095892"

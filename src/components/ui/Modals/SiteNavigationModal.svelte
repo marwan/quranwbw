@@ -66,7 +66,7 @@
 				<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
 					<!-- Search -->
 					<a href="/search" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1}>
-						<Search2 size={4} />
+						<span><Search2 size={4} /></span>
 						<span class={linkTextClasses}>Search</span>
 					</a>
 
@@ -78,19 +78,19 @@
 						}}
 						class={linkClasses}
 					>
-						<Settings size={4} />
+						<span><Settings size={4} /></span>
 						<span class={linkTextClasses}>Settings</span>
 					</button>
 
 					<!-- topics page link -->
 					<a href="/topics" class={linkClasses}>
-						<Topics size={4} />
+						<span><Topics size={4} /></span>
 						<span class={linkTextClasses}>Topics</span>
 					</a>
 
 					<!-- Bookmarks -->
 					<a href="/bookmarks" class={linkClasses}>
-						<Bookmark size={4} />
+						<span><Bookmark size={4} /></span>
 						<span class={linkTextClasses}>Bookmarks</span>
 					</a>
 
@@ -103,49 +103,49 @@
 						class={linkClasses}
 						data-umami-event="Tajweed Modal Button"
 					>
-						<TajweedRules size={4} />
+						<span><TajweedRules size={4} /></span>
 						<span class={linkTextClasses}>{term('tajweed')} Rules</span>
 					</button>
 
 					<!-- Supplications -->
 					<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
-						<Supplication size={4} />
+						<span><Supplication size={4} /></span>
 						<span class={linkTextClasses}>{term('supplications')}</span>
 					</a>
 
 					<!-- Morphology -->
 					<a href="/morphology?word=1:1:1" class={linkClasses}>
-						<Morphology size={4} />
+						<span><Morphology size={4} /></span>
 						<span class={linkTextClasses}>Morphology</span>
 					</a>
 
 					<!-- Guess The Word -->
 					<a href="/games/guess-the-word" class={linkClasses}>
-						<Puzzle size={4} />
+						<span><Puzzle size={4} /></span>
 						<span class={linkTextClasses}>Word Game</span>
 					</a>
 
 					<!-- changelog -->
 					<a href="/changelog" class={linkClasses}>
-						<Changelog size={4} />
+						<span><Changelog size={4} /></span>
 						<span class={linkTextClasses}>Changelog</span>
 					</a>
 
 					<!-- About -->
 					<a href="/about" class={linkClasses}>
-						<About size={4} />
+						<span><About size={4} /></span>
 						<span class={linkTextClasses}>About</span>
 					</a>
 
 					<!-- Offline Mode page -->
 					<a href="/offline" class={linkClasses}>
-						<Offline size={4} />
+						<span><Offline size={4} /></span>
 						<span class={linkTextClasses}>Offline Mode (Beta)</span>
 					</a>
 
 					<!-- legacy site link -->
 					<a href="https://old.quranwbw.com/" target="_blank" rel="noopener noreferrer" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1} data-umami-event="Legacy Site Button">
-						<LegacySite size={4} />
+						<span><LegacySite size={4} /></span>
 						<span class={linkTextClasses}>Old Website</span>
 					</a>
 				</div>
