@@ -24,7 +24,7 @@
 							</div>
 						</div>
 
-						<div class="chapter-icons text-4xl hidden md:inline-flex flex-shrink-0" style="color: var(--theme-accent-hex)">
+						<div class="chapter-icons text-4xl hidden md:inline-flex flex-shrink-0 text-theme-accent">
 							{@html `&#xE9${quranMetaData[chapter.id].icon};`}
 						</div>
 					</div>

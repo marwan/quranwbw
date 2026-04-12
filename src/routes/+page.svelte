@@ -170,7 +170,7 @@
 			<div><Quran /></div>
 
 			<div class="flex flex-col">
-				<div id="site-title" class="text-2xl md:text-3xl font-bold pb-2" style="color: var(--theme-accent-hex)">
+				<div id="site-title" class="text-2xl md:text-3xl font-bold pb-2 text-theme-accent">
 					<span class="block md:hidden">QuranWBW</span>
 					<span class="hidden md:block">Quran Word By Word</span>
 				</div>
@@ -190,7 +190,7 @@
 				<div class="flex flex-row space-x-2 w-full">
 					{#if isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: var(--theme-accent-hex)">{@html `&#xE9${quranMetaData[18].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[18].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
 								<span>Al Kahf</span>
@@ -200,7 +200,7 @@
 
 					{#if isNight}
 						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Waaqia Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: var(--theme-accent-hex)">{@html `&#xE9${quranMetaData[56].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[56].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Evening Reminder:</span>
 								<span>Al Waaqia</span>
@@ -208,7 +208,7 @@
 						</a>
 
 						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: var(--theme-accent-hex)">{@html `&#xE9${quranMetaData[67].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[67].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
 								<span>Al Mulk</span>
@@ -312,7 +312,7 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: var(--theme-accent-hex)">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span class="truncate">
 								<span class="md:hidden">Continue:</span>
 								<span class="hidden md:inline-block">Continue Reading:</span>
@@ -339,7 +339,7 @@
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadJuz = $__lastRead.juz}
 						<a href="/juz?id={lastReadJuz}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: var(--theme-accent-hex)">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('juz')}
 								{lastReadJuz}, {lastReadChapter}:{lastReadVerse}
@@ -382,7 +382,7 @@
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadHizb = $__lastRead.hizb}
 						<a href="/hizb?id={lastReadHizb}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Hizb Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: var(--theme-accent-hex)">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('hizb')}
 								{lastReadHizb}, {lastReadChapter}:{lastReadVerse}
