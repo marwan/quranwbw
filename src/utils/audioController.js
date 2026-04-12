@@ -6,10 +6,26 @@ import { selectableReciters, selectableTranslationReciters, selectablePlaybackSp
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-let audio = document.querySelector('#player'); // Getting the audio element
+// <audio> element used for all verse and word playback
+let audio = document.querySelector('#player');
+
+// Tracks the last highlighted word to avoid redundant scrolls
 let lastPlayedKey = null;
+
+// Stores the active blob URL so it can be revoked to prevent memory leaks
 let lastBlobUrl = null;
+
+// Incrementing token to invalidate outdated async audio requests
 let activeAudioRequestId = 0;
+
+// Cached timestamp data to avoid repeated fetches during playback
+let cachedTimestampData = null;
+
+// Cache word counts per verse to avoid repeated reads in hot loops
+let wordsInVerseCache = {};
+
+// Prevents overlapping executions of the wordHighlighter handler
+let isHighlighting = false;
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -77,6 +93,7 @@ export async function playVerseAudio(props) {
 	// Attach word highlighting function for supported reciters
 	if (props.language === 'arabic' && reciter.wbw) {
 		await fetchTimestampData();
+		wordsInVerseCache[props.key] = getWordsInVerse(props.key);
 		audio.addEventListener('timeupdate', wordHighlighter);
 	}
 
@@ -85,17 +102,25 @@ export async function playVerseAudio(props) {
 		scrollElementIntoView(audioSettings.playingKey);
 	}
 
-	audio.onended = async function () {
+	// Use a named handler instead of audio.onended so it can be explicitly removed
+	// after firing, preventing handlers from stacking up across repeated plays
+	const onEndedHandler = async function () {
+		// Remove both listeners immediately to prevent any chance of double-firing
+		audio.removeEventListener('ended', onEndedHandler);
 		audio.removeEventListener('timeupdate', wordHighlighter);
+
 		const previousLanguage = props.language;
 
-		// Determine the delay based on audioDelay settings
+		// Calculate the delay between verses based on the user's audioDelay setting.
+		// The last delay option is a special case — it waits for the duration of the
+		// audio itself (i.e. a full extra play-length pause) rather than a fixed ms value
 		const delaySetting = audioSettings.audioDelay;
 		const delay = selectableAudioDelays[delaySetting]?.milliseconds || 0;
 		const isAudioLengthDelay = delaySetting === Math.max(...Object.keys(selectableAudioDelays).map(Number));
 		const calculatedDelay = isAudioLengthDelay ? (audio.duration || 0) * 1000 : delay;
 
-		// Play translation if needed
+		// If playing both languages, immediately follow Arabic with the translation
+		// before applying any delay or advancing to the next verse
 		if (playBoth && previousLanguage === 'arabic') {
 			return playVerseAudio({
 				key: `${props.key}`,
@@ -104,18 +129,16 @@ export async function playVerseAudio(props) {
 			});
 		}
 
-		// Delay before repeating
+		// Wait for the configured delay before moving to the next verse
 		if (calculatedDelay > 0) {
-			console.log(`Applying delay: ${calculatedDelay}ms`);
 			await new Promise((resolve) => setTimeout(resolve, calculatedDelay));
 		}
 
-		// If there are more verses to play, continue
+		// If there are more verses queued, remove the one that just finished
+		// and immediately start playing the next one in the list
 		if (window.versesToPlayArray?.length > 0) {
 			const index = window.versesToPlayArray.indexOf(audioSettings.playingKey);
-			if (index > -1) {
-				window.versesToPlayArray.splice(index, 1);
-			}
+			if (index > -1) window.versesToPlayArray.splice(index, 1);
 
 			if (window.versesToPlayArray.length > 0) {
 				return playVerseAudio({
@@ -126,9 +149,11 @@ export async function playVerseAudio(props) {
 			}
 		}
 
-		// Reset settings after playback ends
+		// No more verses to play — reset everything back to the default state
 		resetAudioSettings({ location: 'end' });
 	};
+
+	audio.addEventListener('ended', onEndedHandler);
 
 	__audioSettings.set(audioSettings);
 }
@@ -186,13 +211,25 @@ export async function playWordAudio(props) {
 	// For debugging purposes, needs not be removed
 	console.log('playing word', '-', audioSettings.playingWordKey);
 
-	audio.onended = function () {
+	// Use a named handler instead of audio.onended so it can be explicitly removed
+	// after firing, preventing handlers from stacking up across repeated plays
+	const onEndedHandler = function () {
+		// Remove the listener immediately to prevent any chance of double-firing
+		audio.removeEventListener('ended', onEndedHandler);
+
+		// If playAllWords is enabled and there are still more words left in this
+		// verse, automatically advance to and play the next word
 		if (props.playAllWords && wordNumber < getWordsInVerse(audioSettings.playingKey)) {
 			return playWordAudio({ key: `${wordChapter}:${wordVerse}:${wordNumber + 1}`, playAllWords: true });
 		}
+
+		// No more words to play — reset everything back to the default state
+		// and restore the audio type that was active before word playback started
 		resetAudioSettings({ location: 'end' });
 		audioSettings.audioType = currentAudioType;
 	};
+
+	audio.addEventListener('ended', onEndedHandler);
 
 	__audioSettings.set(audioSettings);
 }
@@ -255,6 +292,9 @@ export function resetAudioSettings(props) {
 		document.querySelectorAll('.word').forEach((element) => {
 			element.classList.remove('bg-black/5');
 		});
+
+		// Clear cached word counts to prevent stale data between playback sessions
+		wordsInVerseCache = {};
 	} catch (error) {
 		console.warn(error);
 	}
@@ -286,40 +326,44 @@ export async function wordAudioController(props) {
 	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key });
 }
 
-// Highlight words during audio playback based on timestamps
+// Highlight the currently playing word during verse audio playback.
 async function wordHighlighter() {
+	if (isHighlighting) return;
+	isHighlighting = true;
+
 	const audioSettings = get(__audioSettings);
 
 	try {
-		// Get the total number of words in the verse
+		// Get word count and timestamp data for the currently playing verse
 		const wordsInVerse = getWordsInVerse(audioSettings.playingKey);
-
-		// Retrieve verse timestamp data fetched in playVerseAudio function
 		const [chapter, verse] = audioSettings.playingKey.split(':').map(Number);
 		const reciterId = selectableReciters[get(__reciter)].id;
-		const timestampData = await fetchTimestampData();
-		const verseTimestamp = timestampData.data[chapter][verse][reciterId];
 
-		// Loop through all the words to highlight them
+		// cachedTimestampData is pre-populated in playVerseAudio before this
+		// listener is attached, so no async fetch is needed here
+		const verseTimestamp = cachedTimestampData.data[chapter][verse][reciterId];
+		const timestamps = verseTimestamp.split('|');
+
+		// Walk through each word and update playingWordKey to the latest word
+		// whose timestamp has been passed by the current audio position
 		for (let word = 0; word < wordsInVerse; word++) {
-			const wordTimestamp = verseTimestamp.split('|')[word];
-
-			// If the word timestamp is lower than the current audio time, update playingWordKey
-			if (wordTimestamp < audio.currentTime) {
+			if (timestamps[word] < audio.currentTime) {
 				audioSettings.playingWordKey = `${audioSettings.playingKey}:${word + 1}`;
 			}
 		}
 
-		// Update the audio settings
 		__audioSettings.set(audioSettings);
 
-		// Scroll to the currently playing word when auto-scroll is enabled and the word changes
+		// Scroll the newly active word into view if auto-scroll is on and the word has changed
 		if (audioSettings.wbwAutoScrollEnabled && audioSettings.playingWordKey && lastPlayedKey !== audioSettings.playingWordKey) {
 			scrollElementIntoView(audioSettings.playingWordKey);
 			lastPlayedKey = audioSettings.playingWordKey;
 		}
 	} catch (error) {
 		console.warn(error);
+	} finally {
+		// Always release the guard so the next timeupdate event can run
+		isHighlighting = false;
 	}
 }
 
@@ -480,7 +524,9 @@ export function prepareVersesToPlay(key) {
 
 // Fetch timestamps for word-by-word highlighting
 async function fetchTimestampData() {
-	return await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
+	if (cachedTimestampData) return cachedTimestampData;
+	cachedTimestampData = await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
+	return cachedTimestampData;
 }
 
 // Fetch audio and cache it in the Cache API.
