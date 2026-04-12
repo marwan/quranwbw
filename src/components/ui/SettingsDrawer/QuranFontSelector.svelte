@@ -1,6 +1,5 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import Check from '$svgs/Check.svelte';
 	import { onMount } from 'svelte';
 	import { __currentPage, __fontType, __offlineModeSettings } from '$utils/stores';
 	import { selectableFontTypes, fontTypes } from '$data/options';
@@ -69,10 +68,6 @@
 								<Radio name="fontType" bind:group={$__fontType} value={Number(fontKey)} on:change={(event) => updateSettings({ type: 'fontType', value: +event.target.value })} custom>
 									<div class="{individualRadioClasses} {$__fontType === Number(fontKey) && selectedRadioOrCheckboxClasses}">
 										<div class="w-full">{fontType.font}</div>
-
-										{#if $__fontType === Number(fontKey)}
-											<Check size={5} />
-										{/if}
 									</div>
 								</Radio>
 							{/if}

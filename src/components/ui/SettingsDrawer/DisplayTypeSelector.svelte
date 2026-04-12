@@ -1,6 +1,5 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import Check from '$svgs/Check.svelte';
 	import { __displayType, __currentPage, __fontType, __signLanguageModeEnabled, __settingsSelectorModal } from '$utils/stores';
 	import { selectableDisplays } from '$data/options';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
@@ -22,10 +21,6 @@
 			>
 				<div class="{individualRadioClasses} {$__displayType === displayOption.displayID && selectedRadioOrCheckboxClasses}">
 					<div class="w-full">{displayOption.displayName}</div>
-
-					{#if $__displayType === displayOption.displayID}
-						<Check size={5} />
-					{/if}
 				</div>
 			</Radio>
 		{/if}

@@ -1,6 +1,5 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import Check from '$svgs/Check.svelte';
 	import { __reciter, __translationReciter } from '$utils/stores';
 	import { selectableReciters, selectableTranslationReciters } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
@@ -19,10 +18,6 @@
 				<Radio name="reciter" bind:group={$__translationReciter} value={reciter.id} on:change={(event) => updateSettings({ type: 'translationReciter', value: +event.target.value })} custom>
 					<div class="{individualRadioClasses} {$__translationReciter === reciter.id && selectedRadioOrCheckboxClasses}">
 						<div class="w-full">{reciter.reciter}</div>
-
-						{#if $__translationReciter === reciter.id}
-							<Check size={5} />
-						{/if}
 					</div>
 				</Radio>
 			{/each}
@@ -41,8 +36,8 @@
 							<span>{reciter.reciter}</span>
 						</div>
 
-						{#if $__reciter === reciter.id}
-							<Check size={5} />
+						{#if reciter.wbw}
+							<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">WBW</span>
 						{/if}
 					</div>
 				</Radio>
