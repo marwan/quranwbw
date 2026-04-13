@@ -293,6 +293,23 @@
 			document.head.appendChild(style);
 		</script>
 
+		<!-- Custom theme styles -->
+		<script>
+			// Apply the theme class to the document's root element
+			document.documentElement.classList += `theme-${currentTheme} bg-theme-bg`;
+
+			// If user has a custom theme saved, override the CSS variables
+			try {
+				const customTheme = JSON.parse(localStorage.getItem('customTheme'));
+				if (customTheme && currentTheme === 999) {
+					// use theme-id 999 for custom
+					document.documentElement.style.setProperty('--theme-bg-rgb', customTheme.bg);
+					document.documentElement.style.setProperty('--theme-accent-rgb', customTheme.accent);
+					document.documentElement.style.setProperty('--theme-text-rgb', customTheme.accent);
+				}
+			} catch (e) {}
+		</script>
+
 		<!-- Umami -->
 		<script defer src="%sveltekit.assets%/events.js" data-website-id="07f075d1-8ac0-4ee4-a1b8-9702acc06860"></script>
 		%sveltekit.head%

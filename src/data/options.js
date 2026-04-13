@@ -148,6 +148,7 @@ export const selectableFontTypes = {
 export const themeColors = ['light', 'dark'];
 
 export const selectableThemes = {
+	999: { id: 999, name: 'Custom Theme', color: 'light' },
 	1: { id: 1, name: 'Golden Glint', color: 'light' },
 	2: { id: 2, name: 'Classic Light', color: 'light' },
 	3: { id: 3, name: 'Silver Lining', color: 'light' },
