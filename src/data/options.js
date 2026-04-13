@@ -156,7 +156,12 @@ export const selectableThemes = {
 	6: { id: 6, name: 'Midnight Blue', color: 'dark' },
 	7: { id: 7, name: 'Forest Green', color: 'dark' },
 	8: { id: 8, name: 'Oled Black', color: 'dark' },
-	9: { id: 9, name: 'Dark Luxury', color: 'dark' }
+	9: { id: 9, name: 'Dark Luxury', color: 'dark' },
+	10: { id: 10, name: 'Ash Noir', color: 'dark' },
+	11: { id: 11, name: 'Teal Ember', color: 'dark' },
+	12: { id: 12, name: 'Linen Clay', color: 'light' },
+	13: { id: 13, name: 'Olive Mist', color: 'light' },
+	14: { id: 14, name: 'Frost Slate', color: 'light' }
 };
 
 export const verseTranslationsLanguages = [
