@@ -10,5 +10,5 @@
 
 <!-- Show the bottom border in all cases except when on a division page and it is the last verse -->
 {#if !(['juz', 'hizb'].includes($__currentPage) && isLastVerse)}
-	<div class="border-b {window.theme('border')}"></div>
+	<div class="border-b border-theme-accent/20"></div>
 {/if}

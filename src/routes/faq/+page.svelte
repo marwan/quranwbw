@@ -18,13 +18,13 @@
 <PageHead title={'FAQ'} />
 
 <div class="theme">
-	<div class="my-6 space-y-4 pb-4 border-b-2 {window.theme('border')}">
+	<div class="my-6 space-y-4 pb-4 border-b-2 border-theme-accent/20">
 		<h1 class="text-2xl">Frequently Asked Questions</h1>
 	</div>
 
 	<div class="text-sm">
 		{#each Object.entries(websiteFAQs) as [key, value]}
-			<div id={+key + 1} class="py-6 space-y-2 border-b {window.theme('border')}">
+			<div id={+key + 1} class="py-6 space-y-2 border-b border-theme-accent/20">
 				<div class="flex flex-col space-y-2">
 					<div class="font-medium">#{+key + 1}: {value.question}</div>
 					<div>{@html linkMarkdown(value.answer)}</div>

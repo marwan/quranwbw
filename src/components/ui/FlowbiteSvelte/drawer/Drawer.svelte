@@ -15,7 +15,7 @@
 	export let bgOpacity = 'bg-opacity-75';
 	export let placement = 'left';
 	export let id = 'drawer-example';
-	export let divClass = `overflow-y-auto z-50 p-4 ${window.theme('bgMain')}`;
+	export let divClass = 'overflow-y-auto z-50 p-4 bg-theme-bg';
 	export let transitionParams = {};
 	export let transitionType = 'fly';
 	function multiple(node, params) {
@@ -75,7 +75,7 @@
 @prop export let bgOpacity: string = 'bg-opacity-75';
 @prop export let placement: 'left' | 'right' | 'top' | 'bottom' = 'left';
 @prop export let id: string = 'drawer-example';
-@prop export let divClass: string = 'overflow-y-auto z-50 p-4 ${window.theme('bgMain')}';
+@prop export let divClass: string = 'overflow-y-auto z-50 p-4 bg-theme-bg';
 @prop export let transitionParams: drawerTransitionParamTypes = {};
 @prop export let transitionType: drawerTransitionTypes = 'fly';
 -->

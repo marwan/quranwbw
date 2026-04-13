@@ -17,8 +17,8 @@
 	import { defaultSettings } from '$src/hooks.client';
 
 	// CSS classes for radio buttons
-	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
-	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
+	const radioClasses = 'inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';
+	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;
@@ -184,7 +184,7 @@
 			</div>
 
 			<!-- language options -->
-			<div id="recitation-language-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
+			<div id="recitation-language-block" class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20 {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
 				<span class="text-sm">Language</span>
 				<div class="flex flex-row space-x-2">
 					<!-- play arabic only -->
@@ -215,7 +215,7 @@
 			</div>
 
 			<!-- range options -->
-			<div id="single-or-range-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
+			<div id="single-or-range-block" class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20 {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
 				<span class="text-sm">Range</span>
 				<div class="flex flex-row space-x-2">
 					<!-- play this verse -->
@@ -247,7 +247,7 @@
 
 			<!-- repeat type options -->
 			{#if $__audioSettings.audioRange === 'playRange'}
-				<div id="repeat-type-block" class="flex flex-col space-y-4 py-4 border-t {window.theme('border')} {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
+				<div id="repeat-type-block" class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20 {$__audioSettings.audioType === 'word' ? 'hidden' : null}">
 					<span class="text-sm">Repeat</span>
 					<div class="flex flex-row space-x-2">
 						<!-- repeat each verse -->
@@ -274,7 +274,7 @@
 		<!-- from/till verse options -->
 		{#if $__currentPage === 'chapter' && $__audioSettings.audioType === 'verse'}
 			<div id="audio-range-options" class={$__audioSettings.audioRange === 'playRange' ? 'block' : 'hidden'}>
-				<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
+				<div class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20">
 					<div class="flex flex-row space-x-4">
 						<!-- Start Verse Dropdown -->
 						<div class="flex flex-row space-x-2">
@@ -286,7 +286,7 @@
 							<Dropdown bind:open={startVerseDropdownOpen} class="w-max">
 								<!-- Sticky Search Box -->
 								<div class="p-2 sticky top-0 z-10">
-									<Input min="1" max={versesInChapter} type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 w-32 {window.theme('placeholder')}">
+									<Input min="1" max={versesInChapter} type="number" bind:value={startVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 w-32 placeholder:text-theme-accent/50">
 										<Search slot="left" size={6} classes="pt-1 {startVerseSearch.length > 0 && 'hidden'}" />
 									</Input>
 								</div>
@@ -319,7 +319,7 @@
 							<Dropdown bind:open={endVerseDropdownOpen} class="w-max">
 								<!-- Sticky Search Box -->
 								<div class="p-2 sticky top-0 z-10">
-									<Input min="1" max={versesInChapter} type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 w-32 {window.theme('placeholder')}">
+									<Input min="1" max={versesInChapter} type="number" bind:value={endVerseSearch} autocomplete="off" placeholder="{term('verse')} #" size="md" class="bg-transparent rounded-3xl px-4 w-32 placeholder:text-theme-accent/50">
 										<Search slot="left" size={6} classes="pt-1 {endVerseSearch.length > 0 && 'hidden'}" />
 									</Input>
 								</div>
@@ -347,7 +347,7 @@
 		{/if}
 
 		{#if $__audioSettings.audioType === 'verse'}
-			<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
+			<div class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20">
 				<div class="flex flex-row space-x-4">
 					<!-- repeat times -->
 					<div class="flex flex-row space-x-2">
@@ -395,7 +395,7 @@
 			</div>
 		{/if}
 
-		<Checkbox checked={$__audioSettings.rememberSettings} on:click={() => toggleRememberSettings()} class="space-x-2 pb-6 font-normal {window.theme('bgMain')}">
+		<Checkbox checked={$__audioSettings.rememberSettings} on:click={() => toggleRememberSettings()} class="space-x-2 pb-6 font-normal bg-theme-bg">
 			<span>Remember Settings</span>
 		</Checkbox>
 	</div>

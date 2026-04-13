@@ -705,13 +705,13 @@
 			<!-- Data Section -->
 			<div class="flex flex-col space-y-2 text-sm {(isDownloading && !section.isDownloading) || (section.isSectionDisabled && section.isSectionDisabled()) ? disabledClasses : ''}">
 				<div>
-					<span class={window.theme('textSecondary')}>{section.title}</span>
+					<span class="text-theme-accent">{section.title}</span>
 					<span class="opacity-70"> (~{section.dataSizeInMB} MB)</span>
 				</div>
 
 				<!-- Mismatch banner with re-download button -->
 				{#if section.isDataDownloaded && section.showMismatchBanner}
-					<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-start text-sm {window.theme('bgSecondaryLight')}">
+					<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-start text-sm bg-theme-accent/5">
 						<span class="flex-shrink-0 w-5 h-5 mt-1 md:mt-0.5"><Info /></span>
 						<span>{mismatchMessage}</span>
 					</div>
@@ -751,7 +751,7 @@
 
 			<!-- Divider (only between sections, not after the last one) -->
 			{#if index < dataSections.length - 1}
-				<div class="border-b {window.theme('border')}"></div>
+				<div class="border-b border-theme-accent/20"></div>
 			{/if}
 		{/each}
 	</div>

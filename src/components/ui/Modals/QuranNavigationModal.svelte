@@ -18,8 +18,8 @@
 
 	// CSS classes
 	const linkClasses = 'flex flex-row space-x-2 items-center';
-	const linkTextClasses = `px-4 py-2 rounded-3xl border ${window.theme('border')} ${window.theme('hover')} w-fit text-sm`;
-	const listItemClasses = `py-2 px-2 text-sm w-full text-left font-normal rounded-3xl ${window.theme('hoverBorder')} ${window.theme('hover')}`;
+	const linkTextClasses = 'px-4 py-2 rounded-3xl border border-theme-accent/20 hover:bg-theme-accent/5 w-fit text-sm';
+	const listItemClasses = 'py-2 px-2 text-sm w-full text-left font-normal rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5';
 
 	let maxChaptersLoaded = false;
 	let maxVersesLoaded = false;
@@ -98,7 +98,7 @@
 			<div id="navigation-inputs" class="flex flex-col justify-start">
 				<div class="flex flex-row w-full h-fit items-center">
 					<form on:submit|preventDefault={() => (searchedKey = document.getElementById('searchKey').value)} class="flex flex-row w-full">
-						<Input id="searchKey" type="text" bind:value={searchedKey} autocomplete="off" {placeholder} size="md" class="bg-transparent rounded-3xl !text-center pl-10 px-8 {window.theme('placeholder')}">
+						<Input id="searchKey" type="text" bind:value={searchedKey} autocomplete="off" {placeholder} size="md" class="bg-transparent rounded-3xl !text-center pl-10 px-8 placeholder:text-theme-accent/50">
 							<Search slot="left" size={7} classes="pl-2 pt-1 {searchedKey.length > 0 && 'hidden'}" />
 							<CloseButton slot="right" on:click={() => (searchedKey = '')} class="pr-2 {searchedKey.length === 0 && 'hidden'}" />
 						</Input>
@@ -281,12 +281,12 @@
 				<!-- chapter selector -->
 				{#if !['morphology'].includes($__currentPage)}
 					<div class="flex flex-col py-2 space-y-2 w-full">
-						<div class="px-2 pb-2 text-xs font-semibold border-b {window.theme('border')}">{term('chapters')}</div>
+						<div class="px-2 pb-2 text-xs font-semibold border-b border-theme-accent/20">{term('chapters')}</div>
 						<ul id="navbar-chapter-list" class="grow basis-1/2 overflow-y-scroll">
 							{#each { length: maxItemsToLoad } as _, chapter}
 								<li>
 									<a href={$__currentPage === 'mushaf' ? `/page?id=${startPageOfChapters[chapter + 1]}` : `/${chapter + 1}`}>
-										<div class="{listItemClasses} {$__currentPage === 'chapter' ? (chapter + 1 === $__chapterNumber ? `${window.theme('bgSecondaryLight')}` : null) : null}">
+										<div class="{listItemClasses} {$__currentPage === 'chapter' ? (chapter + 1 === $__chapterNumber ? `bg-theme-accent/5` : null) : null}">
 											{chapter + 1}. {quranMetaData[chapter + 1].transliteration}
 
 											{#if $__currentPage === 'chapter'}
@@ -309,7 +309,7 @@
 				<!-- verse selector -->
 				{#if $__currentPage === 'chapter'}
 					<div class="flex flex-col py-2 space-y-2 w-44">
-						<div class="mx-4 pb-2 text-xs font-semibold border-b {window.theme('border')}">{term('verses')}</div>
+						<div class="mx-4 pb-2 text-xs font-semibold border-b border-theme-accent/20">{term('verses')}</div>
 						<ul id="navbar-verse-list" class="grow basis-1/2 px-2 overflow-y-scroll">
 							{#key $__chapterNumber}
 								{#each { length: maxVersesToLoad } as _, verse}
@@ -332,7 +332,7 @@
 				<!-- supplications selector -->
 				<!-- {#if $__currentPage === 'supplications'}
 					<div class="flex flex-col space-y-2 w-full">
-						<div class="px-2 text-sm pb-2 border-b {window.theme('border')} font-medium">{term('supplications')}</div>
+						<div class="px-2 text-sm pb-2 border-b border-theme-accent/20 font-medium">{term('supplications')}</div>
 						<ul id="navbar-supplications-list" class="grow basis-1/2 px-2 overflow-y-scroll">
 							{#each Object.entries(supplicationsFromQuran) as [key, value]}
 								<li>
@@ -348,7 +348,7 @@
 				<!-- words selector -->
 				{#if $__currentPage === 'morphology'}
 					<div class="flex flex-col space-y-2 w-full">
-						<div class="px-2 text-sm pb-2 border-b {window.theme('border')} font-medium">Words</div>
+						<div class="px-2 text-sm pb-2 border-b border-theme-accent/20 font-medium">Words</div>
 						{#await verseKeyData then verseKeyData}
 							<ul id="navbar-words-list" class="grow basis-1/2 px-2 overflow-y-scroll">
 								{#each { length: verseKeyData[morphologyKey].words } as _, word}

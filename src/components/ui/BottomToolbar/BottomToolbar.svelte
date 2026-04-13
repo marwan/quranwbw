@@ -3,7 +3,7 @@
 	import { __currentPage, __bottomToolbarVisible } from '$utils/stores';
 
 	$: toolbarOuterClasses = `print:hidden ${['home', 'chapter', 'mushaf'].includes($__currentPage) ? 'block' : 'hidden'}`;
-	$: toolbarInnerClasses = `fixed z-20 w-full h-16 max-w-xs md:max-w-lg shadow-md -translate-x-1/2 rounded-full bottom-4 left-1/2 border ${window.theme('border')} ${window.theme('bgMain')} ${$__bottomToolbarVisible ? 'block' : 'hidden'}`;
+	$: toolbarInnerClasses = `fixed z-20 w-full h-16 max-w-xs md:max-w-lg shadow-md -translate-x-1/2 rounded-full bottom-4 left-1/2 border border-theme-accent/20 bg-theme-bg ${$__bottomToolbarVisible ? 'block' : 'hidden'}`;
 </script>
 
 {#if $__currentPage !== 'home'}

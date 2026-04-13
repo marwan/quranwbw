@@ -10,7 +10,7 @@
 	import { selectableVerseTranslations } from '$data/options';
 
 	// CSS classes for radio buttons
-	const radioClasses = `inline-flex justify-between items-center py-2 px-4 w-full ${window.theme('bgMain')} rounded-lg border-2 ${window.theme('border')} cursor-pointer ${window.theme('checked')} ${window.theme('hover')}`;
+	const radioClasses = 'inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';
 
 	// Options
 	let copyType = 1;
@@ -206,7 +206,7 @@
 				<!-- Main Options -->
 				<div class="flex flex-col">
 					<!-- Arabic/Translation/Both -->
-					<div class="flex flex-col space-y-4 py-4 border-t {window.theme('border')}">
+					<div class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20">
 						<span class="text-sm">Text</span>
 						<div class="flex flex-row space-x-2">
 							<div class="flex items-center">
@@ -235,22 +235,22 @@
 				</div>
 
 				<!-- Other Options -->
-				<div class="flex flex-col space-y-2 py-4 border-t {window.theme('border')}">
-					<Checkbox checked={includeKey} on:click={() => (includeKey = !includeKey)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+				<div class="flex flex-col space-y-2 py-4 border-t border-theme-accent/20">
+					<Checkbox checked={includeKey} on:click={() => (includeKey = !includeKey)} class="space-x-2 pb-2 font-normal bg-theme-bg">
 						<span>Include {term('chapter')} Name & {term('verse')} Key</span>
 					</Checkbox>
 
 					{#if textType === 2 || textType === 3}
-						<Checkbox checked={includeTranslationNames} on:click={() => (includeTranslationNames = !includeTranslationNames)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+						<Checkbox checked={includeTranslationNames} on:click={() => (includeTranslationNames = !includeTranslationNames)} class="space-x-2 pb-2 font-normal bg-theme-bg">
 							<span>Include Author Names</span>
 						</Checkbox>
 
-						<Checkbox checked={includeFootNotes} on:click={() => (includeFootNotes = !includeFootNotes)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+						<Checkbox checked={includeFootNotes} on:click={() => (includeFootNotes = !includeFootNotes)} class="space-x-2 pb-2 font-normal bg-theme-bg">
 							<span>Include Footnotes</span>
 						</Checkbox>
 					{/if}
 
-					<Checkbox checked={includeLink} on:click={() => (includeLink = !includeLink)} class="space-x-2 pb-2 font-normal {window.theme('bgMain')}">
+					<Checkbox checked={includeLink} on:click={() => (includeLink = !includeLink)} class="space-x-2 pb-2 font-normal bg-theme-bg">
 						<span>Include Website Link</span>
 					</Checkbox>
 				</div>

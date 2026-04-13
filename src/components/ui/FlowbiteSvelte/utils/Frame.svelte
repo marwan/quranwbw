@@ -26,9 +26,9 @@
 	$: setContext('color', color);
 	// your script goes here
 	const bgColors = {
-		default: `${window.theme('bgMain')}`,
-		dropdown: `${window.theme('bgMain')}`,
-		navbar: `${window.theme('bgMain')}`,
+		default: `bg-theme-bg`,
+		dropdown: `bg-theme-bg`,
+		navbar: `bg-theme-bg`,
 		navbarUl: '',
 		form: '',
 		none: ''
@@ -43,10 +43,10 @@
 	};
 	const borderColors = {
 		default: ``,
-		dropdown: `${window.theme('border')}`,
-		navbar: `${window.theme('border')}`,
-		navbarUl: `${window.theme('border')}`,
-		form: `${window.theme('border')}`,
+		dropdown: `border-theme-accent/20`,
+		navbar: `border-theme-accent/20`,
+		navbarUl: `border-theme-accent/20`,
+		form: `border-theme-accent/20`,
 		none: ''
 	};
 	let divClass;
