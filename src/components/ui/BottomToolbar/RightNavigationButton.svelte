@@ -17,7 +17,7 @@
 			linkDisabled = $__chapterNumber === 114;
 		} else if ($__currentPage === 'mushaf') {
 			// Set properties for previous page navigation (right to left)
-			linkHref = `page/${$__pageNumber - 1}`;
+			linkHref = `page?id=${$__pageNumber - 1}`;
 			linkText = 'Previous Page';
 			linkDisabled = $__pageNumber === 1;
 		}
@@ -25,7 +25,7 @@
 </script>
 
 <!-- next chapter / previous page -->
-<a href="/{linkHref}" class="inline-flex flex-col items-center justify-center px-5 rounded-e-full group {window.theme('hover')} {linkDisabled ? disabledClasses : 'opacity-100'}">
+<a href="/{linkHref}" class="inline-flex flex-col items-center justify-center px-5 rounded-e-full group hover:bg-theme-accent/5 {linkDisabled ? disabledClasses : 'opacity-100'}">
 	<ChevronRight size={7} />
 	<span class="sr-only">{linkText}</span>
 </a>

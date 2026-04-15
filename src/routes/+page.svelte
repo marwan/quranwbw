@@ -26,13 +26,13 @@
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
-	const topButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
-	const continueReadingButtonClasses = `inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
+	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
+	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
-	const cardInnerClasses = `flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')} ${window.theme('hover')}`;
+	const cardInnerClasses = 'flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5 hover:bg-theme-accent/5';
 	const commontabClasses = 'px-2 md:px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
 	const tabDefaultBorder = `${commontabClasses} border-transparent`;
-	const tabActiveBorder = `${commontabClasses} ${window.theme('border')}`;
+	const tabActiveBorder = `${commontabClasses} border-theme-accent/20`;
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 	const currentHour = new Date().getHours();
 
@@ -157,7 +157,7 @@
 				</button>
 				<a href="/topics" class="{topButtonClasses} !py-4 md:bg-transparent"><TopicsBold size={4} /><span class="hidden md:block">Topics</span></a>
 				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
-				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page/${$__lastRead.page}` : '/page/1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
+				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
 				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
 			</div>
 			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
@@ -165,12 +165,12 @@
 	</div>
 
 	<!-- mid section -->
-	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl !mt-2 {window.theme('bgSecondaryLight')} homepage-background-image">
+	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl !mt-2 bg-theme-accent/5 homepage-background-image">
 		<a href="/" class="flex flex-row space-x-4 px-2 items-center justify-left" aria-label="Home">
 			<div><Quran /></div>
 
 			<div class="flex flex-col">
-				<div id="site-title" class="text-2xl md:text-3xl font-bold pb-2" style="color: {window.theme('icon')}">
+				<div id="site-title" class="text-2xl md:text-3xl font-bold pb-2 text-theme-accent">
 					<span class="block md:hidden">QuranWBW</span>
 					<span class="hidden md:block">Quran Word By Word</span>
 				</div>
@@ -190,7 +190,7 @@
 				<div class="flex flex-row space-x-2 w-full">
 					{#if isFriday}
 						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[18].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[18].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
 								<span>Al Kahf</span>
@@ -200,7 +200,7 @@
 
 					{#if isNight}
 						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Waaqia Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[56].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[56].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Evening Reminder:</span>
 								<span>Al Waaqia</span>
@@ -208,7 +208,7 @@
 						</a>
 
 						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[67].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[67].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
 								<span>Al Mulk</span>
@@ -222,7 +222,7 @@
 
 	<!-- chapter and most read tabs -->
 	<div id="homepage-tabs" style="margin-top: 0px;">
-		<div class="border-b {window.theme('border')} mt-4"></div>
+		<div class="border-b border-theme-accent/20 mt-4"></div>
 
 		<div id="extras-tabs" class="flex items-center justify-between">
 			<div class="flex flex-row justify-center">
@@ -239,7 +239,7 @@
 				</div>
 			</div>
 
-			<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => (homepageLayoutPreferences.extrasPanelVisible = !homepageLayoutPreferences.extrasPanelVisible)} data-umami-event="Toggle Panel Button">
+			<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (homepageLayoutPreferences.extrasPanelVisible = !homepageLayoutPreferences.extrasPanelVisible)} data-umami-event="Toggle Panel Button">
 				<svelte:component this={homepageLayoutPreferences.extrasPanelVisible ? EyeCrossed : Eye} size={4} />
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.extrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
@@ -273,7 +273,7 @@
 			</div>
 		</div>
 
-		<div class="border-b {window.theme('border')}"></div>
+		<div class="border-b border-theme-accent/20"></div>
 
 		<div id="quran-division-tabs" class="mt-4">
 			<div class="flex flex-row items-center justify-between">
@@ -293,7 +293,7 @@
 				</div>
 
 				{#if showDivisionSort}
-					<button class="inline-flex p-2 rounded-full items-center {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
+					<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
 						<svelte:component this={currentSortIsAscending ? SortDescending : SortAscending} size={4} />
 					</button>
 					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">
@@ -312,7 +312,7 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span class="truncate">
 								<span class="md:hidden">Continue:</span>
 								<span class="hidden md:inline-block">Continue Reading:</span>
@@ -338,8 +338,8 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadJuz = $__lastRead.juz}
-						<a href="/juz/{lastReadJuz}?startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+						<a href="/juz?id={lastReadJuz}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('juz')}
 								{lastReadJuz}, {lastReadChapter}:{lastReadVerse}
@@ -381,8 +381,8 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadHizb = $__lastRead.hizb}
-						<a href="/hizb/{lastReadHizb}?startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Hizb Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl" style="color: {window.theme('icon')}">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+						<a href="/hizb?id={lastReadHizb}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Hizb Button')}>
+							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('hizb')}
 								{lastReadHizb}, {lastReadChapter}:{lastReadVerse}

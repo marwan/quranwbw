@@ -104,7 +104,7 @@
 				<div class="grid gap-4 md:gap-6 w-full md:grid-cols-2">
 					{#each Object.entries(data) as [key, _]}
 						<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
-							<div class="{individualRadioClasses} {selection === +key ? `${window.theme('border')}` : null}">
+							<div class="{individualRadioClasses} {selection === +key ? `border-theme-accent/20` : null}">
 								<div class="flex flex-row mr-auto ml-2">{data[key].word_english}</div>
 
 								<!-- check / cross icon -->

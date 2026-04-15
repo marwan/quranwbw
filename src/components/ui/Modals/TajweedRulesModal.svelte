@@ -41,7 +41,7 @@
 		<Spinner inline={true} />
 	{:then data}
 		<table class="w-full text-sm text-left rtl:text-right">
-			<thead class="text-xs uppercase {window.theme('bgSecondaryLight')}">
+			<thead class="text-xs uppercase bg-theme-accent/5">
 				<tr>
 					<th scope="col" class="px-6 py-3 w-fit"> Icon </th>
 					<th scope="col" class="pl-2 pr-6 py-3"> Description </th>
@@ -49,7 +49,7 @@
 			</thead>
 			<tbody>
 				{#each Object.entries(data.data) as [_, value]}
-					<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
+					<tr class="bg-theme-bg border-b border-theme-accent/20 hover:bg-theme-accent/5">
 						<td class="py-4 w-fit tajweed-rules text-2xl text-center align-top theme-palette-tajweed"> {value.code} </td>
 						<td class="pl-2 pr-6 py-4">
 							<div class="flex flex-col space-y-2">

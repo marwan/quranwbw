@@ -158,7 +158,7 @@
 				</div>
 
 				{#if allData.wordSummaryData && Object.keys(allData.wordSummaryData).length > 0}
-					<div id="word-summary" class="text-center mx-auto md:w-3/4 text-sm md:text-lg pb-6 border-b-2 {window.theme('border')}">
+					<div id="word-summary" class="text-center mx-auto md:w-3/4 text-sm md:text-lg pb-6 border-b-2 border-theme-accent/20">
 						<div class="flex flex-col space-y-4">
 							<span>{@html allData.wordSummaryData.data[$__morphologyKey]}</span>
 						</div>
@@ -178,14 +178,14 @@
 				<div id="word-details" class="flex flex-col">
 					<!-- Verbs data -->
 					{#if allData?.wordVerbsData?.data && $__morphologyKey in allData.wordVerbsData.data}
-						<div id="word-forms" class="pb-8 pt-2 border-b-2 {window.theme('border')}">
+						<div id="word-forms" class="pb-8 pt-2 border-b-2 border-theme-accent/20">
 							<div class="flex flex-col">
 								<div id="different-verbs">
 									<div class="mx-auto text-center">
 										<div class="relative grid gap-4 grid-cols-2 row-gap-3 md:row-gap-4 md:grid-cols-6">
 											{#each Object.entries(allData.wordVerbsData.data[$__morphologyKey]) as [key, value]}
 												{#if value !== null}
-													<div class="flex flex-col py-5 duration-300 transform {window.theme('bgMain')} border {window.theme('border')} rounded-3xl shadow-sm text-center hover:-translate-y-2">
+													<div class="flex flex-col py-5 duration-300 transform bg-theme-bg border border-theme-accent/20 rounded-3xl shadow-sm text-center hover:-translate-y-2">
 														<div class="flex items-center justify-center mb-2">
 															<p id="verb-1" class="text-xl md:text-2xl pb-4 leading-5 arabic-font-1">{value}</p>
 														</div>
@@ -202,14 +202,14 @@
 
 					<!-- Word with same root -->
 					{#if allData?.wordsWithSameRootData?.data && wordRoot && wordRoot in allData.wordsWithSameRootData.data}
-						<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
+						<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 border-theme-accent/20">
 							<Table wordKeys={allData.wordsWithSameRootData.data[wordRoot]} tableType={1} wordData={allData.wordData} />
 						</div>
 					{/if}
 
 					<!-- Exact words in Quran -->
 					{#if Array.isArray(allData?.exactWordsInQuranData) && allData.exactWordsInQuranData.length}
-						<div id="exact-word-data" class="pb-8 pt-8 border-b-2 {window.theme('border')}">
+						<div id="exact-word-data" class="pb-8 pt-8 border-b-2 border-theme-accent/20">
 							<Table wordKeys={allData.exactWordsInQuranData} tableType={2} wordData={allData.wordData} />
 						</div>
 					{/if}

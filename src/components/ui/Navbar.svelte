@@ -17,11 +17,11 @@
 	let mushafChapterInfo = [];
 
 	// Classes for the navbar
-	$: navbarClasses = `${window.theme('bgMain')} border-b ${window.theme('border')} fixed w-full z-20 top-0 left-0 print:hidden ${$__currentPage === 'home' ? 'hidden' : 'block'}`;
+	$: navbarClasses = `bg-theme-bg border-b border-theme-accent/20 fixed w-full z-20 top-0 left-0 print:hidden ${$__currentPage === 'home' ? 'hidden' : 'block'}`;
 	$: topNavClasses = `
 		${getWebsiteWidth($__wideWesbiteLayoutEnabled)}
 		${$__topNavbarVisible ? 'block' : 'hidden'} 
-		${['chapter', 'mushaf'].includes($__currentPage) && `border-b ${window.theme('border')} `}
+		${['chapter', 'mushaf'].includes($__currentPage) && `border-b border-theme-accent/20 `}
 		flex flex-row items-center justify-between mx-auto px-4 py-2
 	`;
 
@@ -72,12 +72,12 @@
 
 <nav id="navbar" class={navbarClasses}>
 	<div id="top-nav" class={topNavClasses} aria-label="Home">
-		<a href="/" class="flex flex-row items-center p-3 cursor-pointer rounded-3xl {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" aria-label="Home">
+		<a href="/" class="flex flex-row items-center p-3 cursor-pointer rounded-3xl border border-transparent hover:border-theme-accent bg-theme-accent/5" aria-label="Home">
 			<Home />
 			<span class="text-xs pl-2 hidden md:block">Home</span>
 		</a>
 
-		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl {window.theme('hoverBorder')} {window.theme('hover')}" on:click={() => __quranNavigationModalVisible.set(true)} data-umami-event="Navbar Navigation Button">
+		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5" on:click={() => __quranNavigationModalVisible.set(true)} data-umami-event="Navbar Navigation Button">
 			<!-- display the chapter name on chapter page -->
 			{#if $__currentPage === 'chapter'}
 				{@html navbarChapterName}
@@ -112,7 +112,7 @@
 			{/if}
 		</button>
 
-		<button class="flex flex-row items-center p-3 cursor-pointer rounded-3xl {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" type="button" aria-label="Menu" on:click={() => __siteNavigationModalVisible.set(true)}>
+		<button class="flex flex-row items-center p-3 cursor-pointer rounded-3xl border border-transparent hover:border-theme-accent bg-theme-accent/5" type="button" aria-label="Menu" on:click={() => __siteNavigationModalVisible.set(true)}>
 			<span class="text-xs pr-2 hidden md:block">Menu</span>
 			<Menu />
 		</button>
@@ -138,12 +138,12 @@
 			</div>
 		</div>
 
-		<div id="chapter-progress-bar" class="fixed inset-x-0 z-20 h-1 rounded-r-3xl {window.theme('bgSecondary')}" style="width: {chapterProgress}%" />
+		<div id="chapter-progress-bar" class="fixed inset-x-0 z-20 h-1 rounded-r-3xl bg-theme-accent" style="width: {chapterProgress}%" />
 	{/if}
 
 	<!-- mini nav for mushaf page -->
 	{#if $__currentPage === 'mushaf'}
-		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between border-t ${window.theme('border')} text-xs mx-auto px-6`}>
+		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between border-t border-theme-accent/20 text-xs mx-auto px-6`}>
 			<div class="flex flex-row items-center py-2 truncate">
 				{#if !$__topNavbarVisible}
 					<span>Page {$__pageNumber} -&nbsp;</span>
