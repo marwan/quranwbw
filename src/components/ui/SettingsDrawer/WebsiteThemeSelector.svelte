@@ -9,13 +9,15 @@
 
 	let bgHex = '#ffffff';
 	let accentHex = '#b1901f';
+	let textHex = '#b1901f';
 
 	onMount(() => {
 		const saved = localStorage.getItem('customTheme');
 		if (saved) {
-			const { bg, accent } = JSON.parse(saved);
+			const { bg, accent, text } = JSON.parse(saved);
 			bgHex = rgbChannelsToHex(bg);
 			accentHex = rgbChannelsToHex(accent);
+			textHex = rgbChannelsToHex(text);
 		}
 	});
 
@@ -38,7 +40,8 @@
 			'customTheme',
 			JSON.stringify({
 				bg: hexToRgbChannels(bgHex),
-				accent: hexToRgbChannels(accentHex)
+				accent: hexToRgbChannels(accentHex),
+				text: hexToRgbChannels(textHex)
 			})
 		);
 
@@ -53,7 +56,7 @@
 	<div class="flex flex-col space-y-4">
 		<div class="text-md font-medium">Custom Theme</div>
 
-		<div class="grid grid-cols-2 gap-4">
+		<div class="flex flex-col space-y-2 md:flex-row md:space-x-2">
 			<label class="flex flex-col space-y-2">
 				<span class="text-sm">Background color</span>
 				<input type="color" bind:value={bgHex} class="h-10 w-full" />
@@ -62,6 +65,11 @@
 			<label class="flex flex-col space-y-2">
 				<span class="text-sm">Accent color</span>
 				<input type="color" bind:value={accentHex} class="h-10 w-full" />
+			</label>
+
+			<label class="flex flex-col space-y-2">
+				<span class="text-sm">Text color</span>
+				<input type="color" bind:value={textHex} class="h-10 w-full" />
 			</label>
 		</div>
 
