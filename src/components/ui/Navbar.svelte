@@ -3,7 +3,7 @@
 	import Home from '$svgs/Home.svelte';
 	import ChevronDown from '$svgs/ChevronDown.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
+	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled, __fullVersesDisplayKeys } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	import Mecca from '$svgs/Mecca.svelte';
@@ -42,8 +42,36 @@
 	$: revelationTerm = term(revelation.termKey);
 	$: RevelationIcon = revelation.Icon;
 
-	// Calculate the scroll progress percentage for the current chapter
-	$: chapterProgress = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
+	// Calculates reading progress (0–100%) — by verse fraction on chapter pages, or by position within the displayed verse keys on all other pages.
+	$: readingProgress = (() => {
+		// No progress if the user hasn't started reading yet
+		if (!Object.prototype.hasOwnProperty.call($__lastRead, 'chapter')) return 0;
+
+		// On the chapter page, progress = verses read / total verses in chapter
+		if ($__currentPage === 'chapter') {
+			return ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100;
+		}
+
+		// On other pages, progress is derived from the ordered list of displayed verse keys
+		if ($__fullVersesDisplayKeys?.length) {
+			// The store may hold a comma-separated string or an array — normalise to array
+			const keys = typeof $__fullVersesDisplayKeys === 'string' ? $__fullVersesDisplayKeys.split(',') : $__fullVersesDisplayKeys;
+
+			// Find the last key that is at or before the user's current read position
+			const index = keys.findLastIndex((k) => {
+				const [kChap, kVerse] = k.split(':').map(Number);
+				return kChap < $__lastRead.chapter || (kChap === $__lastRead.chapter && kVerse <= $__lastRead.verse);
+			});
+
+			// If no key is before the last read position, the user hasn't reached this page yet
+			if (index === -1) return 0;
+
+			// Progress = position of last read key / total keys on this page
+			return ((index + 1) / keys.length) * 100;
+		}
+
+		return 0;
+	})();
 
 	// Get the chapter name for the navbar
 	$: {
@@ -137,8 +165,11 @@
 				<span>{lastReadJuz ? `${term('juz')} ${lastReadJuz}` : '...'}</span>
 			</div>
 		</div>
+	{/if}
 
-		<div id="chapter-progress-bar" class="fixed inset-x-0 z-20 h-1 rounded-r-3xl bg-theme-accent" style="width: {chapterProgress}%" />
+	<!-- Show the progress tracker for specific pages only -->
+	{#if ['chapter', 'juz', 'hizb'].includes($__currentPage)}
+		<div id="progress-bar" class="fixed inset-x-0 z-20 h-1 rounded-r-3xl bg-theme-accent" style="width: {readingProgress}%" />
 	{/if}
 
 	<!-- mini nav for mushaf page -->

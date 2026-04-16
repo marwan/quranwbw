@@ -8,7 +8,7 @@
 	import Bismillah from '$misc/Bismillah.svelte';
 	import ChapterHeader from '$misc/ChapterHeader.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
-	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __currentPage, __keysToFetch, __pageURL } from '$utils/stores';
+	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __currentPage, __keysToFetch, __pageURL, __fullVersesDisplayKeys } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { isValidVerseKey } from '$utils/validateKey';
@@ -17,8 +17,11 @@
 	import { term } from '$utils/terminologies';
 	import { selectableDisplays } from '$data/options';
 
-	// set this so we can use it for the 'setPlayFromHere' functionality in the audio modal
+	// Set this so we can use it for the 'setPlayFromHere' functionality in the audio modal
 	$: $__keysToFetch = keys;
+
+	// Set the keys in this store for progress tracking
+	$__fullVersesDisplayKeys = keys;
 
 	const displayComponents = {
 		1: { component: WordByWord },
