@@ -3,11 +3,14 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import ArrowUp from '$svgs/ArrowUp.svelte';
 	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
-	import { __currentPage } from '$utils/stores';
+	import { __currentPage, __displayType } from '$utils/stores';
 	import { onMount } from 'svelte';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { page } from '$app/stores';
+
+	// Allow only supported display types; fallback to default without saving to settings
+	if ([3, 4].includes($__displayType)) $__displayType = 1;
 
 	// State variables
 	let allTopics = [];
