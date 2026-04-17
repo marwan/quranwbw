@@ -33,13 +33,13 @@
 					<div class="{individualRadioClasses} px-5 py-3 {$__reciter === reciter.id && selectedRadioOrCheckboxClasses}">
 						<div class="flex flex-row space-x-2 items-center w-full">
 							<img src="{staticEndpoint}/images/reciters/{reciter.image}" class={reciterImageClasses} alt={reciter.reciter} />
-							<span>{reciter.reciter}</span>
+							<span class="truncate pr-2">{reciter.reciter}</span>
 						</div>
 
 						{#if reciter.tags?.length}
 							<div class="flex flex-row space-x-1">
 								{#each [...reciter.tags].reverse() as tag}
-									<span class="px-2 py-1 rounded-full text-xs h-max {window.theme('textSecondary')} {window.theme('bgSecondaryLight')}">
+									<span class="px-2 py-1 rounded-full text-xs h-max bg-theme-accent text-theme-bg">
 										{tag.toUpperCase()}
 									</span>
 								{/each}
