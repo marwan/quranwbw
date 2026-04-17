@@ -46,7 +46,7 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: false,
 		customClasses: null,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'hizb', 'search', 'topics'],
+		disallowedInPages: ['bookmarks', 'morphology', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	6: {

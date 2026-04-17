@@ -4,6 +4,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import WordByWord from '$display/layouts/WordByWord.svelte';
 	import Normal from '$display/layouts/Normal.svelte';
+	import SideBySide from '$display/layouts/SideBySide.svelte';
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
 	import Bismillah from '$misc/Bismillah.svelte';
 	import ChapterHeader from '$misc/ChapterHeader.svelte';
@@ -26,6 +27,7 @@
 	const displayComponents = {
 		1: { component: WordByWord },
 		2: { component: Normal },
+		5: { component: SideBySide },
 		7: { component: TranslationTransliteration }
 	};
 

@@ -8,8 +8,8 @@
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import { page } from '$app/stores';
 
-	// only allow display type 1 & 2, and don't save the layout in settings
-	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
+	// Allow only supported display types; fallback to default without saving to settings
+	if ([3, 4].includes($__displayType)) $__displayType = 1;
 
 	let juzKeysData;
 
