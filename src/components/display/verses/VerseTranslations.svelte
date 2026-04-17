@@ -17,7 +17,7 @@
 	const params = new URLSearchParams(window.location.search);
 	const searchQuery = params.get('query') === null ? '' : params.get('query');
 
-	const footnoteSupClasses = `ml-1 mt-1 px-2 py-1 rounded-full font-semibold cursor-pointer system-font ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
+	const footnoteSupClasses = 'ml-1 mt-1 px-2 py-1 rounded-full font-semibold cursor-pointer system-font border border-transparent hover:border-theme-accent bg-theme-accent/5';
 
 	let footnoteId;
 	let footnoteChapter;
@@ -120,7 +120,7 @@
 				{@const verseKey = `${value.meta.chapter}:${value.meta.verse}`}
 				{#if $__verseTranslationData[verseTranslationID] && $__verseTranslationData[verseTranslationID][verseKey]}
 					{@const verseTranslation = $__verseTranslationData[verseTranslationID][verseKey]}
-					{@const translationFootnoteClasses = `hidden my-2 footnote-block px-2 py-2 border-2 ${window.theme('border')} rounded-2xl footnote-${value.meta.chapter}-${value.meta.verse}-${verseTranslationID}`}
+					{@const translationFootnoteClasses = `hidden my-2 footnote-block px-2 py-2 border-2 border-theme-accent/20 rounded-2xl footnote-${value.meta.chapter}-${value.meta.verse}-${verseTranslationID}`}
 
 					<div class="flex flex-col print:break-inside-avoid">
 						<span class="{isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font} break-words">

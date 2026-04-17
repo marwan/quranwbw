@@ -4,7 +4,6 @@
 	import { selectableThemes, themeColors } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
-	import { createLink } from '$utils/createLink';
 </script>
 
 <div class="grid gap-3 w-full">
@@ -29,5 +28,3 @@
 		</div>
 	{/each}
 </div>
-
-<div class="text-xs opacity-70 pb-8">Got a unique color combo in mind that's a visual delight? Shoot your suggestions over to {@html createLink('mailto:quranwbw@gmail.com', 'quranwbw@gmail.com')}.</div>

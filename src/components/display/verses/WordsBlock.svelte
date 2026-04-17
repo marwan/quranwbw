@@ -85,7 +85,7 @@
 	// Common classes for words and end icons
 	$: wordAndEndIconCommonClasses = `
 		hover:cursor-pointer
-		${window.theme('hover')}
+		hover:bg-theme-accent/5
 		${$__displayType === 1 ? 'text-center flex flex-col' : 'inline-flex flex-col'}
 		${selectableDisplays[$__displayType].layout === 'wbw' ? 'p-3' : [2, 3].includes($__fontType) ? ($__currentPage === 'mushaf' ? 'p-0' : 'px-0 py-1') : 'p-1'}
 		${exampleVerse && '!p-0'}
@@ -136,7 +136,7 @@
 	$: endIconClasses = `
 		rounded-lg 
 		${wordAndEndIconCommonClasses}
-		${$__websiteTheme === 1 && `${window.theme('textSecondary')}`}
+		${$__websiteTheme === 1 && `text-theme-accent`}
 	`;
 
 	// Classes for word translation and transliteration
@@ -167,7 +167,7 @@
 			id={wordKey}
 			class={`
 				word rounded-lg ${wordAndEndIconCommonClasses} text-center print:break-inside-avoid
-				${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? window.theme('bgSecondaryDark') : ''}
+				${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? 'bg-theme-accent/15' : ''}
 				${$__currentPage === 'supplications' && word + 1 < (supplicationsFromQuran[key] || 0) ? ($__hideNonDuaPart ? 'hidden' : 'opacity-30') : ''}
 			`.trim()}
 			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}
@@ -202,7 +202,7 @@
 
 		<!-- word tooltip -->
 		{#if $__wordTooltip > 1}
-			<Tooltip arrow={false} type="light" class="z-[19] hidden md:block text-center inline-flex font-sans font-normal">
+			<Tooltip arrow={false} type="light" class="z-30 hidden md:block text-center inline-flex font-sans font-normal">
 				{#if $__wordTooltip === 2}
 					{@html transliterationWords[word]}
 				{:else if $__wordTooltip === 3}
@@ -210,8 +210,8 @@
 				{:else if $__wordTooltip === 4}
 					{@html `
 						<div class="flex flex-col">
-							${transliterationWords[word]} 
-							<div class="border-t"></div> 
+							<span>${transliterationWords[word]}</span>
+							<div class="border-t border-theme-bg my-1"></div> 
 							<span class="${selectableWordTranslations[$__wordTranslation].customClasses}">${translationWords[word]}</span>
 						</div>
 					`}
@@ -241,7 +241,7 @@
 	{/if}
 
 	<!-- end icon tooltip -->
-	<Tooltip arrow={false} type="light" class="z-[19] inline-flex font-sans font-normal">
+	<Tooltip arrow={false} type="light" class="z-30 inline-flex font-sans font-normal">
 		End of {key}
 	</Tooltip>
 {/if}

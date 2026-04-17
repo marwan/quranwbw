@@ -11,9 +11,10 @@
 	import { fade } from 'svelte/transition';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-	const API_KEY = import.meta.env.VITE_KALIMAT_API_KEY;
+	// Public client-side API key (origin-restricted on API provider side)
+	const kalimatPublicApiKey = import.meta.env.VITE_KALIMAT_PUBLIC_API_KEY;
 
-	const linkClasses = `w-fit flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
+	const linkClasses = 'w-fit flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const linkTextClasses = 'text-xs md:text-sm text-left w-fit capitalize truncate';
 
 	const params = new URLSearchParams(window.location.search);
@@ -44,7 +45,7 @@
 		try {
 			const response = await fetch(`https://api.kalimat.dev/search?query=${searchQuery}&numResults=50`, {
 				headers: {
-					'x-api-key': API_KEY
+					'x-api-key': kalimatPublicApiKey
 				}
 			});
 
@@ -168,9 +169,9 @@
 		<!-- search input form -->
 		<form on:submit|preventDefault={() => updateSearchQuery(document.getElementById('search-input').value)} class="flex items-center w-full">
 			<div class="relative w-full">
-				<input type="search" id="search-input" value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border {window.theme('placeholder')} {window.theme('border')} {window.theme('input')}" placeholder="Search Ibrahim, Mary, Jannat, كتاب..." required />
+				<input type="search" id="search-input" value={searchQuery} class="bg-transparent block py-4 pl-4 rounded-l-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" placeholder="Search Ibrahim, Mary, Jannat, كتاب..." required />
 			</div>
-			<button type="submit" title="Search" class="py-4 px-5 rounded-r-3xl items-center border {window.theme('border')} {window.theme('bgSecondaryLight')}">
+			<button type="submit" title="Search" class="py-4 px-5 rounded-r-3xl items-center border border-theme-accent/20 bg-theme-accent/5">
 				<Search2 size={5} />
 			</button>
 		</form>

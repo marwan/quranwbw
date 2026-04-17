@@ -25,7 +25,7 @@
 </script>
 
 <!-- next chapter / previous page -->
-<a href="/{linkHref}" class="inline-flex flex-col items-center justify-center px-5 rounded-e-full group {window.theme('hover')} {linkDisabled ? disabledClasses : 'opacity-100'}">
+<a href="/{linkHref}" class="inline-flex flex-col items-center justify-center px-5 rounded-e-full group hover:bg-theme-accent/5 {linkDisabled ? disabledClasses : 'opacity-100'}">
 	<ChevronRight size={7} />
 	<span class="sr-only">{linkText}</span>
 </a>

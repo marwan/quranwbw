@@ -8,7 +8,7 @@
 	export let size = 'md';
 	export let href = undefined;
 	const colors = {
-		default: `${window.theme('hover')}`
+		default: `hover:bg-theme-accent/5`
 	};
 	const sizing = {
 		xs: 'm-0.5 rounded-full p-0.5',
