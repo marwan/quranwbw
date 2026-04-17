@@ -490,7 +490,7 @@
 					<div class="border-b {window.theme('border')}"></div>
 
 					<!-- wbw-autoscroll-setting -->
-					<div id="wbw-autoscroll-setting" class="{settingsBlockClasses} {!selectableReciters[$__reciter].wbw && disabledClasses}">
+					<div id="wbw-autoscroll-setting" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Auto-Scroll to Highlighted Words</span>
 							<label class="inline-flex items-center cursor-pointer">
@@ -498,7 +498,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Automatically scroll to the highlighted words while listening to the recitation.</p>
+						<p class={settingsDescriptionClasses}>Automatically scroll to the highlighted words while listening to the recitation. This option only works with reciters that support word-by-word highlighting.</p>
 					</div>
 				</div>
 			</div>
