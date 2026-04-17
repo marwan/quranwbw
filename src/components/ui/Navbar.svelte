@@ -2,12 +2,13 @@
 	import Menu from '$svgs/Menu.svelte';
 	import Home from '$svgs/Home.svelte';
 	import ChevronDown from '$svgs/ChevronDown.svelte';
+	import Mecca from '$svgs/Mecca.svelte';
+	import Madinah from '$svgs/Madinah.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled, __fullVersesDisplayKeys } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
-	import Mecca from '$svgs/Mecca.svelte';
-	import Madinah from '$svgs/Madinah.svelte';
+	import { page } from '$app/stores';
 
 	let lastReadPage;
 	let lastReadJuz;
@@ -96,6 +97,9 @@
 			console.warn(error);
 		}
 	}
+
+	// Set the Juz or Hizb Id
+	$: juzOrHizbId = Number($page.url.searchParams.get('id')) || 1;
 </script>
 
 <nav id="navbar" class={navbarClasses}>
@@ -120,7 +124,8 @@
 
 			<!-- display only the division title for juz/hizb page -->
 			{#if ['juz', 'hizb'].includes($__currentPage)}
-				{document.title.split(' - ')[0]}
+				{term($__currentPage)}
+				{juzOrHizbId}
 				<ChevronDown />
 			{/if}
 

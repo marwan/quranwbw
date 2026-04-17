@@ -2,7 +2,7 @@
 	import PlaySolid from '$svgs/PlaySolid.svelte';
 	import PauseSolid from '$svgs/PauseSolid.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
-	import { __audioSettings } from '$utils/stores';
+	import { __currentPage, __audioSettings, __fullVersesDisplayKeys } from '$utils/stores';
 	import { playVerseAudio, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
@@ -16,7 +16,14 @@
 		if ($__audioSettings.isPlaying) {
 			resetAudioSettings({ location: 'end' });
 		} else {
-			setVersesToPlay({ allVersesOnPage: true });
+			// On juz or hizb pages, play only the verses in that specific section
+			if (['juz', 'hizb'].includes($__currentPage)) {
+				setVersesToPlay({ verses: $__fullVersesDisplayKeys.split(',') });
+			}
+			// On other pages, play all verses available on the page
+			else {
+				setVersesToPlay({ allVersesOnPage: true });
+			}
 
 			playVerseAudio({
 				key: `${window.versesToPlayArray[0]}`,
