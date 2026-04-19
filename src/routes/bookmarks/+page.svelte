@@ -5,8 +5,8 @@
 	import { __currentPage, __displayType, __userBookmarks } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 
-	// only allow display type 1 & 2, and don't save the layout in settings
-	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
+	// Allow only supported display types; fallback to default without saving to settings
+	if ([3, 4].includes($__displayType)) $__displayType = 1;
 
 	__currentPage.set('bookmarks');
 </script>
