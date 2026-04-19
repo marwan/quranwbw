@@ -1,7 +1,7 @@
 export const selectableDisplays = {
 	1: {
 		displayID: 1,
-		displayName: 'Word by Word',
+		displayName: 'Word By Word',
 		displayComponent: 'WBWDisplay',
 		layout: 'wbw',
 		continuous: false,
@@ -21,7 +21,7 @@ export const selectableDisplays = {
 	},
 	3: {
 		displayID: 3,
-		displayName: 'Continuous Word by Word',
+		displayName: 'Continuous Word By Word',
 		displayComponent: 'ContinuousDisplay',
 		layout: 'wbw',
 		continuous: true,
@@ -46,7 +46,7 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: false,
 		customClasses: null,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'hizb', 'search', 'topics'],
+		disallowedInPages: ['morphology', 'search'],
 		disallowedInFontTypes: [9]
 	},
 	6: {

@@ -1,7 +1,6 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import party from 'party-js';
 	import Check from '$svgs/Check.svelte';
 	import Cross from '$svgs/Cross.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
@@ -12,16 +11,33 @@
 	import { playWordAudio } from '$utils/audioController';
 	import { fetchWordData } from '$utils/fetchData';
 	import { fade } from 'svelte/transition';
+	import { onMount } from 'svelte';
 
 	let randomID = 1;
 	let selection = null;
 	let answerChecked = false;
 	let isAnswerCorrect = null;
 	let randomWord = Math.floor(Math.random() * 3);
+	let party = null; // will be set if CDN load succeeds
 
 	$: randomWordsData = fetchRandomWords(randomID);
 
-	// Fetches all word data and returns 4 random words with their Arabic, transliteration, and translation
+	// Dynamically load party-js from CDN after mount; sets `party` if successful, silently skips confetti if not
+	onMount(() => {
+		const script = document.createElement('script');
+		script.src = 'https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js';
+		script.async = true;
+		script.onload = () => {
+			// party-js attaches itself to window.party
+			if (window.party) party = window.party;
+		};
+		script.onerror = () => {
+			// CDN failed (404, 500, offline) — confetti simply won't run
+			console.warn('party-js CDN failed to load. Confetti will be disabled.');
+		};
+		document.head.appendChild(script);
+	});
+
 	async function fetchRandomWords() {
 		const { arabicWordData, translationWordData, transliterationWordData } = await fetchWordData(1, 1, 1);
 
@@ -58,14 +74,15 @@
 		isAnswerCorrect = selection === randomWord;
 
 		if (isAnswerCorrect) {
-			// Show confetti for correct answer
-			party.confetti(document.body, {
-				count: 80,
-				spread: 100,
-				size: 2
-			});
+			// Only fire confetti if party-js loaded successfully
+			if (party) {
+				party.confetti(document.body, {
+					count: 80,
+					spread: 100,
+					size: 2
+				});
+			}
 
-			// Update correct answers count
 			updateSettings({ type: 'quizCorrectAnswers', value: $__quizCorrectAnswers + 1 });
 		} else {
 			// Update wrong answers count

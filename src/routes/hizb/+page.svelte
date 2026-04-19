@@ -1,6 +1,4 @@
 <script>
-	export let data;
-
 	import PageHead from '$misc/PageHead.svelte';
 	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
@@ -8,14 +6,17 @@
 	import { __currentPage, __displayType, __pageURL, __fontType, __wordTranslation, __wordTransliteration } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
+	import { page } from '$app/stores';
 
-	// only allow display type 1 & 2, and don't save the layout in settings
-	if ([3, 4, 5].includes($__displayType)) $__displayType = 1;
+	// Allow only supported display types; fallback to default without saving to settings
+	if ([3, 4].includes($__displayType)) $__displayType = 1;
 
-	const hizbNumber = data.id;
 	let hizbKeysData;
 
-	$: if ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration) {
+	// Reactive number from the URL (?id=...), updates on navigation
+	$: hizbNumber = Number($page.url.searchParams.get('id')) || 1;
+
+	$: if (hizbNumber && ($__pageURL || $__fontType || $__wordTranslation || $__wordTransliteration)) {
 		hizbKeysData = (async () => {
 			try {
 				const data = await getSegmentKeys('hizb');
@@ -31,7 +32,9 @@
 	__currentPage.set('hizb');
 </script>
 
-<PageHead title={`${term('hizb')} ${hizbNumber}`} />
+{#key hizbNumber}
+	<PageHead title={`${term('hizb')} ${hizbNumber}`} />
+{/key}
 
 {#await hizbKeysData}
 	<Spinner />
