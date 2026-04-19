@@ -857,7 +857,7 @@ export const selectableReciters = {
 
 export const selectableTranslationReciters = {
 	1: { id: 1, reciter: 'English - Ibrahim Walk (Sahih International)', url: 'https://everyayah.com/data/English/Sahih_Intnl_Ibrahim_Walk_192kbps/' },
-	2: { id: 2, reciter: 'Urdu - Dr. Farhat Hashmi', url: 'https://everyayah.com/data/translations/urdu_farhat_hashmi/' },
+	2: { id: 2, reciter: 'Urdu - Dr. Farhat Hashmi (Word By Word)', url: 'https://everyayah.com/data/translations/urdu_farhat_hashmi/' },
 	3: { id: 3, reciter: 'Urdu - Shamshad Ali Khan', url: 'https://everyayah.com/data/translations/urdu_shamshad_ali_khan_46kbps/' }
 };
 
