@@ -91,6 +91,7 @@
 	const settingsDescriptionClasses = 'mb-6 text-xs opacity-70';
 	const toggleBtnClasses = 'relative w-14 h-7 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:content-[""] after:absolute after:top-0.5 after:start-[4px] after:border after:rounded-full after:h-6 after:w-6 after:transition-all bg-theme-accent/15 after:bg-theme-bg after:border-theme-bg peer-checked:bg-theme-accent';
 	const rangeClasses = 'appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full bg-theme-accent/15 [&::-webkit-slider-thumb]:!bg-theme-accent';
+	const headingIconClasses = 'inline-flex p-2 rounded-full items-center border border-transparent bg-theme-accent/5';
 
 	let settingsDrawerOpacity = 'opacity-100';
 	let settingsDrawerBackground = 'bg-theme-bg';
@@ -226,7 +227,7 @@
 		<div id="all-settings">
 			<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center my-4">
-					<Settings size="7" />
+					<span class={headingIconClasses}><Settings size="6" /></span>
 					<h5 class="inline-flex items-center text-3xl font-semibold mb-1">Settings</h5>
 				</div>
 
@@ -236,7 +237,7 @@
 			<!-- Appearance & Layout -->
 			<div class="py-5 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center">
-					<SettingsDisplay size="5" />
+					<span class={headingIconClasses}><SettingsDisplay size="4" /></span>
 					<h3 class="block font-medium text-xl mb-1">Appearance & Layout</h3>
 				</div>
 
@@ -351,7 +352,7 @@
 			<!-- Text & Typography -->
 			<div class="py-5 border-t-2 border-theme-accent/20">
 				<div class="flex flex-row space-x-2 items-center {settingsDrawerOpacity}">
-					<SettingsFont size="5" />
+					<span class={headingIconClasses}><SettingsFont size="4" /></span>
 					<h3 class="block font-medium text-xl mb-1">Text & Typography</h3>
 				</div>
 
@@ -412,7 +413,7 @@
 			<!-- Translation & Tafsir -->
 			<div class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center">
-					<SettingsTranslation size="5" />
+					<span class={headingIconClasses}><SettingsTranslation size="4" /></span>
 					<h3 class="block font-medium text-xl mb-1">Translation & {term('tafsir')}</h3>
 				</div>
 
@@ -475,7 +476,7 @@
 			<!-- Recitation & Audio -->
 			<div class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center">
-					<SettingsAudio size="5" />
+					<span class={headingIconClasses}><SettingsAudio size="4" /></span>
 					<h3 class="block font-medium text-xl mb-1">Recitation & Audio</h3>
 				</div>
 
@@ -532,7 +533,7 @@
 			<!-- Behavior & Preferences -->
 			<div class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center">
-					<SettingsMisc size="5" />
+					<span class={headingIconClasses}><SettingsMisc size="4" /></span>
 					<h3 class="block font-medium text-xl mb-1">Behavior & Preferences</h3>
 				</div>
 
