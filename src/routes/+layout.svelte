@@ -86,7 +86,7 @@
 	function setDefaultPaddings() {
 		// paddingTop = $__currentPage === 'home' ? 'pt-16' : defaultPaddingTop;
 		paddingTop = $__currentPage === 'home' ? 'pt-0' : defaultPaddingTop;
-		paddingBottom = $__currentPage === 'chapter' ? 'pb-24' : defaultPaddingBottom;
+		paddingBottom = ['chapter', 'juz', 'hizb'].includes($__currentPage) ? 'pb-24' : defaultPaddingBottom;
 		paddingX = $__currentPage === 'mushaf' ? 'px-0 md:px-4' : $__currentPage === 'home' ? 'px-0' : 'px-4';
 	}
 

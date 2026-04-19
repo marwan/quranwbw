@@ -1,5 +1,6 @@
 <script>
 	export let size = 4;
+	// w-7 h-7
 </script>
 
 <svg class="w-{size} h-{size} fill-theme-accent" viewBox="0 0 24 24" width="512" height="512"
