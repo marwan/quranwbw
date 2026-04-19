@@ -21,7 +21,7 @@ let ticking = false;
 
 // Main entry point — call this on every scroll event.
 // Decides how to respond based on the current page.
-export function toggleNavbar() {
+export function toggleNavbarToolbarOnScroll() {
 	const currentPage = get(__currentPage);
 
 	if (scrollAwarePages.includes(currentPage)) {
