@@ -1,6 +1,5 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import Check from '$svgs/Check.svelte';
 	import { __websiteTheme } from '$utils/stores';
 	import { selectableThemes, themeColors } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
@@ -21,10 +20,6 @@
 									<div class="w-4 h-8 rounded-r-full {window.theme('bgSecondary', theme.id)}"></div>
 								</div> -->
 								<div class="w-full">{theme.name}</div>
-
-								{#if $__websiteTheme === theme.id}
-									<Check size={5} />
-								{/if}
 							</div>
 						</Radio>
 					{/if}

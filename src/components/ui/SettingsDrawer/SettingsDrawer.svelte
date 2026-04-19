@@ -39,7 +39,8 @@
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
 		__wideWesbiteLayoutEnabled,
-		__signLanguageModeEnabled
+		__signLanguageModeEnabled,
+		__audioSettings
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -83,7 +84,7 @@
 	const selectorClasses = 'w-32 border border-theme-accent/20 text-left rounded-3xl focus:border-theme-accent focus:ring-theme-accent focus-within:ring-2 block p-2.5 truncate text-sm';
 	const settingsDescriptionClasses = 'mb-6 text-xs opacity-70';
 	const toggleBtnClasses = 'relative w-14 h-7 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:content-[""] after:absolute after:top-0.5 after:start-[4px] after:border after:rounded-full after:h-6 after:w-6 after:transition-all bg-theme-accent/15 after:bg-theme-bg after:border-theme-bg peer-checked:bg-theme-accent';
-	const rangeClasses = 'appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full bg-theme-accent/10 [&::-webkit-slider-thumb]:!bg-theme-accent';
+	const rangeClasses = 'appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full bg-theme-accent/15 [&::-webkit-slider-thumb]:!bg-theme-accent';
 
 	let settingsDrawerOpacity = 'opacity-100';
 	let settingsDrawerBackground = 'bg-theme-bg';
@@ -485,6 +486,20 @@
 						</div>
 						<p class={settingsDescriptionClasses}>Select what happens when you click on the play button for a {term('verse')}.</p>
 					</div>
+
+					<div class="border-b border-theme-accent/20"></div>
+
+					<!-- wbw-autoscroll-setting -->
+					<div id="wbw-autoscroll-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Auto-Scroll to Highlighted Words</span>
+							<label class="inline-flex items-center cursor-pointer">
+								<input type="checkbox" class="sr-only peer" bind:checked={$__audioSettings.wbwAutoScrollEnabled} on:change={() => updateSettings({ type: 'audioSettings', value: $__audioSettings })} data-umami-event="Toggle WBW Auto Scroll" />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Automatically scroll to the highlighted words while listening to the recitation. This option only works with reciters that support word-by-word highlighting.</p>
+					</div>
 				</div>
 			</div>
 
@@ -587,7 +602,7 @@
 	{#if showIndividualSetting}
 		<div id="individual-setting" transition:fly={{ duration: 150, x: 0, easing: sineIn }}>
 			<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4">
-				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>← Back</button>
+				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>⟵ Back</button>
 				<CloseButton on:click={() => ($__settingsDrawerHidden = true)} class="my-4 rounded-3xl" />
 			</div>
 

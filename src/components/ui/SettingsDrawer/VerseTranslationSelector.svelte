@@ -1,6 +1,5 @@
 <script>
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
-	import Check from '$svgs/Check.svelte';
 	import { onMount } from 'svelte';
 	import { __verseTranslations, __offlineModeSettings } from '$utils/stores';
 	import { selectableVerseTranslations, verseTranslationsLanguages } from '$data/options';
@@ -54,10 +53,6 @@
 										<Checkbox class="w-full" on:click={() => updateSettings({ type: 'verseTranslation', value: translation.resource_id })} custom>
 											<div class="{individualCheckboxClasses} {$__verseTranslations.includes(translation.resource_id) && selectedRadioOrCheckboxClasses}">
 												<div class="w-full">{translation.resource_name}</div>
-
-												{#if $__verseTranslations.includes(translation.resource_id)}
-													<Check size={5} />
-												{/if}
 											</div>
 										</Checkbox>
 									</div>

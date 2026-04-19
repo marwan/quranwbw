@@ -710,17 +710,19 @@ export const selectableWordTransliterations = {
 export const selectableReciters = {
 	1: {
 		id: 1,
-		reciter: 'Abdul Basit (Mujawwad)',
+		reciter: 'Abdul Basit',
 		url: 'https://everyayah.com/data/Abdul_Basit_Mujawwad_128kbps',
 		image: 'abdul-baset-abdel-samad-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw', 'mujawwad']
 	},
 	2: {
 		id: 2,
-		reciter: 'Abdul Basit (Murattal)',
+		reciter: 'Abdul Basit',
 		url: 'https://everyayah.com/data/Abdul_Basit_Murattal_192kbps',
 		image: 'abdul-baset-abdel-samad-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw', 'murattal']
 	},
 	3: {
 		id: 3,
@@ -745,7 +747,8 @@ export const selectableReciters = {
 		reciter: 'Hani Ar-Rifai',
 		url: 'https://everyayah.com/data/Hani_Rifai_192kbps',
 		image: 'hani-ar-rifai-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw']
 	},
 	7: {
 		id: 7,
@@ -762,28 +765,32 @@ export const selectableReciters = {
 	},
 	9: {
 		id: 9,
-		reciter: 'Mahmoud Khalil Al-Husary (with gaps)',
+		reciter: 'Mahmoud Khalil Al-Husary',
 		url: 'https://everyayah.com/data/Husary_Muallim_128kbps',
-		image: 'mahmoud-khalil-al-hussary-profile.webp'
+		image: 'mahmoud-khalil-al-hussary-profile.webp',
+		tags: ['gaps']
 	},
 	10: {
 		id: 10,
 		reciter: 'Mishary Rashid Alafasy',
 		url: 'https://everyayah.com/data/Alafasy_128kbps',
 		image: 'mishary-rashid-alafasy-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw']
 	},
 	11: {
 		id: 11,
-		reciter: 'Mohamed El-Minshawi (Mujawwad)',
+		reciter: 'Mohamed El-Minshawi',
 		url: 'https://everyayah.com/data/Minshawy_Mujawwad_192kbps',
-		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp'
+		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp',
+		tags: ['mujawwad']
 	},
 	12: {
 		id: 12,
-		reciter: 'Mohamed El-Minshawi (Teacher)',
+		reciter: 'Mohamed El-Minshawi',
 		url: 'https://everyayah.com/data/Minshawy_Teacher_128kbps',
-		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp'
+		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp',
+		tags: ['teacher']
 	},
 	13: {
 		id: 13,
@@ -850,7 +857,7 @@ export const selectableReciters = {
 
 export const selectableTranslationReciters = {
 	1: { id: 1, reciter: 'English - Ibrahim Walk (Sahih International)', url: 'https://everyayah.com/data/English/Sahih_Intnl_Ibrahim_Walk_192kbps/' },
-	2: { id: 2, reciter: 'Urdu - Dr. Farhat Hashmi (word by word)', url: 'https://everyayah.com/data/translations/urdu_farhat_hashmi/' },
+	2: { id: 2, reciter: 'Urdu - Dr. Farhat Hashmi (Word By Word)', url: 'https://everyayah.com/data/translations/urdu_farhat_hashmi/' },
 	3: { id: 3, reciter: 'Urdu - Shamshad Ali Khan', url: 'https://everyayah.com/data/translations/urdu_shamshad_ali_khan_46kbps/' }
 };
 
