@@ -17,7 +17,6 @@
 	import ResetSettings from '$svgs/ResetSettings.svelte';
 	import Import from '$svgs/Import.svelte';
 	import Export from '$svgs/Export.svelte';
-	import Settings from '$svgs/Settings.svelte';
 	import SettingsDisplay from '$svgs/SettingsDisplay.svelte';
 	import SettingsFont from '$svgs/SettingsFont.svelte';
 	import SettingsAudio from '$svgs/SettingsAudio.svelte';
@@ -226,11 +225,7 @@
 	{#if showAllSettings}
 		<div id="all-settings">
 			<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4 {settingsDrawerOpacity}">
-				<div class="flex flex-row space-x-2 items-center my-4">
-					<span class={headingIconClasses}><Settings size="6" /></span>
-					<h5 class="inline-flex items-center text-3xl font-semibold mb-1">Settings</h5>
-				</div>
-
+				<h5 class="inline-flex items-center my-4 text-3xl font-semibold">Settings</h5>
 				<CloseButton on:click={() => ($__settingsDrawerHidden = true)} class="my-4 rounded-3xl" />
 			</div>
 
