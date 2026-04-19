@@ -233,8 +233,8 @@
 				<CloseButton on:click={() => ($__settingsDrawerHidden = true)} class="my-4 rounded-3xl" />
 			</div>
 
-			<!-- display-settings-block -->
-			<div id="display-settings-block" class="py-5 {settingsDrawerOpacity}">
+			<!-- Appearance & Layout -->
+			<div class="py-5 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center">
 					<SettingsDisplay size="5" />
 					<h3 class="block font-medium text-xl mb-1">Appearance & Layout</h3>
@@ -348,9 +348,9 @@
 				</div>
 			</div>
 
-			<!-- font-settings-block -->
-			<div id="font-settings-block" class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
-				<div class="flex flex-row space-x-2 items-center">
+			<!-- Text & Typography -->
+			<div class="py-5 border-t-2 border-theme-accent/20">
+				<div class="flex flex-row space-x-2 items-center {settingsDrawerOpacity}">
 					<SettingsFont size="5" />
 					<h3 class="block font-medium text-xl mb-1">Text & Typography</h3>
 				</div>
@@ -409,8 +409,8 @@
 				</div>
 			</div>
 
-			<!-- translation-settings-block -->
-			<div id="translation-settings-block" class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
+			<!-- Translation & Tafsir -->
+			<div class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center">
 					<SettingsTranslation size="5" />
 					<h3 class="block font-medium text-xl mb-1">Translation & {term('tafsir')}</h3>
@@ -472,8 +472,8 @@
 				</div>
 			</div>
 
-			<!-- audio-settings-block -->
-			<div id="audio-settings-block" class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
+			<!-- Recitation & Audio -->
+			<div class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center">
 					<SettingsAudio size="5" />
 					<h3 class="block font-medium text-xl mb-1">Recitation & Audio</h3>
@@ -529,8 +529,8 @@
 				</div>
 			</div>
 
-			<!-- miscellaneous-settings-block -->
-			<div id="miscellaneous-settings-block" class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
+			<!-- Behavior & Preferences -->
+			<div class="py-5 border-t-2 border-theme-accent/20 {settingsDrawerOpacity}">
 				<div class="flex flex-row space-x-2 items-center">
 					<SettingsMisc size="5" />
 					<h3 class="block font-medium text-xl mb-1">Behavior & Preferences</h3>
