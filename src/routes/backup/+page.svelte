@@ -13,7 +13,7 @@
 
 	// The localStorage key where we persist the user's token locally
 	// so they don't have to re-enter it every session
-	const tokenStorageKey = 'cloudSyncToken';
+	const tokenStorageKey = 'cloudBackupAndRestoreToken';
 
 	// State
 
@@ -270,7 +270,7 @@
 		// 	return;
 		// }
 
-		showConfirm('Apply cloud backup?', 'This will replace your current local settings. The page will reload.', () => applyRestoredSettings(restorePreview.settings));
+		showConfirm('This will replace your current local settings. The page will reload.', null, () => applyRestoredSettings(restorePreview.settings));
 	}
 
 	// Cancel the restore preview
@@ -284,7 +284,7 @@
 <div class="mx-auto">
 	<div class="markdown mx-auto">
 		<h3>Cloud Backup & Restore</h3>
-		<p>Back up and restore your settings across devices using an anonymous token — no account or email required. Your token is the only key to your backup. Save it somewhere safe; it cannot be recovered if lost. All backups are manual: nothing is uploaded automatically.</p>
+		<p>Back up and restore your settings across devices using a private, anonymous token. No account or email is required. Your settings are stored only when you manually back them up and restored only when you choose to. The token is the sole key to your cloud backup, so save it safely. It cannot be recovered if lost.</p>
 	</div>
 
 	<!-- No token saved: onboarding options -->
@@ -415,12 +415,9 @@
 			<div class="flex flex-col space-y-2 text-sm">
 				<span class="text-theme-accent">Active Token</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<div>
-						<p>{tokenDisplay}</p>
-						<p class="mt-1 opacity-60 text-xs">This token is saved on this device. Use it on other devices to restore your settings.</p>
-					</div>
+					<p>This token is saved on this device. Use it on other devices to restore your settings ({tokenDisplay}).</p>
 					<!-- Forget token from this device -->
-					<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Forget token on this device?', 'Your cloud backup will not be deleted. You can re-enter the token at any time.', forgetLocalToken)}> Forget </button>
+					<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the token at any time.', null, forgetLocalToken)}> Forget </button>
 				</div>
 			</div>
 
@@ -438,7 +435,7 @@
 							</p>
 						{/if}
 					</div>
-					<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Back up your settings?', 'This will overwrite your previous cloud backup.', handleBackup)}>
+					<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
 						{isBackingUp ? 'Backing up…' : 'Backup Now'}
 					</button>
 				</div>
