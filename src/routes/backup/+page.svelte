@@ -32,12 +32,6 @@
 	let isBackingUp = false;
 	let isRestoring = false;
 
-	// The newly generated token — shown to the user exactly once
-	let newlyGeneratedToken = '';
-
-	// Whether the user has acknowledged saving their new token
-	let hasAcknowledgedToken = false;
-
 	// Metadata about the cloud backup (returned on restore-preview or backup success)
 	let backupMeta = null; // { backed_up_at, checksum }
 
@@ -47,16 +41,14 @@
 	// Any inline error message to display
 	let errorMessage = '';
 
+	// Copy button state for active token
+	let hasCopiedToken = false;
+	let copyResetTimer;
+
 	// Computed
 
 	// True if any async operation is in progress
 	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
-
-	// A truncated display version of the saved token for the UI
-	$: tokenDisplay = savedToken ? `${savedToken.slice(0, 4)}••••••••••••••••••••${savedToken.slice(-4)}` : '';
-
-	// Lifecycle
-	__currentPage.set('Cloud Backup & Restore');
 
 	// Clear any visible error message
 	function clearError() {
@@ -82,7 +74,6 @@
 	function forgetLocalToken() {
 		localStorage.removeItem(tokenStorageKey);
 		savedToken = '';
-		newlyGeneratedToken = '';
 		restorePreview = null;
 		backupMeta = null;
 		view = 'main';
@@ -147,8 +138,6 @@
 	async function handleGenerateToken() {
 		isGenerating = true;
 		clearError();
-		newlyGeneratedToken = '';
-		hasAcknowledgedToken = false;
 
 		try {
 			const { ok, json } = await apiFetch('/tokens/generate', { method: 'POST' });
@@ -160,7 +149,6 @@
 
 			// Store the token locally immediately
 			persistToken(json.token);
-			newlyGeneratedToken = json.token;
 			view = 'generate';
 		} catch {
 			errorMessage = 'Network error. Please check your connection and try again.';
@@ -277,6 +265,24 @@
 	function handleRestoreCancel() {
 		restorePreview = null;
 	}
+
+	// Copies the active token to the clipboard and briefly shows "Copied" feedback.
+	// Repeated clicks reset the timer so the feedback behaves correctly.
+	function handleCopyToken() {
+		if (!savedToken) return;
+
+		navigator.clipboard?.writeText(savedToken);
+
+		hasCopiedToken = true;
+
+		// Handle repeated clicks safely
+		clearTimeout(copyResetTimer);
+		copyResetTimer = setTimeout(() => {
+			hasCopiedToken = false;
+		}, 2000);
+	}
+
+	__currentPage.set('Cloud Backup & Restore');
 </script>
 
 <PageHead title={'Cloud Backup & Restore'} />
@@ -296,7 +302,7 @@
 					<span class="text-theme-accent">New to Cloud Backup & Restore?</span>
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 						<div>Generate a unique token to start backing up your settings. You only need to do this once.</div>
-						<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateToken}>
+						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateToken}>
 							{isGenerating ? 'Generating…' : 'Generate Token'}
 						</button>
 					</div>
@@ -310,7 +316,7 @@
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 						<div>Enter a token you previously generated to restore your settings on this device.</div>
 						<button
-							class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
+							class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
 							on:click={() => {
 								view = 'enter';
 								clearError();
@@ -330,24 +336,15 @@
 				<p class="opacity-70">Paste your 32-character token exactly as it was shown to you when you first generated it.</p>
 
 				<div class="flex flex-col space-y-2">
-					<input
-						type="text"
-						bind:value={tokenInput}
-						placeholder="e.g. a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
-						class="w-full px-3 py-2 rounded-md bg-theme-accent/5 border border-theme-accent/20
-                   text-sm font-mono focus:outline-none focus:border-theme-accent/20"
-						maxlength="32"
-						spellcheck="false"
-						autocomplete="off"
-					/>
+					<input type="text" bind:value={tokenInput} placeholder="e.g. a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" maxlength="32" spellcheck="false" autocomplete="off" />
 				</div>
 
 				<div class="flex flex-row space-x-2">
-					<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy || (tokenInput.trim().length !== 32 && disabledClasses)}" on:click={handleValidateToken}>
+					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (tokenInput.trim().length !== 32 && disabledClasses)}" on:click={handleValidateToken}>
 						{isValidating ? 'Validating…' : 'Validate & Save'}
 					</button>
 					<button
-						class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
+						class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
 						on:click={() => {
 							view = 'main';
 							tokenInput = '';
@@ -360,54 +357,6 @@
 			</div>
 		{/if}
 
-		<!-- Token generation success panel -->
-		{#if view === 'generate' && newlyGeneratedToken}
-			<div class="my-6 flex flex-col space-y-4 text-sm">
-				<span class="text-theme-accent">Your Token</span>
-
-				<!-- Warning box -->
-				<div class="p-3 rounded-md bg-theme-accent/5 border border-theme-accent/20 text-sm">
-					This is the <strong>only time</strong> your token will be displayed. Copy it and store it somewhere safe (a password manager, notes app, etc.). If you lose it, your cloud backup becomes inaccessible.
-				</div>
-
-				<!-- Token display -->
-				<div class="flex flex-col space-y-1">
-					<span class="opacity-60 text-xs uppercase tracking-wider">Your Token</span>
-					<div class="flex flex-row items-center space-x-2">
-						<code class="flex-1 px-3 py-2 rounded-md bg-theme-accent/5 border border-theme-accent/20 font-mono text-sm break-all select-all">
-							{newlyGeneratedToken}
-						</code>
-						<!-- Copy button -->
-						<button
-							class="text-sm h-max whitespace-nowrap {buttonClasses}"
-							on:click={() => {
-								navigator.clipboard?.writeText(newlyGeneratedToken);
-							}}
-						>
-							Copy
-						</button>
-					</div>
-				</div>
-
-				<!-- Acknowledgement checkbox -->
-				<label class="flex flex-row items-start space-x-2 cursor-pointer">
-					<input type="checkbox" bind:checked={hasAcknowledgedToken} class="mt-0.5 accent-theme-accent" />
-					<span>I have saved my token. I understand it cannot be recovered if lost.</span>
-				</label>
-
-				<!-- Continue button — only enabled after acknowledgement -->
-				<button
-					class="text-sm h-max whitespace-nowrap {buttonClasses} {!hasAcknowledgedToken && disabledClasses}"
-					on:click={() => {
-						view = 'main';
-						newlyGeneratedToken = '';
-					}}
-				>
-					Continue to Cloud Backup & Restore
-				</button>
-			</div>
-		{/if}
-
 		<!-- Token is saved: show backup / restore controls -->
 	{:else}
 		<div class="my-6 flex flex-col space-y-4 overflow-auto">
@@ -415,9 +364,16 @@
 			<div class="flex flex-col space-y-2 text-sm">
 				<span class="text-theme-accent">Active Token</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<p>This token is saved on this device. Use it on other devices to restore your settings ({tokenDisplay}).</p>
-					<!-- Forget token from this device -->
-					<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the token at any time.', null, forgetLocalToken)}> Forget </button>
+					<p>This token is saved on this device. Use it on other devices to restore your settings.</p>
+					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+						<!-- Copy token button -->
+						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyToken} disabled={isBusy}>
+							{hasCopiedToken ? 'Copied' : 'Copy'}
+						</button>
+
+						<!-- Forget token button -->
+						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the token at any time.', null, forgetLocalToken)}> Forget </button>
+					</div>
 				</div>
 			</div>
 
@@ -435,8 +391,8 @@
 							</p>
 						{/if}
 					</div>
-					<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
-						{isBackingUp ? 'Backing up…' : 'Backup Now'}
+					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
+						{isBackingUp ? 'Backing up…' : 'Backup'}
 					</button>
 				</div>
 			</div>
@@ -448,7 +404,7 @@
 				<span class="text-theme-accent">Restore Settings</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 					<div>Fetch your cloud backup and preview it before applying. Your local settings will not change until you confirm.</div>
-					<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
+					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
 						{isRestoring ? 'Fetching…' : 'Restore'}
 					</button>
 				</div>
@@ -463,8 +419,8 @@
 						</div>
 						<p class="opacity-70 text-xs">Applying this backup will replace your current local settings and reload the page.</p>
 						<div class="flex flex-row space-x-2">
-							<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreConfirm}> Apply Backup </button>
-							<button class="text-sm h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}> Cancel </button>
+							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreConfirm}> Apply Backup </button>
+							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}> Cancel </button>
 						</div>
 					</div>
 				{/if}
