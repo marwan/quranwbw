@@ -15,6 +15,11 @@
 	// so they don't have to re-enter it every session
 	const tokenStorageKey = 'cloudBackupAndRestoreToken';
 
+	// Settings paths that should NEVER be overwritten during a restore.
+	// Each entry is a dot-separated path into the userSettings object.
+	// Add or remove paths here as needed.
+	const settingsRestoreExclusions = ['displaySettings.fontSizes', 'offlineModeSettings'];
+
 	// The token currently saved in localStorage (auto-populated on mount)
 	let savedToken = localStorage.getItem(tokenStorageKey) || '';
 
@@ -242,19 +247,28 @@
 		}
 	}
 
-	// Apply the previewed settings after user confirms
+	// Apply the previewed settings after user confirms.
+	// Preserves settingsRestoreExclusions paths from the current local settings.
 	async function handleRestoreConfirm() {
 		if (!restorePreview) return;
 
-		// Verify integrity before applying
-		// const isValid = await verifyChecksum(restorePreview.settings, restorePreview.checksum);
-		// if (!isValid) {
-		// 	showAlert('Integrity check failed. The backup data may be corrupted. Please try backing up again from your other device.', '');
-		// 	restorePreview = null;
-		// 	return;
-		// }
+		const currentSettings = readLocalSettings() || {};
 
-		showConfirm('This will replace your current local settings. The page will reload.', null, () => applyRestoredSettings(restorePreview.settings));
+		// Snapshot the values we must never overwrite
+		const protectedValues = settingsRestoreExclusions.map((path) => ({
+			path,
+			value: getNestedValue(currentSettings, path)
+		}));
+
+		// Deep-clone the incoming settings so we can safely mutate it
+		const merged = JSON.parse(JSON.stringify(restorePreview.settings));
+
+		// Re-apply all protected values on top of the incoming settings
+		for (const { path, value } of protectedValues) {
+			if (value !== undefined) setNestedValue(merged, path, value);
+		}
+
+		applyRestoredSettings(merged);
 	}
 
 	// Cancel the restore preview
@@ -276,6 +290,69 @@
 		copyResetTimer = setTimeout(() => {
 			hasCopiedToken = false;
 		}, 2000);
+	}
+
+	// Reads a nested value from an object using a dot-separated path string
+	// e.g. getNestedValue(obj, 'displaySettings.fontSizes') → obj.displaySettings.fontSizes
+	function getNestedValue(obj, path) {
+		return path.split('.').reduce((current, key) => current?.[key], obj);
+	}
+
+	// Sets a nested value in an object using a dot-separated path string (mutates the object)
+	function setNestedValue(obj, path, value) {
+		const keys = path.split('.');
+		const lastKey = keys.pop();
+		const target = keys.reduce((current, key) => {
+			if (current[key] === undefined) current[key] = {};
+			return current[key];
+		}, obj);
+		target[lastKey] = value;
+	}
+
+	// Deep equality check using JSON serialization (sufficient for settings comparison)
+	function isEqual(a, b) {
+		return JSON.stringify(a) === JSON.stringify(b);
+	}
+
+	// Returns a flat list of { path, label, currentValue, newValue } for every leaf-level
+	// setting that differs between currentSettings and newSettings,
+	// skipping anything under settingsRestoreExclusions paths.
+	function getChangedSettings(currentSettings, newSettings, prefix = '', changes = []) {
+		// Collect all keys from both objects
+		const allKeys = new Set([...Object.keys(currentSettings || {}), ...Object.keys(newSettings || {})]);
+
+		for (const key of allKeys) {
+			const fullPath = prefix ? `${prefix}.${key}` : key;
+
+			// Skip anything in the do-not-restore list
+			if (settingsRestoreExclusions.some((blocked) => fullPath === blocked || fullPath.startsWith(blocked + '.'))) {
+				continue;
+			}
+
+			const currentVal = currentSettings?.[key];
+			const newVal = newSettings?.[key];
+
+			// If both sides are plain objects, recurse into them
+			if (currentVal !== null && newVal !== null && typeof currentVal === 'object' && !Array.isArray(currentVal) && typeof newVal === 'object' && !Array.isArray(newVal)) {
+				getChangedSettings(currentVal, newVal, fullPath, changes);
+			} else {
+				// Leaf value — only record if it actually changed
+				if (!isEqual(currentVal, newVal)) {
+					changes.push({ path: fullPath, currentValue: currentVal, newValue: newVal });
+				}
+			}
+		}
+
+		return changes;
+	}
+
+	// Formats a raw setting value for display in the diff table
+	function formatValue(val) {
+		if (val === null || val === undefined) return '—';
+		if (typeof val === 'boolean') return val ? 'Yes' : 'No';
+		if (Array.isArray(val)) return val.length ? val.join(', ') : '(empty)';
+		if (typeof val === 'object') return JSON.stringify(val);
+		return String(val);
 	}
 
 	__currentPage.set('Cloud Backup & Restore');
@@ -407,12 +484,29 @@
 
 				<!-- Restore preview panel — shown after fetching, before applying -->
 				{#if restorePreview}
+					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
 					<div class="mt-2 p-3 rounded-md bg-theme-accent/5 border border-theme-accent/20 flex flex-col space-y-3">
 						<div class="flex flex-col space-y-1">
 							<span class="text-xs uppercase tracking-wider">Backup Preview</span>
 							<span class="opacity-70">Saved on: {formatDate(restorePreview.backed_up_at)}</span>
-							<span class="opacity-70">Settings keys: {Object.keys(restorePreview.settings || {}).length} entries</span>
 						</div>
+
+						<!-- Changed settings diff table -->
+						{#if changedSettings.length === 0}
+							<p class="opacity-70 text-xs">Your local settings are already identical to this backup. No changes will be made.</p>
+						{:else}
+							<div class="flex flex-col space-y-1">
+								<span class="opacity-70 text-xs">{changedSettings.length} setting{changedSettings.length === 1 ? '' : 's'} will change:</span>
+								<div class="flex flex-col divide-y divide-theme-accent/10">
+									{#each changedSettings as change}
+										<div class="py-2 flex flex-col space-y-1">
+											<span class="font-mono text-xs opacity-80">{change.path}: {formatValue(change.currentValue)} → {formatValue(change.newValue)}</span>
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/if}
+
 						<p class="opacity-70 text-xs">Applying this backup will replace your current local settings and reload the page.</p>
 						<div class="flex flex-row space-x-2">
 							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreConfirm}> Apply Backup </button>
