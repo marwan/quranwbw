@@ -38,9 +38,6 @@
 	// Input field for entering an existing token from another device
 	let tokenInput = '';
 
-	// Indicates whether the current token input is valid based on all client-side validation rules
-	let isTokenValid = false;
-
 	// Controls which "panel" is shown: 'main' | 'generate' | 'enter'
 	let view = 'main';
 
@@ -51,10 +48,10 @@
 	let isRestoring = false;
 
 	// Metadata about the cloud backup (returned on restore-preview or backup success)
-	let backupMeta = null; // { backed_up_at, checksum }
+	let backupMeta = null;
 
 	// Restore preview data — shown before applying to localStorage
-	let restorePreview = null; // { settings, checksum, backed_up_at }
+	let restorePreview = null; // { settings, backed_up_at }
 
 	// Copy button state for active token
 	let hasCopiedToken = false;
@@ -106,23 +103,6 @@
 		// Reload so all Svelte stores re-initialise from localStorage
 		window.location.reload();
 	}
-
-	// Verify a checksum on the client side before applying restored settings.
-	// We re-hash the received object using the Web Crypto API and compare
-	// it against the checksum returned by the server.
-	// async function verifyChecksum(settingsObj, expectedChecksum) {
-	// 	try {
-	// 		const str = JSON.stringify(settingsObj);
-	// 		const encoded = new TextEncoder().encode(str);
-	// 		const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
-	// 		const hashArray = Array.from(new Uint8Array(hashBuffer));
-	// 		const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-	// 		return hashHex === expectedChecksum;
-	// 	} catch {
-	// 		// If Web Crypto isn't available, skip verification (fail open)
-	// 		return true;
-	// 	}
-	// }
 
 	// Generic fetch wrapper that adds the user-token header.
 	// Returns { ok, status, json } — callers should branch on status, not json.message.
@@ -402,41 +382,6 @@
 		return String(val);
 	}
 
-	// Validates a readable token in the format:
-	// word###-word###-word###
-	//
-	// Rules enforced:
-	// - Trimmed input
-	// - Length between 20 and 29 chars (based on your word list)
-	// - Exactly 2 hyphens
-	// - Only lowercase letters for words
-	// - Exactly 3 digits per segment
-	function validateReadableToken(input) {
-		const token = input.trim();
-
-		// Fast fail: empty input
-		if (!token) return false;
-
-		// Length bounds (derived from your design)
-		if (token.length < 20 || token.length > 29) return false;
-
-		// Must contain exactly 2 hyphens
-		if ((token.match(/-/g)?.length ?? 0) !== 2) return false;
-
-		// Strict format check: word###-word###-word###
-		// Example: apple150-cloud200-earth100
-		const tokenRegix = /^[a-z]+[0-9]{3}-[a-z]+[0-9]{3}-[a-z]+[0-9]{3}$/;
-		if (!tokenRegix.test(token)) return false;
-
-		return true;
-	}
-
-	// Handles token input changes and re-validates the token on every keystroke
-	function onTokenInput(e) {
-		tokenInput = e.target.value;
-		isTokenValid = validateReadableToken(tokenInput);
-	}
-
 	__currentPage.set('Cloud Backup & Restore');
 </script>
 
@@ -490,11 +435,11 @@
 				<p>Please enter your token exactly as issued. Even small changes will make it invalid.</p>
 
 				<div class="flex flex-col space-y-2">
-					<input type="text" bind:value={tokenInput} on:input={onTokenInput} placeholder="e.g. valley250-smile200-peace350" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" maxlength="29" spellcheck="false" autocomplete="off" />
+					<input type="text" bind:value={tokenInput} placeholder="e.g. pal10-hop30-sky21-key28" maxlength="23" spellcheck="false" autocomplete="off" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" />
 				</div>
 
 				<div class="flex flex-row space-x-2">
-					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (!isTokenValid && disabledClasses)}" on:click={handleValidateToken}>
+					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (tokenInput.length !== 23 && disabledClasses)}" on:click={handleValidateToken}>
 						{isValidating ? 'Validating…' : 'Validate & Save'}
 					</button>
 					<button
