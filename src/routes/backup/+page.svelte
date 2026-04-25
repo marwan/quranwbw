@@ -5,7 +5,7 @@
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 
 	// QuranWBW User Settings API
-	const apiBase = 'http://localhost:7500/v2/user';
+	const apiBase = 'https://cloud-backup-api.quranwbw.com/user';
 
 	// The localStorage key where settings are stored
 	const settingsKey = 'userSettings';
@@ -501,7 +501,7 @@
 					<div>
 						Push your current settings to the cloud. This will overwrite any previous backup for this token.
 						{#if backupMeta}
-							<p class="mt-1 text-xs">
+							<p class="mt-1 opacity-50">
 								Last backed up: {formatDate(backupMeta.backed_up_at)}
 							</p>
 						{/if}
