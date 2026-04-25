@@ -261,6 +261,9 @@
 
 			// Store backup metadata locally for display in the UI
 			backupMeta = json.meta;
+
+			// Clear any open restore preview — its data is now stale after a fresh backup
+			restorePreview = null;
 		} catch {
 			errorMessage = 'Network error. Please check your connection and try again.';
 		} finally {
