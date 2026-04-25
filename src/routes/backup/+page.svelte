@@ -272,13 +272,10 @@
 	}
 
 	// Fetch the cloud backup and show a preview before applying.
-	// If the restore panel is already open, clicking Restore again closes it (toggle).
+	// Always clears any existing preview and re-fetches fresh data on each click.
 	async function handleRestorePreview() {
-		// Toggle: close the panel if it's already open
-		if (restorePreview) {
-			restorePreview = null;
-			return;
-		}
+		// Clear any existing preview before fetching fresh data
+		restorePreview = null;
 
 		clearError();
 		isRestoring = true;
@@ -529,15 +526,9 @@
 				<span class="text-theme-accent">Restore Settings</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 					<div>Fetch your cloud backup and preview it before applying. Your local settings will not change until you confirm.</div>
-					<!-- Label changes to reflect the current state of the preview panel -->
+					<!-- Label changes to reflect whether a fetch is in progress -->
 					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
-						{#if isRestoring}
-							Fetching…
-						{:else if restorePreview}
-							Close
-						{:else}
-							Restore
-						{/if}
+						{isRestoring ? 'Fetching…' : 'Restore'}
 					</button>
 				</div>
 
