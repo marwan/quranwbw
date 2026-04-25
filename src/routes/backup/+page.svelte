@@ -18,7 +18,18 @@
 	// Settings paths that should NEVER be overwritten during a restore.
 	// Each entry is a dot-separated path into the userSettings object.
 	// Add or remove paths here as needed.
-	const settingsRestoreExclusions = ['displaySettings.fontSizes', 'offlineModeSettings'];
+	const settingsRestoreExclusions = [
+		'displaySettings.fontSizes',
+		'offlineModeSettings',
+
+		// Some audio settings
+		'audioSettings.playBoth',
+		'audioSettings.playingKey',
+		'audioSettings.playingWordKey',
+		'audioSettings.isPlaying',
+		'audioSettings.startVerse',
+		'audioSettings.endVerse'
+	];
 
 	// The token currently saved in localStorage (auto-populated on mount)
 	let savedToken = localStorage.getItem(tokenStorageKey) || '';
@@ -406,7 +417,7 @@
 		{#if view === 'enter'}
 			<div class="my-6 flex flex-col space-y-4 text-sm">
 				<span class="text-theme-accent">Enter Your Token</span>
-				<p class="opacity-70">Paste your 32-character token exactly as it was shown to you when you first generated it.</p>
+				<p>Paste your 32-character token exactly as it was shown to you when you first generated it.</p>
 
 				<div class="flex flex-col space-y-2">
 					<input type="text" bind:value={tokenInput} placeholder="e.g. a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" maxlength="32" spellcheck="false" autocomplete="off" />
@@ -459,7 +470,7 @@
 					<div>
 						Push your current settings to the cloud. This will overwrite any previous backup for this token.
 						{#if backupMeta}
-							<p class="mt-1 opacity-70 text-xs">
+							<p class="mt-1 text-xs">
 								Last backed up: {formatDate(backupMeta.backed_up_at)}
 							</p>
 						{/if}
@@ -485,30 +496,32 @@
 				<!-- Restore preview panel — shown after fetching, before applying -->
 				{#if restorePreview}
 					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
-					<div class="mt-2 p-3 rounded-md bg-theme-accent/5 border border-theme-accent/20 flex flex-col space-y-3">
-						<div class="flex flex-col space-y-1">
+					<div class="mt-2 flex flex-col space-y-3">
+						<!-- <div class="flex flex-col space-y-1">
 							<span class="text-xs uppercase tracking-wider">Backup Preview</span>
-							<span class="opacity-70">Saved on: {formatDate(restorePreview.backed_up_at)}</span>
+							<span>Saved on: {formatDate(restorePreview.backed_up_at)}</span>
+						</div> -->
+
+						<!-- Changed settings diff viewer -->
+						<div>
+							{#if changedSettings.length === 0}
+								<p>Your local settings are already identical to this backup. No changes will be made.</p>
+							{:else}
+								<div class="flex flex-col space-y-1">
+									<span>{changedSettings.length} setting{changedSettings.length === 1 ? '' : 's'} will change:</span>
+									<div class="markdown">
+										<ul>
+											{#each changedSettings as change}
+												<li class="text-xs">{change.path}: {formatValue(change.currentValue)} → {formatValue(change.newValue)}</li>
+											{/each}
+										</ul>
+									</div>
+								</div>
+							{/if}
 						</div>
 
-						<!-- Changed settings diff table -->
-						{#if changedSettings.length === 0}
-							<p class="opacity-70 text-xs">Your local settings are already identical to this backup. No changes will be made.</p>
-						{:else}
-							<div class="flex flex-col space-y-1">
-								<span class="opacity-70 text-xs">{changedSettings.length} setting{changedSettings.length === 1 ? '' : 's'} will change:</span>
-								<div class="flex flex-col divide-y divide-theme-accent/10">
-									{#each changedSettings as change}
-										<div class="py-2 flex flex-col space-y-1">
-											<span class="font-mono text-xs opacity-80">{change.path}: {formatValue(change.currentValue)} → {formatValue(change.newValue)}</span>
-										</div>
-									{/each}
-								</div>
-							</div>
-						{/if}
-
-						<p class="opacity-70 text-xs">Applying this backup will replace your current local settings and reload the page.</p>
-						<div class="flex flex-row space-x-2">
+						<p>Applying this backup will replace your current local settings and reload the page.</p>
+						<div class="flex flex-row space-x-2 mt-2">
 							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreConfirm}> Apply Backup </button>
 							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}> Cancel </button>
 						</div>
