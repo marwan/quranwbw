@@ -5,8 +5,8 @@
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 
-	// Constants
-	const apiBase = 'http://localhost:7500/user';
+	// QuranWBW User Settings API
+	const apiBase = 'http://localhost:7500/v2/user';
 
 	// The localStorage key where settings are stored
 	const settingsKey = 'userSettings';
@@ -14,8 +14,6 @@
 	// The localStorage key where we persist the user's token locally
 	// so they don't have to re-enter it every session
 	const tokenStorageKey = 'cloudBackupAndRestoreToken';
-
-	// State
 
 	// The token currently saved in localStorage (auto-populated on mount)
 	let savedToken = localStorage.getItem(tokenStorageKey) || '';
@@ -44,8 +42,6 @@
 	// Copy button state for active token
 	let hasCopiedToken = false;
 	let copyResetTimer;
-
-	// Computed
 
 	// True if any async operation is in progress
 	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
@@ -386,7 +382,7 @@
 					<div>
 						Push your current settings to the cloud. This will overwrite any previous backup for this token.
 						{#if backupMeta}
-							<p class="mt-1 opacity-60 text-xs">
+							<p class="mt-1 opacity-70 text-xs">
 								Last backed up: {formatDate(backupMeta.backed_up_at)}
 							</p>
 						{/if}
@@ -413,7 +409,7 @@
 				{#if restorePreview}
 					<div class="mt-2 p-3 rounded-md bg-theme-accent/5 border border-theme-accent/20 flex flex-col space-y-3">
 						<div class="flex flex-col space-y-1">
-							<span class="opacity-60 text-xs uppercase tracking-wider">Backup Preview</span>
+							<span class="text-xs uppercase tracking-wider">Backup Preview</span>
 							<span class="opacity-70">Saved on: {formatDate(restorePreview.backed_up_at)}</span>
 							<span class="opacity-70">Settings keys: {Object.keys(restorePreview.settings || {}).length} entries</span>
 						</div>
