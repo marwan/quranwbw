@@ -67,7 +67,9 @@
 		errorMessage = '';
 	}
 
-	// Format an ISO date string into a human-readable local time
+	// Format an ISO date string into a human-readable local time.
+	// new Date().toLocaleString(undefined, ...) automatically uses the
+	// browser's local timezone — no location permission needed.
 	function formatDate(isoString) {
 		if (!isoString) return 'Unknown';
 		return new Date(isoString).toLocaleString(undefined, {
@@ -126,7 +128,8 @@
 	// 	}
 	// }
 
-	// Generic fetch wrapper that adds the user-token header
+	// Generic fetch wrapper that adds the user-token header.
+	// Returns { ok, status, json } — callers should branch on status, not json.message.
 	async function apiFetch(path, options = {}) {
 		const headers = {
 			'Content-Type': 'application/json',
@@ -139,12 +142,41 @@
 			headers
 		});
 
-		// Parse JSON even on error responses so we can show the server's message
-		const json = await response.json().catch(() => ({ code: response.status, message: 'Unexpected response from server.' }));
+		// Parse JSON even on error responses, but we only use it for data fields —
+		// never for message strings to display to users
+		const json = await response.json().catch(() => ({ code: response.status }));
 		return { ok: response.ok, status: response.status, json };
 	}
 
-	// Actions
+	// Maps an HTTP status code to a user-facing error string.
+	// All error messaging is defined here — never use server-returned message strings.
+	// context is one of: 'generate' | 'validate' | 'backup' | 'restore'
+	function getErrorForStatus(status, context) {
+		switch (status) {
+			case 400:
+				if (context === 'validate') return 'That token is not valid. Please double-check and try again.';
+				if (context === 'backup') return 'Could not save your settings. Please try again.';
+				return 'Something went wrong. Please try again.';
+			case 404:
+				if (context === 'validate') return 'Token not found. Please double-check and try again.';
+				if (context === 'restore') return 'No cloud backup found for this token. Back up your settings first.';
+				return 'Not found. Please try again.';
+			case 409:
+				return 'A conflict occurred. Please refresh and try again.';
+			case 413:
+				return 'Your settings are too large to back up.';
+			case 429:
+				if (context === 'generate') return 'Token generation limit reached. Please try again later.';
+				if (context === 'validate') return 'Too many validation attempts. Please try again later.';
+				return 'Too many requests. Please slow down and try again later.';
+			case 500:
+			case 502:
+			case 503:
+				return 'Server error. Please try again in a few moments.';
+			default:
+				return 'An unexpected error occurred. Please check your connection and try again.';
+		}
+	}
 
 	// Generate a brand-new anonymous token
 	async function handleGenerateToken() {
@@ -152,10 +184,10 @@
 		clearError();
 
 		try {
-			const { ok, json } = await apiFetch('/tokens/generate', { method: 'POST' });
+			const { ok, status, json } = await apiFetch('/tokens/generate', { method: 'POST' });
 
 			if (!ok) {
-				errorMessage = json.message || 'Failed to generate token.';
+				errorMessage = getErrorForStatus(status, 'generate');
 				return;
 			}
 
@@ -163,6 +195,7 @@
 			persistToken(json.token);
 			view = 'generate';
 		} catch {
+			// Network-level failure (offline, DNS, CORS, etc.)
 			errorMessage = 'Network error. Please check your connection and try again.';
 		} finally {
 			isGenerating = false;
@@ -182,14 +215,13 @@
 		clearError();
 
 		try {
-			const { ok, json } = await apiFetch('/tokens/validate', {
+			const { ok, status } = await apiFetch('/tokens/validate', {
 				method: 'GET',
 				headers: { 'user-token': trimmed }
 			});
 
 			if (!ok) {
-				// Distinguish "not found" from other errors
-				errorMessage = json.code === 404 ? 'Token not found. Double-check it and try again.' : json.message || 'Validation failed.';
+				errorMessage = getErrorForStatus(status, 'validate');
 				return;
 			}
 
@@ -217,13 +249,13 @@
 		isBackingUp = true;
 
 		try {
-			const { ok, json } = await apiFetch('/settings', {
+			const { ok, status, json } = await apiFetch('/settings', {
 				method: 'POST',
 				body: JSON.stringify(settings)
 			});
 
 			if (!ok) {
-				errorMessage = json.message || 'Backup failed. Please try again.';
+				errorMessage = getErrorForStatus(status, 'backup');
 				return;
 			}
 
@@ -236,17 +268,23 @@
 		}
 	}
 
-	// Fetch the cloud backup and show a preview before applying
+	// Fetch the cloud backup and show a preview before applying.
+	// If the restore panel is already open, clicking Restore again closes it (toggle).
 	async function handleRestorePreview() {
+		// Toggle: close the panel if it's already open
+		if (restorePreview) {
+			restorePreview = null;
+			return;
+		}
+
 		clearError();
-		restorePreview = null;
 		isRestoring = true;
 
 		try {
-			const { ok, json } = await apiFetch('/settings', { method: 'GET' });
+			const { ok, status, json } = await apiFetch('/settings', { method: 'GET' });
 
 			if (!ok) {
-				errorMessage = json.code === 404 ? 'No cloud backup found for this token. Back up your settings first.' : json.message || 'Restore failed. Please try again.';
+				errorMessage = getErrorForStatus(status, 'restore');
 				return;
 			}
 
@@ -325,7 +363,7 @@
 		return JSON.stringify(a) === JSON.stringify(b);
 	}
 
-	// Returns a flat list of { path, label, currentValue, newValue } for every leaf-level
+	// Returns a flat list of { path, currentValue, newValue } for every leaf-level
 	// setting that differs between currentSettings and newSettings,
 	// skipping anything under settingsRestoreExclusions paths.
 	function getChangedSettings(currentSettings, newSettings, prefix = '', changes = []) {
@@ -357,7 +395,7 @@
 		return changes;
 	}
 
-	// Formats a raw setting value for display in the diff table
+	// Formats a raw setting value for display in the diff list
 	function formatValue(val) {
 		if (val === null || val === undefined) return '—';
 		if (typeof val === 'boolean') return val ? 'Yes' : 'No';
@@ -488,8 +526,15 @@
 				<span class="text-theme-accent">Restore Settings</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 					<div>Fetch your cloud backup and preview it before applying. Your local settings will not change until you confirm.</div>
+					<!-- Label changes to reflect the current state of the preview panel -->
 					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
-						{isRestoring ? 'Fetching…' : 'Restore'}
+						{#if isRestoring}
+							Fetching…
+						{:else if restorePreview}
+							Close
+						{:else}
+							Restore
+						{/if}
 					</button>
 				</div>
 
@@ -497,34 +542,33 @@
 				{#if restorePreview}
 					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
 					<div class="mt-2 flex flex-col space-y-3">
-						<!-- <div class="flex flex-col space-y-1">
-							<span class="text-xs uppercase tracking-wider">Backup Preview</span>
-							<span>Saved on: {formatDate(restorePreview.backed_up_at)}</span>
-						</div> -->
-
-						<!-- Changed settings diff viewer -->
-						<div>
-							{#if changedSettings.length === 0}
-								<p>Your local settings are already identical to this backup. No changes will be made.</p>
-							{:else}
-								<div class="flex flex-col space-y-1">
-									<span>{changedSettings.length} setting{changedSettings.length === 1 ? '' : 's'} will change:</span>
-									<div class="markdown">
-										<ul>
-											{#each changedSettings as change}
-												<li class="text-xs">{change.path}: {formatValue(change.currentValue)} → {formatValue(change.newValue)}</li>
-											{/each}
-										</ul>
-									</div>
+						{#if changedSettings.length === 0}
+							<!-- Settings are identical: show info banner only, no apply button -->
+							<div class="p-3 rounded-md flex flex-row space-x-1 items-start text-sm bg-theme-accent/5">
+								<span class="flex-shrink-0 w-5 h-5 mt-1 md:mt-0.5"><Info /></span>
+								<span>Your local settings are already identical to this backup. No changes will be made.</span>
+							</div>
+						{:else}
+							<!-- Settings differ: show the diff list, the warning, and the apply button -->
+							<div class="flex flex-col space-y-1">
+								<span>{changedSettings.length} setting{changedSettings.length === 1 ? '' : 's'} will change:</span>
+								<div class="markdown">
+									<ul>
+										{#each changedSettings as change}
+											<li class="text-xs">{change.path}: {formatValue(change.currentValue)} → {formatValue(change.newValue)}</li>
+										{/each}
+									</ul>
 								</div>
-							{/if}
-						</div>
+							</div>
 
-						<p>Applying this backup will replace your current local settings and reload the page.</p>
-						<div class="flex flex-row space-x-2 mt-2">
-							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreConfirm}> Apply Backup </button>
-							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}> Cancel </button>
-						</div>
+							<!-- Only shown when there is a diff and the apply button is visible -->
+							<p>Applying this backup will replace your current local settings and reload the page.</p>
+
+							<div class="flex flex-row space-x-2 mt-2">
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreConfirm}> Apply Backup </button>
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}> Cancel </button>
+							</div>
+						{/if}
 					</div>
 				{/if}
 			</div>
