@@ -38,6 +38,9 @@
 	// Input field for entering an existing token from another device
 	let tokenInput = '';
 
+	// Indicates whether the current token input is valid based on all client-side validation rules
+	let isTokenValid = false;
+
 	// Controls which "panel" is shown: 'main' | 'generate' | 'enter'
 	let view = 'main';
 
@@ -399,6 +402,41 @@
 		return String(val);
 	}
 
+	// Validates a readable token in the format:
+	// word###-word###-word###
+	//
+	// Rules enforced:
+	// - Trimmed input
+	// - Length between 20 and 29 chars (based on your word list)
+	// - Exactly 2 hyphens
+	// - Only lowercase letters for words
+	// - Exactly 3 digits per segment
+	function validateReadableToken(input) {
+		const token = input.trim();
+
+		// Fast fail: empty input
+		if (!token) return false;
+
+		// Length bounds (derived from your design)
+		if (token.length < 20 || token.length > 29) return false;
+
+		// Must contain exactly 2 hyphens
+		if ((token.match(/-/g)?.length ?? 0) !== 2) return false;
+
+		// Strict format check: word###-word###-word###
+		// Example: apple150-cloud200-earth100
+		const tokenRegix = /^[a-z]+[0-9]{3}-[a-z]+[0-9]{3}-[a-z]+[0-9]{3}$/;
+		if (!tokenRegix.test(token)) return false;
+
+		return true;
+	}
+
+	// Handles token input changes and re-validates the token on every keystroke
+	function onTokenInput(e) {
+		tokenInput = e.target.value;
+		isTokenValid = validateReadableToken(tokenInput);
+	}
+
 	__currentPage.set('Cloud Backup & Restore');
 </script>
 
@@ -449,14 +487,14 @@
 		{#if view === 'enter'}
 			<div class="my-6 flex flex-col space-y-4 text-sm">
 				<span class="text-theme-accent">Enter Your Token</span>
-				<p>Paste your 32-character token exactly as it was shown to you when you first generated it.</p>
+				<p>Please enter your token exactly as issued. Even small changes will make it invalid.</p>
 
 				<div class="flex flex-col space-y-2">
-					<input type="text" bind:value={tokenInput} placeholder="e.g. a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" maxlength="32" spellcheck="false" autocomplete="off" />
+					<input type="text" bind:value={tokenInput} on:input={onTokenInput} placeholder="e.g. valley250-smile200-peace350" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" maxlength="29" spellcheck="false" autocomplete="off" />
 				</div>
 
 				<div class="flex flex-row space-x-2">
-					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (tokenInput.trim().length !== 32 && disabledClasses)}" on:click={handleValidateToken}>
+					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (!isTokenValid && disabledClasses)}" on:click={handleValidateToken}>
 						{isValidating ? 'Validating…' : 'Validate & Save'}
 					</button>
 					<button
