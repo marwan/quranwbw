@@ -1,9 +1,8 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
-	import Info from '$svgs/Info.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
-	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 
 	// QuranWBW User Settings API
 	const apiBase = 'http://localhost:7500/v2/user';
@@ -31,6 +30,8 @@
 		'audioSettings.endVerse'
 	];
 
+	const networkErrorMessage = 'Network error. Please check your connection and try again.';
+
 	// The token currently saved in localStorage (auto-populated on mount)
 	let savedToken = localStorage.getItem(tokenStorageKey) || '';
 
@@ -52,20 +53,12 @@
 	// Restore preview data — shown before applying to localStorage
 	let restorePreview = null; // { settings, checksum, backed_up_at }
 
-	// Any inline error message to display
-	let errorMessage = '';
-
 	// Copy button state for active token
 	let hasCopiedToken = false;
 	let copyResetTimer;
 
 	// True if any async operation is in progress
 	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
-
-	// Clear any visible error message
-	function clearError() {
-		errorMessage = '';
-	}
 
 	// Format an ISO date string into a human-readable local time.
 	// new Date().toLocaleString(undefined, ...) automatically uses the
@@ -181,13 +174,12 @@
 	// Generate a brand-new anonymous token
 	async function handleGenerateToken() {
 		isGenerating = true;
-		clearError();
 
 		try {
 			const { ok, status, json } = await apiFetch('/tokens/generate', { method: 'POST' });
 
 			if (!ok) {
-				errorMessage = getErrorForStatus(status, 'generate');
+				showAlert(getErrorForStatus(status, 'generate'));
 				return;
 			}
 
@@ -196,7 +188,7 @@
 			view = 'generate';
 		} catch {
 			// Network-level failure (offline, DNS, CORS, etc.)
-			errorMessage = 'Network error. Please check your connection and try again.';
+			showAlert(networkErrorMessage);
 		} finally {
 			isGenerating = false;
 		}
@@ -207,12 +199,11 @@
 		const trimmed = tokenInput.trim();
 
 		if (!trimmed) {
-			errorMessage = 'Please enter your token.';
+			showAlert('Please enter your token.');
 			return;
 		}
 
 		isValidating = true;
-		clearError();
 
 		try {
 			const { ok, status } = await apiFetch('/tokens/validate', {
@@ -221,7 +212,7 @@
 			});
 
 			if (!ok) {
-				errorMessage = getErrorForStatus(status, 'validate');
+				showAlert(getErrorForStatus(status, 'validate'));
 				return;
 			}
 
@@ -230,7 +221,7 @@
 			tokenInput = '';
 			view = 'main';
 		} catch {
-			errorMessage = 'Network error. Please check your connection and try again.';
+			showAlert(networkErrorMessage);
 		} finally {
 			isValidating = false;
 		}
@@ -238,11 +229,9 @@
 
 	// Backup current localStorage settings to the cloud
 	async function handleBackup() {
-		clearError();
-
 		const settings = readLocalSettings();
 		if (!settings) {
-			errorMessage = 'No local settings found to back up.';
+			showAlert('No local settings found to back up.');
 			return;
 		}
 
@@ -255,7 +244,7 @@
 			});
 
 			if (!ok) {
-				errorMessage = getErrorForStatus(status, 'backup');
+				showAlert(getErrorForStatus(status, 'backup'));
 				return;
 			}
 
@@ -265,7 +254,7 @@
 			// Clear any open restore preview — its data is now stale after a fresh backup
 			restorePreview = null;
 		} catch {
-			errorMessage = 'Network error. Please check your connection and try again.';
+			showAlert(networkErrorMessage);
 		} finally {
 			isBackingUp = false;
 		}
@@ -277,20 +266,26 @@
 		// Clear any existing preview before fetching fresh data
 		restorePreview = null;
 
-		clearError();
 		isRestoring = true;
 
 		try {
 			const { ok, status, json } = await apiFetch('/settings', { method: 'GET' });
 
 			if (!ok) {
-				errorMessage = getErrorForStatus(status, 'restore');
+				showAlert(getErrorForStatus(status, 'restore'));
 				return;
 			}
 
 			restorePreview = json.data;
+
+			const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings);
+
+			// Show an alert if there is no difference
+			if (changedSettings.length === 0) {
+				showAlert('Your local settings are already identical to this backup. No changes will be made.');
+			}
 		} catch {
-			errorMessage = 'Network error. Please check your connection and try again.';
+			showAlert(networkErrorMessage);
 		} finally {
 			isRestoring = false;
 		}
@@ -441,7 +436,6 @@
 							class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
 							on:click={() => {
 								view = 'enter';
-								clearError();
 							}}
 						>
 							Enter Token
@@ -470,7 +464,6 @@
 						on:click={() => {
 							view = 'main';
 							tokenInput = '';
-							clearError();
 						}}
 					>
 						Cancel
@@ -536,14 +529,8 @@
 				{#if restorePreview}
 					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
 					<div class="mt-2 flex flex-col space-y-3">
-						{#if changedSettings.length === 0}
-							<!-- Settings are identical: show info banner only, no apply button -->
-							<div class="p-3 rounded-md flex flex-row space-x-1 items-start text-sm bg-theme-accent/5">
-								<span class="flex-shrink-0 w-5 h-5 mt-1 md:mt-0.5"><Info /></span>
-								<span>Your local settings are already identical to this backup. No changes will be made.</span>
-							</div>
-						{:else}
-							<!-- Settings differ: show the diff list, the warning, and the apply button -->
+						<!-- Settings differ: show the diff list, the warning, and the apply button -->
+						{#if changedSettings.length !== 0}
 							<div class="flex flex-col space-y-1">
 								<span>{changedSettings.length} setting{changedSettings.length === 1 ? '' : 's'} will change:</span>
 								<div class="markdown">
@@ -566,14 +553,6 @@
 					</div>
 				{/if}
 			</div>
-		</div>
-	{/if}
-
-	<!-- Inline error message (shown below all panels) -->
-	{#if errorMessage}
-		<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-start text-sm bg-theme-accent/5">
-			<span class="flex-shrink-0 w-5 h-5 mt-1 md:mt-0.5"><Info /></span>
-			<span>{errorMessage}</span>
 		</div>
 	{/if}
 </div>

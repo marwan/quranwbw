@@ -367,7 +367,7 @@
 			});
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		}
 	}
 
@@ -423,7 +423,7 @@
 			window.umami?.track(`Data Re-download: ${dataType}`);
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			window.umami?.track(`Data Re-download: ${dataType}`);
 		}
@@ -471,7 +471,7 @@
 			window.umami?.track('Chapter Data Download');
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			isDownloadingChapter = false;
 			downloadProgressPercentage = 100;
@@ -520,7 +520,7 @@
 			window.umami?.track('Mushaf Data Download');
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			isDownloadingMushaf = false;
 			downloadProgressPercentage = 100;
@@ -584,7 +584,7 @@
 			window.umami?.track('Morphology Data Download');
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			isDownloadingMorphology = false;
 			downloadProgressPercentage = 100;
@@ -636,7 +636,7 @@
 			window.umami?.track('Tafsir Data Download');
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			isDownloadingTafsir = false;
 			downloadProgressPercentage = 100;
