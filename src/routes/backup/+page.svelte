@@ -5,7 +5,8 @@
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 
 	// QuranWBW User Settings API
-	const apiBase = 'https://cloud-backup-api.quranwbw.com/user';
+	// const apiBase = 'https://cloud-backup-api.quranwbw.com/user';
+	const apiBase = 'http://localhost:8900/user';
 
 	// The localStorage key where settings are stored
 	const settingsKey = 'userSettings';
@@ -390,7 +391,7 @@
 <div class="mx-auto">
 	<div class="markdown mx-auto">
 		<h3>Cloud Backup & Restore</h3>
-		<p>Back up and restore your settings across devices using a private, anonymous token. No account or email is required. Your settings are stored only when you manually back them up and restored only when you choose to. The token is the sole key to your cloud backup, so save it safely. It cannot be recovered if lost.</p>
+		<p>This feature lets you save your settings safely online and restore them on another device. You do not need an account or email. You will get a private backup key (called a token). This key is the only way to restore your settings later. Keep this key safe. If you lose it, your backup cannot be recovered.</p>
 	</div>
 
 	<!-- No token saved: onboarding options -->
@@ -399,9 +400,9 @@
 			<div class="my-6 flex flex-col space-y-4 text-sm">
 				<!-- Option A: Generate a new token -->
 				<div class="flex flex-col space-y-2">
-					<span class="text-theme-accent">New to Cloud Backup & Restore?</span>
+					<span class="text-theme-accent">First time using this?</span>
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-						<div>Generate a unique token to start backing up your settings. You only need to do this once.</div>
+						<div>Generate a backup key to save your settings online. You only need to do this once.</div>
 						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateToken}>
 							{isGenerating ? 'Generating…' : 'Generate Token'}
 						</button>
@@ -412,16 +413,16 @@
 
 				<!-- Option B: Enter an existing token -->
 				<div class="flex flex-col space-y-2">
-					<span class="text-theme-accent">Already have a token?</span>
+					<span class="text-theme-accent">Already have a backup key?</span>
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-						<div>Enter a token you previously generated to restore your settings on this device.</div>
+						<div>Enter your backup key to load your saved settings on this device.</div>
 						<button
 							class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
 							on:click={() => {
 								view = 'enter';
 							}}
 						>
-							Enter Token
+							Enter Your Backup Key
 						</button>
 					</div>
 				</div>
@@ -432,7 +433,7 @@
 		{#if view === 'enter'}
 			<div class="my-6 flex flex-col space-y-4 text-sm">
 				<span class="text-theme-accent">Enter Your Token</span>
-				<p>Please enter your token exactly as issued. Even small changes will make it invalid.</p>
+				<p>Please enter your backup key exactly as issued. Spaces or small changes will make it invalid.</p>
 
 				<div class="flex flex-col space-y-2">
 					<input type="text" bind:value={tokenInput} placeholder="e.g. pal10-hop30-sky21-key28" maxlength="23" spellcheck="false" autocomplete="off" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" />
@@ -460,9 +461,9 @@
 		<div class="my-6 flex flex-col space-y-4 overflow-auto">
 			<!-- Active token info -->
 			<div class="flex flex-col space-y-2 text-sm">
-				<span class="text-theme-accent">Active Token</span>
+				<span class="text-theme-accent">Your Saved Backup Key</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<p>This token is saved on this device. Use it on other devices to restore your settings.</p>
+					<p>This backup key is saved on this device. You can use it on other devices to restore your settings.</p>
 					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 						<!-- Copy token button -->
 						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyToken} disabled={isBusy}>
@@ -479,10 +480,10 @@
 
 			<!-- Backup settings -->
 			<div class="flex flex-col space-y-2 text-sm">
-				<span class="text-theme-accent">Backup Settings</span>
+				<span class="text-theme-accent">Save Settings to Cloud</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 					<div>
-						Push your current settings to the cloud. This will overwrite any previous backup for this token.
+						Save your current settings online. This will replace any previous backup for this key.
 						{#if backupMeta}
 							<p class="mt-1 opacity-50">
 								Last backed up: {formatDate(backupMeta.backed_up_at)}
@@ -499,9 +500,9 @@
 
 			<!-- Restore settings -->
 			<div class="flex flex-col space-y-2 text-sm">
-				<span class="text-theme-accent">Restore Settings</span>
+				<span class="text-theme-accent">Restore Settings from Cloud</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<div>Fetch your cloud backup and preview it before applying. Your local settings will not change until you confirm.</div>
+					<div>Load your saved settings and review them before applying. Your current settings will not change until you confirm.</div>
 					<!-- Label changes to reflect whether a fetch is in progress -->
 					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
 						{isRestoring ? 'Fetching…' : 'Restore'}
@@ -526,7 +527,7 @@
 							</div>
 
 							<!-- Only shown when there is a diff and the apply button is visible -->
-							<p>Applying this backup will replace your current local settings and reload the page.</p>
+							<p>This will replace your current settings and reload the page.</p>
 
 							<div class="flex flex-row space-x-2 mt-2">
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreConfirm}> Apply Backup </button>
