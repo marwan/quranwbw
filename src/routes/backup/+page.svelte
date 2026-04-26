@@ -456,6 +456,21 @@
 							{hasCopiedBackupKey ? 'Copied' : 'Copy'}
 						</button>
 
+						<!-- Share key button -->
+						<button
+							class="h-max whitespace-nowrap {buttonClasses}"
+							on:click={() => {
+								if (navigator.share) {
+									navigator.share({ title: 'My Backup Key', text: savedBackupKey });
+								} else {
+									navigator.clipboard?.writeText(savedBackupKey);
+									showAlert('Share not supported on this device. Key copied to clipboard instead.');
+								}
+							}}
+						>
+							Share
+						</button>
+
 						<!-- Forget backup key button -->
 						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, forgetLocalBackupKey)}> Forget </button>
 					</div>
