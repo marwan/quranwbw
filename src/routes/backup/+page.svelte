@@ -260,6 +260,7 @@
 
 			// Show an alert if there is no difference
 			if (changedSettings.length === 0) {
+				restorePreview = null;
 				showAlert('Your local settings are already identical to this backup. No changes will be made.');
 			}
 		} catch {
@@ -366,15 +367,6 @@
 		}
 
 		return changes;
-	}
-
-	// Formats a raw setting value for display in the diff list
-	function formatValue(val) {
-		if (val === null || val === undefined) return '—';
-		if (typeof val === 'boolean') return val ? 'Yes' : 'No';
-		if (Array.isArray(val)) return val.length ? val.join(', ') : '(empty)';
-		if (typeof val === 'object') return JSON.stringify(val);
-		return String(val);
 	}
 
 	__currentPage.set('Cloud Backup & Restore');
@@ -495,42 +487,45 @@
 			<!-- Restore settings -->
 			<div class="flex flex-col space-y-2 text-sm">
 				<span class="text-theme-accent">Restore Settings from Cloud</span>
-				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<div>Load your saved settings and review them before applying. Your current settings will not change until you confirm.</div>
 
-					<!-- Label changes to reflect whether a fetch is in progress -->
-					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
-						{isRestoring ? 'Fetching…' : 'Restore'}
-					</button>
-				</div>
+				<!--
+					STEP 1: Restore (preview stage)
+					No backup data has been loaded yet.
+					The user can fetch their saved settings from the cloud to preview changes.
+					Local settings remain untouched at this stage.
+				-->
+				{#if !restorePreview}
+					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+						<div>Load your saved settings and review them before applying. Your current settings will not change until you confirm.</div>
 
-				<!-- Restore preview panel — shown after fetching, before applying -->
+						<!-- Label changes to reflect whether a fetch is in progress -->
+						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
+							{isRestoring ? 'Fetching…' : 'Restore'}
+						</button>
+					</div>
+				{/if}
+
+				<!--
+					STEP 2: Restore preview (confirmation stage)
+					Backup data has been fetched from the cloud.
+					Show only the settings that differ from the current local settings.
+					The user must explicitly confirm before any changes are applied.
+				-->
 				{#if restorePreview}
 					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
+					{@const changedSettingsCount = changedSettings.length}
 
-					<!-- Settings differ: show the diff list, the warning, and the apply button -->
-					<div class="mt-2 flex flex-col space-y-3">
-						{#if changedSettings.length !== 0}
-							<div class="flex flex-col space-y-1">
-								<span>{changedSettings.length} setting{changedSettings.length === 1 ? '' : 's'} will change:</span>
-								<div class="markdown">
-									<ul>
-										{#each changedSettings as change}
-											<li class="text-xs">{change.path}: {formatValue(change.currentValue)} → {formatValue(change.newValue)}</li>
-										{/each}
-									</ul>
-								</div>
-							</div>
+					<!-- Settings differ: show the warning, apply button and cancel button -->
+					{#if changedSettingsCount !== 0}
+						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+							<div>A total of {changedSettingsCount} setting{changedSettingsCount === 1 ? '' : 's'} on this device will be updated. Your current settings will be replaced, and the page will reload.</div>
 
-							<!-- Only shown when there is a diff and the apply button is visible -->
-							<p>This will replace your current settings and reload the page.</p>
-
-							<div class="flex flex-row space-x-2 mt-2">
-								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreConfirm}> Apply Backup </button>
+							<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}> Apply </button>
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}> Cancel </button>
 							</div>
-						{/if}
-					</div>
+						</div>
+					{/if}
 				{/if}
 			</div>
 		</div>
