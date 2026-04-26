@@ -5,8 +5,7 @@
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 
 	// QuranWBW User Settings API
-	// const apiBase = 'https://cloud-backup-api.quranwbw.com/user';
-	const apiBase = 'http://localhost:8900/user';
+	const apiBase = 'https://cloud-backup-api.quranwbw.com/user';
 
 	// The localStorage key where settings are stored
 	const settingsKey = 'userSettings';
