@@ -101,12 +101,25 @@
 		window.location.reload();
 	}
 
-	// Generic fetch wrapper that adds the x-backup-key header.
-	// Returns { ok, status, json } — callers should branch on status, not json.message.
+	// Generic fetch wrapper that adds the x-backup-key header and sends the user's local timezone with every request.
 	async function apiFetch(path, options = {}) {
+		// Get user's local IANA timezone (e.g. "Asia/Kolkata")
+		let localTimeZone = null;
+		try {
+			localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+		} catch {
+			// Ignore — timezone is optional
+		}
+
 		const headers = {
 			'Content-Type': 'application/json',
+
+			// Send backup key if available
 			...(savedBackupKey ? { 'x-backup-key': savedBackupKey } : {}),
+
+			// Send user's local timezone so the server can store and return backup / restore timestamps in the user's local time
+			...(localTimeZone ? { 'x-user-timezone': localTimeZone } : {}),
+
 			...(options.headers || {})
 		};
 
@@ -115,8 +128,7 @@
 			headers
 		});
 
-		// Parse JSON even on error responses, but we only use it for data fields —
-		// never for message strings to display to users
+		// Parse JSON even on error responses, but we only use it for data fields — never for message strings to display to users
 		const json = await response.json().catch(() => ({ code: response.status }));
 		return { ok: response.ok, status: response.status, json };
 	}
