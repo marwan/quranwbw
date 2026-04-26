@@ -11,9 +11,8 @@
 	// The localStorage key where settings are stored
 	const settingsKey = 'userSettings';
 
-	// The localStorage key where we persist the user's token locally
-	// so they don't have to re-enter it every session
-	const tokenStorageKey = 'cloudBackupAndRestoreToken';
+	// The localStorage key where we persist the user's backup key locally so they don't have to re-enter it every session
+	const cloudBackupKeyLocalStorageItemName = 'cloudBackupAndRestoreBackupKey';
 
 	// Settings paths that should NEVER be overwritten during a restore.
 	// Each entry is a dot-separated path into the userSettings object.
@@ -33,11 +32,11 @@
 
 	const networkErrorMessage = 'Network error. Please check your connection and try again.';
 
-	// The token currently saved in localStorage (auto-populated on mount)
-	let savedToken = localStorage.getItem(tokenStorageKey) || '';
+	// The backup key currently saved in localStorage (auto-populated on mount)
+	let savedBackupKey = localStorage.getItem(cloudBackupKeyLocalStorageItemName) || '';
 
-	// Input field for entering an existing token from another device
-	let tokenInput = '';
+	// Input field for entering an existing backup key from another device
+	let backupKeyInput = '';
 
 	// Controls which "panel" is shown: 'main' | 'generate' | 'enter'
 	let view = 'main';
@@ -54,16 +53,14 @@
 	// Restore preview data — shown before applying to localStorage
 	let restorePreview = null; // { settings, backed_up_at }
 
-	// Copy button state for active token
-	let hasCopiedToken = false;
+	// Copy button state for active backup key
+	let hasCopiedBackupKey = false;
 	let copyResetTimer;
 
 	// True if any async operation is in progress
 	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
 
 	// Format an ISO date string into a human-readable local time.
-	// new Date().toLocaleString(undefined, ...) automatically uses the
-	// browser's local timezone — no location permission needed.
 	function formatDate(isoString) {
 		if (!isoString) return 'Unknown';
 		return new Date(isoString).toLocaleString(undefined, {
@@ -72,16 +69,16 @@
 		});
 	}
 
-	// Persist the token to localStorage so the user doesn't have to re-enter it
-	function persistToken(token) {
-		localStorage.setItem(tokenStorageKey, token);
-		savedToken = token;
+	// Persist the backup key to localStorage so the user doesn't have to re-enter it
+	function persistBackupKey(backupKey) {
+		localStorage.setItem(cloudBackupKeyLocalStorageItemName, backupKey);
+		savedBackupKey = backupKey;
 	}
 
-	// Remove the locally stored token (does NOT delete cloud data)
-	function forgetLocalToken() {
-		localStorage.removeItem(tokenStorageKey);
-		savedToken = '';
+	// Remove the locally stored backup key (does NOT delete cloud data)
+	function forgetLocalBackupKey() {
+		localStorage.removeItem(cloudBackupKeyLocalStorageItemName);
+		savedBackupKey = '';
 		restorePreview = null;
 		backupMeta = null;
 		view = 'main';
@@ -97,20 +94,20 @@
 		}
 	}
 
-	// Apply restored settings to localStorage and trigger a page reload
-	// so all stores pick up the new values
+	// Apply restored settings to localStorage and trigger a page reload so all stores pick up the new values
 	function applyRestoredSettings(settings) {
 		localStorage.setItem(settingsKey, JSON.stringify(settings));
+
 		// Reload so all Svelte stores re-initialise from localStorage
 		window.location.reload();
 	}
 
-	// Generic fetch wrapper that adds the user-token header.
+	// Generic fetch wrapper that adds the x-backup-key header.
 	// Returns { ok, status, json } — callers should branch on status, not json.message.
 	async function apiFetch(path, options = {}) {
 		const headers = {
 			'Content-Type': 'application/json',
-			...(savedToken ? { 'user-token': savedToken } : {}),
+			...(savedBackupKey ? { 'x-backup-key': savedBackupKey } : {}),
 			...(options.headers || {})
 		};
 
@@ -126,24 +123,23 @@
 	}
 
 	// Maps an HTTP status code to a user-facing error string.
-	// All error messaging is defined here — never use server-returned message strings.
 	// context is one of: 'generate' | 'validate' | 'backup' | 'restore'
 	function getErrorForStatus(status, context) {
 		switch (status) {
 			case 400:
-				if (context === 'validate') return 'That token is not valid. Please double-check and try again.';
+				if (context === 'validate') return 'That backup key is not valid. Please double-check and try again.';
 				if (context === 'backup') return 'Could not save your settings. Please try again.';
 				return 'Something went wrong. Please try again.';
 			case 404:
-				if (context === 'validate') return 'Token not found. Please double-check and try again.';
-				if (context === 'restore') return 'No cloud backup found for this token. Back up your settings first.';
+				if (context === 'validate') return 'Backup key not found. Please double-check and try again.';
+				if (context === 'restore') return 'No cloud backup found for this backup key. Back up your settings first.';
 				return 'Not found. Please try again.';
 			case 409:
 				return 'A conflict occurred. Please refresh and try again.';
 			case 413:
 				return 'Your settings are too large to back up.';
 			case 429:
-				if (context === 'generate') return 'Token generation limit reached. Please try again later.';
+				if (context === 'generate') return 'Backup key generation limit reached. Please try again later.';
 				if (context === 'validate') return 'Too many validation attempts. Please try again later.';
 				return 'Too many requests. Please slow down and try again later.';
 			case 500:
@@ -155,20 +151,20 @@
 		}
 	}
 
-	// Generate a brand-new anonymous token
-	async function handleGenerateToken() {
+	// Generate a brand-new anonymous backup key
+	async function handleGenerateBackupKey() {
 		isGenerating = true;
 
 		try {
-			const { ok, status, json } = await apiFetch('/tokens/generate', { method: 'POST' });
+			const { ok, status, json } = await apiFetch('/backupKey/generate', { method: 'POST' });
 
 			if (!ok) {
 				showAlert(getErrorForStatus(status, 'generate'));
 				return;
 			}
 
-			// Store the token locally immediately
-			persistToken(json.token);
+			// Store the backup key locally immediately
+			persistBackupKey(json.backupKey);
 			view = 'generate';
 		} catch {
 			// Network-level failure (offline, DNS, CORS, etc.)
@@ -178,21 +174,21 @@
 		}
 	}
 
-	// Validate a manually entered token from another device
-	async function handleValidateToken() {
-		const trimmed = tokenInput.trim();
+	// Validate a manually entered backup key from another device
+	async function handleValidateBackupKey() {
+		const trimmed = backupKeyInput.trim();
 
 		if (!trimmed) {
-			showAlert('Please enter your token.');
+			showAlert('Please enter your backup key.');
 			return;
 		}
 
 		isValidating = true;
 
 		try {
-			const { ok, status } = await apiFetch('/tokens/validate', {
+			const { ok, status } = await apiFetch('/backupKey/validate', {
 				method: 'GET',
-				headers: { 'user-token': trimmed }
+				headers: { 'x-backup-key': trimmed }
 			});
 
 			if (!ok) {
@@ -200,9 +196,9 @@
 				return;
 			}
 
-			// Token is valid — save it locally and show the main panel
-			persistToken(trimmed);
-			tokenInput = '';
+			// Backup key is valid — save it locally and show the main panel
+			persistBackupKey(trimmed);
+			backupKeyInput = '';
 			view = 'main';
 		} catch {
 			showAlert(networkErrorMessage);
@@ -245,7 +241,6 @@
 	}
 
 	// Fetch the cloud backup and show a preview before applying.
-	// Always clears any existing preview and re-fetches fresh data on each click.
 	async function handleRestorePreview() {
 		// Clear any existing preview before fetching fresh data
 		restorePreview = null;
@@ -304,19 +299,19 @@
 		restorePreview = null;
 	}
 
-	// Copies the active token to the clipboard and briefly shows "Copied" feedback.
+	// Copies the active backup key to the clipboard and briefly shows "Copied" feedback.
 	// Repeated clicks reset the timer so the feedback behaves correctly.
-	function handleCopyToken() {
-		if (!savedToken) return;
+	function handleCopyBackupKey() {
+		if (!savedBackupKey) return;
 
-		navigator.clipboard?.writeText(savedToken);
+		navigator.clipboard?.writeText(savedBackupKey);
 
-		hasCopiedToken = true;
+		hasCopiedBackupKey = true;
 
 		// Handle repeated clicks safely
 		clearTimeout(copyResetTimer);
 		copyResetTimer = setTimeout(() => {
-			hasCopiedToken = false;
+			hasCopiedBackupKey = false;
 		}, 2000);
 	}
 
@@ -337,7 +332,7 @@
 		target[lastKey] = value;
 	}
 
-	// Deep equality check using JSON serialization (sufficient for settings comparison)
+	// Deep equality check using JSON serialization
 	function isEqual(a, b) {
 		return JSON.stringify(a) === JSON.stringify(b);
 	}
@@ -391,27 +386,27 @@
 <div class="mx-auto">
 	<div class="markdown mx-auto">
 		<h3>Cloud Backup & Restore</h3>
-		<p>This feature lets you save your settings safely online and restore them on another device. You do not need an account or email. You will get a private backup key (called a token). This key is the only way to restore your settings later. Keep this key safe. If you lose it, your backup cannot be recovered.</p>
+		<p>This feature lets you save your settings safely online and restore them on another device. You do not need an account or email. You will get a private backup key. This key is the only way to restore your settings later. Keep this key safe. If you lose it, your backup cannot be recovered.</p>
 	</div>
 
-	<!-- No token saved: onboarding options -->
-	{#if !savedToken}
+	<!-- No backup key saved: onboarding options -->
+	{#if !savedBackupKey}
 		{#if view === 'main'}
 			<div class="my-6 flex flex-col space-y-4 text-sm">
-				<!-- Option A: Generate a new token -->
+				<!-- Option A: Generate a new backup key -->
 				<div class="flex flex-col space-y-2">
 					<span class="text-theme-accent">First time using this?</span>
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 						<div>Generate a backup key to save your settings online. You only need to do this once.</div>
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateToken}>
-							{isGenerating ? 'Generating…' : 'Generate Token'}
+						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateBackupKey}>
+							{isGenerating ? 'Generating…' : 'Generate Backup Key'}
 						</button>
 					</div>
 				</div>
 
 				<div class="border-b border-theme-accent/20"></div>
 
-				<!-- Option B: Enter an existing token -->
+				<!-- Option B: Enter an existing backup key -->
 				<div class="flex flex-col space-y-2">
 					<span class="text-theme-accent">Already have a backup key?</span>
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
@@ -429,25 +424,25 @@
 			</div>
 		{/if}
 
-		<!-- Token entry panel -->
+		<!-- Backup key entry panel -->
 		{#if view === 'enter'}
 			<div class="my-6 flex flex-col space-y-4 text-sm">
-				<span class="text-theme-accent">Enter Your Token</span>
+				<span class="text-theme-accent">Enter Your Backup Key</span>
 				<p>Please enter your backup key exactly as issued. Spaces or small changes will make it invalid.</p>
 
 				<div class="flex flex-col space-y-2">
-					<input type="text" bind:value={tokenInput} placeholder="e.g. pal10-hop30-sky21-key28" maxlength="23" spellcheck="false" autocomplete="off" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" />
+					<input type="text" bind:value={backupKeyInput} placeholder="e.g. pal10-hop30-sky21-key28" maxlength="23" spellcheck="false" autocomplete="off" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" />
 				</div>
 
 				<div class="flex flex-row space-x-2">
-					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (tokenInput.length !== 23 && disabledClasses)}" on:click={handleValidateToken}>
+					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (backupKeyInput.length !== 23 && disabledClasses)}" on:click={handleValidateBackupKey}>
 						{isValidating ? 'Validating…' : 'Validate & Save'}
 					</button>
 					<button
 						class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
 						on:click={() => {
 							view = 'main';
-							tokenInput = '';
+							backupKeyInput = '';
 						}}
 					>
 						Cancel
@@ -456,22 +451,22 @@
 			</div>
 		{/if}
 
-		<!-- Token is saved: show backup / restore controls -->
+		<!-- Backup key is saved: show backup / restore controls -->
 	{:else}
 		<div class="my-6 flex flex-col space-y-4 overflow-auto">
-			<!-- Active token info -->
+			<!-- Active backup key info -->
 			<div class="flex flex-col space-y-2 text-sm">
 				<span class="text-theme-accent">Your Saved Backup Key</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 					<p>This backup key is saved on this device. You can use it on other devices to restore your settings.</p>
 					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-						<!-- Copy token button -->
-						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyToken} disabled={isBusy}>
-							{hasCopiedToken ? 'Copied' : 'Copy'}
+						<!-- Copy backup key button -->
+						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyBackupKey} disabled={isBusy}>
+							{hasCopiedBackupKey ? 'Copied' : 'Copy'}
 						</button>
 
-						<!-- Forget token button -->
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the token at any time.', null, forgetLocalToken)}> Forget </button>
+						<!-- Forget backup key button -->
+						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, forgetLocalBackupKey)}> Forget </button>
 					</div>
 				</div>
 			</div>
@@ -503,6 +498,7 @@
 				<span class="text-theme-accent">Restore Settings from Cloud</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 					<div>Load your saved settings and review them before applying. Your current settings will not change until you confirm.</div>
+
 					<!-- Label changes to reflect whether a fetch is in progress -->
 					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
 						{isRestoring ? 'Fetching…' : 'Restore'}
@@ -512,8 +508,9 @@
 				<!-- Restore preview panel — shown after fetching, before applying -->
 				{#if restorePreview}
 					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
+
+					<!-- Settings differ: show the diff list, the warning, and the apply button -->
 					<div class="mt-2 flex flex-col space-y-3">
-						<!-- Settings differ: show the diff list, the warning, and the apply button -->
 						{#if changedSettings.length !== 0}
 							<div class="flex flex-col space-y-1">
 								<span>{changedSettings.length} setting{changedSettings.length === 1 ? '' : 's'} will change:</span>
