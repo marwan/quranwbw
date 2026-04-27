@@ -11,8 +11,8 @@
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 
-	// QuranWBW User Settings API
-	const apiBase = 'https://cloud-backup-api.quranwbw.com/user';
+	// QuranWBW's Cloud Backup API
+	const cloudBackupAPI = 'https://cloud-backup-api.quranwbw.com/user';
 
 	// The localStorage key where settings are stored
 	const settingsKey = 'userSettings';
@@ -136,7 +136,7 @@
 			...(options.headers || {})
 		};
 
-		const response = await fetch(`${apiBase}${path}`, {
+		const response = await fetch(`${cloudBackupAPI}${path}`, {
 			...options,
 			headers
 		});
