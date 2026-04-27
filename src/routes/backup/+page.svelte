@@ -10,12 +10,11 @@
 	// The localStorage key where settings are stored
 	const settingsKey = 'userSettings';
 
-	// The localStorage key where we persist the user's backup key locally so they don't have to re-enter it every session
-	const cloudBackupKeyLocalStorageItemName = 'cloudBackupAndRestoreBackupKey';
+	// The localStorage key where we store the backup key + all timestamps as a JSON object
+	const cloudBackupKeyLocalStorageItemName = 'cloudBackupAndRestoreData';
 
 	// Settings paths that should NEVER be overwritten during a restore.
 	// Each entry is a dot-separated path into the userSettings object.
-	// Add or remove paths here as needed.
 	const settingsRestoreExclusions = [
 		'displaySettings.fontSizes',
 		'offlineModeSettings',
@@ -32,7 +31,14 @@
 	const networkErrorMessage = 'Network error. Please check your connection and try again.';
 
 	// The backup key currently saved in localStorage (auto-populated on mount)
-	let savedBackupKey = localStorage.getItem(cloudBackupKeyLocalStorageItemName) || '';
+	let savedBackupKey = readBackupData().backupKey || '';
+
+	// All three timestamps we track — null means the event has never happened
+	let backupTimestamps = {
+		keyCreatedAt: readBackupData().keyCreatedAt || null, // When the backup key was first generated
+		lastBackedUpAt: readBackupData().lastBackedUpAt || null, // When settings were last pushed to the cloud
+		lastRestoredAt: readBackupData().lastRestoredAt || null // When settings were last pulled from the cloud
+	};
 
 	// Input field for entering an existing backup key from another device
 	let backupKeyInput = '';
@@ -46,9 +52,6 @@
 	let isBackingUp = false;
 	let isRestoring = false;
 
-	// Metadata about the cloud backup (returned on restore-preview or backup success)
-	let backupMeta = null;
-
 	// Restore preview data — shown before applying to localStorage
 	let restorePreview = null; // { settings, backed_up_at }
 
@@ -59,7 +62,7 @@
 	// True if any async operation is in progress
 	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
 
-	// Format an ISO date string into a human-readable local time.
+	// Format an ISO date string into a human-readable local time
 	function formatDate(isoString) {
 		if (!isoString) return 'Unknown';
 		return new Date(isoString).toLocaleString(undefined, {
@@ -68,18 +71,21 @@
 		});
 	}
 
-	// Persist the backup key to localStorage so the user doesn't have to re-enter it
+	// Persist the backup key and record the key creation timestamp.
+	// Called only when generating a brand-new key.
 	function persistBackupKey(backupKey) {
-		localStorage.setItem(cloudBackupKeyLocalStorageItemName, backupKey);
-		savedBackupKey = backupKey;
+		const data = writeBackupData({ backupKey, keyCreatedAt: new Date().toISOString() });
+		savedBackupKey = data.backupKey;
+		backupTimestamps = { ...backupTimestamps, keyCreatedAt: data.keyCreatedAt };
 	}
 
-	// Remove the locally stored backup key (does NOT delete cloud data)
+	// Remove all locally stored backup data (key + timestamps).
+	// Does NOT delete the cloud backup — the user can re-enter the key at any time.
 	function forgetLocalBackupKey() {
 		localStorage.removeItem(cloudBackupKeyLocalStorageItemName);
 		savedBackupKey = '';
+		backupTimestamps = { keyCreatedAt: null, lastBackedUpAt: null, lastRestoredAt: null };
 		restorePreview = null;
-		backupMeta = null;
 		view = 'main';
 	}
 
@@ -101,7 +107,7 @@
 		window.location.reload();
 	}
 
-	// Generic fetch wrapper that adds the x-backup-key header and sends the user's local timezone with every request.
+	// Generic fetch wrapper that adds the x-backup-key header and sends the user's local timezone with every request
 	async function apiFetch(path, options = {}) {
 		// Get user's local IANA timezone (e.g. "Asia/Kolkata")
 		let localTimeZone = null;
@@ -117,7 +123,7 @@
 			// Send backup key if available
 			...(savedBackupKey ? { 'x-backup-key': savedBackupKey } : {}),
 
-			// Send user's local timezone so the server can store and return backup / restore timestamps in the user's local time
+			// Send user's local timezone so the server can store timestamps in the user's local time
 			...(localTimeZone ? { 'x-user-timezone': localTimeZone } : {}),
 
 			...(options.headers || {})
@@ -128,7 +134,8 @@
 			headers
 		});
 
-		// Parse JSON even on error responses, but we only use it for data fields — never for message strings to display to users
+		// Parse JSON even on error responses, but we only use it for data fields —
+		// never for message strings to display to users
 		const json = await response.json().catch(() => ({ code: response.status }));
 		return { ok: response.ok, status: response.status, json };
 	}
@@ -174,7 +181,7 @@
 				return;
 			}
 
-			// Store the backup key locally immediately
+			// Store the backup key and record the creation timestamp
 			persistBackupKey(json.backupKey);
 			view = 'generate';
 		} catch {
@@ -207,8 +214,12 @@
 				return;
 			}
 
-			// Backup key is valid — save it locally and show the main panel
-			persistBackupKey(trimmed);
+			// Key is valid — save it locally without overwriting any existing timestamps
+			// (we don't know the original creation date when entering a key from another device)
+			writeBackupData({ backupKey: trimmed });
+			savedBackupKey = trimmed;
+			backupTimestamps = { ...backupTimestamps, ...readBackupData() };
+
 			backupKeyInput = '';
 			view = 'main';
 		} catch {
@@ -229,7 +240,7 @@
 		isBackingUp = true;
 
 		try {
-			const { ok, status, json } = await apiFetch('/settings', {
+			const { ok, status } = await apiFetch('/settings', {
 				method: 'POST',
 				body: JSON.stringify(settings)
 			});
@@ -239,8 +250,10 @@
 				return;
 			}
 
-			// Store backup metadata locally for display in the UI
-			backupMeta = json.meta;
+			// Record the backup timestamp locally
+			const ts = new Date().toISOString();
+			writeBackupData({ lastBackedUpAt: ts });
+			backupTimestamps = { ...backupTimestamps, lastBackedUpAt: ts };
 
 			// Clear any open restore preview — its data is now stale after a fresh backup
 			restorePreview = null;
@@ -251,7 +264,7 @@
 		}
 	}
 
-	// Fetch the cloud backup and show a preview before applying.
+	// Fetch the cloud backup and show a preview before applying
 	async function handleRestorePreview() {
 		// Clear any existing preview before fetching fresh data
 		restorePreview = null;
@@ -270,7 +283,7 @@
 
 			const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings);
 
-			// Show an alert if there is no difference
+			// Show an alert if there is no difference between local and cloud settings
 			if (changedSettings.length === 0) {
 				restorePreview = null;
 				showAlert('Your local settings are already identical to this backup. No changes will be made.');
@@ -303,6 +316,10 @@
 			if (value !== undefined) setNestedValue(merged, path, value);
 		}
 
+		// Record the restore timestamp before reloading the page
+		const ts = new Date().toISOString();
+		writeBackupData({ lastRestoredAt: ts });
+
 		applyRestoredSettings(merged);
 	}
 
@@ -317,10 +334,9 @@
 		if (!savedBackupKey) return;
 
 		navigator.clipboard?.writeText(savedBackupKey);
-
 		hasCopiedBackupKey = true;
 
-		// Handle repeated clicks safely
+		// Reset the "Copied" label after 2 seconds
 		clearTimeout(copyResetTimer);
 		copyResetTimer = setTimeout(() => {
 			hasCopiedBackupKey = false;
@@ -381,7 +397,25 @@
 		return changes;
 	}
 
-	__currentPage.set('Cloud Backup & Restore');
+	// Read the entire backup data object from localStorage
+	function readBackupData() {
+		try {
+			const raw = localStorage.getItem(cloudBackupKeyLocalStorageItemName);
+			return raw ? JSON.parse(raw) : {};
+		} catch {
+			return {};
+		}
+	}
+
+	// Merge a patch into the stored backup data object and persist it
+	function writeBackupData(patch) {
+		const current = readBackupData();
+		const updated = { ...current, ...patch };
+		localStorage.setItem(cloudBackupKeyLocalStorageItemName, JSON.stringify(updated));
+		return updated;
+	}
+
+	__currentPage.set('cloud backup & restore');
 </script>
 
 <PageHead title={'Cloud Backup & Restore'} />
@@ -409,7 +443,7 @@
 
 				<div class="border-b border-theme-accent/20"></div>
 
-				<!-- Option B: Enter an existing backup key -->
+				<!-- Option B: Enter an existing backup key from another device -->
 				<div class="flex flex-col space-y-2">
 					<span class="text-theme-accent">Already have a backup key?</span>
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
@@ -457,24 +491,35 @@
 		<!-- Backup key is saved: show backup / restore controls -->
 	{:else}
 		<div class="my-6 flex flex-col space-y-4 overflow-auto">
-			<!-- Active backup key info -->
+			<!-- ----------------------------------------------------------------
+				SECTION 1: Backup key info + actions
+				Shows when the key was created (if known) and lets the user
+				copy, share, or forget the key stored on this device.
+			---------------------------------------------------------------- -->
 			<div class="flex flex-col space-y-2 text-sm">
 				<span class="text-theme-accent">Your Saved Backup Key</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<p>This backup key is saved on this device. You can use it on other devices to restore your settings.</p>
+					<div class="flex flex-col">
+						<p>A backup key is saved on this device. Copy or share it to use on another device.</p>
+						<!-- Only shown if the key was generated on this device (not when entered from another device) -->
+						{#if backupTimestamps.keyCreatedAt}
+							<p class="opacity-70 mt-2">Key created: {formatDate(backupTimestamps.keyCreatedAt)}</p>
+						{/if}
+					</div>
 					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-						<!-- Copy backup key button -->
+						<!-- Copy the backup key to clipboard -->
 						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyBackupKey} disabled={isBusy}>
 							{hasCopiedBackupKey ? 'Copied' : 'Copy'}
 						</button>
 
-						<!-- Share key button -->
+						<!-- Open the device native share sheet with the backup key -->
 						<button
 							class="h-max whitespace-nowrap {buttonClasses}"
 							on:click={() => {
 								if (navigator.share) {
 									navigator.share({ title: 'My Backup Key', text: savedBackupKey });
 								} else {
+									// Fallback for browsers/devices that don't support the Web Share API
 									navigator.clipboard?.writeText(savedBackupKey);
 									showAlert('Share not supported on this device. Key copied to clipboard instead.');
 								}
@@ -483,7 +528,7 @@
 							Share
 						</button>
 
-						<!-- Forget backup key button -->
+						<!-- Remove the key from this device only — cloud backup is preserved -->
 						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, forgetLocalBackupKey)}> Forget </button>
 					</div>
 				</div>
@@ -491,16 +536,19 @@
 
 			<div class="border-b border-theme-accent/20"></div>
 
-			<!-- Backup settings -->
+			<!-- ----------------------------------------------------------------
+				SECTION 2: Backup settings to cloud
+				Shows when settings were last backed up and lets the user
+				push their current local settings to the cloud.
+			---------------------------------------------------------------- -->
 			<div class="flex flex-col space-y-2 text-sm">
 				<span class="text-theme-accent">Save Settings to Cloud</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<div>
-						Save your current settings online. This will replace any previous backup for this key.
-						{#if backupMeta}
-							<p class="mt-1 opacity-50">
-								Last backed up: {formatDate(backupMeta.backed_up_at)}
-							</p>
+					<div class="flex flex-col">
+						<p>Save your current settings online. This will replace any previous backup for this key.</p>
+						<!-- Timestamp recorded locally after each successful backup -->
+						{#if backupTimestamps.lastBackedUpAt}
+							<p class="opacity-70 mt-2">Last backed up: {formatDate(backupTimestamps.lastBackedUpAt)}</p>
 						{/if}
 					</div>
 					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
@@ -511,7 +559,11 @@
 
 			<div class="border-b border-theme-accent/20"></div>
 
-			<!-- Restore settings -->
+			<!-- ----------------------------------------------------------------
+				SECTION 3: Restore settings from cloud
+				Shows when settings were last restored and lets the user
+				fetch and preview cloud settings before applying them.
+			---------------------------------------------------------------- -->
 			<div class="flex flex-col space-y-2 text-sm">
 				<span class="text-theme-accent">Restore Settings from Cloud</span>
 
@@ -523,9 +575,14 @@
 				-->
 				{#if !restorePreview}
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-						<div>Load your saved settings and review them before applying. Your current settings will not change until you confirm.</div>
+						<div class="flex flex-col">
+							<p>Load your saved settings and review them before applying. Your current settings will not change until you confirm.</p>
+							<!-- Timestamp recorded locally after each successful restore -->
+							{#if backupTimestamps.lastRestoredAt}
+								<p class="opacity-70 mt-2">Last restored: {formatDate(backupTimestamps.lastRestoredAt)}</p>
+							{/if}
+						</div>
 
-						<!-- Label changes to reflect whether a fetch is in progress -->
 						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
 							{isRestoring ? 'Fetching…' : 'Restore'}
 						</button>
@@ -542,11 +599,10 @@
 					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
 					{@const changedSettingsCount = changedSettings.length}
 
-					<!-- Settings differ: show the warning, apply button and cancel button -->
+					<!-- Settings differ: show the diff count, apply button and cancel button -->
 					{#if changedSettingsCount !== 0}
 						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 							<div>A total of {changedSettingsCount} setting{changedSettingsCount === 1 ? '' : 's'} on this device will be updated. Your current settings will be replaced, and the page will reload.</div>
-
 							<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}> Apply </button>
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}> Cancel </button>
