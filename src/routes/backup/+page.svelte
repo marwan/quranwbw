@@ -1,5 +1,12 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
+
+	import CloudBackup from '$svgs/CloudBackup.svelte';
+	import CloudRestore from '$svgs/CloudRestore.svelte';
+	import Share from '$svgs/Share.svelte';
+	import Trash from '$svgs/Trash.svelte';
+	import Copy from '$svgs/Copy.svelte';
+
 	import { __currentPage } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
@@ -508,13 +515,14 @@
 					</div>
 					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 						<!-- Copy the backup key to clipboard -->
-						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyBackupKey} disabled={isBusy}>
-							{hasCopiedBackupKey ? 'Copied' : 'Copy'}
+						<button class="text-sm space-x-2 h-max {buttonClasses}" on:click={handleCopyBackupKey} disabled={isBusy}>
+							<Copy size={4} />
+							<span>{hasCopiedBackupKey ? 'Copied' : 'Copy'}</span>
 						</button>
 
 						<!-- Open the device native share sheet with the backup key -->
 						<button
-							class="h-max whitespace-nowrap {buttonClasses}"
+							class="text-sm space-x-2 h-max {buttonClasses}"
 							on:click={() => {
 								if (navigator.share) {
 									navigator.share({ title: 'My Backup Key', text: savedBackupKey });
@@ -525,11 +533,15 @@
 								}
 							}}
 						>
-							Share
+							<Share size={4} />
+							<span>Share</span>
 						</button>
 
 						<!-- Remove the key from this device only — cloud backup is preserved -->
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, forgetLocalBackupKey)}> Forget </button>
+						<button class="text-sm space-x-2 h-max {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, forgetLocalBackupKey)}>
+							<Trash size={4} />
+							<span>Forget</span>
+						</button>
 					</div>
 				</div>
 			</div>
@@ -551,8 +563,9 @@
 							<p class="opacity-70 mt-2">Last backed up: {formatDate(backupTimestamps.lastBackedUpAt)}</p>
 						{/if}
 					</div>
-					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
-						{isBackingUp ? 'Backing up…' : 'Backup'}
+					<button class="text-sm space-x-2 h-max {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
+						<CloudBackup size={4} />
+						<span>{isBackingUp ? 'Backing up…' : 'Backup'}</span>
 					</button>
 				</div>
 			</div>
@@ -583,8 +596,9 @@
 							{/if}
 						</div>
 
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
-							{isRestoring ? 'Fetching…' : 'Restore'}
+						<button class="text-sm space-x-2 h-max {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
+							<CloudRestore size={4} />
+							<span>{isRestoring ? 'Fetching…' : 'Restore'}</span>
 						</button>
 					</div>
 				{/if}
