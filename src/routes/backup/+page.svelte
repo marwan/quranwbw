@@ -422,7 +422,7 @@
 		return updated;
 	}
 
-	__currentPage.set('cloud backup & restore');
+	__currentPage.set('Cloud Backup & Restore');
 </script>
 
 <PageHead title={'Cloud Backup & Restore'} />
