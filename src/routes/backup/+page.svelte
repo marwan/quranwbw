@@ -7,6 +7,8 @@
 	import Share from '$svgs/Share.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import Copy from '$svgs/Copy.svelte';
+	import Cross from '$svgs/Cross.svelte';
+	import Check from '$svgs/Check.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
@@ -481,8 +483,9 @@
 				</div>
 
 				<div class="flex flex-row space-x-2">
-					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (backupKeyInput.length !== 23 && disabledClasses)}" on:click={handleValidateBackupKey}>
-						{isValidating ? 'Validating…' : 'Validate & Save'}
+					<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleValidateBackupKey}>
+						<Check size={5} />
+						<span class="!ml-[4px]">{isValidating ? 'Validating…' : 'Validate & Save'}</span>
 					</button>
 					<button
 						class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
@@ -491,7 +494,8 @@
 							backupKeyInput = '';
 						}}
 					>
-						Cancel
+						<Cross size={5} />
+						<span class="!ml-[4px]">Cancel</span>
 					</button>
 				</div>
 			</div>
@@ -620,8 +624,14 @@
 						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 							<div>A total of {changedSettingsCount} setting{changedSettingsCount === 1 ? '' : 's'} on this device will be updated. Your current settings will be replaced, and the page will reload.</div>
 							<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}> Apply </button>
-								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}> Cancel </button>
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}>
+									<Check size={5} />
+									<span class="!ml-[4px]">Apply</span>
+								</button>
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}>
+									<Cross size={5} />
+									<span class="!ml-[4px]">Cancel</span>
+								</button>
 							</div>
 						</div>
 					{/if}
