@@ -662,33 +662,35 @@
 					{/if}
 				{/if}
 			</div>
+		</div>
+	{/if}
 
-			<div class="border-b border-theme-accent/20"></div>
+	<div class="my-6 flex flex-col space-y-4 overflow-auto">
+		<div class="border-b border-theme-accent/20"></div>
 
-			<!-- ----------------------------------------------------------------
+		<!-- ----------------------------------------------------------------
 				SECTION 4: Local backup & restore
 				Allows exporting settings to a local file and restoring them manually.
 				Works offline and does not require a backup key or cloud access.
 				Importing a file will overwrite the current local settings.
 			---------------------------------------------------------------- -->
-			<div class="flex flex-col space-y-2 text-sm">
-				<span class="text-theme-accent">Local Backup & Restore</span>
-				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<div class="flex flex-col">Save your settings to a local file or restore them from a previously exported backup. This option works completely offline and is useful for manual backups or transferring settings without using the cloud.</div>
-					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={exportSettings}>
-							<Export />
-							<span>Backup</span>
-						</button>
+		<div class="flex flex-col space-y-2 text-sm">
+			<span class="text-theme-accent">Local Backup & Restore</span>
+			<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+				<div class="flex flex-col">Save your settings to a local file or restore them from a previously exported backup. This option works completely offline and is useful for manual backups or transferring settings without using the cloud.</div>
+				<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+					<button class="h-max whitespace-nowrap {buttonClasses}" on:click={exportSettings}>
+						<Export />
+						<span>Backup</span>
+					</button>
 
-						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={triggerImport}>
-							<Import />
-							<span>Restore</span>
-						</button>
-						<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
-					</div>
+					<button class="h-max whitespace-nowrap {buttonClasses}" on:click={triggerImport}>
+						<Import />
+						<span>Restore</span>
+					</button>
+					<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 				</div>
 			</div>
 		</div>
-	{/if}
+	</div>
 </div>
