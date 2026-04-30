@@ -7,11 +7,14 @@
 	import Share from '$svgs/Share.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import Copy from '$svgs/Copy.svelte';
-	import Cross from '$svgs/Cross.svelte';
 	import Check from '$svgs/Check.svelte';
+	import Cross from '$svgs/Cross.svelte';
+	import Import from '$svgs/Import.svelte';
+	import Export from '$svgs/Export.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
+	import { importSettings, exportSettings } from '$utils/settingsManager';
 
 	// QuranWBW's Cloud Backup API
 	const cloudBackupAPI = 'https://cloud-backup-api.quranwbw.com/user';
@@ -67,6 +70,9 @@
 	// Copy button state for active backup key
 	let hasCopiedBackupKey = false;
 	let copyResetTimer;
+
+	// Reference to the hidden file input used for importing settings
+	let fileInput;
 
 	// True if any async operation is in progress
 	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
@@ -424,15 +430,34 @@
 		return updated;
 	}
 
-	__currentPage.set('Cloud Backup & Restore');
+	// Programmatically open the file picker for importing settings
+	function triggerImport() {
+		fileInput.click();
+	}
+
+	// Handle selected file and confirm before importing settings
+	function handleFileChange(event) {
+		const file = event.target.files[0];
+		if (file) {
+			showConfirm('Are you sure you want to import settings? This will overwrite your current preferences.', 'settings-drawer', () => {
+				importSettings(file);
+				event.target.value = ''; // reset so the same file can be chosen again
+			});
+		}
+	}
+
+	__currentPage.set('Backup & Restore');
 </script>
 
-<PageHead title={'Cloud Backup & Restore'} />
+<PageHead title={'Backup & Restore'} />
 
 <div class="mx-auto">
 	<div class="markdown mx-auto">
-		<h3>Cloud Backup & Restore</h3>
-		<p>This feature lets you save your settings safely online and restore them on another device. You do not need an account or email. You will get a private backup key. This key is the only way to restore your settings later. Keep this key safe. If you lose it, your backup cannot be recovered.</p>
+		<h3>Backup & Restore</h3>
+		<p>
+			This page lets you back up and restore your settings in two ways: cloud backup and local file backup. Cloud backup securely saves your settings online using a private backup key, allowing you to restore them on any device without an account. Local backup lets you export your settings to a file and restore them manually at any time. Your backup key and files are the only way to recover your
+			settings, so keep them safe.
+		</p>
 	</div>
 
 	<!-- No backup key saved: onboarding options -->
@@ -636,6 +661,33 @@
 						</div>
 					{/if}
 				{/if}
+			</div>
+
+			<div class="border-b border-theme-accent/20"></div>
+
+			<!-- ----------------------------------------------------------------
+				SECTION 4: Local backup & restore
+				Allows exporting settings to a local file and restoring them manually.
+				Works offline and does not require a backup key or cloud access.
+				Importing a file will overwrite the current local settings.
+			---------------------------------------------------------------- -->
+			<div class="flex flex-col space-y-2 text-sm">
+				<span class="text-theme-accent">Local Backup & Restore</span>
+				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+					<div class="flex flex-col">Save your settings to a local file or restore them from a previously exported backup. This option works completely offline and is useful for manual backups or transferring settings without using the cloud.</div>
+					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={exportSettings}>
+							<Export />
+							<span>Backup</span>
+						</button>
+
+						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={triggerImport}>
+							<Import />
+							<span>Restore</span>
+						</button>
+						<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
+					</div>
+				</div>
 			</div>
 		</div>
 	{/if}

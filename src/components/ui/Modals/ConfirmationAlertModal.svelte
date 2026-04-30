@@ -1,5 +1,7 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
+	import Check from '$svgs/Check.svelte';
+	import Cross from '$svgs/Cross.svelte';
 	import { __confirmationAlertModal } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { getModalTransition } from '$utils/getModalTransition';
@@ -38,11 +40,20 @@
 						$__confirmationAlertModal.visible = false;
 					}}
 				>
-					Confirm
+					<Check size={5} />
+					<span class="!ml-[4px]">Confirm</span>
 				</button>
 			{/if}
 
-			<button class="w-full {buttonClasses}" on:click={() => ($__confirmationAlertModal.visible = false)}> {$__confirmationAlertModal.type === 'confirm' ? 'Cancel' : 'Got it'} </button>
+			<button class="w-full {buttonClasses}" on:click={() => ($__confirmationAlertModal.visible = false)}>
+				{#if $__confirmationAlertModal.type === 'confirm'}
+					<Cross size={5} />
+					<span class="!ml-[4px]">Cancel</span>
+				{:else}
+					<Check size={5} />
+					<span class="!ml-[4px]">Okay</span>
+				{/if}
+			</button>
 		</div>
 	</div>
 </Modal>

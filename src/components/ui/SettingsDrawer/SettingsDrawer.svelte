@@ -15,8 +15,6 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import ResetSettings from '$svgs/ResetSettings.svelte';
-	import Import from '$svgs/Import.svelte';
-	import Export from '$svgs/Export.svelte';
 
 	import {
 		__currentPage,
@@ -53,7 +51,6 @@
 	import { fly } from 'svelte/transition';
 	import { term } from '$utils/terminologies';
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
-	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
@@ -194,22 +191,6 @@
 			}
 		}
 		return null;
-	}
-
-	let fileInput;
-
-	function triggerImport() {
-		fileInput.click();
-	}
-
-	function handleFileChange(event) {
-		const file = event.target.files[0];
-		if (file) {
-			showConfirm('Are you sure you want to import settings? This will overwrite your current preferences.', 'settings-drawer', () => {
-				importSettings(file);
-				event.target.value = ''; // reset so the same file can be chosen again
-			});
-		}
 	}
 </script>
 
@@ -554,23 +535,8 @@
 					<div id="import-export-settings" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Backup & Restore</span>
-
-							<div class="flex flex-row space-x-2">
-								<button class="text-sm space-x-2 {buttonClasses}" on:click={exportSettings}>
-									<Export />
-									<span>Backup</span>
-								</button>
-								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Backup</Tooltip>
-
-								<button class="text-sm space-x-2 {buttonClasses}" on:click={triggerImport}>
-									<Import />
-									<span>Restore</span>
-								</button>
-								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Restore</Tooltip>
-								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
-							</div>
 						</div>
-						<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>
+						<p class={settingsDescriptionClasses}>Backup and restore options have moved to the <a href="/backup" class={linkClasses}>Backup & Restore</a> page, where you can manage both cloud backups and local file backups in one place.</p>
 					</div>
 
 					<div class="border-b border-theme-accent/20"></div>
