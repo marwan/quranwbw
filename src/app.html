@@ -71,10 +71,10 @@
 		<link crossorigin="anonymous" href="%sveltekit.assets%/images/apple-touch-icon.png?v=2" rel="apple-touch-icon" />
 
 		<!-- 
-		If the user's browser do not support Optional chaining (?.), redirect to old v3 website
-		issue: https://github.com/sveltejs/kit/issues/5209
-		credits: https://stackoverflow.com/a/69935847 
-		caniuse: https://caniuse.com/mdn-javascript_operators_optional_chaining
+			If the user's browser do not support Optional chaining (?.), redirect to old v3 website
+			issue: https://github.com/sveltejs/kit/issues/5209
+			credits: https://stackoverflow.com/a/69935847 
+			caniuse: https://caniuse.com/mdn-javascript_operators_optional_chaining
 		-->
 		<script>
 			try {
@@ -85,259 +85,157 @@
 			}
 		</script>
 
-		<!-- Themes related stuff... putting all this here to ensure there is no white-flash -->
-		<script>
-			window.websiteColors = {
-				1: 'bg-[#FFFFFF]',
-				2: 'bg-[#FFFFFF]',
-				3: 'bg-[#e1e1e1]',
-				4: 'bg-[#e9e3d7]',
-				5: 'bg-[#20161f]',
-				6: 'bg-[#02021b]',
-				7: 'bg-[#001617]',
-				8: 'bg-[#000000]',
-				9: 'bg-[#09090b]'
-			};
-
-			const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-			const usersTheme = userSettings ? +userSettings.displaySettings.websiteTheme : 1;
-
-			function theme(type, id = usersTheme) {
-				try {
-					const themes = {
-						1: {
-							themeName: 'Golden Glint',
-							bgMain: 'bg-[#FFFFFF]',
-							bgSecondary: 'bg-[#b1901f]',
-							bgSecondaryLight: 'bg-[#b1901f]/5',
-							bgSecondaryDark: 'bg-[#b1901f]/15',
-							bgSecondaryExtraDark: 'bg-[#b1901f]/20',
-							text: 'text-[#000000]',
-							textSecondary: 'text-[#b1901f]',
-							textBgColor: 'text-[#FFFFFF]',
-							border: 'border-[#b1901f]/20',
-							borderDark: '!border-[#b1901f]',
-							icon: '#b1901f',
-							input: 'focus:border-[#b1901f] focus:ring-[#b1901f]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#b1901f] peer-checked:border-[#b1901f]',
-							toggle: 'bg-[#b1901f]/15 after:bg-[#FFFFFF] after:border-[#FFFFFF] peer-checked:bg-[#b1901f]',
-							slider: 'bg-[#b1901f]/10 [&::-webkit-slider-thumb]:!bg-[#b1901f]',
-							hover: 'hover:bg-[#b1901f]/5',
-							hoverBorder: 'border border-transparent hover:border-[#b1901f]',
-							via: 'via-[#b1901f]',
-							placeholder: 'placeholder:text-[#b1901f]/50'
-						},
-						2: {
-							themeName: 'Classic Light',
-							bgMain: 'bg-[#FFFFFF]',
-							bgSecondary: 'bg-[#000000]',
-							bgSecondaryLight: 'bg-[#000000]/5',
-							bgSecondaryDark: 'bg-[#000000]/15',
-							bgSecondaryExtraDark: 'bg-[#000000]/20',
-							text: 'text-[#000000]',
-							textSecondary: 'text-[#000000]',
-							textBgColor: 'text-[#FFFFFF]',
-							border: 'border-[#000000]/20',
-							borderDark: '!border-[#000000]',
-							icon: '#000000',
-							input: 'focus:border-[#000000] focus:ring-[#000000]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#000000] peer-checked:border-[#000000]',
-							toggle: 'bg-[#000000]/15 after:bg-[#FFFFFF] after:border-[#FFFFFF] peer-checked:bg-[#000000]',
-							slider: 'bg-[#000000]/10 [&::-webkit-slider-thumb]:!bg-[#000000]',
-							hover: 'hover:bg-[#000000]/5',
-							hoverBorder: 'border border-transparent hover:border-[#000000]',
-							via: 'via-[#000000]',
-							placeholder: 'placeholder:text-[#000000]/50'
-						},
-						3: {
-							themeName: 'Silver Lining',
-							bgMain: 'bg-[#e1e1e1]',
-							bgSecondary: 'bg-[#000000]',
-							bgSecondaryLight: 'bg-[#000000]/5',
-							bgSecondaryDark: 'bg-[#000000]/15',
-							bgSecondaryExtraDark: 'bg-[#000000]/20',
-							text: 'text-[#000000]',
-							textSecondary: 'text-[#000000]',
-							textBgColor: 'text-[#e1e1e1]',
-							border: 'border-[#000000]/20',
-							borderDark: '!border-[#000000]',
-							icon: '#000000',
-							input: 'focus:border-[#000000] focus:ring-[#000000]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#000000] peer-checked:border-[#000000]',
-							toggle: 'bg-[#000000]/15 after:bg-[#e1e1e1] after:border-[#e1e1e1] peer-checked:bg-[#000000]',
-							slider: 'bg-[#000000]/10 [&::-webkit-slider-thumb]:!bg-[#000000]',
-							hover: 'hover:bg-[#000000]/5',
-							hoverBorder: 'border border-transparent hover:border-[#000000]',
-							via: 'via-[#000000]',
-							placeholder: 'placeholder:text-[#000000]/50'
-						},
-						4: {
-							themeName: 'Vintage Sepia',
-							bgMain: 'bg-[#e9e3d7]',
-							bgSecondary: 'bg-[#553c0f]',
-							bgSecondaryLight: 'bg-[#553c0f]/5',
-							bgSecondaryDark: 'bg-[#553c0f]/15',
-							bgSecondaryExtraDark: 'bg-[#553c0f]/20',
-							text: 'text-[#553c0f]',
-							textSecondary: 'text-[#553c0f]',
-							textBgColor: 'text-[#e9e3d7]',
-							border: 'border-[#553c0f]/20',
-							borderDark: '!border-[#553c0f]',
-							icon: '#553c0f',
-							input: 'focus:border-[#553c0f] focus:ring-[#553c0f]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#553c0f] peer-checked:border-[#553c0f]',
-							toggle: 'bg-[#553c0f]/15 after:bg-[#e9e3d7] after:border-[#e9e3d7] peer-checked:bg-[#553c0f]',
-							slider: 'bg-[#553c0f]/10 [&::-webkit-slider-thumb]:!bg-[#553c0f]',
-							hover: 'hover:bg-[#553c0f]/5',
-							hoverBorder: 'border border-transparent hover:border-[#553c0f]',
-							via: 'via-[#553c0f]',
-							placeholder: 'placeholder:text-[#553c0f]/50'
-						},
-						5: {
-							themeName: 'Mocha Night',
-							bgMain: 'bg-[#20161f]',
-							bgSecondary: 'bg-[#dca54c]',
-							bgSecondaryLight: 'bg-[#dca54c]/5',
-							bgSecondaryDark: 'bg-[#dca54c]/15',
-							bgSecondaryExtraDark: 'bg-[#dca54c]/20',
-							text: 'text-[#dca54c]',
-							textSecondary: 'text-[#dca54c]',
-							textBgColor: 'text-[#20161f]',
-							border: 'border-[#dca54c]/20',
-							borderDark: '!border-[#dca54c]',
-							icon: '#dca54c',
-							input: 'focus:border-[#dca54c] focus:ring-[#dca54c]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#dca54c] peer-checked:border-[#dca54c]',
-							toggle: 'bg-[#dca54c]/15 after:bg-[#20161f] after:border-[#20161f] peer-checked:bg-[#dca54c]',
-							slider: 'bg-[#dca54c]/10 [&::-webkit-slider-thumb]:!bg-[#dca54c]',
-							hover: 'hover:bg-[#dca54c]/5',
-							hoverBorder: 'border border-transparent hover:border-[#dca54c]',
-							via: 'via-[#dca54c]',
-							placeholder: 'placeholder:text-[#dca54c]/50'
-						},
-						6: {
-							themeName: 'Midnight Blue',
-							bgMain: 'bg-[#02021b]',
-							bgSecondary: 'bg-[#c2c2c2]',
-							bgSecondaryLight: 'bg-[#c2c2c2]/5',
-							bgSecondaryDark: 'bg-[#c2c2c2]/15',
-							bgSecondaryExtraDark: 'bg-[#c2c2c2]/20',
-							text: 'text-[#c2c2c2]',
-							textSecondary: 'text-[#c2c2c2]',
-							textBgColor: 'text-[#02021b]',
-							border: 'border-[#c2c2c2]/20',
-							borderDark: '!border-[#c2c2c2]',
-							icon: '#c2c2c2',
-							input: 'focus:border-[#c2c2c2] focus:ring-[#c2c2c2]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#c2c2c2] peer-checked:border-[#c2c2c2]',
-							toggle: 'bg-[#c2c2c2]/15 after:bg-[#02021b] after:border-[#02021b] peer-checked:bg-[#c2c2c2]',
-							slider: 'bg-[#c2c2c2]/10 [&::-webkit-slider-thumb]:!bg-[#c2c2c2]',
-							hover: 'hover:bg-[#c2c2c2]/5',
-							hoverBorder: 'border border-transparent hover:border-[#c2c2c2]',
-							via: 'via-[#c2c2c2]',
-							placeholder: 'placeholder:text-[#c2c2c2]/50'
-						},
-						7: {
-							themeName: 'Forest Green',
-							bgMain: 'bg-[#001617]',
-							bgSecondary: 'bg-[#dddddd]',
-							bgSecondaryLight: 'bg-[#dddddd]/5',
-							bgSecondaryDark: 'bg-[#dddddd]/15',
-							bgSecondaryExtraDark: 'bg-[#dddddd]/20',
-							text: 'text-[#dddddd]',
-							textSecondary: 'text-[#dddddd]',
-							textBgColor: 'text-[#001617]',
-							border: 'border-[#dddddd]/20',
-							borderDark: '!border-[#dddddd]',
-							icon: '#dddddd',
-							input: 'focus:border-[#dddddd] focus:ring-[#dddddd]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#dddddd] peer-checked:border-[#dddddd]',
-							toggle: 'bg-[#dddddd]/15 after:bg-[#001617] after:border-[#001617] peer-checked:bg-[#dddddd]',
-							slider: 'bg-[#dddddd]/10 [&::-webkit-slider-thumb]:!bg-[#dddddd]',
-							hover: 'hover:bg-[#dddddd]/5',
-							hoverBorder: 'border border-transparent hover:border-[#dddddd]',
-							via: 'via-[#dddddd]',
-							placeholder: 'placeholder:text-[#dddddd]/50'
-						},
-						8: {
-							themeName: 'Oled Black',
-							bgMain: 'bg-[#000000]',
-							bgSecondary: 'bg-[#dddddd]',
-							bgSecondaryLight: 'bg-[#dddddd]/5',
-							bgSecondaryDark: 'bg-[#dddddd]/15',
-							bgSecondaryExtraDark: 'bg-[#dddddd]/20',
-							text: 'text-[#dddddd]',
-							textSecondary: 'text-[#dddddd]',
-							textBgColor: 'text-[#000000]',
-							border: 'border-[#dddddd]/20',
-							borderDark: '!border-[#dddddd]',
-							icon: '#dddddd',
-							input: 'focus:border-[#dddddd] focus:ring-[#dddddd]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#dddddd] peer-checked:border-[#dddddd]',
-							toggle: 'bg-[#dddddd]/15 after:bg-[#000000] after:border-[#000000] peer-checked:bg-[#dddddd]',
-							slider: 'bg-[#dddddd]/10 [&::-webkit-slider-thumb]:!bg-[#dddddd]',
-							hover: 'hover:bg-[#dddddd]/5',
-							hoverBorder: 'border border-transparent hover:border-[#dddddd]',
-							via: 'via-[#dddddd]',
-							placeholder: 'placeholder:text-[#dddddd]/50'
-						},
-						9: {
-							themeName: 'Dark Luxury',
-							bgMain: 'bg-[#09090b]',
-							bgSecondary: 'bg-[#dca54c]',
-							bgSecondaryLight: 'bg-[#dca54c]/5',
-							bgSecondaryDark: 'bg-[#dca54c]/15',
-							bgSecondaryExtraDark: 'bg-[#dca54c]/20',
-							text: 'text-[#dca54c]',
-							textSecondary: 'text-[#dca54c]',
-							textBgColor: 'text-[#09090b]',
-							border: 'border-[#dca54c]/20',
-							borderDark: '!border-[#dca54c]',
-							icon: '#dca54c',
-							input: 'focus:border-[#dca54c] focus:ring-[#dca54c]',
-							checked: 'peer-checked:border-2 peer-checked:border-[#dca54c] peer-checked:border-[#dca54c]',
-							toggle: 'bg-[#dca54c]/15 after:bg-[#09090b] after:border-[#09090b] peer-checked:bg-[#dca54c]',
-							slider: 'bg-[#dca54c]/10 [&::-webkit-slider-thumb]:!bg-[#dca54c]',
-							hover: 'hover:bg-[#dca54c]/5',
-							hoverBorder: 'border border-transparent hover:border-[#dca54c]',
-							via: 'via-[#dca54c]',
-							placeholder: 'placeholder:text-[#dca54c]/50'
-						}
-					};
-
-					return themes[id][type] || '';
-				} catch (error) {
-					console.warn(error);
-					return '';
-				}
+		<!--
+			Theme CSS variables defined inline (not in the external stylesheet) so they are
+			available synchronously when the theme script below runs. This is necessary because
+			the theme script reads --theme-accent-rgb via getComputedStyle to inject checkbox
+			styles — external stylesheets are not yet parsed at that point, but inline <style>
+			blocks are parsed synchronously before any following <script> executes.
+		-->
+		<style>
+			/* Golden Glint */
+			html.theme-1 {
+				--theme-bg-rgb: 255 255 255;
+				--theme-accent-rgb: 177 144 31;
+				--theme-text-rgb: 0 0 0;
+				--theme-palette-normal: --palette3;
+				--theme-palette-tajweed: --palette0;
+				--theme-palette-header: --palette7;
+				--theme-palette-colored-fonts: --palette4;
 			}
 
-			window.theme = theme;
-		</script>
+			/* Classic Light */
+			html.theme-2 {
+				--theme-bg-rgb: 255 255 255;
+				--theme-accent-rgb: 0 0 0;
+				--theme-text-rgb: 0 0 0;
+				--theme-palette-normal: --palette3;
+				--theme-palette-tajweed: --palette0;
+				--theme-palette-header: --palette0;
+				--theme-palette-colored-fonts: --palette0;
+			}
 
-		<!-- set the website theme - we put this code here to avoid the white flash and making people go blind -->
+			/* Silver Lining */
+			html.theme-3 {
+				--theme-bg-rgb: 225 225 225;
+				--theme-accent-rgb: 0 0 0;
+				--theme-text-rgb: 0 0 0;
+				--theme-palette-normal: --palette5;
+				--theme-palette-tajweed: --palette2;
+				--theme-palette-header: --palette8;
+				--theme-palette-colored-fonts: --palette3;
+			}
+
+			/* Vintage Sepia */
+			html.theme-4 {
+				--theme-bg-rgb: 233 227 215;
+				--theme-accent-rgb: 85 60 15;
+				--theme-text-rgb: 85 60 15;
+				--theme-palette-normal: --palette5;
+				--theme-palette-tajweed: --palette2;
+				--theme-palette-header: --palette5;
+				--theme-palette-colored-fonts: --palette2;
+			}
+
+			/* Mocha Night */
+			html.theme-5 {
+				--theme-bg-rgb: 32 22 31;
+				--theme-accent-rgb: 220 165 76;
+				--theme-text-rgb: 220 165 76;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette9;
+				--theme-palette-colored-fonts: --palette5;
+			}
+
+			/* Midnight Blue */
+			html.theme-6 {
+				--theme-bg-rgb: 2 2 27;
+				--theme-accent-rgb: 194 194 194;
+				--theme-text-rgb: 194 194 194;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette3;
+				--theme-palette-colored-fonts: --palette1;
+			}
+
+			/* Forest Green */
+			html.theme-7 {
+				--theme-bg-rgb: 0 22 23;
+				--theme-accent-rgb: 221 221 221;
+				--theme-text-rgb: 221 221 221;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette1;
+				--theme-palette-colored-fonts: --palette1;
+			}
+
+			/* Oled Black */
+			html.theme-8 {
+				--theme-bg-rgb: 0 0 0;
+				--theme-accent-rgb: 221 221 221;
+				--theme-text-rgb: 221 221 221;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette4;
+				--theme-palette-colored-fonts: --palette1;
+			}
+
+			/* Dark Luxury */
+			html.theme-9 {
+				--theme-bg-rgb: 9 9 11;
+				--theme-accent-rgb: 220 165 76;
+				--theme-text-rgb: 220 165 76;
+				--theme-palette-normal: --palette4;
+				--theme-palette-tajweed: --palette1;
+				--theme-palette-header: --palette6;
+				--theme-palette-colored-fonts: --palette5;
+			}
+		</style>
+
+		<!-- Set the website theme early to prevent a white flash during initial load -->
 		<script>
-			// Declare the theme variable
 			let currentTheme;
 
 			try {
-				// Try to retrieve the user settings from localStorage and parse the JSON string
 				const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-
-				// Check if displaySettings and websiteTheme exist in the parsed object
 				if (userSettings && userSettings.displaySettings && userSettings.displaySettings.websiteTheme !== undefined) {
 					currentTheme = userSettings.displaySettings.websiteTheme;
 				} else {
-					// Default theme in case the properties don't exist
 					currentTheme = 1;
 				}
 			} catch (error) {
-				// If there's an error during JSON parsing or any other issue, fallback to default theme
 				currentTheme = 1;
 			}
 
 			// Apply the theme class to the document's root element
-			document.documentElement.classList += `theme-${currentTheme} ${window.theme('bgMain')}`;
+			document.documentElement.classList += `theme-${currentTheme} bg-theme-bg`;
+
+			// Read accent color from the now-available CSS variables
+			const rgb = getComputedStyle(document.documentElement).getPropertyValue('--theme-accent-rgb').trim().split(' ');
+
+			const toHex = (n) => parseInt(n).toString(16).padStart(2, '0');
+			const accentHex = `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
+			const accentNoHash = accentHex.substring(1);
+
+			// Inject checkbox styles using the theme accent color.
+			// CSS variables cannot be used inside url() for background-image, so we read
+			// --theme-accent-rgb from the inline <style> above, convert it to hex, and
+			// inject a one-time <style> tag with the correct color baked into the SVG checkmark.
+			const style = document.createElement('style');
+			style.textContent = `
+				[type='checkbox'], [type='checkbox']:checked {
+						background-color: transparent !important;
+						border-color: ${accentHex} !important;
+				}
+				[type='checkbox']:checked {
+						background-color: transparent !important;
+						border-color: ${accentHex} !important;
+						background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23${accentNoHash}'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>") !important;
+				}
+			`;
+
+			document.head.appendChild(style);
 		</script>
 
 		<!-- Umami -->
@@ -346,7 +244,7 @@
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<script>
-			document.body.classList.add(`${window.theme('text')}`);
+			document.body.classList.add('text-theme-text');
 		</script>
 
 		<div style="display: contents">%sveltekit.body%</div>

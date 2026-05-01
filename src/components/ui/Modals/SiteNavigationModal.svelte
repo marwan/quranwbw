@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Settings from '$svgs/Settings.svelte';
 	import Topics from '$svgs/Topics.svelte';
@@ -12,27 +13,46 @@
 	import Changelog from '$svgs/Changelog.svelte';
 	import Offline from '$svgs/Offline.svelte';
 	import LegacySite from '$svgs/LegacySite.svelte';
+	import { disabledClasses } from '$data/commonClasses';
 	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { isUserOnline } from '$utils/offlineModeHandler';
 
-	const linkClasses = `w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
+	const linkClasses = 'w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const linkTextClasses = 'text-xs md:text-sm text-left w-[-webkit-fill-available] truncate';
 
-	let userOnline = true; // assume online by default to avoid hiding links; will be updated after an explicit network check
-	let networkCheckPerformed = false;
+	// Default to online; fall back gracefully if navigator is unavailable (e.g. SSR)
+	let userOnline = typeof navigator === 'undefined' ? true : navigator.onLine;
 
+	// Performs a real network check (not just navigator.onLine) via the utility
 	async function checkNetwork() {
-		networkCheckPerformed = false;
 		userOnline = await isUserOnline();
-		networkCheckPerformed = true;
 	}
 
-	// Run check only when modal opens
+	onMount(() => {
+		// Keep userOnline in sync with browser online/offline events
+		const syncOnlineStatus = () => {
+			userOnline = navigator.onLine;
+		};
+
+		window.addEventListener('online', syncOnlineStatus);
+		window.addEventListener('offline', syncOnlineStatus);
+
+		// Run an actual connectivity check on mount
+		checkNetwork();
+
+		// Cleanup listeners when the component is destroyed
+		return () => {
+			window.removeEventListener('online', syncOnlineStatus);
+			window.removeEventListener('offline', syncOnlineStatus);
+		};
+	});
+
+	// Re-check network each time the navigation modal opens, so offline-gated tiles reflect the latest status without re-rendering the layout
 	$: if ($__siteNavigationModalVisible) checkNetwork();
 
-	// hide the modal when page changes
+	// Automatically close the navigation modal whenever the user navigates to a new page
 	$: if ($__currentPage) __siteNavigationModalVisible.set(false);
 </script>
 
@@ -45,12 +65,10 @@
 			<div class="flex flex-col space-y-2">
 				<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
 					<!-- Search -->
-					{#if networkCheckPerformed && userOnline}
-						<a href="/search" class={linkClasses}>
-							<Search2 size={4} />
-							<span class={linkTextClasses}>Search</span>
-						</a>
-					{/if}
+					<a href="/search" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1}>
+						<span><Search2 size={4} /></span>
+						<span class={linkTextClasses}>Search</span>
+					</a>
 
 					<!-- settings modal -->
 					<button
@@ -60,19 +78,19 @@
 						}}
 						class={linkClasses}
 					>
-						<Settings size={4} />
+						<span><Settings size={4} /></span>
 						<span class={linkTextClasses}>Settings</span>
 					</button>
 
 					<!-- topics page link -->
 					<a href="/topics" class={linkClasses}>
-						<Topics size={4} />
+						<span><Topics size={4} /></span>
 						<span class={linkTextClasses}>Topics</span>
 					</a>
 
 					<!-- Bookmarks -->
 					<a href="/bookmarks" class={linkClasses}>
-						<Bookmark size={4} />
+						<span><Bookmark size={4} /></span>
 						<span class={linkTextClasses}>Bookmarks</span>
 					</a>
 
@@ -85,53 +103,51 @@
 						class={linkClasses}
 						data-umami-event="Tajweed Modal Button"
 					>
-						<TajweedRules size={4} />
+						<span><TajweedRules size={4} /></span>
 						<span class={linkTextClasses}>{term('tajweed')} Rules</span>
 					</button>
 
 					<!-- Supplications -->
 					<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
-						<Supplication size={4} />
+						<span><Supplication size={4} /></span>
 						<span class={linkTextClasses}>{term('supplications')}</span>
 					</a>
 
 					<!-- Morphology -->
 					<a href="/morphology?word=1:1:1" class={linkClasses}>
-						<Morphology size={4} />
+						<span><Morphology size={4} /></span>
 						<span class={linkTextClasses}>Morphology</span>
 					</a>
 
 					<!-- Guess The Word -->
 					<a href="/games/guess-the-word" class={linkClasses}>
-						<Puzzle size={4} />
+						<span><Puzzle size={4} /></span>
 						<span class={linkTextClasses}>Word Game</span>
 					</a>
 
 					<!-- changelog -->
 					<a href="/changelog" class={linkClasses}>
-						<Changelog size={4} />
+						<span><Changelog size={4} /></span>
 						<span class={linkTextClasses}>Changelog</span>
 					</a>
 
 					<!-- About -->
 					<a href="/about" class={linkClasses}>
-						<About size={4} />
+						<span><About size={4} /></span>
 						<span class={linkTextClasses}>About</span>
 					</a>
 
 					<!-- Offline Mode page -->
 					<a href="/offline" class={linkClasses}>
-						<Offline size={4} />
+						<span><Offline size={4} /></span>
 						<span class={linkTextClasses}>Offline Mode (Beta)</span>
 					</a>
 
 					<!-- legacy site link -->
-					{#if networkCheckPerformed && userOnline}
-						<a href="https://old.quranwbw.com/" target="_blank" class={linkClasses} data-umami-event="Legacy Site Button">
-							<LegacySite size={4} />
-							<span class={linkTextClasses}>Old Website</span>
-						</a>
-					{/if}
+					<a href="https://old.quranwbw.com/" target="_blank" rel="noopener noreferrer" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1} data-umami-event="Legacy Site Button">
+						<span><LegacySite size={4} /></span>
+						<span class={linkTextClasses}>Old Website</span>
+					</a>
 				</div>
 			</div>
 		</div>

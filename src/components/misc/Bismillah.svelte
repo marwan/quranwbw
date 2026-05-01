@@ -64,7 +64,7 @@
 	`;
 
 	$: chapterBismillahClasses = `
-		${window.theme('text')}
+		text-theme-text
 		flex flex-col text-center flex-wrap block pb-2 
 		${isUthmaniFontType && chapter === 2 ? 'pt-8' : 'pt-12'}
 		${isUthmaniFontType ? `${chapter === 2 ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl'}` : 'arabic-font-4 text-3xl md:text-4xl'}
@@ -80,7 +80,7 @@
 </script>
 
 <!-- chapter page -->
-{#if ['chapter', 'juz'].includes($__currentPage)}
+{#if ['chapter', 'juz', 'hizb'].includes($__currentPage)}
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
 		<div style="font-family: bismillah" class={chapterBismillahClasses}>
 			<!-- uthmani fonts -->

@@ -3,7 +3,6 @@
 	import '$utils/checkURLParameters';
 	import '$utils/keyDownHandler';
 	import '$utils/devTools';
-	import '$utils/generateThemes';
 	import Navbar from '$ui/Navbar.svelte';
 	import SettingsDrawer from '$ui/SettingsDrawer/SettingsDrawer.svelte';
 	import BottomToolbar from '$ui/BottomToolbar/BottomToolbar.svelte';
@@ -18,10 +17,11 @@
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
+	import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
 
 	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
-	import { toggleNavbar } from '$utils/toggleNavbar';
+	import { toggleNavbarToolbarOnScroll } from '$utils/toggleNavbarToolbarOnScroll';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	import { fade } from 'svelte/transition';
@@ -90,9 +90,9 @@
 		paddingX = $__currentPage === 'mushaf' ? 'px-0 md:px-4' : $__currentPage === 'home' ? 'px-0' : 'px-4';
 	}
 
-	// Toggle bottom nav on scroll
+	// Update navbar and bottom toolbar visibility based on scroll
 	document.body.onscroll = () => {
-		debounce(toggleNavbar, 0);
+		debounce(toggleNavbarToolbarOnScroll, 0);
 	};
 
 	// Mushaf Page Handling
@@ -193,6 +193,7 @@
 	<VerseTranslationModal />
 	<MorphologyModal />
 	<CopyShareVerseModal />
+	<FavoriteChaptersModal />
 	<ConfirmationAlertModal />
 
 	{#key $page.url.pathname}

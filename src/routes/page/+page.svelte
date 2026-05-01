@@ -10,14 +10,15 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
+	import { onDestroy } from 'svelte';
 	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
-	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
-	import { fetchChapterData, fetchAndCacheJson } from '$utils/fetchData';
+	import { fetchChapterData } from '$utils/fetchData';
+	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import { fade } from 'svelte/transition';
 	import '$utils/swiped-events.min.js';
 
@@ -29,16 +30,32 @@
 	let lines = [];
 	let pageBlock;
 
+	// Store parsed page data in a variable instead of reading from localStorage on every render
+	let pageDataStore = {};
+
+	// Track prefetched pages to avoid redundant fetches
+	const prefetchedPages = new Set();
+
+	// Store named handler references so they can be properly removed
+	let swipedLeftHandler = null;
+	let swipedRightHandler = null;
+
+	// Stale request guard — only the latest request's result is applied
+	let currentLoadId = 0;
+
 	// Pages for which we need to center align rather than justify (format: page:line)
 	const centeredPageLines = ['1:9', '1:10', '1:11', '1:12', '1:13', '1:14', '1:15', '2:10', '2:11', '2:12', '2:13', '2:14', '2:15', '255:2', '528:9', '534:6', '545:6', '586:1', '593:2', '594:5', '600:10', '602:5', '602:11', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
 	// Set the page number
-	$: page = +data.page;
+	$: page = +data.id;
 
-	// Prefetch adjacent pages for better UX
+	// Guarded font prefetching — skip already-fetched pages and out-of-range pages
 	$: if ([2, 3].includes($__fontType)) {
 		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
-			fetch(getMushafWordFontLink(thisPage));
+			if (thisPage > 0 && thisPage <= 604 && !prefetchedPages.has(thisPage)) {
+				prefetchedPages.add(thisPage);
+				fetch(getMushafWordFontLink(thisPage));
+			}
 		}
 	}
 
@@ -46,10 +63,20 @@
 		chapters = [];
 		verses = [];
 		lines = [];
+		pageDataStore = {};
 
 		pageData = (async () => {
+			// Capture the current load ID; discard result if a newer load has started
+			const thisLoadId = ++currentLoadId;
+
 			const data = await fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation);
 			const verseData = data.verses;
+
+			// Stale check — if a newer navigation happened, discard this result
+			if (thisLoadId !== currentLoadId) return;
+
+			// Store parsed data in memory and in localStorage
+			pageDataStore = verseData;
 			localStorage.setItem('pageData', JSON.stringify(verseData));
 
 			// Get the first line, of the first word, of the first verse
@@ -102,8 +129,7 @@
 
 	/**
 	 * This function retrieves and processes Quranic verses for a given page number.
-	 * It first fetches a JSON file (`keysInPage.json`) containing verse keys mapped to pages,
-	 * then extracts the specific chapters and verses required for the given page.
+	 * It first gets the specific verse keys required for the given page.
 	 * After identifying the necessary chapters, it fetches their complete data
 	 * and filters out only the requested verses. The function then ensures that the verses
 	 * are sorted in ascending order based on chapter and verse numbers before returning
@@ -111,9 +137,9 @@
 	 */
 	async function fetchVersesByPage(page) {
 		try {
-			// Fetch keys for the given page
-			const keysData = await fetchAndCacheJson(cdnStaticDataUrls.keysInPage, 'other');
-			const keysInPage = keysData[page];
+			// Get keys for the given page
+			const data = await getSegmentKeys('page');
+			const keysInPage = data[page];
 
 			// Parse keys into chapters and verses
 			const chaptersWithVerses = {};
@@ -138,7 +164,7 @@
 					verses.forEach((verse) => {
 						const verseKey = `${chapter}:${verse}`;
 						if (data[verseKey]) {
-							stitchedVerses[verseKey] = data[verseKey]; // Add only needed verses
+							stitchedVerses[verseKey] = data[verseKey];
 						}
 					});
 				} catch (error) {
@@ -146,7 +172,7 @@
 				}
 			});
 
-			await Promise.all(fetchPromises); // Wait for all fetch requests to complete
+			await Promise.all(fetchPromises);
 
 			// Sort the verses in ascending order before returning
 			const sortedVerses = Object.keys(stitchedVerses)
@@ -167,11 +193,27 @@
 		}
 	}
 
-	// Event listeners for swipe gestures
+	// Attach swipe listeners with named handlers so old ones can be removed before re-attaching
 	$: if (pageBlock) {
-		pageBlock.addEventListener('swiped-left', () => goto(`/page/${page === 1 ? 1 : page - 1}`, { replaceState: false }));
-		pageBlock.addEventListener('swiped-right', () => goto(`/page/${page === 604 ? 604 : page + 1}`, { replaceState: false }));
+		// Remove any previously attached listeners first
+		if (swipedLeftHandler) pageBlock.removeEventListener('swiped-left', swipedLeftHandler);
+		if (swipedRightHandler) pageBlock.removeEventListener('swiped-right', swipedRightHandler);
+
+		// Define named handlers referencing the current page value
+		swipedLeftHandler = () => goto(`/page?id=${page === 1 ? 1 : page - 1}`, { replaceState: false });
+		swipedRightHandler = () => goto(`/page?id=${page === 604 ? 604 : page + 1}`, { replaceState: false });
+
+		pageBlock.addEventListener('swiped-left', swipedLeftHandler);
+		pageBlock.addEventListener('swiped-right', swipedRightHandler);
 	}
+
+	// Cleanup when the component is destroyed
+	onDestroy(() => {
+		if (pageBlock) {
+			if (swipedLeftHandler) pageBlock.removeEventListener('swiped-left', swipedLeftHandler);
+			if (swipedRightHandler) pageBlock.removeEventListener('swiped-right', swipedRightHandler);
+		}
+	});
 
 	// Only allow continuous normal mode, without saving the setting
 	$__displayType = 4;
@@ -198,7 +240,7 @@
 					{/if}
 
 					<div class="line {line} flex px-2 arabic-font-{$__fontType} {centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : 'justify-between'}">
-						{#each Object.entries(JSON.parse(localStorage.getItem('pageData'))) as [key, value]}
+						{#each Object.entries(pageDataStore) as [key, value]}
 							<WordsBlock {key} {value} {line} />
 						{/each}
 					</div>
@@ -208,9 +250,9 @@
 			<!-- page number -->
 			<div class="max-w-3xl md:max-w-[40rem] mx-auto justify-center text-sm">
 				<div class="flex items-center">
-					<div class="flex-1 border-t-2 {window.theme('border')}"></div>
+					<div class="flex-1 border-t-2 border-theme-accent/20"></div>
 					<span class="px-3">{page}</span>
-					<div class="flex-1 border-t-2 {window.theme('border')}"></div>
+					<div class="flex-1 border-t-2 border-theme-accent/20"></div>
 				</div>
 			</div>
 		</div>
@@ -222,7 +264,7 @@
 <!-- only show the minimize minimal mode button when it is enabled -->
 {#if $__mushafMinimalModeEnabled}
 	<div class="flex justify-center -mt-12 pb-16">
-		<button class="w-fit flex flex-row space-x-2 py-3 px-3 rounded-xl items-center cursor-pointer {window.theme('hoverBorder')} {window.theme('bgSecondaryLight')}" on:click={toggleMushafMinimalMode} data-umami-event="Mushaf Minimal Mode Button">
+		<button class="w-fit flex flex-row space-x-2 py-3 px-3 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={toggleMushafMinimalMode} data-umami-event="Mushaf Minimal Mode Button">
 			<Minimize size={3} />
 		</button>
 		<Tooltip arrow={false} type="light" class="z-30 hidden md:block font-normal">Minimal Mode</Tooltip>

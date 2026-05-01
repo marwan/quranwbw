@@ -10,6 +10,7 @@ let __currentPage,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -42,6 +43,7 @@ let __currentPage,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
+	__favoriteChaptersModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
@@ -56,7 +58,8 @@ let __currentPage,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
 	__offlineModeSettings,
-	__homepageLayoutPreferences;
+	__homepageLayoutPreferences,
+	__fullVersesDisplayKeys;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -87,6 +90,9 @@ if (browser) {
 
 	// to store the user bookmarks
 	__userBookmarks = writable(userSettings.userBookmarks);
+
+	// to store the user's favorite chapters
+	__userFavoriteChapters = writable(userSettings.userFavoriteChapters);
 
 	// to store the font type - Uthmani, IndoPak, etc...
 	__fontType = writable(userSettings.displaySettings.fontType);
@@ -165,6 +171,7 @@ if (browser) {
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
+	__favoriteChaptersModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
 		type: null,
@@ -215,6 +222,9 @@ if (browser) {
 
 	// to store all the homepage layout preferences like active tabs, sort order, etc...
 	__homepageLayoutPreferences = writable(userSettings.displaySettings.homepageLayoutPreferences);
+
+	// to store the keys from FullVersesDisplay component for progress tracking
+	__fullVersesDisplayKeys = writable(null);
 }
 
 export {
@@ -227,6 +237,7 @@ export {
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__fontType,
 	__wordTranslation,
 	__wordTransliteration,
@@ -259,6 +270,7 @@ export {
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
+	__favoriteChaptersModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
@@ -273,5 +285,6 @@ export {
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
 	__offlineModeSettings,
-	__homepageLayoutPreferences
+	__homepageLayoutPreferences,
+	__fullVersesDisplayKeys
 };

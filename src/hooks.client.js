@@ -23,7 +23,8 @@ export const defaultSettings = {
 			divisionsActiveTab: 1, // chapters tab
 			extrasActiveTab: 1, // bookmarks tab
 			chaptersSortIsAscending: true,
-			juzSortIsAscending: true
+			juzSortIsAscending: true,
+			hizbSortIsAscending: true
 		}
 	},
 	translations: {
@@ -46,7 +47,8 @@ export const defaultSettings = {
 		timesToRepeat: 1,
 		repeatType: 'repeatVerse',
 		audioDelay: 1, // none
-		savedPlaySettings: {}
+		savedPlaySettings: {},
+		wbwAutoScrollEnabled: false
 	},
 	quiz: {
 		correctAnswers: 0,
@@ -54,6 +56,7 @@ export const defaultSettings = {
 	},
 	lastRead: {},
 	userBookmarks: [],
+	userFavoriteChapters: [],
 	userNotes: {},
 	chapter: 1,
 	offlineModeSettings: {}

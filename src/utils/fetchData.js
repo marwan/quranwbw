@@ -1,7 +1,7 @@
 import { cacheTableMap } from '$utils/dexie';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
-import { staticEndpoint } from '$data/websiteSettings';
+import { staticEndpoint, cdnStaticDataUrls } from '$data/websiteSettings';
 import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
 // Keep track of in-progress fetches globally
@@ -34,6 +34,7 @@ export async function fetchChapterData(props) {
 			verse: parseInt(verseStr, 10),
 			page: null,
 			juz: null,
+			hizb: null,
 			words: arabicWords.length
 		};
 
@@ -43,6 +44,7 @@ export async function fetchChapterData(props) {
 				verse: parseInt(verseStr, 10),
 				page: meta.page,
 				juz: meta.juz,
+				hizb: meta.hizb,
 				words: meta.words
 			},
 			words: {
@@ -225,7 +227,7 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		{ url: `${staticEndpoint}/words-data/arabic/${fontID}.json?version=${arabicVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/words-data/translations/${wordTranslation}.json?version=${translationVersion}`, type: 'word' },
 		{ url: `${staticEndpoint}/words-data/transliterations/${wordTransliteration}.json?version=${transliterationVersion}`, type: 'word' },
-		{ url: `${staticEndpoint}/meta/verseKeyData.json?version=2`, type: 'other' }
+		{ url: cdnStaticDataUrls.verseKeyData, type: 'other' }
 	];
 
 	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));

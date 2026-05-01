@@ -1,9 +1,9 @@
 <script>
 	import PlaySolid from '$svgs/PlaySolid.svelte';
-	import Pause from '$svgs/Pause.svelte';
+	import PauseSolid from '$svgs/PauseSolid.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
-	import { __audioSettings } from '$utils/stores';
 	import { playButtonHandler, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
+	import { __currentPage, __audioSettings, __fullVersesDisplayKeys } from '$utils/stores';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// quick play from first verse of page till the max chapter verses
@@ -13,7 +13,15 @@
 		if ($__audioSettings.isPlaying) {
 			resetAudioSettings({ location: 'end' });
 		} else {
-			setVersesToPlay({ allVersesOnPage: true });
+			// On juz or hizb pages, play only the verses in that specific section
+			if (['juz', 'hizb'].includes($__currentPage)) {
+				setVersesToPlay({ verses: $__fullVersesDisplayKeys.split(',') });
+			}
+			// On other pages, play all verses available on the page
+			else {
+				setVersesToPlay({ allVersesOnPage: true });
+			}
+
 			playButtonHandler();
 		}
 	}
@@ -21,13 +29,13 @@
 
 <!-- play/pause button -->
 <div class="flex items-center justify-center">
-	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => audioHandler()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group {window.theme('input')} {window.theme('bgSecondaryDark')}" data-umami-event="Toolbar Play Button">
-		<span><svelte:component this={$__audioSettings.isPlaying ? Pause : PlaySolid} size={5} /></span>
+	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => audioHandler()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group focus:border-theme-accent focus:ring-theme-accent bg-theme-accent/15" data-umami-event="Toolbar Play Button">
+		<span><svelte:component this={$__audioSettings.isPlaying ? PauseSolid : PlaySolid} size={5} /></span>
 		<span class="sr-only">{$__audioSettings.isPlaying ? 'Pause' : 'Play'}</span>
 
 		<!-- show badge when a verse is playing -->
 		{#if $__audioSettings.isPlaying && $__audioSettings.audioType === 'verse'}
-			<div class="absolute inline-flex items-center justify-center z-30 text-xs px-2 rounded-3xl -top-3 border {window.theme('bgMain')} {window.theme('border')}">{$__audioSettings.playingKey}</div>
+			<div class="absolute inline-flex items-center justify-center z-30 text-xs px-2 rounded-3xl -top-3 border bg-theme-bg border-theme-accent/20">{$__audioSettings.playingKey}</div>
 		{/if}
 	</button>
 </div>

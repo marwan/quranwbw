@@ -38,7 +38,7 @@
 			<h1 class="text-md md:text-2xl text-center">{totalAvailableWords} {totalAvailableWords > 1 ? 'words' : 'word'} {tableTitles[tableType].title}</h1>
 			<div class="max-h-[32em] overflow-auto">
 				<table class="w-full text-sm text-left rtl:text-right rounded-md">
-					<thead class="text-xs uppercase top-0 {window.theme('bgSecondaryLight')}">
+					<thead class="text-xs uppercase top-0 bg-theme-accent/5">
 						<tr>
 							<th class="px-6 py-3">#</th>
 							<th class="px-6 py-3">Word</th>
@@ -54,7 +54,7 @@
 							{@const arabic = wordData.arabicWordData[chapter][verse][0][word - 1]}
 							{@const translation = wordData.translationWordData[chapter][verse][0][word - 1]}
 							{@const transliteration = wordData.transliterationWordData[chapter][verse][0][word - 1]}
-							<tr class="{window.theme('bgMain')} border-b {window.theme('border')} {window.theme('hover')}">
+							<tr class="bg-theme-bg border-b border-theme-accent/20 hover:bg-theme-accent/5">
 								<td class="px-6 py-4">{i + 1}</td>
 								<td class="px-6 py-4 text-xl md:text-2xl arabic-font-1">{arabic}</td>
 								<td class={`px-6 py-4 ${selectableWordTranslations[$__wordTranslation].customClasses}`}>{translation}</td>

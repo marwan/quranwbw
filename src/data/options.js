@@ -1,7 +1,7 @@
 export const selectableDisplays = {
 	1: {
 		displayID: 1,
-		displayName: 'Word by Word',
+		displayName: 'Word By Word',
 		displayComponent: 'WBWDisplay',
 		layout: 'wbw',
 		continuous: false,
@@ -21,12 +21,12 @@ export const selectableDisplays = {
 	},
 	3: {
 		displayID: 3,
-		displayName: 'Continuous Word by Word',
+		displayName: 'Continuous Word By Word',
 		displayComponent: 'ContinuousDisplay',
 		layout: 'wbw',
 		continuous: true,
 		customClasses: 'text-center direction-rtl',
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'hizb', 'search', 'topics'],
 		disallowedInFontTypes: []
 	},
 	4: {
@@ -36,7 +36,7 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: true,
 		customClasses: 'text-center direction-rtl',
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'hizb', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	5: {
@@ -46,14 +46,14 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: false,
 		customClasses: null,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
+		disallowedInPages: ['morphology', 'search'],
 		disallowedInFontTypes: [9]
 	},
 	6: {
 		displayID: 6,
 		displayName: 'Mushaf',
 		continuous: true,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'search', 'topics'],
+		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'hizb', 'search', 'topics'],
 		disallowedInFontTypes: [9]
 	},
 	7: {
@@ -148,106 +148,15 @@ export const selectableFontTypes = {
 export const themeColors = ['light', 'dark'];
 
 export const selectableThemes = {
-	1: {
-		id: 1,
-		name: 'Golden Glint',
-		palette: 2,
-		color: 'light',
-		paletteNormal: 3,
-		paletteTajweed: 0,
-		paletteHeader: 2,
-		color1: '#FFFFFF',
-		color2: '#b1901f',
-		color3: '#000000'
-	},
-	2: {
-		id: 2,
-		name: 'Classic Light',
-		palette: 2,
-		color: 'light',
-		paletteNormal: 3,
-		paletteTajweed: 0,
-		paletteHeader: 0,
-		color1: '#FFFFFF',
-		color2: '#000000'
-	},
-	3: {
-		id: 3,
-		name: 'Silver Lining',
-		palette: 1,
-		color: 'light',
-		paletteNormal: 5,
-		paletteTajweed: 2,
-		paletteHeader: 3,
-		color1: '#e1e1e1',
-		color2: '#000000'
-	},
-	4: {
-		id: 4,
-		name: 'Vintage Sepia',
-		palette: 2,
-		color: 'light',
-		paletteNormal: 5,
-		paletteTajweed: 2,
-		paletteHeader: 5,
-		color1: '#e9e3d7',
-		color2: '#553c0f'
-	},
-	5: {
-		id: 5,
-		name: 'Mocha Night',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 5,
-		color1: '#20161f',
-		color2: '#dca54c'
-	},
-	6: {
-		id: 6,
-		name: 'Midnight Blue',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 3,
-		color1: '#02021b',
-		color2: '#c2c2c2'
-	},
-	7: {
-		id: 7,
-		name: 'Forest Green',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 1,
-		color1: '#001617',
-		color2: '#dddddd'
-	},
-	8: {
-		id: 8,
-		name: 'Oled Black',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 1,
-		color1: '#000000',
-		color2: '#dddddd'
-	},
-	9: {
-		id: 9,
-		name: 'Dark Luxury',
-		palette: 1,
-		color: 'dark',
-		paletteNormal: 4,
-		paletteTajweed: 1,
-		paletteHeader: 1,
-		color1: '#09090b',
-		color2: '#dca54c'
-	}
+	1: { id: 1, name: 'Golden Glint', color: 'light' },
+	2: { id: 2, name: 'Classic Light', color: 'light' },
+	3: { id: 3, name: 'Silver Lining', color: 'light' },
+	4: { id: 4, name: 'Vintage Sepia', color: 'light' },
+	5: { id: 5, name: 'Mocha Night', color: 'dark' },
+	6: { id: 6, name: 'Midnight Blue', color: 'dark' },
+	7: { id: 7, name: 'Forest Green', color: 'dark' },
+	8: { id: 8, name: 'Oled Black', color: 'dark' },
+	9: { id: 9, name: 'Dark Luxury', color: 'dark' }
 };
 
 export const verseTranslationsLanguages = [
@@ -801,17 +710,19 @@ export const selectableWordTransliterations = {
 export const selectableReciters = {
 	1: {
 		id: 1,
-		reciter: 'Abdul Basit (Mujawwad)',
+		reciter: 'Abdul Basit',
 		url: 'https://everyayah.com/data/Abdul_Basit_Mujawwad_128kbps',
 		image: 'abdul-baset-abdel-samad-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw', 'mujawwad']
 	},
 	2: {
 		id: 2,
-		reciter: 'Abdul Basit (Murattal)',
+		reciter: 'Abdul Basit',
 		url: 'https://everyayah.com/data/Abdul_Basit_Murattal_192kbps',
 		image: 'abdul-baset-abdel-samad-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw', 'murattal']
 	},
 	3: {
 		id: 3,
@@ -836,7 +747,8 @@ export const selectableReciters = {
 		reciter: 'Hani Ar-Rifai',
 		url: 'https://everyayah.com/data/Hani_Rifai_192kbps',
 		image: 'hani-ar-rifai-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw']
 	},
 	7: {
 		id: 7,
@@ -853,28 +765,32 @@ export const selectableReciters = {
 	},
 	9: {
 		id: 9,
-		reciter: 'Mahmoud Khalil Al-Husary (with gaps)',
+		reciter: 'Mahmoud Khalil Al-Husary',
 		url: 'https://everyayah.com/data/Husary_Muallim_128kbps',
-		image: 'mahmoud-khalil-al-hussary-profile.webp'
+		image: 'mahmoud-khalil-al-hussary-profile.webp',
+		tags: ['gaps']
 	},
 	10: {
 		id: 10,
 		reciter: 'Mishary Rashid Alafasy',
 		url: 'https://everyayah.com/data/Alafasy_128kbps',
 		image: 'mishary-rashid-alafasy-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw']
 	},
 	11: {
 		id: 11,
-		reciter: 'Mohamed El-Minshawi (Mujawwad)',
+		reciter: 'Mohamed El-Minshawi',
 		url: 'https://everyayah.com/data/Minshawy_Mujawwad_192kbps',
-		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp'
+		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp',
+		tags: ['mujawwad']
 	},
 	12: {
 		id: 12,
-		reciter: 'Mohamed El-Minshawi (Teacher)',
+		reciter: 'Mohamed El-Minshawi',
 		url: 'https://everyayah.com/data/Minshawy_Teacher_128kbps',
-		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp'
+		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp',
+		tags: ['teacher']
 	},
 	13: {
 		id: 13,
@@ -941,7 +857,7 @@ export const selectableReciters = {
 
 export const selectableTranslationReciters = {
 	1: { id: 1, reciter: 'English - Ibrahim Walk (Sahih International)', url: 'https://everyayah.com/data/English/Sahih_Intnl_Ibrahim_Walk_192kbps/' },
-	2: { id: 2, reciter: 'Urdu - Dr. Farhat Hashmi (word by word)', url: 'https://everyayah.com/data/translations/urdu_farhat_hashmi/' },
+	2: { id: 2, reciter: 'Urdu - Dr. Farhat Hashmi (Word By Word)', url: 'https://everyayah.com/data/translations/urdu_farhat_hashmi/' },
 	3: { id: 3, reciter: 'Urdu - Shamshad Ali Khan', url: 'https://everyayah.com/data/translations/urdu_shamshad_ali_khan_46kbps/' }
 };
 

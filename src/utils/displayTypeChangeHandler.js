@@ -26,5 +26,5 @@ function handleNonMushafMode(displayId) {
 
 function handleMushafMode() {
 	const lastReadPage = get(__lastRead).page;
-	goto(`/page/${lastReadPage}`);
+	goto(`/page?id=${lastReadPage}`);
 }

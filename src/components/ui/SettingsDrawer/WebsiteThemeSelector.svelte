@@ -1,11 +1,9 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import Check from '$svgs/Check.svelte';
 	import { __websiteTheme } from '$utils/stores';
 	import { selectableThemes, themeColors } from '$data/options';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
-	import { createLink } from '$utils/createLink';
 </script>
 
 <div class="grid gap-3 w-full">
@@ -22,10 +20,6 @@
 									<div class="w-4 h-8 rounded-r-full {window.theme('bgSecondary', theme.id)}"></div>
 								</div> -->
 								<div class="w-full">{theme.name}</div>
-
-								{#if $__websiteTheme === theme.id}
-									<Check size={5} />
-								{/if}
 							</div>
 						</Radio>
 					{/if}
@@ -34,5 +28,3 @@
 		</div>
 	{/each}
 </div>
-
-<div class="text-xs opacity-70 pb-8">Got a unique color combo in mind that's a visual delight? Shoot your suggestions over to {@html createLink('mailto:quranwbw@gmail.com', 'quranwbw@gmail.com')}.</div>

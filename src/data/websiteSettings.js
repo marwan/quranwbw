@@ -16,10 +16,8 @@ export const chapterHeaderFontLink = `${staticEndpoint}/fonts/Extras/chapter-hea
 
 export const cdnStaticDataUrls = {
 	fullQuranUthmani: `${staticEndpoint}/full-quran/uthmani.json?version=1`,
-	verseKeyData: `${staticEndpoint}/meta/verseKeyData.json?version=2`,
+	verseKeyData: `${staticEndpoint}/meta/verseKeyData.json?version=3`,
 	tajweedRules: `${staticEndpoint}/tajweed/tajweed-rules.json?version=3`,
-	keysInJuz: `${staticEndpoint}/meta/keysInJuz.json?version=1`,
-	keysInPage: `${staticEndpoint}/meta/keysInPage.json?version=2`,
 	quranTopics: `${staticEndpoint}/others/quran-topics.json?version=1`
 };
 

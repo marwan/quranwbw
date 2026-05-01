@@ -133,35 +133,7 @@
 }
 
 /* Scrollbar Colors */
-html.theme-1 ::-webkit-scrollbar-thumb { background: #b1901f; } /* Golden Glint */
-html.theme-2 ::-webkit-scrollbar-thumb { background: #000000; } /* Classic Light */
-html.theme-3 ::-webkit-scrollbar-thumb { background: #000000; } /* Silver Lining */
-html.theme-4 ::-webkit-scrollbar-thumb { background: #553c0f; } /* Vintage Sepia */
-html.theme-5 ::-webkit-scrollbar-thumb { background: #dca54c; } /* Mocha Night */
-html.theme-6 ::-webkit-scrollbar-thumb { background: #c2c2c2; } /* Midnight Blue */
-html.theme-7 ::-webkit-scrollbar-thumb { background: #dddddd; } /* Forest Green */
-html.theme-8 ::-webkit-scrollbar-thumb { background: #dddddd; } /* Oled Black */
-html.theme-9 ::-webkit-scrollbar-thumb { background: #dca54c; } /* Dark Luxury */
-
-/* Checkbox Colors */
-.theme-1 [type='checkbox'], .theme-1 [type='checkbox']:checked { background-color: transparent; border-color: #b1901f }
-.theme-1 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23b1901f'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Golden Glint */
-.theme-2 [type='checkbox'], .theme-2 [type='checkbox']:checked { background-color: transparent; border-color: #000000 }
-.theme-2 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23000000'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Classic Light */
-.theme-3 [type='checkbox'], .theme-3 [type='checkbox']:checked { background-color: transparent; border-color: #000000 }
-.theme-3 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23000000'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Silver Lining */
-.theme-4 [type='checkbox'], .theme-4 [type='checkbox']:checked { background-color: transparent; border-color: #553c0f }
-.theme-4 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23553c0f'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Vintage Sepia */
-.theme-5 [type='checkbox'], .theme-5 [type='checkbox']:checked { background-color: transparent; border-color: #dca54c }
-.theme-5 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dca54c'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Mocha Night */
-.theme-6 [type='checkbox'], .theme-6 [type='checkbox']:checked { background-color: transparent; border-color: #c2c2c2 }
-.theme-6 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23c2c2c2'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Midnight Blue */
-.theme-7 [type='checkbox'], .theme-7 [type='checkbox']:checked { background-color: transparent; border-color: #dddddd }
-.theme-7 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dddddd'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Forest Green */
-.theme-8 [type='checkbox'], .theme-8 [type='checkbox']:checked { background-color: transparent; border-color: #dddddd }
-.theme-8 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dddddd'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Oled Black */
-.theme-9 [type='checkbox'], .theme-9 [type='checkbox']:checked { background-color: transparent; border-color: #dca54c }
-.theme-9 [type='checkbox']:checked { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23dca54c'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>"); } /* Dark Luxury */
+::-webkit-scrollbar-thumb { background: rgb(var(--theme-accent-rgb)); }
 
 /* for some reason, Tailwind applies bottom-right padding to the below elements, so have to manually reset them */
 input, select, textarea {
@@ -415,48 +387,16 @@ svg {
 }
 
 /* Uthmani Hafs NEO Fonts - Normal Palettes */
-.theme-1 .colored-fonts { font-palette: --palette4; } /* Golden Glint */
-.theme-2 .colored-fonts { font-palette: --palette0; } /* Classic Light */
-.theme-3 .colored-fonts { font-palette: --palette3; } /* Silver Lining */
-.theme-4 .colored-fonts { font-palette: --palette2; } /* Vintage Sepia */
-.theme-5 .colored-fonts { font-palette: --palette5; } /* Mocha Night */
-.theme-6 .colored-fonts { font-palette: --palette1; } /* Midnight Blue */
-.theme-7 .colored-fonts { font-palette: --palette1; } /* Forest Green */
-.theme-8 .colored-fonts { font-palette: --palette1; } /* Oled Black */
-.theme-9 .colored-fonts { font-palette: --palette5; } /* Dark Luxury */
+.colored-fonts { font-palette: var(--theme-palette-colored-fonts); }
 
 /* Uthmani V4 and Uthmani Hafs NEO Fonts - Normal Palettes */
-.theme-1 .theme-palette-normal { font-palette: --palette3; } /* Golden Glint */
-.theme-2 .theme-palette-normal { font-palette: --palette3; } /* Classic Light */
-.theme-3 .theme-palette-normal { font-palette: --palette5; } /* Silver Lining */
-.theme-4 .theme-palette-normal { font-palette: --palette5; } /* Vintage Sepia */
-.theme-5 .theme-palette-normal { font-palette: --palette4; } /* Mocha Night */
-.theme-6 .theme-palette-normal { font-palette: --palette4; } /* Midnight Blue */
-.theme-7 .theme-palette-normal { font-palette: --palette4; } /* Forest Green */
-.theme-8 .theme-palette-normal { font-palette: --palette4; } /* Oled Black */
-.theme-9 .theme-palette-normal { font-palette: --palette4; } /* Dark Luxury */
+.theme-palette-normal { font-palette: var(--theme-palette-normal); }
 
 /* Uthmani V4 Fonts - Tajweed Palettes */
-.theme-1 .theme-palette-tajweed { font-palette: --palette0; } /* Golden Glint */
-.theme-2 .theme-palette-tajweed { font-palette: --palette0; } /* Classic Light */
-.theme-3 .theme-palette-tajweed { font-palette: --palette2; } /* Silver Lining */
-.theme-4 .theme-palette-tajweed { font-palette: --palette2; } /* Vintage Sepia */
-.theme-5 .theme-palette-tajweed { font-palette: --palette1; } /* Mocha Night */
-.theme-6 .theme-palette-tajweed { font-palette: --palette1; } /* Midnight Blue */
-.theme-7 .theme-palette-tajweed { font-palette: --palette1; } /* Forest Green */
-.theme-8 .theme-palette-tajweed { font-palette: --palette1; } /* Oled Black */
-.theme-9 .theme-palette-tajweed { font-palette: --palette1; } /* Dark Luxury */
+.theme-palette-tajweed { font-palette: var(--theme-palette-tajweed); }
 
 /* Mushaf Header Palettes */
-.theme-1 .header { font-palette: --palette7; } /* Golden Glint */
-.theme-2 .header { font-palette: --palette0; } /* Classic Light */
-.theme-3 .header { font-palette: --palette8; } /* Silver Lining */
-.theme-4 .header { font-palette: --palette5; } /* Vintage Sepia */
-.theme-5 .header { font-palette: --palette9; } /* Mocha Night */
-.theme-6 .header { font-palette: --palette3; } /* Midnight Blue */
-.theme-7 .header { font-palette: --palette1; } /* Forest Green */
-.theme-8 .header { font-palette: --palette4; } /* Oled Black */
-.theme-9 .header { font-palette: --palette6; } /* Dark Luxury */
+.header { font-palette: var(--theme-palette-header); }
 
 .theme-1 .custom-ayah-icon-color { font-palette: --AyahIconGoldTheme !important; }
 
@@ -547,33 +487,9 @@ svg {
 }
 
 /* Markdown Colors */
-.theme-1 .markdown hr { @apply border-[#b1901f]/20; } /* Golden Glint */
-.theme-1 .markdown a { @apply text-[#b1901f]; } /* Golden Glint */
-.theme-1 .markdown h3 { @apply text-[#b1901f]; } /* Golden Glint */
-.theme-2 .markdown hr { @apply border-[#000000]/20; } /* Classic Light */
-.theme-2 .markdown a { @apply text-[#000000]; } /* Classic Light */
-.theme-2 .markdown h3 { @apply text-[#000000]; } /* Classic Light */
-.theme-3 .markdown hr { @apply border-[#000000]/20; } /* Silver Lining */
-.theme-3 .markdown a { @apply text-[#000000]; } /* Silver Lining */
-.theme-3 .markdown h3 { @apply text-[#000000]; } /* Silver Lining */
-.theme-4 .markdown hr { @apply border-[#553c0f]/20; } /* Vintage Sepia */
-.theme-4 .markdown a { @apply text-[#553c0f]; } /* Vintage Sepia */
-.theme-4 .markdown h3 { @apply text-[#553c0f]; } /* Vintage Sepia */
-.theme-5 .markdown hr { @apply border-[#dca54c]/20; } /* Mocha Night */
-.theme-5 .markdown a { @apply text-[#dca54c]; } /* Mocha Night */
-.theme-5 .markdown h3 { @apply text-[#dca54c]; } /* Mocha Night */
-.theme-6 .markdown hr { @apply border-[#c2c2c2]/20; } /* Midnight Blue */
-.theme-6 .markdown a { @apply text-[#c2c2c2]; } /* Midnight Blue */
-.theme-6 .markdown h3 { @apply text-[#c2c2c2]; } /* Midnight Blue */
-.theme-7 .markdown hr { @apply border-[#dddddd]/20; } /* Forest Green */
-.theme-7 .markdown a { @apply text-[#dddddd]; } /* Forest Green */
-.theme-7 .markdown h3 { @apply text-[#dddddd]; } /* Forest Green */
-.theme-8 .markdown hr { @apply border-[#dddddd]/20; } /* Oled Black */
-.theme-8 .markdown a { @apply text-[#dddddd]; } /* Oled Black */
-.theme-8 .markdown h3 { @apply text-[#dddddd]; } /* Oled Black */
-.theme-9 .markdown hr { @apply border-[#dca54c]/20; } /* Dark Luxury */
-.theme-9 .markdown a { @apply text-[#dca54c]; } /* Dark Luxury */
-.theme-9 .markdown h3 { @apply text-[#dca54c]; } /* Dark Luxury */
+.markdown hr { border-color: rgb(var(--theme-accent-rgb) / 0.2); }
+.markdown a  { color: rgb(var(--theme-accent-rgb)); }
+.markdown h3 { color: rgb(var(--theme-accent-rgb)); }
 
 /* Firefox-only glyph rendering fix: add a transparent text-shadow with blur equal to font-size.
   This mitigates occasional glyph edge artifacts when drawing Arabic glyphs in Firefox.

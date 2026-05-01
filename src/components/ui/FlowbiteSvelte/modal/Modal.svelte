@@ -40,7 +40,7 @@
 	export let defaultClass = 'relative flex flex-col mx-auto';
 	export let headerClass = 'flex justify-between items-center p-4 md:p-5 rounded-t-lg';
 	export let classHeader = undefined;
-	export let bodyClass = `p-4 md:p-5 space-y-4 flex-1 overflow-y-auto overscroll-contain`;
+	export let bodyClass = 'p-4 md:p-5 space-y-4 flex-1 overflow-y-auto overscroll-contain';
 	export let classBody = undefined;
 	export let footerClass = 'flex items-center p-4 md:p-5 space-x-3 rtl:space-x-reverse rounded-b-lg';
 	export let classFooter = undefined;

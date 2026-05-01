@@ -10,8 +10,10 @@ export const englishTerms = {
 		supplications: 'Supplications',
 		tafsir: 'Exegesis',
 		tajweed: 'Pronunciation',
-		juz: 'Part (Juz)',
-		juzs: 'Parts (Juz)',
+		juz: 'Part',
+		juzs: 'Parts',
+		hizb: 'Division',
+		hizbs: 'Divisions',
 		meccan: 'Meccan',
 		medinan: 'Medinan'
 	},
@@ -25,6 +27,8 @@ export const englishTerms = {
 		tajweed: 'Tajweed',
 		juz: 'Juz',
 		juzs: 'Juz',
+		hizb: 'Hizb',
+		hizbs: 'Hizb',
 		meccan: 'Makki',
 		medinan: 'Madani'
 	}

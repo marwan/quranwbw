@@ -4,7 +4,7 @@
 	import VerseOptionsDropdown from '$display/verses/VerseOptionsDropdown.svelte';
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import BookmarkFilled from '$svgs/BookmarkFilled.svelte';
-	import PlaySolid from '$svgs/PlaySolid.svelte';
+	import Play from '$svgs/Play.svelte';
 	import Pause from '$svgs/Pause.svelte';
 	import NotesFilled from '$svgs/NotesFilled.svelte';
 	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
@@ -15,26 +15,23 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
-	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	const chapter = parseInt(key.split(':')[0], 10);
 	const verse = parseInt(key.split(':')[1], 10);
-	const buttonClasses = `inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 rounded-3xl focus:shadow-outline print:hidden ${window.theme('hover')}`;
+	const buttonClasses = 'inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 rounded-3xl focus:shadow-outline print:hidden hover:bg-theme-accent/5';
 
 	// For chapter page, just show the key, else show the complete chapter transliteration & key
-	$: verseKeyClasses = `${buttonClasses} w-fit px-4 font-medium ${window.theme('textSecondary')} ${window.theme('hoverBorder')} ${window.theme('bgSecondaryLight')}`;
+	$: verseKeyClasses = `${buttonClasses} w-fit px-4 font-medium text-theme-accent border border-transparent hover:border-theme-accent bg-theme-accent/5`;
 
 	// Update userBookmarks whenever the __userSettings changes
 	$: userBookmarks = JSON.parse($__userSettings).userBookmarks;
 
 	async function audioHandler(key) {
-		if (!(await checkOnlineAndAlert())) return;
-
 		// Stop any audio if something is playing
 		if ($__audioSettings.isPlaying) return resetAudioSettings({ location: 'end' });
 
 		// For these pages, perform action depending on the play button functionality set by the user
-		if (['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz'].includes($__currentPage)) {
+		if (['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb'].includes($__currentPage)) {
 			switch ($__playButtonsFunctionality.verse) {
 				// Play Verse
 				case 1:
@@ -75,11 +72,13 @@
 		<!-- verse key -->
 		<div class="flex flex-row space-x-2">
 			<a href={`/${chapter}?startVerse=${verse}`} class={verseKeyClasses}>
-				{#if $__currentPage === 'chapter'}
-					<div class="text-xs">{key}</div>
-				{:else}
-					<div class="text-xs">{quranMetaData[chapter].transliteration}, {key}</div>
-				{/if}
+				<div class="text-xs">
+					{#if ['chapter', 'juz', 'hizb'].includes($__currentPage)}
+						{key}
+					{:else}
+						{quranMetaData[chapter].transliteration}, {key}
+					{/if}
+				</div>
 			</a>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">{term('verse')} {key}</Tooltip>
 		</div>
@@ -89,7 +88,7 @@
 			<!-- play verse button -->
 			<button on:click={() => audioHandler(key)} class={buttonClasses} aria-label="Play">
 				<div>
-					<svelte:component this={$__audioSettings.isPlaying && $__audioSettings.playingKey === key ? Pause : PlaySolid} size={3.5} />
+					<svelte:component this={$__audioSettings.isPlaying && $__audioSettings.playingKey === key ? Pause : Play} size={3.5} />
 				</div>
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Play</Tooltip>
