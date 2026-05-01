@@ -1,3 +1,9 @@
+### May 1, 2026
+
+- **Cloud Backup & Restore (Beta):** Added secure **cloud-based backup and restore** for user settings using a private backup key. You can now generate a backup key, back up your settings to the cloud, and restore them on any device without creating an account. The restore process includes a preview and confirmation step, preserves critical settings, and tracks backup/restore history locally.
+
+---
+
 ### Apr 5, 2026
 
 - **Hizb (Division) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur'an by its 60 Hizb divisions. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.

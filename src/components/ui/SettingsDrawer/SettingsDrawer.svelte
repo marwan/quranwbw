@@ -15,6 +15,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import ResetSettings from '$svgs/ResetSettings.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
 
 	import {
 		__currentPage,
@@ -568,7 +569,10 @@
 	{#if showIndividualSetting}
 		<div id="individual-setting" transition:fly={{ duration: 150, x: 0, easing: sineIn }}>
 			<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4">
-				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>⟵ Back</button>
+				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>
+					<span class="pt-1 mr-2"><LeftArrow size={7} /></span>
+					<span>Back</span>
+				</button>
 				<CloseButton on:click={() => ($__settingsDrawerHidden = true)} class="my-4 rounded-3xl" />
 			</div>
 
