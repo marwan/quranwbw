@@ -658,7 +658,7 @@
 		<div class="flex flex-col space-y-2 text-sm">
 			<span class="text-theme-accent">Local Backup & Restore</span>
 			<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-				<div class="flex flex-col">Save your settings to a local file or restore them from a previously exported backup. This option works completely offline and is useful for manual backups or transferring settings without using the cloud.</div>
+				<div class="flex flex-col">Save your settings to a local file or restore from a previously exported backup. Works offline, no backup key needed.</div>
 				<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 					<button class="h-max whitespace-nowrap {buttonClasses}" on:click={exportSettings}>
 						<Export />
