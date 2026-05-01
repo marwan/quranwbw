@@ -28,7 +28,6 @@
 	let maxItemsToLoad = 20;
 	let maxVersesToLoad = 1;
 	let searchedKey = '';
-	let placeholder = 'Navigate or Search Quran';
 	let verseKeyData;
 	let searchResults;
 	let morphologyKey = '1:1';
@@ -98,18 +97,13 @@
 		<!-- search block -->
 		<div id="search-block" class="mx-2">
 			<div id="navigation-inputs" class="flex flex-col justify-start">
-				<div class="flex flex-row w-full h-fit items-center">
+				<div class="flex flex-row w-full h-fit items-center pb-2">
 					<form on:submit|preventDefault={() => (searchedKey = document.getElementById('searchKey').value)} class="flex flex-row w-full">
-						<Input id="searchKey" type="text" bind:value={searchedKey} autocomplete="off" {placeholder} size="md" class="bg-transparent rounded-3xl !text-center pl-10 px-8 placeholder:text-theme-accent/50">
+						<Input id="searchKey" type="text" bind:value={searchedKey} autocomplete="off" placeholder="Search by {term('chapter').toLowerCase()}, {term('verse').toLowerCase()}, page, {term('juz').toLowerCase()} or {term('hizb').toLowerCase()}..." size="md" class="bg-transparent rounded-3xl !text-center pl-10 px-8 placeholder:text-theme-accent/50">
 							<Search slot="left" size={7} classes="pl-2 pt-1 {searchedKey.length > 0 && 'hidden'}" />
 							<CloseButton slot="right" on:click={() => (searchedKey = '')} class="pr-2 {searchedKey.length === 0 && 'hidden'}" />
 						</Input>
 					</form>
-				</div>
-
-				<!-- instructions -->
-				<div id="search-instructions" class="text-xs pt-2 opacity-70 pb-4">
-					Enter a {term('chapter').toLowerCase()}, page, {term('juz').toLowerCase()}/{term('hizb').toLowerCase()} number, or {term('verse').toLowerCase()}/word key (e.g., 2:255, 2.286, 18-10, 2 1 1). You can also navigate using surah names (e.g., faatiha, kahf, mary).
 				</div>
 
 				<!-- suggestions (only for home page) -->
