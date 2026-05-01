@@ -12,7 +12,7 @@
 	import About from '$svgs/About.svelte';
 	import Changelog from '$svgs/Changelog.svelte';
 	import Offline from '$svgs/Offline.svelte';
-	import LegacySite from '$svgs/LegacySite.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
 	import { disabledClasses } from '$data/commonClasses';
 	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
@@ -145,7 +145,7 @@
 
 					<!-- legacy site link -->
 					<a href="https://old.quranwbw.com/" target="_blank" rel="noopener noreferrer" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1} data-umami-event="Legacy Site Button">
-						<span><LegacySite size={4} /></span>
+						<span><LeftArrow /></span>
 						<span class={linkTextClasses}>Old Website</span>
 					</a>
 				</div>
