@@ -9,7 +9,7 @@
 	import Bismillah from '$misc/Bismillah.svelte';
 	import ChapterHeader from '$misc/ChapterHeader.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
-	import Previous from '$svgs/Previous.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
 	import SectionStart from '$svgs/SectionStart.svelte';
 	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __currentPage, __keysToFetch, __pageURL, __fullVersesDisplayKeys } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
@@ -247,7 +247,7 @@
 					<span>Start of {$__currentPage === 'hizb' ? term('hizb') : term('juz')}</span>
 				</button>
 				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>
-					<Previous />
+					<LeftArrow />
 					<span>Previous {term('verse')}</span>
 				</button>
 			</div>

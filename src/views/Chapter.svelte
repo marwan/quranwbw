@@ -6,7 +6,7 @@
 	import Chapter from '$display/verses/modes/Chapter.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
-	import Previous from '$svgs/Previous.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
 	import SectionStart from '$svgs/SectionStart.svelte';
 	import { parseURL } from '$utils/parseURL';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
@@ -74,7 +74,7 @@
 						<span>Start of {term('chapter')} </span>
 					</a>
 					<button on:click={loadPreviousVerse} class="text-sm {buttonClasses}">
-						<Previous />
+						<LeftArrow />
 						<span> Previous {term('verse')} </span>
 					</button>
 				</div>

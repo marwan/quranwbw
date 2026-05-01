@@ -3,8 +3,8 @@
 
 	import Spinner from '$svgs/Spinner.svelte';
 	import Play from '$svgs/Play.svelte';
-	import Previous from '$svgs/Previous.svelte';
-	import Next from '$svgs/Next.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
+	import RightArrow from '$svgs/RightArrow.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Table from './Table.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
@@ -131,7 +131,7 @@
 						<!-- previous chapter -->
 						{#if verse === 1 && chapter > 1}
 							<a href="/morphology?word={+chapter - 1}:1" class={buttonOutlineClasses}>
-								<Previous />
+								<LeftArrow />
 								<span>{term('chapter')} {+chapter - 1}</span>
 							</a>
 						{/if}
@@ -139,7 +139,7 @@
 						<!-- previous verse -->
 						{#if verse > 1}
 							<a href="/morphology?word={chapter}:{+verse - 1}" class={buttonOutlineClasses}>
-								<Previous />
+								<LeftArrow />
 								<span>{term('verse')} {chapter}:{+verse - 1}</span>
 							</a>
 						{/if}
@@ -148,7 +148,7 @@
 						{#if verse < quranMetaData[chapter].verses}
 							<a href="/morphology?word={chapter}:{+verse + 1}" class={buttonOutlineClasses}>
 								<span>{term('verse')} {chapter}:{+verse + 1}</span>
-								<Next />
+								<RightArrow />
 							</a>
 						{/if}
 
@@ -156,7 +156,7 @@
 						{#if verse === quranMetaData[chapter].verses && chapter < 114}
 							<a href="/morphology?word={+chapter + 1}:1" class={buttonOutlineClasses}>
 								<span>{term('chapter')} {+chapter + 1} </span>
-								<Next />
+								<RightArrow />
 							</a>
 						{/if}
 					</div>
@@ -189,7 +189,7 @@
 							{#if isMorphologyPage}
 								<a href="/{chapter}/{verse}" class={buttonClasses}>
 									<span>Goto Verse</span>
-									<Next />
+									<RightArrow />
 								</a>
 							{/if}
 						</div>

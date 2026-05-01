@@ -3,7 +3,7 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import Check from '$svgs/Check.svelte';
 	import Cross from '$svgs/Cross.svelte';
-	import Next from '$svgs/Next.svelte';
+	import RightArrow from '$svgs/RightArrow.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
@@ -162,7 +162,7 @@
 				<div id="skip-word-button" class="w-full">
 					<button class="{buttonClasses} w-full" on:click={() => setRandomWord()}>
 						<span>{answerChecked ? 'Next' : 'Skip'}</span>
-						<Next />
+						<RightArrow />
 					</button>
 				</div>
 			</div>
