@@ -3,6 +3,7 @@
 
 	import Spinner from '$svgs/Spinner.svelte';
 	import Play from '$svgs/Play.svelte';
+	import Previous from '$svgs/Previous.svelte';
 	import Next from '$svgs/Next.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Table from './Table.svelte';
@@ -124,27 +125,39 @@
 		{#await allDataPromise}
 			<Spinner />
 		{:then allData}
-			<div class="space-y-6 my-8" in:fade={{ duration: 300 }}>
+			<div class="space-y-6" in:fade={{ duration: 300 }}>
 				{#if isMorphologyPage}
-					<div id="verse-navigator" class="flex flex-row justify-center space-x-8 text-sm">
+					<div id="verse-navigator" class="flex flex-row justify-center space-x-2 text-sm">
 						<!-- previous chapter -->
 						{#if verse === 1 && chapter > 1}
-							<a href="/morphology?word={+chapter - 1}:1" class={buttonOutlineClasses}>{@html '&#x2190;'} {term('chapter')} {+chapter - 1}</a>
-						{/if}
-
-						<!-- next verse -->
-						{#if verse > 1}
-							<a href="/morphology?word={chapter}:{+verse - 1}" class={buttonOutlineClasses}>{@html '&#x2190;'} {term('verse')} {chapter}:{+verse - 1}</a>
+							<a href="/morphology?word={+chapter - 1}:1" class={buttonOutlineClasses}>
+								<Previous />
+								<span>{term('chapter')} {+chapter - 1}</span>
+							</a>
 						{/if}
 
 						<!-- previous verse -->
+						{#if verse > 1}
+							<a href="/morphology?word={chapter}:{+verse - 1}" class={buttonOutlineClasses}>
+								<Previous />
+								<span>{term('verse')} {chapter}:{+verse - 1}</span>
+							</a>
+						{/if}
+
+						<!-- next verse -->
 						{#if verse < quranMetaData[chapter].verses}
-							<a href="/morphology?word={chapter}:{+verse + 1}" class={buttonOutlineClasses}>{term('verse')} {chapter}:{+verse + 1} {@html '&#x2192;'}</a>
+							<a href="/morphology?word={chapter}:{+verse + 1}" class={buttonOutlineClasses}>
+								<span>{term('verse')} {chapter}:{+verse + 1}</span>
+								<Next />
+							</a>
 						{/if}
 
 						<!-- next chapter -->
 						{#if verse === quranMetaData[chapter].verses && chapter < 114}
-							<a href="/morphology?word={+chapter + 1}:1" class={buttonOutlineClasses}>{term('chapter')} {+chapter + 1} {@html '&#x2192;'}</a>
+							<a href="/morphology?word={+chapter + 1}:1" class={buttonOutlineClasses}>
+								<span>{term('chapter')} {+chapter + 1} </span>
+								<Next />
+							</a>
 						{/if}
 					</div>
 				{/if}
