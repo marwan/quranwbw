@@ -31,8 +31,8 @@ const cacheNames = {
 	tafsirData: 'quranwbw-tafsir-data' // Tafsir data files
 };
 
-// Files we should never cache (the service worker itself and its settings)
-const stuffNotToCache = ['/service-worker.js', '/service-worker-settings.json'];
+// Files we should never cache
+const stuffNotToCache = ['/service-worker.js'];
 
 // Static files built by SvelteKit (CSS, JS, images from /static folder)
 const precacheFiles = [
