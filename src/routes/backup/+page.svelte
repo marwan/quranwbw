@@ -272,7 +272,7 @@
 		isBackingUp = true;
 
 		try {
-			const { ok, status } = await apiFetch('/settings', {
+			const { ok, status } = await apiFetch('/settings/backup', {
 				method: 'POST',
 				body: JSON.stringify(settings)
 			});
@@ -307,7 +307,7 @@
 		isRestoring = true;
 
 		try {
-			const { ok, status, json } = await apiFetch('/settings', { method: 'GET' });
+			const { ok, status, json } = await apiFetch('/settings/restore', { method: 'GET' });
 
 			if (!ok) {
 				showAlert(getErrorForStatus(status, 'restore'));
