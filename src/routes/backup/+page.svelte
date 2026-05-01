@@ -538,7 +538,7 @@
 
 				<div class="flex flex-row space-x-2">
 					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (backupKeyInput.length !== 23 && disabledClasses)}" on:click={handleValidateBackupKey}>
-						<Check size={5} />
+						<Check />
 						<span class="!ml-[4px]">{isValidating ? 'Validating…' : 'Validate & Save'}</span>
 					</button>
 					<button
@@ -548,7 +548,7 @@
 							backupKeyInput = '';
 						}}
 					>
-						<Cross size={5} />
+						<Cross />
 						<span class="!ml-[4px]">Cancel</span>
 					</button>
 				</div>
@@ -661,11 +661,11 @@
 							<div>A total of {changedSettingsCount} setting{changedSettingsCount === 1 ? '' : 's'} on this device will be updated. Your current settings will be replaced, and the page will reload.</div>
 							<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}>
-									<Check size={5} />
+									<Check />
 									<span class="!ml-[4px]">Apply</span>
 								</button>
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}>
-									<Cross size={5} />
+									<Cross />
 									<span class="!ml-[4px]">Cancel</span>
 								</button>
 							</div>

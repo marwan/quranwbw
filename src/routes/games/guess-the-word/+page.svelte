@@ -152,7 +152,7 @@
 				{#if !answerChecked}
 					<div id="confirm-button" class="{selection === null || answerChecked === true ? disabledClasses : null} w-full">
 						<button class="{buttonClasses} w-full" on:click={() => checkAnswer()}>
-							<Check size={5} />
+							<Check size={6} />
 							<span class="!ml-[4px]">Confirm</span>
 						</button>
 					</div>

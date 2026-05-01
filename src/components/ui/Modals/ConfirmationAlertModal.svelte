@@ -40,17 +40,17 @@
 						$__confirmationAlertModal.visible = false;
 					}}
 				>
-					<Check size={5} />
+					<Check size={6} />
 					<span class="!ml-[4px]">Confirm</span>
 				</button>
 			{/if}
 
 			<button class="w-full {buttonClasses}" on:click={() => ($__confirmationAlertModal.visible = false)}>
 				{#if $__confirmationAlertModal.type === 'confirm'}
-					<Cross size={5} />
+					<Cross size={6} />
 					<span class="!ml-[4px]">Cancel</span>
 				{:else}
-					<Check size={5} />
+					<Check size={6} />
 					<span class="!ml-[4px]">Okay</span>
 				{/if}
 			</button>

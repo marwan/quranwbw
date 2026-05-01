@@ -1,5 +1,5 @@
 <script>
-	export let size = 4;
+	export let size = 5;
 </script>
 
 <svg class="w-{size} h-{size}" aria-hidden="true" width="24" height="24" fill="none" viewBox="0 0 24 24">
