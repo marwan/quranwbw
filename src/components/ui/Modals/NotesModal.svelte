@@ -1,5 +1,6 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
+	import Save from '$svgs/Save.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __verseKey, __userNotes, __notesModalVisible } from '$utils/stores';
@@ -86,12 +87,14 @@
 
 	<div class="flex flex-row space-x-2 flex-shrink-0 mt-4">
 		<button on:click={() => updateNote()} class="w-full {buttonClasses}">
-			{updateButtonText}
+			<Save />
+			<span>{updateButtonText}</span>
 		</button>
 
 		{#if showDeleteButton}
-			<button on:click={() => showConfirm('Are you sure you want to reset this note? This action cannot be undone.', 'notesModal', () => resetNote())} class="w-fit {buttonClasses}">
-				<span><Trash size={5} /></span>
+			<button on:click={() => showConfirm('Are you sure you want to reset this note? This action cannot be undone.', 'notesModal', () => resetNote())} class="w-full {buttonClasses}">
+				<Trash size={5} />
+				<span>Delete</span>
 			</button>
 		{/if}
 	</div>

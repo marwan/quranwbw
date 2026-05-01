@@ -4,6 +4,7 @@
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import Search from '$svgs/Search.svelte';
+	import Cross from '$svgs/Cross.svelte';
 	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
 	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled } from '$utils/stores';
@@ -366,7 +367,10 @@
 		{/if}
 
 		<div class="w-full px-2">
-			<button class="w-full {buttonClasses}" on:click={() => __quranNavigationModalVisible.set(false)}>Close</button>
+			<button class="w-full {buttonClasses}" on:click={() => __quranNavigationModalVisible.set(false)}>
+				<Cross size={5} />
+				<span class="!ml-[4px]">Close</span>
+			</button>
 		</div>
 	</div>
 </Modal>

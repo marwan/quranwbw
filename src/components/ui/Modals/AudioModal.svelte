@@ -6,6 +6,7 @@
 	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
 	import Input from '$ui/FlowbiteSvelte/forms/Input.svelte';
 	import Search from '$svgs/Search.svelte';
+	import Play from '$svgs/Play.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __reciter, __translationReciter } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
@@ -401,6 +402,9 @@
 	</div>
 
 	<div class="flex-shrink-0 mt-4">
-		<button on:click={() => playButtonHandler($__audioSettings.playingKey)} class="w-full {buttonClasses} {invalidStartVerse || invalidEndVerse || invalidTimesToRepeat ? disabledClasses : null}">Play</button>
+		<button on:click={() => playButtonHandler($__audioSettings.playingKey)} class="w-full {buttonClasses} {invalidStartVerse || invalidEndVerse || invalidTimesToRepeat ? disabledClasses : null}">
+			<Play />
+			<span>Play</span>
+		</button>
 	</div>
 </Modal>

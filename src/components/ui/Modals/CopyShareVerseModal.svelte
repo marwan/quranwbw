@@ -2,6 +2,7 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
+	import Copy from '$svgs/Copy.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __verseKey, __copyShareVerseModalVisible, __verseTranslationData } from '$utils/stores';
 	import { linkClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
@@ -270,6 +271,9 @@
 	</div>
 
 	<div class="flex-shrink-0 mt-4">
-		<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">Copy</button>
+		<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">
+			<Copy size={4} />
+			<span>Copy</span>
+		</button>
 	</div>
 </Modal>

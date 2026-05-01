@@ -9,6 +9,8 @@
 	import Bismillah from '$misc/Bismillah.svelte';
 	import ChapterHeader from '$misc/ChapterHeader.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
+	import Previous from '$svgs/Previous.svelte';
+	import SectionStart from '$svgs/SectionStart.svelte';
 	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __currentPage, __keysToFetch, __pageURL, __fullVersesDisplayKeys } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
@@ -240,8 +242,14 @@
 				we re-add bottom padding here so the buttons remain fully clickable.
 			-->
 			<div class="{loadPrevNextVerseButtons} {isNextVerseFirst && 'pb-12'}">
-				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {$__currentPage === 'hizb' ? term('hizb') : term('juz')}</button>
-				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>Previous {term('verse')}</button>
+				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>
+					<SectionStart />
+					<span>Start of {$__currentPage === 'hizb' ? term('hizb') : term('juz')}</span>
+				</button>
+				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>
+					<Previous />
+					<span>Previous {term('verse')}</span>
+				</button>
 			</div>
 		{/if}
 
