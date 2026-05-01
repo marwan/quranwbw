@@ -96,12 +96,13 @@
 
 	// Remove all locally stored backup data (key + timestamps).
 	// Does NOT delete the cloud backup — the user can re-enter the key at any time.
-	function forgetLocalBackupKey() {
+	function deleteLocalBackupKey() {
 		localStorage.removeItem(cloudBackupKeyLocalStorageItemName);
 		savedBackupKey = '';
 		backupTimestamps = { keyCreatedAt: null, lastBackedUpAt: null, lastRestoredAt: null };
 		restorePreview = null;
 		view = 'main';
+		window.umami?.track('Backup Key Deleted');
 	}
 
 	// Read the current settings from localStorage
@@ -198,7 +199,10 @@
 
 			// Store the backup key and record the creation timestamp
 			persistBackupKey(json.backupKey);
+
 			view = 'generate';
+
+			window.umami?.track('Backup Key Generated');
 		} catch {
 			// Network-level failure (offline, DNS, CORS, etc.)
 			showAlert(networkErrorMessage);
@@ -237,6 +241,8 @@
 
 			backupKeyInput = '';
 			view = 'main';
+
+			window.umami?.track('Backup Key Entered');
 		} catch {
 			showAlert(networkErrorMessage);
 		} finally {
@@ -262,6 +268,7 @@
 
 			if (!ok) {
 				showAlert(getErrorForStatus(status, 'backup'));
+				window.umami?.track('Cloud Backup Failed');
 				return;
 			}
 
@@ -269,6 +276,8 @@
 			const ts = new Date().toISOString();
 			writeBackupData({ lastBackedUpAt: ts });
 			backupTimestamps = { ...backupTimestamps, lastBackedUpAt: ts };
+
+			window.umami?.track('Cloud Backup Success');
 
 			// Clear any open restore preview — its data is now stale after a fresh backup
 			restorePreview = null;
@@ -303,6 +312,8 @@
 				restorePreview = null;
 				showAlert('Your local settings are already identical to this backup. No changes will be made.');
 			}
+
+			window.umami?.track('Cloud Restore Success');
 		} catch {
 			showAlert(networkErrorMessage);
 		} finally {
@@ -335,12 +346,15 @@
 		const ts = new Date().toISOString();
 		writeBackupData({ lastRestoredAt: ts });
 
+		window.umami?.track('Cloud Restore Applied');
+
 		applyRestoredSettings(merged);
 	}
 
 	// Cancel the restore preview
 	function handleRestoreCancel() {
 		restorePreview = null;
+		window.umami?.track('Cloud Restore Cancelled');
 	}
 
 	// Copies the active backup key to the clipboard and briefly shows "Copied" feedback.
@@ -350,6 +364,8 @@
 
 		navigator.clipboard?.writeText(savedBackupKey);
 		hasCopiedBackupKey = true;
+
+		window.umami?.track('Backup Key Copied');
 
 		// Reset the "Copied" label after 2 seconds
 		clearTimeout(copyResetTimer);
@@ -538,7 +554,7 @@
 				<span class="text-theme-accent">Your Saved Backup Key</span>
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 					<div class="flex flex-col">
-						<p>A backup key is saved on this device. Copy or share it to use on another device.</p>
+						<p>Your backup key is stored on this device. Keys that go unused for 30 days are permanently deleted from the cloud.</p>
 						<!-- Only shown if the key was generated on this device (not when entered from another device) -->
 						{#if backupTimestamps.keyCreatedAt}
 							<p class="opacity-70 mt-2">Key created: {formatDate(backupTimestamps.keyCreatedAt)}</p>
@@ -557,6 +573,7 @@
 							on:click={() => {
 								if (navigator.share) {
 									navigator.share({ title: 'My Backup Key', text: savedBackupKey });
+									window.umami?.track('Backup Key Shared');
 								} else {
 									// Fallback for browsers/devices that don't support the Web Share API
 									navigator.clipboard?.writeText(savedBackupKey);
@@ -569,9 +586,9 @@
 						</button>
 
 						<!-- Remove the key from this device only — cloud backup is preserved -->
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, forgetLocalBackupKey)}>
+						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, deleteLocalBackupKey)}>
 							<Trash size={4} />
-							<span>Forget</span>
+							<span>Delete</span>
 						</button>
 					</div>
 				</div>
