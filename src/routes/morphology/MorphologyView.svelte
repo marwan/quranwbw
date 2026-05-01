@@ -2,6 +2,8 @@
 	export let data;
 
 	import Spinner from '$svgs/Spinner.svelte';
+	import Play from '$svgs/Play.svelte';
+	import Next from '$svgs/Next.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Table from './Table.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
@@ -164,12 +166,18 @@
 						</div>
 
 						<!-- Buttons -->
-						<div class="pt-4 flex flex-row justify-center space-x-2 text-xs">
-							<button class={buttonClasses} on:click={() => wordAudioController({ key: $__morphologyKey })}>Play Word</button>
+						<div class="pt-4 flex flex-row justify-center space-x-2 text-sm">
+							<button class={buttonClasses} on:click={() => wordAudioController({ key: $__morphologyKey })}>
+								<Play />
+								<span>Play Word</span>
+							</button>
 
 							<!-- Show the "goto verse" button if the user in on morphology page -->
 							{#if isMorphologyPage}
-								<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
+								<a href="/{chapter}/{verse}" class={buttonClasses}>
+									<span>Goto Verse</span>
+									<Next />
+								</a>
 							{/if}
 						</div>
 					</div>
