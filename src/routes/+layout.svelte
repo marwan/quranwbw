@@ -15,7 +15,7 @@
 	import SettingsSelectorModal from '$ui/Modals/SettingsSelectorModal.svelte';
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
-	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
+	import CopyVerseModal from '$ui/Modals/CopyVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
 	import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
 
@@ -192,7 +192,7 @@
 	<SettingsSelectorModal />
 	<VerseTranslationModal />
 	<MorphologyModal />
-	<CopyShareVerseModal />
+	<CopyVerseModal />
 	<FavoriteChaptersModal />
 	<ConfirmationAlertModal />
 

@@ -81,7 +81,7 @@
 		<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent placeholder:text-theme-accent/50 resize-none" placeholder="Write your thoughts here..."></textarea>
 
 		{#if noteModifiedAt !== null}
-			<div id="notes-last-modified" class="text-xs mt-4">Modified {noteModifiedAt}.</div>
+			<div id="notes-last-modified" class="opacity-70 mt-4 text-sm">Last Modified: {noteModifiedAt}</div>
 		{/if}
 	</div>
 

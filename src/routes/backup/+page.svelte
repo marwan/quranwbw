@@ -482,7 +482,7 @@
 
 <div class="mx-auto">
 	<div class="markdown mx-auto">
-		<h3>Backup & Restore</h3>
+		<h3>Backup & Restore (Beta)</h3>
 		<p>
 			This page lets you back up and restore your settings in two ways: cloud backup and local file backup. Cloud backup securely saves your settings online using a private backup key, allowing you to restore them on any device without an account. Local backup lets you export your settings to a file and restore them manually at any time. Your backup key and files are the only way to recover your
 			settings, so keep them safe.
@@ -499,7 +499,7 @@
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 						<div>Generate a backup key to save your settings online. You only need to do this once.</div>
 						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateBackupKey}>
-							<GenerateBackupKey size={4} />
+							<GenerateBackupKey />
 							<span>{isGenerating ? 'Generating…' : 'Generate Key'}</span>
 						</button>
 					</div>
@@ -518,7 +518,7 @@
 								view = 'enter';
 							}}
 						>
-							<InputBackupKey size={4} />
+							<InputBackupKey />
 							<span>Enter Key</span>
 						</button>
 					</div>
@@ -576,7 +576,7 @@
 					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 						<!-- Copy the backup key to clipboard -->
 						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyBackupKey} disabled={isBusy}>
-							<Copy size={4} />
+							<Copy />
 							<span>{hasCopiedBackupKey ? 'Copied' : 'Copy'}</span>
 						</button>
 
@@ -594,13 +594,13 @@
 								}
 							}}
 						>
-							<Share size={4} />
+							<Share />
 							<span>Share</span>
 						</button>
 
 						<!-- Remove the key from this device only — cloud backup is preserved -->
 						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, deleteLocalBackupKey)}>
-							<Trash size={4} />
+							<Trash />
 							<span>Delete</span>
 						</button>
 					</div>
@@ -634,13 +634,13 @@
 						<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 							<!-- Push current local settings to the cloud -->
 							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
-								<CloudBackup size={4} />
+								<CloudBackup />
 								<span>{isBackingUp ? 'Backing up…' : 'Backup'}</span>
 							</button>
 
 							<!-- Fetch cloud settings and enter preview stage -->
 							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
-								<CloudRestore size={4} />
+								<CloudRestore />
 								<span>{isRestoring ? 'Fetching…' : 'Restore'}</span>
 							</button>
 						</div>

@@ -152,15 +152,15 @@
 						__quranNavigationModalVisible.set(true);
 					}}
 				>
-					<Search2Bold size={4} />
+					<Search2Bold />
 					<span class="hidden md:block">Search</span>
 				</button>
-				<a href="/topics" class="{topButtonClasses} !py-4 md:bg-transparent"><TopicsBold size={4} /><span class="hidden md:block">Topics</span></a>
-				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
-				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
-				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
+				<a href="/topics" class="{topButtonClasses} !py-4 md:bg-transparent"><TopicsBold /><span class="hidden md:block">Topics</span></a>
+				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold /><span class="hidden md:block">{term('supplications')}</span></a>
+				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled /><span class="hidden md:block">Mushaf</span></a>
+				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold /><span class="hidden md:block">Morphology</span></a>
 			</div>
-			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
+			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __siteNavigationModalVisible.set(true)}><Menu /><span class="hidden md:block">Menu</span></button>
 		</div>
 	</div>
 
@@ -240,7 +240,7 @@
 			</div>
 
 			<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (homepageLayoutPreferences.extrasPanelVisible = !homepageLayoutPreferences.extrasPanelVisible)} data-umami-event="Toggle Panel Button">
-				<svelte:component this={homepageLayoutPreferences.extrasPanelVisible ? EyeCrossed : Eye} size={4} />
+				<svelte:component this={homepageLayoutPreferences.extrasPanelVisible ? EyeCrossed : Eye} />
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.extrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
 		</div>
@@ -279,7 +279,7 @@
 			<div class="flex flex-row items-center justify-between">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
 					<button id="favorite-chapters-tab" on:click={() => changeTabs('divisionsActiveTab', favoriteChaptersTab)} class="{divisionsActiveTab === favoriteChaptersTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center" data-umami-event="Favorite Chapters Tab Button" aria-label={`Favorite ${term('chapters')}`} title={`Favorite ${term('chapters')}`}>
-						<svelte:component this={divisionsActiveTab === favoriteChaptersTab ? StarFilled : Star} size={4} />
+						<svelte:component this={divisionsActiveTab === favoriteChaptersTab ? StarFilled : Star} />
 					</button>
 					<button on:click={() => changeTabs('divisionsActiveTab', chaptersTab)} class="{divisionsActiveTab === chaptersTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
 						<span>{term('chapters')}</span>
@@ -294,7 +294,7 @@
 
 				{#if showDivisionSort}
 					<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
-						<svelte:component this={currentSortIsAscending ? SortDescending : SortAscending} size={4} />
+						<svelte:component this={currentSortIsAscending ? SortDescending : SortAscending} />
 					</button>
 					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">
 						{currentSortIsAscending ? 'Sort Descending' : 'Sort Ascending'}
@@ -361,7 +361,7 @@
 					<div class="flex flex-row space-x-2 text-sm mb-2">
 						<!-- Edit Favorites button  -->
 						<button class="{topButtonClasses} truncate w-full min-h-[54px] md:min-h-[58px]" on:click={() => __favoriteChaptersModalVisible.set(true)}>
-							<Edit2 size={4} />
+							<Edit2 />
 							<span>{hasFavorites ? 'Manage' : 'Add Your'} Favorite {term('chapters')}</span>
 						</button>
 					</div>

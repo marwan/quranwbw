@@ -66,7 +66,7 @@
 				<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
 					<!-- Search -->
 					<a href="/search" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1}>
-						<span><Search2 size={4} /></span>
+						<span><Search2 /></span>
 						<span class={linkTextClasses}>Search</span>
 					</a>
 
@@ -78,19 +78,19 @@
 						}}
 						class={linkClasses}
 					>
-						<span><Settings size={4} /></span>
+						<span><Settings /></span>
 						<span class={linkTextClasses}>Settings</span>
 					</button>
 
 					<!-- topics page link -->
 					<a href="/topics" class={linkClasses}>
-						<span><Topics size={4} /></span>
+						<span><Topics /></span>
 						<span class={linkTextClasses}>Topics</span>
 					</a>
 
 					<!-- Bookmarks -->
 					<a href="/bookmarks" class={linkClasses}>
-						<span><Bookmark size={4} /></span>
+						<span><Bookmark /></span>
 						<span class={linkTextClasses}>Bookmarks</span>
 					</a>
 
@@ -103,43 +103,43 @@
 						class={linkClasses}
 						data-umami-event="Tajweed Modal Button"
 					>
-						<span><TajweedRules size={4} /></span>
+						<span><TajweedRules /></span>
 						<span class={linkTextClasses}>{term('tajweed')} Rules</span>
 					</button>
 
 					<!-- Supplications -->
 					<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
-						<span><Supplication size={4} /></span>
+						<span><Supplication /></span>
 						<span class={linkTextClasses}>{term('supplications')}</span>
 					</a>
 
 					<!-- Morphology -->
 					<a href="/morphology?word=1:1:1" class={linkClasses}>
-						<span><Morphology size={4} /></span>
+						<span><Morphology /></span>
 						<span class={linkTextClasses}>Morphology</span>
 					</a>
 
 					<!-- Guess The Word -->
 					<a href="/games/guess-the-word" class={linkClasses}>
-						<span><Puzzle size={4} /></span>
+						<span><Puzzle /></span>
 						<span class={linkTextClasses}>Word Game</span>
 					</a>
 
 					<!-- changelog -->
 					<a href="/changelog" class={linkClasses}>
-						<span><Changelog size={4} /></span>
+						<span><Changelog /></span>
 						<span class={linkTextClasses}>Changelog</span>
 					</a>
 
 					<!-- About -->
 					<a href="/about" class={linkClasses}>
-						<span><About size={4} /></span>
+						<span><About /></span>
 						<span class={linkTextClasses}>About</span>
 					</a>
 
 					<!-- Offline Mode page -->
 					<a href="/offline" class={linkClasses}>
-						<span><Offline size={4} /></span>
+						<span><Offline /></span>
 						<span class={linkTextClasses}>Offline Mode (Beta)</span>
 					</a>
 

@@ -724,7 +724,7 @@
 						{#if section.isDataDownloaded}
 							<!-- Re-download button (only shown when data is downloaded) -->
 							<button class="h-max whitespace-nowrap {buttonClasses}" on:click={section.onRedownload} disabled={isDownloading}>
-								<Refresh size={4} />
+								<Refresh />
 								<span>
 									{#if section.isDownloading}
 										{downloadProgressPercentage}%
@@ -736,13 +736,13 @@
 
 							<!-- Delete button (only shown when data is downloaded) -->
 							<button class="h-max whitespace-nowrap {buttonClasses}" on:click={() => showConfirm('Are you sure you want to delete this data?', '', section.onDelete)} disabled={isDownloading}>
-								<Trash size={4} />
+								<Trash />
 								<span>Delete</span>
 							</button>
 						{:else}
 							<!-- Download button (only shown when data is NOT downloaded) -->
 							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses}" on:click={section.onDownload} disabled={isDownloading}>
-								<Download size={4} />
+								<Download />
 								<span>
 									{#if section.isDownloading}
 										{downloadProgressPercentage}%

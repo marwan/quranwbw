@@ -100,7 +100,7 @@
 	<Portal target="body">
 		<Dropdown bind:open={dropdownOpen} triggeredBy="#bookmark-menu-{bookmark.replace(':', '-')}" strategy="fixed" containerClass={`divide-y z-[1000] shadow-md border border-theme-accent/20`} class="px-2 my-2 w-max text-left font-sans direction-ltr">
 			<DropdownItem class={dropdownItemClasses} on:click={handleDeleteBookmark}>
-				<Trash size={4} aria-hidden="true" />
+				<Trash aria-hidden="true" />
 				<span>Delete</span>
 			</DropdownItem>
 		</Dropdown>

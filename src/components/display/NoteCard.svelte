@@ -103,12 +103,12 @@
 	<Portal target="body">
 		<Dropdown bind:open={dropdownOpen} triggeredBy="#note-menu-{verse.replace(':', '-')}" strategy="fixed" containerClass={`divide-y z-[1000] shadow-md border border-theme-accent/20`} class="px-2 my-2 w-max text-left font-sans direction-ltr">
 			<DropdownItem class={dropdownItemClasses} on:click={handleEditNote}>
-				<EditIcon size={4} aria-hidden="true" />
+				<EditIcon aria-hidden="true" />
 				<span>Edit</span>
 			</DropdownItem>
 
 			<DropdownItem class={dropdownItemClasses} on:click={handleDeleteNote}>
-				<Trash size={4} aria-hidden="true" />
+				<Trash aria-hidden="true" />
 				<span>Delete</span>
 			</DropdownItem>
 		</Dropdown>

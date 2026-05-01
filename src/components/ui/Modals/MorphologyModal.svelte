@@ -16,7 +16,7 @@
 	<div class="flex flex-row space-x-2 flex-shrink-0">
 		<h3 id="modal-title" class="mb-6 text-xl font-medium">Word {$__morphologyKey}</h3>
 		<a href="/morphology?word={$__morphologyKey}" class="inline-flex mt-[-2px] mb-6 p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => window.umami.track('Full View Morphology Button')}>
-			<ExternalLink size={4} />
+			<ExternalLink />
 		</a>
 	</div>
 
