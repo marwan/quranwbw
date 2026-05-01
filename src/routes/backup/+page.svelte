@@ -77,6 +77,17 @@
 	// True if any async operation is in progress
 	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
 
+	// Fire any pending analytics event that was queued before a page reload
+	// (e.g. Cloud Restore Applied, which reloads the page immediately after tracking)
+	if (typeof window !== 'undefined') {
+		const pendingEvent = localStorage.getItem('pendingUmamiEvent');
+		if (pendingEvent) {
+			localStorage.removeItem('pendingUmamiEvent');
+			// Defer slightly so Umami has time to initialise after page load
+			setTimeout(() => window.umami?.track(pendingEvent), 500);
+		}
+	}
+
 	// Format an ISO date string into a human-readable local time
 	function formatDate(isoString) {
 		if (!isoString) return 'Unknown';
@@ -346,7 +357,9 @@
 		const ts = new Date().toISOString();
 		writeBackupData({ lastRestoredAt: ts });
 
-		window.umami?.track('Cloud Restore Applied');
+		// Queue the analytics event to be fired after the page reloads,
+		// since the reload happens before the track call can complete
+		localStorage.setItem('pendingUmamiEvent', 'Cloud Restore Applied');
 
 		applyRestoredSettings(merged);
 	}
