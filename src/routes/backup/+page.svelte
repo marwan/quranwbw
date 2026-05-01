@@ -508,7 +508,7 @@
 				</div>
 
 				<div class="flex flex-row space-x-2">
-					<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleValidateBackupKey}>
+					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (backupKeyInput.length !== 23 && disabledClasses)}" on:click={handleValidateBackupKey}>
 						<Check size={5} />
 						<span class="!ml-[4px]">{isValidating ? 'Validating…' : 'Validate & Save'}</span>
 					</button>
@@ -580,71 +580,52 @@
 			<div class="border-b border-theme-accent/20"></div>
 
 			<!-- ----------------------------------------------------------------
-				SECTION 2: Backup settings to cloud
-				Shows when settings were last backed up and lets the user
-				push their current local settings to the cloud.
+				SECTION 2: Cloud Backup & Restore
+				Both actions share one section with side-by-side buttons,
+				mirroring the layout of the local backup section below.
+				Restore enters a preview/confirmation state inline.
 			---------------------------------------------------------------- -->
 			<div class="flex flex-col space-y-2 text-sm">
-				<span class="text-theme-accent">Save Settings to Cloud</span>
-				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<div class="flex flex-col">
-						<p>Save your current settings online. This will replace any previous backup for this key.</p>
-						<!-- Timestamp recorded locally after each successful backup -->
-						{#if backupTimestamps.lastBackedUpAt}
-							<p class="opacity-70 mt-2">Last backed up: {formatDate(backupTimestamps.lastBackedUpAt)}</p>
-						{/if}
-					</div>
-					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
-						<CloudBackup size={4} />
-						<span>{isBackingUp ? 'Backing up…' : 'Backup'}</span>
-					</button>
-				</div>
-			</div>
+				<span class="text-theme-accent">Cloud Backup & Restore</span>
 
-			<div class="border-b border-theme-accent/20"></div>
-
-			<!-- ----------------------------------------------------------------
-				SECTION 3: Restore settings from cloud
-				Shows when settings were last restored and lets the user
-				fetch and preview cloud settings before applying them.
-			---------------------------------------------------------------- -->
-			<div class="flex flex-col space-y-2 text-sm">
-				<span class="text-theme-accent">Restore Settings from Cloud</span>
-
-				<!--
-					STEP 1: Restore (preview stage)
-					No backup data has been loaded yet.
-					The user can fetch their saved settings from the cloud to preview changes.
-					Local settings remain untouched at this stage.
-				-->
+				<!-- Normal state: description + both buttons side by side -->
 				{#if !restorePreview}
 					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 						<div class="flex flex-col">
-							<p>Load your saved settings and review them before applying. Your current settings will not change until you confirm.</p>
-							<!-- Timestamp recorded locally after each successful restore -->
+							<p>Save your settings to the cloud or restore them from your last backup. Your current settings will not change until you confirm a restore.</p>
+							<!-- Show whichever timestamps are available -->
+							{#if backupTimestamps.lastBackedUpAt}
+								<p class="opacity-70 mt-2">Last backed up: {formatDate(backupTimestamps.lastBackedUpAt)}</p>
+							{/if}
 							{#if backupTimestamps.lastRestoredAt}
-								<p class="opacity-70 mt-2">Last restored: {formatDate(backupTimestamps.lastRestoredAt)}</p>
+								<p class="opacity-70 mt-1">Last restored: {formatDate(backupTimestamps.lastRestoredAt)}</p>
 							{/if}
 						</div>
+						<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+							<!-- Push current local settings to the cloud -->
+							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
+								<CloudBackup size={4} />
+								<span>{isBackingUp ? 'Backing up…' : 'Backup'}</span>
+							</button>
 
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
-							<CloudRestore size={4} />
-							<span>{isRestoring ? 'Fetching…' : 'Restore'}</span>
-						</button>
+							<!-- Fetch cloud settings and enter preview stage -->
+							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
+								<CloudRestore size={4} />
+								<span>{isRestoring ? 'Fetching…' : 'Restore'}</span>
+							</button>
+						</div>
 					</div>
 				{/if}
 
 				<!--
-					STEP 2: Restore preview (confirmation stage)
-					Backup data has been fetched from the cloud.
-					Show only the settings that differ from the current local settings.
-					The user must explicitly confirm before any changes are applied.
+					Restore preview (confirmation stage)
+					Replaces the normal state once cloud settings have been fetched.
+					Shows how many settings differ and asks the user to confirm or cancel.
 				-->
 				{#if restorePreview}
 					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
 					{@const changedSettingsCount = changedSettings.length}
 
-					<!-- Settings differ: show the diff count, apply button and cancel button -->
 					{#if changedSettingsCount !== 0}
 						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 							<div>A total of {changedSettingsCount} setting{changedSettingsCount === 1 ? '' : 's'} on this device will be updated. Your current settings will be replaced, and the page will reload.</div>
@@ -669,11 +650,11 @@
 		<div class="border-b border-theme-accent/20"></div>
 
 		<!-- ----------------------------------------------------------------
-				SECTION 4: Local backup & restore
-				Allows exporting settings to a local file and restoring them manually.
-				Works offline and does not require a backup key or cloud access.
-				Importing a file will overwrite the current local settings.
-			---------------------------------------------------------------- -->
+			SECTION 4: Local backup & restore
+			Allows exporting settings to a local file and restoring them manually.
+			Works offline and does not require a backup key or cloud access.
+			Importing a file will overwrite the current local settings.
+		---------------------------------------------------------------- -->
 		<div class="flex flex-col space-y-2 text-sm">
 			<span class="text-theme-accent">Local Backup & Restore</span>
 			<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
