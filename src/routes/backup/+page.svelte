@@ -42,6 +42,10 @@
 
 	const genericErrorMessage = 'Something went wrong. Please try again.';
 
+	// Strict format check: word##-word##-word##-word##
+	// Example: pal10-hop30-sky21-key28
+	const backupKeyRegex = /^[a-z]{3}[0-9]{2}-[a-z]{3}[0-9]{2}-[a-z]{3}[0-9]{2}-[a-z]{3}[0-9]{2}$/;
+
 	// The backup key currently saved in localStorage (auto-populated on mount)
 	let savedBackupKey = readBackupData().backupKey || '';
 
@@ -672,7 +676,7 @@
 				</div>
 
 				<div class="flex flex-row space-x-2">
-					<button class="h-max whitespace-nowrap {buttonClasses} {(isBusy || backupKeyInput.length !== 23) && disabledClasses}" on:click={handleValidateBackupKey}>
+					<button class="h-max whitespace-nowrap {buttonClasses} {(isBusy || !backupKeyRegex.test(backupKeyInput)) && disabledClasses}" on:click={handleValidateBackupKey}>
 						<Check />
 						<span>{isValidating ? 'Validating…' : 'Validate & Save'}</span>
 					</button>
