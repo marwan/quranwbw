@@ -55,8 +55,8 @@
 	// Input field for entering an existing backup key from another device
 	let backupKeyInput = '';
 
-	// Controls which "panel" is shown: 'main' | 'generate' | 'enter'
-	let view = 'main';
+	// Controls which "panel" is shown: 'keySetup' | 'keyEntry'
+	let view = 'keySetup';
 
 	// Loading states for each async action
 	let isGenerating = false;
@@ -112,7 +112,7 @@
 		savedBackupKey = '';
 		backupTimestamps = { keyCreatedAt: null, lastBackedUpAt: null, lastRestoredAt: null };
 		restorePreview = null;
-		view = 'main';
+		view = 'keySetup';
 		window.umami?.track('Backup Key Deleted');
 	}
 
@@ -211,8 +211,6 @@
 			// Store the backup key and record the creation timestamp
 			persistBackupKey(json.backupKey);
 
-			view = 'generate';
-
 			window.umami?.track('Backup Key Generated');
 		} catch {
 			// Network-level failure (offline, DNS, CORS, etc.)
@@ -251,7 +249,7 @@
 			backupTimestamps = { ...backupTimestamps, ...readBackupData() };
 
 			backupKeyInput = '';
-			view = 'main';
+			view = 'keySetup';
 
 			window.umami?.track('Backup Key Entered');
 		} catch {
@@ -491,7 +489,7 @@
 
 	<!-- No backup key saved: onboarding options -->
 	{#if !savedBackupKey}
-		{#if view === 'main'}
+		{#if view === 'keySetup'}
 			<div class="my-6 flex flex-col space-y-4 text-sm">
 				<!-- Option A: Generate a new backup key -->
 				<div class="flex flex-col space-y-2">
@@ -515,7 +513,7 @@
 						<button
 							class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
 							on:click={() => {
-								view = 'enter';
+								view = 'keyEntry';
 							}}
 						>
 							<InputBackupKey />
@@ -527,7 +525,7 @@
 		{/if}
 
 		<!-- Backup key entry panel -->
-		{#if view === 'enter'}
+		{#if view === 'keyEntry'}
 			<div class="my-6 flex flex-col space-y-4 text-sm">
 				<span class="text-theme-accent">Enter Your Backup Key</span>
 				<p>Please enter your backup key exactly as issued. Spaces or small changes will make it invalid.</p>
@@ -544,7 +542,7 @@
 					<button
 						class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
 						on:click={() => {
-							view = 'main';
+							view = 'keySetup';
 							backupKeyInput = '';
 						}}
 					>
