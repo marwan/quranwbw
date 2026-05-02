@@ -535,7 +535,7 @@
 				</div>
 
 				<div class="flex flex-row space-x-2">
-					<button class="h-max whitespace-nowrap {buttonClasses} {isBusy || (backupKeyInput.length !== 23 && disabledClasses)}" on:click={handleValidateBackupKey}>
+					<button class="h-max whitespace-nowrap {buttonClasses} {(isBusy || backupKeyInput.length !== 23) && disabledClasses}" on:click={handleValidateBackupKey}>
 						<Check />
 						<span class="!ml-[4px]">{isValidating ? 'Validating…' : 'Validate & Save'}</span>
 					</button>
