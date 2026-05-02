@@ -7,7 +7,7 @@
 	import Input from '$ui/FlowbiteSvelte/forms/Input.svelte';
 	import Search from '$svgs/Search.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __reciter, __translationReciter } from '$utils/stores';
+	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __reciter, __translationReciter, __playbackSpeed } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { selectableAudioDelays, selectableRepeatTimes } from '$data/options';
@@ -130,9 +130,10 @@
 			delete audioSettings.savedPlaySettings;
 		}
 
-		// Setting the reciters manually because the "remember settings" option resets these for some reason
+		// Workaround: "remember settings" resets these values, so we restore them explicitly
 		$__audioSettings.reciter = $__reciter;
 		$__audioSettings.translationReciter = $__translationReciter;
+		$__audioSettings.playbackSpeed = $__playbackSpeed;
 
 		updateSettings({ type: 'audioSettings', value: audioSettings });
 	}
