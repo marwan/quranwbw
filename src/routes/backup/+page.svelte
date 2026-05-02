@@ -177,12 +177,12 @@
 				return 'Something went wrong. Please try again.';
 			case 404:
 				if (context === 'validate') return 'Backup key not found. Please double-check and try again.';
-				if (context === 'restore') return 'No cloud backup found for this backup key. Back up your settings first.';
+				if (context === 'restore') return 'No cloud backup found for this backup key. Backup your settings first.';
 				return 'Not found. Please try again.';
 			case 409:
 				return 'A conflict occurred. Please refresh and try again.';
 			case 413:
-				return 'Your settings are too large to back up.';
+				return 'Your settings are too large to backup.';
 			case 429:
 				if (context === 'generate') return 'Backup key generation limit reached. Please try again later.';
 				if (context === 'validate') return 'Too many validation attempts. Please try again later.';
@@ -265,7 +265,7 @@
 	async function handleBackup() {
 		const settings = readLocalSettings();
 		if (!settings) {
-			showAlert('No local settings found to back up.');
+			showAlert('No local settings found to backup.');
 			return;
 		}
 
@@ -484,7 +484,7 @@
 	<div class="markdown mx-auto">
 		<h3>Backup & Restore (Beta)</h3>
 		<p>
-			This page lets you back up and restore your settings in two ways: cloud backup and local file backup. Cloud backup securely saves your settings online using a private backup key, allowing you to restore them on any device without an account. Local backup lets you export your settings to a file and restore them manually at any time. Your backup key and files are the only way to recover your
+			This page lets you backup and restore your settings in two ways: cloud backup and local file backup. Cloud backup securely saves your settings online using a private backup key, allowing you to restore them on any device without an account. Local backup lets you export your settings to a file and restore them manually at any time. Your backup key and files are the only way to recover your
 			settings, so keep them safe.
 		</p>
 	</div>
