@@ -674,7 +674,7 @@
 				<div class="flex flex-row space-x-2">
 					<button class="h-max whitespace-nowrap {buttonClasses} {(isBusy || backupKeyInput.length !== 23) && disabledClasses}" on:click={handleValidateBackupKey}>
 						<Check />
-						<span class="!ml-[4px]">{isValidating ? 'Validating…' : 'Validate & Save'}</span>
+						<span>{isValidating ? 'Validating…' : 'Validate & Save'}</span>
 					</button>
 					<button
 						class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
@@ -684,7 +684,7 @@
 						}}
 					>
 						<Cross />
-						<span class="!ml-[4px]">Cancel</span>
+						<span>Cancel</span>
 					</button>
 				</div>
 			</div>
@@ -734,7 +734,7 @@
 						</button>
 
 						<!-- Remove the key from this device only — cloud backup is preserved -->
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('Your cloud backup will not be deleted. You can re-enter the backup key at any time.', null, deleteLocalBackupKey)}>
+						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This action removes the backup key locally and does not affect your cloud settings. Please note that unused backup keys are permanently deleted after 30 days.', null, deleteLocalBackupKey)}>
 							<Trash />
 							<span>Delete</span>
 						</button>
@@ -796,11 +796,11 @@
 							<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}>
 									<Check />
-									<span class="!ml-[4px]">Apply</span>
+									<span>Apply</span>
 								</button>
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}>
 									<Cross />
-									<span class="!ml-[4px]">Cancel</span>
+									<span>Cancel</span>
 								</button>
 							</div>
 						</div>

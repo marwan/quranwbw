@@ -108,8 +108,11 @@
 	// Get keys
 	$: wordTransliterationKey = Object.keys(selectableWordTransliterations).find((item) => selectableWordTransliterations[item].id === $__wordTransliteration);
 
-	// Hide settings drawer and go back to main settings on certain conditions
+	// Go back to main settings view on certain conditions
 	$: if ($__currentPage || $__settingsDrawerHidden) goBackToMainSettings();
+
+	// Hide the settings drawer whenever the page changes
+	$: if ($__currentPage) $__settingsDrawerHidden = true;
 
 	// Build a Set of all transliteration resource IDs (language_id === 11115)
 	const transliterationIdSet = new Set(

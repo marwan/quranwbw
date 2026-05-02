@@ -1,7 +1,1 @@
-<script>
-	export let size = 5;
-</script>
-
-<svg class="w-{size} h-{size}" aria-hidden="true" width="24" height="24" fill="none" viewBox="0 0 24 24">
-	<path class="stroke-theme-accent" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
-</svg>
+<svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path class="fill-theme-accent" d="M23.707.293h0a1,1,0,0,0-1.414,0L12,10.586,1.707.293a1,1,0,0,0-1.414,0h0a1,1,0,0,0,0,1.414L10.586,12,.293,22.293a1,1,0,0,0,0,1.414h0a1,1,0,0,0,1.414,0L12,13.414,22.293,23.707a1,1,0,0,0,1.414,0h0a1,1,0,0,0,0-1.414L13.414,12,23.707,1.707A1,1,0,0,0,23.707.293Z" /></svg>

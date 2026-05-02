@@ -1,4 +1,4 @@
-### May 1, 2026
+### May 4, 2026
 
 - **Cloud Backup & Restore (Beta):** Added secure **cloud-based backup and restore** for user settings using a private backup key. You can now generate a backup key, back up your settings to the cloud, and restore them on any device without creating an account. The restore process includes a preview and confirmation step, preserves critical settings, and tracks backup/restore history locally.
 

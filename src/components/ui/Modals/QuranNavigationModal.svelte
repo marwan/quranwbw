@@ -364,7 +364,7 @@
 		<div class="w-full px-2">
 			<button class="w-full {buttonClasses}" on:click={() => __quranNavigationModalVisible.set(false)}>
 				<Cross />
-				<span class="!ml-[4px]">Close</span>
+				<span>Close</span>
 			</button>
 		</div>
 	</div>
