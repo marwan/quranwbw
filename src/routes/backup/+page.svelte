@@ -40,7 +40,7 @@
 		'audioSettings.endVerse'
 	];
 
-	const networkErrorMessage = 'Network error. Please check your connection and try again.';
+	const genericErrorMessage = 'Something went wrong. Please try again.';
 
 	// The backup key currently saved in localStorage (auto-populated on mount)
 	let savedBackupKey = readBackupData().backupKey || '';
@@ -216,7 +216,7 @@
 			window.umami?.track('Backup Key Generated');
 		} catch {
 			// Network-level failure (offline, DNS, CORS, etc.)
-			showAlert(networkErrorMessage);
+			showAlert(genericErrorMessage);
 		} finally {
 			isGenerating = false;
 		}
@@ -255,7 +255,7 @@
 
 			window.umami?.track('Backup Key Entered');
 		} catch {
-			showAlert(networkErrorMessage);
+			showAlert(genericErrorMessage);
 		} finally {
 			isValidating = false;
 		}
@@ -293,7 +293,7 @@
 			// Clear any open restore preview — its data is now stale after a fresh backup
 			restorePreview = null;
 		} catch {
-			showAlert(networkErrorMessage);
+			showAlert(genericErrorMessage);
 		} finally {
 			isBackingUp = false;
 		}
@@ -326,7 +326,7 @@
 
 			window.umami?.track('Cloud Restore Success');
 		} catch {
-			showAlert(networkErrorMessage);
+			showAlert(genericErrorMessage);
 		} finally {
 			isRestoring = false;
 		}
