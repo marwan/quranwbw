@@ -201,7 +201,7 @@
 		isGenerating = true;
 
 		try {
-			const { ok, status, json } = await apiFetch('/backupKey/generate', { method: 'POST' });
+			const { ok, status, json } = await apiFetch('/keys/generate', { method: 'POST' });
 
 			if (!ok) {
 				showAlert(getErrorForStatus(status, 'generate'));
@@ -234,7 +234,7 @@
 		isValidating = true;
 
 		try {
-			const { ok, status } = await apiFetch('/backupKey/validate', {
+			const { ok, status } = await apiFetch('/keys/validate', {
 				method: 'GET',
 				headers: { 'x-backup-key': trimmed }
 			});
