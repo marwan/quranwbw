@@ -723,7 +723,7 @@
 					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 						{#if section.isDataDownloaded}
 							<!-- Re-download button (only shown when data is downloaded) -->
-							<button class="h-max whitespace-nowrap {buttonClasses}" on:click={section.onRedownload} disabled={isDownloading}>
+							<button class="h-max whitespace-nowrap {buttonClasses} {isDownloading && disabledClasses}" on:click={section.onRedownload}>
 								<Refresh />
 								<span>
 									{#if section.isDownloading}
@@ -735,13 +735,13 @@
 							</button>
 
 							<!-- Delete button (only shown when data is downloaded) -->
-							<button class="h-max whitespace-nowrap {buttonClasses}" on:click={() => showConfirm('Are you sure you want to delete this data?', '', section.onDelete)} disabled={isDownloading}>
+							<button class="h-max whitespace-nowrap {buttonClasses} {isDownloading && disabledClasses}" on:click={() => showConfirm('Are you sure you want to delete this data?', null, section.onDelete)}>
 								<Trash />
 								<span>Delete</span>
 							</button>
 						{:else}
 							<!-- Download button (only shown when data is NOT downloaded) -->
-							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses}" on:click={section.onDownload} disabled={isDownloading}>
+							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses} {isDownloading && disabledClasses}" on:click={section.onDownload}>
 								<Download />
 								<span>
 									{#if section.isDownloading}
