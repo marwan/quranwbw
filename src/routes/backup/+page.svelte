@@ -654,11 +654,10 @@
 				-->
 				{#if restorePreview}
 					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
-					{@const changedSettingsCount = changedSettings.length}
 
-					{#if changedSettingsCount !== 0}
+					{#if changedSettings.length !== 0}
 						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-							<div>A total of {changedSettingsCount} setting{changedSettingsCount === 1 ? '' : 's'} on this device will be updated. Your current settings will be replaced, and the page will reload.</div>
+							<div>Your current settings on this device will be replaced to match the settings saved on the cloud. The page will reload to apply the changes.</div>
 							<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}>
 									<Check />
