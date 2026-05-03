@@ -17,7 +17,7 @@
 		{ delay: 6000, text: 'Still loading, hang in there.' },
 		{ delay: 12000, text: 'Almost done… thanks for waiting!' },
 		{ delay: 20000, text: 'Still working… slow internet might be the reason.' },
-		{ delay: 30000, text: 'Hmm, something might’ve gone wrong. You can try refreshing.' }
+		{ delay: 30000, text: 'This is taking longer than expected. You can try refreshing.' }
 	];
 
 	function resetMessages() {

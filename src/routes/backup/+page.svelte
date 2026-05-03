@@ -201,6 +201,13 @@
 
 	// Generic fetch wrapper that adds the x-backup-key header and sends the user's local timezone with every request
 	async function apiFetch(path, options = {}) {
+		// Guard: if Turnstile hasn't completed yet, block the request entirely.
+		// This can happen if the user finds a way to trigger a request before
+		// the security check finishes (e.g. via keyboard or programmatic call).
+		if (!turnstileToken) {
+			return { ok: false, status: 'verificationPending', json: {} };
+		}
+
 		// Get user's local IANA timezone (e.g. "Asia/Kolkata")
 		let localTimeZone = null;
 		try {
@@ -241,36 +248,46 @@
 		return { ok: response.ok, status: response.status, json };
 	}
 
-	// Maps an HTTP status code to a user-facing error string.
-	// context is one of: 'generate' | 'validate' | 'backup' | 'restore'
+	// Maps HTTP and application-specific status codes to user-facing error messages.
 	function getErrorForStatus(status, context) {
 		switch (status) {
 			case 400:
 				if (context === 'validate') return 'That backup key is not valid. Please double-check and try again.';
 				if (context === 'backup') return 'Could not save your settings. Please try again.';
 				return 'Something went wrong. Please try again.';
+
 			case 401:
-				return 'Security check is still in progress. Please wait and try again.';
+				return 'Security verification could not be completed. Please try again.';
+
 			case 403:
-				return 'Your request could not be completed. Please refresh the page and try again.';
+				return 'This request is not allowed. Please try again.';
+
 			case 404:
 				if (context === 'validate') return 'Backup key not found. Please double-check and try again.';
 				if (context === 'restore') return 'No cloud backup found for this backup key. Backup your settings first.';
-				return 'Not found. Please try again.';
+				return 'Requested resource not found. Please try again.';
+
 			case 409:
-				return 'A conflict occurred. Please refresh and try again.';
+				return 'A conflict occurred. Please try again.';
+
 			case 413:
 				return 'Your settings are too large to backup.';
+
 			case 429:
 				if (context === 'generate') return 'Backup key generation limit reached. Please try again later.';
 				if (context === 'validate') return 'Too many validation attempts. Please try again later.';
-				return 'Too many requests. Please slow down and try again later.';
+				return 'Too many requests. Please try again later.';
+
 			case 500:
 			case 502:
 			case 503:
-				return 'Server error. Please try again in a few moments.';
+				return 'Server error. Please try again in a moment.';
+
+			case 'verificationPending':
+				return "We're verifying that you're human. This may take a little longer on slower networks. Please try again shortly.";
+
 			default:
-				return 'An unexpected error occurred. Please check your connection and try again.';
+				return 'An unexpected error occurred. Please try again later.';
 		}
 	}
 
@@ -558,7 +575,7 @@
 			return typeof imported === typeof defaults ? imported : defaults;
 		}
 
-		// If default is an array, accept imported only if it’s also an array
+		// If default is an array, accept imported only if it's also an array
 		if (Array.isArray(defaults)) {
 			return Array.isArray(imported) ? imported : defaults;
 		}
