@@ -113,6 +113,8 @@
 		});
 	}
 
+	// Ensures Cloudflare Turnstile is loaded and ready before rendering it.
+	// Reuses an existing script if present, waits for initialization if still loading, or injects the script on first visit.
 	onMount(() => {
 		const existingScript = document.querySelector('script[data-turnstile]');
 
@@ -497,11 +499,6 @@
 		target[lastKey] = value;
 	}
 
-	// Deep equality check using JSON serialization
-	function isEqual(a, b) {
-		return JSON.stringify(a) === JSON.stringify(b);
-	}
-
 	// Returns a flat list of { path, currentValue, newValue } for every leaf-level
 	// setting that differs between currentSettings and newSettings,
 	// skipping anything under settingsRestoreExclusions paths.
@@ -524,8 +521,8 @@
 			if (currentVal !== null && newVal !== null && typeof currentVal === 'object' && !Array.isArray(currentVal) && typeof newVal === 'object' && !Array.isArray(newVal)) {
 				getChangedSettings(currentVal, newVal, fullPath, changes);
 			} else {
-				// Leaf value — only record if it actually changed
-				if (!isEqual(currentVal, newVal)) {
+				// Leaf value — record only if the value actually changed (deep compare via JSON)
+				if (JSON.stringify(currentVal) !== JSON.stringify(newVal)) {
 					changes.push({ path: fullPath, currentValue: currentVal, newValue: newVal });
 				}
 			}
