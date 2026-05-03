@@ -96,6 +96,11 @@
 	// Buttons that require API calls are disabled until this is true.
 	let isTurnstileReady = false;
 
+	// Tracks how many seconds have elapsed since the Turnstile check started.
+	// Increments every second while isTurnstileReady is false.
+	let turnstileElapsedSeconds = 0;
+	let turnstileElapsedTimer = null;
+
 	// Renders the invisible Turnstile widget into the container.
 	// Safe to call multiple times — guards against double-rendering.
 	function renderTurnstile() {
@@ -111,6 +116,9 @@
 
 				// Token received — challenge passed, unlock the UI
 				isTurnstileReady = true;
+
+				// Stop the elapsed seconds counter once the check completes
+				clearInterval(turnstileElapsedTimer);
 			},
 
 			// Automatically get a fresh token when the current one expires (~300s)
@@ -119,6 +127,12 @@
 	}
 
 	onMount(() => {
+		// Start the elapsed seconds counter when the component mounts,
+		// and stop it once Turnstile completes (handled in renderTurnstile callback).
+		turnstileElapsedTimer = setInterval(() => {
+			if (!isTurnstileReady) turnstileElapsedSeconds++;
+		}, 1000);
+
 		const existingScript = document.querySelector('script[data-turnstile]');
 
 		if (existingScript) {
@@ -715,7 +729,10 @@
 		<!-- Centered spinner shown only while Turnstile challenge is in progress -->
 		{#if !isTurnstileReady}
 			<div class="absolute inset-0 z-10 flex items-center justify-center">
-				<Spinner inline={true} hideMessages="true" />
+				<div class="flex flex-col">
+					<Spinner inline={true} hideMessages="true" />
+					<p class="text-xs mt-2">Performing security check ({turnstileElapsedSeconds}s)...</p>
+				</div>
 			</div>
 		{/if}
 
