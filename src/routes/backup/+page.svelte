@@ -15,6 +15,7 @@
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { defaultSettings } from '$src/hooks.client';
+	import { onMount } from 'svelte';
 
 	// QuranWBW's Cloud Backup API
 	const cloudBackupAPI = 'https://cloud-backup-api.quranwbw.com/user';
@@ -80,6 +81,63 @@
 
 	// True if any async operation is in progress
 	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
+
+	// DOM element where the Cloudflare Turnstile widget will be rendered
+	let turnstileContainer;
+
+	// Stores the verification token returned after a successful challenge
+	let turnstileToken = null;
+
+	// Stores the widget instance ID returned by Turnstile after render
+	let turnstileWidgetId = null;
+
+	// Renders the invisible Turnstile widget into the container.
+	// Safe to call multiple times — guards against double-rendering.
+	function renderTurnstile() {
+		// Don't re-render if already rendered or container isn't in the DOM yet
+		if (turnstileWidgetId !== null || !turnstileContainer) return;
+
+		turnstileWidgetId = window.turnstile.render(turnstileContainer, {
+			sitekey: '0x4AAAAAADH4gEOXypchOute',
+
+			// Capture the token when the silent challenge passes
+			callback: (token) => {
+				turnstileToken = token;
+			},
+
+			// Automatically get a fresh token when the current one expires (~300s)
+			'refresh-expired': 'auto'
+		});
+	}
+
+	onMount(() => {
+		const existingScript = document.querySelector('script[data-turnstile]');
+
+		if (existingScript) {
+			if (window.turnstile) {
+				// Script already loaded and window.turnstile is ready — render immediately
+				renderTurnstile();
+			} else {
+				// Script tag exists but is still loading (e.g. navigated to this page
+				// before the async script finished). Wait for the onload callback.
+				window.onloadTurnstileCallback = renderTurnstile;
+			}
+		} else {
+			// First ever visit — inject the script dynamically
+			const script = document.createElement('script');
+			script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback';
+			script.async = true;
+			script.defer = true;
+
+			// Marker attribute used to detect the script on subsequent navigations
+			script.setAttribute('data-turnstile', 'true');
+
+			// Cloudflare calls this once window.turnstile is fully initialised
+			window.onloadTurnstileCallback = renderTurnstile;
+
+			document.head.appendChild(script);
+		}
+	});
 
 	// Fire any pending analytics event that was queued before a page reload
 	// (e.g. Cloud Restore Applied, which reloads the page immediately after tracking)
@@ -157,6 +215,9 @@
 			// Send user's local timezone so the server can store timestamps in the user's local time
 			...(localTimeZone ? { 'x-user-timezone': localTimeZone } : {}),
 
+			// Send Turnstile token if available — verified server-side before any route handler runs
+			...(turnstileToken ? { 'x-turnstile-token': turnstileToken } : {}),
+
 			...(options.headers || {})
 		};
 
@@ -164,6 +225,12 @@
 			...options,
 			headers
 		});
+
+		// Reset the Turnstile token after every request — tokens are single-use.
+		// The widget will silently generate a fresh one in the background,
+		// so it's ready by the time the user triggers the next action.
+		turnstileToken = null;
+		window.turnstile?.reset(turnstileWidgetId);
 
 		// Parse JSON even on error responses, but we only use it for data fields —
 		// never for message strings to display to users
@@ -179,6 +246,8 @@
 				if (context === 'validate') return 'That backup key is not valid. Please double-check and try again.';
 				if (context === 'backup') return 'Could not save your settings. Please try again.';
 				return 'Something went wrong. Please try again.';
+			case 403:
+				return 'Your request could not be completed. Please refresh the page and try again.';
 			case 404:
 				if (context === 'validate') return 'Backup key not found. Please double-check and try again.';
 				if (context === 'restore') return 'No cloud backup found for this backup key. Backup your settings first.';
@@ -206,6 +275,10 @@
 
 		try {
 			const { ok, status, json } = await apiFetch('/keys/generate', { method: 'POST' });
+
+			// Reset token after use — tokens are single-use
+			turnstileToken = null;
+			window.turnstile?.reset(turnstileWidgetId);
 
 			if (!ok) {
 				showAlert(getErrorForStatus(status, 'generate'));
@@ -843,3 +916,10 @@
 		</div>
 	</div>
 </div>
+
+<!-- 
+	Invisible Turnstile widget — renders with no visible UI.
+	Cloudflare runs its challenge silently in the background on mount.
+	The token is captured via the callback in onMount and sent with every apiFetch call.
+-->
+<div bind:this={turnstileContainer} data-size="invisible"></div>
