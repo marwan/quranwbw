@@ -284,7 +284,7 @@
 				return 'Server error. Please try again in a moment.';
 
 			case 'verificationPending':
-				return "We're verifying that you're human. This may take a little longer on slower networks. Please try again shortly.";
+				return 'A security check is in progress to verify your request. This may take a little longer on slower networks. Please try again shortly.';
 
 			default:
 				return 'An unexpected error occurred. Please try again later.';
