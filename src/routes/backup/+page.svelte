@@ -246,6 +246,8 @@
 				if (context === 'validate') return 'That backup key is not valid. Please double-check and try again.';
 				if (context === 'backup') return 'Could not save your settings. Please try again.';
 				return 'Something went wrong. Please try again.';
+			case 401:
+				return 'Security check failed. Please try again in a moment.';
 			case 403:
 				return 'Your request could not be completed. Please refresh the page and try again.';
 			case 404:
