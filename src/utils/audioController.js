@@ -168,9 +168,13 @@ export async function playWordAudio(props) {
 	const nextWordFileName = `${wordChapter}/${String(wordChapter).padStart(3, '0')}_${String(wordVerse).padStart(3, '0')}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
 	const currentAudioType = audioSettings.audioType;
 
-	// Prefetch next audio file only if there are more words in the verse
-	if (wordNumber < getWordsInVerse(`${wordChapter}:${wordVerse}`)) {
-		getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false);
+	// Try prefetching next audio file only if there are more words in the verse
+	try {
+		if (wordNumber < getWordsInVerse(`${wordChapter}:${wordVerse}`)) {
+			getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false);
+		}
+	} catch (error) {
+		console.warn(error);
 	}
 
 	// Tag this request with a unique ID to detect if a newer request has superseded it
