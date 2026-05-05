@@ -80,7 +80,7 @@
 	let fileInput;
 
 	// True if any async operation is in progress
-	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
+	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring || !turnstileToken;
 
 	// DOM element where the Cloudflare Turnstile widget will be rendered
 	let turnstileContainer;
