@@ -14,8 +14,9 @@
 	import Offline from '$svgs/Offline.svelte';
 	import BackupRestore from '$svgs/BackupRestore.svelte';
 	import LeftArrow from '$svgs/LeftArrow.svelte';
+	import Book from '$svgs/Book.svelte';
 	import { disabledClasses } from '$data/commonClasses';
-	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
+	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage, __lastRead } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { isUserOnline } from '$utils/offlineModeHandler';
@@ -86,10 +87,46 @@
 				<span class={linkTextClasses}>Topics</span>
 			</a>
 
+			<!-- Supplications -->
+			<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
+				<span><Supplication /></span>
+				<span class={linkTextClasses}>{term('supplications')}</span>
+			</a>
+
+			<!-- Mushaf page -->
+			<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class={linkClasses}>
+				<span><Book /></span>
+				<span class={linkTextClasses}>Mushaf</span>
+			</a>
+
+			<!-- Morphology -->
+			<a href="/morphology?word=1:1:1" class={linkClasses}>
+				<span><Morphology /></span>
+				<span class={linkTextClasses}>Morphology</span>
+			</a>
+
 			<!-- Bookmarks -->
 			<a href="/bookmarks" class={linkClasses}>
 				<span><Bookmark /></span>
 				<span class={linkTextClasses}>Bookmarks</span>
+			</a>
+
+			<!-- Guess The Word -->
+			<a href="/games/guess-the-word" class={linkClasses}>
+				<span><Puzzle /></span>
+				<span class={linkTextClasses}>Word Game</span>
+			</a>
+
+			<!-- Offline Mode -->
+			<a href="/offline" class={linkClasses}>
+				<span><Offline /></span>
+				<span class={linkTextClasses}>Offline Mode (Beta)</span>
+			</a>
+
+			<!-- Backup & Restore -->
+			<a href="/backup" class={linkClasses}>
+				<span><BackupRestore /></span>
+				<span class={linkTextClasses}>Backup & Restore (Beta)</span>
 			</a>
 
 			<!-- Tajweed Rules -->
@@ -105,24 +142,6 @@
 				<span class={linkTextClasses}>{term('tajweed')} Rules</span>
 			</button>
 
-			<!-- Supplications -->
-			<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
-				<span><Supplication /></span>
-				<span class={linkTextClasses}>{term('supplications')}</span>
-			</a>
-
-			<!-- Morphology -->
-			<a href="/morphology?word=1:1:1" class={linkClasses}>
-				<span><Morphology /></span>
-				<span class={linkTextClasses}>Morphology</span>
-			</a>
-
-			<!-- Guess The Word -->
-			<a href="/games/guess-the-word" class={linkClasses}>
-				<span><Puzzle /></span>
-				<span class={linkTextClasses}>Word Game</span>
-			</a>
-
 			<!-- Changelog -->
 			<a href="/changelog" class={linkClasses}>
 				<span><Changelog /></span>
@@ -133,18 +152,6 @@
 			<a href="/about" class={linkClasses}>
 				<span><About /></span>
 				<span class={linkTextClasses}>About</span>
-			</a>
-
-			<!-- Offline Mode -->
-			<a href="/offline" class={linkClasses}>
-				<span><Offline /></span>
-				<span class={linkTextClasses}>Offline Mode (Beta)</span>
-			</a>
-
-			<!-- Backup & Restore -->
-			<a href="/backup" class={linkClasses}>
-				<span><BackupRestore /></span>
-				<span class={linkTextClasses}>Backup & Restore (Beta)</span>
 			</a>
 
 			<!-- Old Website -->
