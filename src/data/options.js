@@ -142,6 +142,14 @@ export const selectableFontTypes = {
 		displayOrder: 9,
 		disallowedInPages: ['mushaf'],
 		version: 2
+	},
+	10: {
+		id: 13,
+		type: 'Indopak / Nastaleeq',
+		font: 'Majidi Nastaleeq',
+		displayOrder: 10,
+		disallowedInPages: ['mushaf'],
+		version: 1
 	}
 };
 

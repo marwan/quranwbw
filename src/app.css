@@ -51,6 +51,14 @@
 }
 
 @font-face {
+  font-family: "Majidi-5";
+  src: url("/fonts/Majidi5_QWBW-Bold.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Arabic-Sign-Language";
   src: url("/fonts/LPMQ-MSI-ISYARAT.woff2") format("woff2");
   font-weight: normal;
@@ -200,7 +208,8 @@ svg {
 .arabic-font-6,
 .arabic-font-7,
 .arabic-font-8,
-.arabic-font-9  {
+.arabic-font-9,
+.arabic-font-10  {
   direction: rtl;
 }
 
@@ -226,6 +235,10 @@ svg {
 
 .arabic-font-9 {
   font-family: "Indonesian-Misbah";
+}
+
+.arabic-font-10 {
+  font-family: "Majidi-5";
 }
 
 .chapter-icons {
