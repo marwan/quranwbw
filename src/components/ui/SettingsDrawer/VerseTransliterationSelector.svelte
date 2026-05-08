@@ -47,7 +47,7 @@
 					<div id="translation-name" class="text-md font-medium">{language.language}</div>
 					<div id="translation-list" class="space-y-3">
 						{#if hasVisibleTransliterations(language.language_id)}
-							{#each Object.values(selectableVerseTranslations).sort((a, b) => (a.displayOrder ?? Infinity) - (b.displayOrder ?? Infinity)) as translation}
+							{#each Object.values(selectableVerseTranslations).sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity)) as translation}
 								{#if translation.language_id === language.language_id && shouldShowTransliteration(translation.resource_id)}
 									<div class="flex items-center w-full">
 										<Checkbox on:click={() => updateSettings({ type: 'verseTranslation', value: translation.resource_id })} custom>

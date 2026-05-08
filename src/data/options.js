@@ -74,80 +74,80 @@ export const selectableFontTypes = {
 	1: {
 		id: 1,
 		type: 'Uthmanic',
-		font: 'Digital Font',
-		displayOrder: 1,
+		name: 'Digital Font',
+		order: 1,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	2: {
 		id: 2,
 		type: 'Uthmanic',
-		font: 'Mushaf 1441H',
-		displayOrder: 3,
+		name: 'Mushaf 1441H',
+		order: 3,
 		disallowedInPages: [],
 		version: 5
 	},
 	3: {
 		id: 2,
 		type: 'Uthmanic',
-		font: 'Mushaf Tajweed 1441H',
-		displayOrder: 4,
+		name: 'Mushaf Tajweed 1441H',
+		order: 4,
 		disallowedInPages: [],
 		version: 5
 	},
 	4: {
 		id: 3,
 		type: 'Indopak / Nastaleeq',
-		font: 'Qalam Digital Font (Madinah Edition)',
-		displayOrder: 5,
+		name: 'Qalam Digital Font (Madinah Edition)',
+		order: 5,
 		disallowedInPages: ['mushaf'],
 		version: 7
 	},
 	5: {
 		id: 5,
 		type: 'Indopak / Nastaleeq',
-		font: 'Uthman Taha Digital Font',
-		displayOrder: 7,
+		name: 'Uthman Taha Digital Font',
+		order: 7,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	6: {
 		id: 6,
 		type: 'Indopak / Nastaleeq',
-		font: 'Qalam Digital Font (Hanafi Edition)',
-		displayOrder: 6,
+		name: 'Qalam Digital Font (Hanafi Edition)',
+		order: 6,
 		disallowedInPages: ['mushaf'],
 		version: 7
 	},
 	7: {
 		id: 1,
 		type: 'Uthmanic',
-		font: 'Digital Bold Font',
-		displayOrder: 2,
+		name: 'Digital Bold Font',
+		order: 2,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	8: {
 		id: 5,
 		type: 'Indopak / Nastaleeq',
-		font: 'Uthman Taha Digital Bold Font',
-		displayOrder: 8,
+		name: 'Uthman Taha Digital Bold Font',
+		order: 8,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	9: {
 		id: 9,
 		type: 'Indopak / Nastaleeq',
-		font: 'Indonesian Isep Misbah Digital Font',
-		displayOrder: 9,
+		name: 'Indonesian Isep Misbah Digital Font',
+		order: 9,
 		disallowedInPages: ['mushaf'],
 		version: 2
 	},
 	10: {
 		id: 13,
 		type: 'Indopak / Nastaleeq',
-		font: 'Majidi Nastaleeq',
-		displayOrder: 10,
+		name: 'Majidi Nastaleeq Digital Font',
+		order: 10,
 		disallowedInPages: ['mushaf'],
 		version: 1
 	}
@@ -458,14 +458,14 @@ export const selectableVerseTranslations = {
 		resource_name: 'Transliteration (Simple Tajweed)',
 		language_id: 11115,
 		version: 2,
-		displayOrder: 2
+		order: 2
 	},
 	3: {
 		resource_id: 3,
 		resource_name: 'Transliteration (Syllables)',
 		language_id: 11115,
 		version: 2,
-		displayOrder: 4,
+		order: 4,
 		font: 'font-serif'
 	},
 	57: {
@@ -473,14 +473,14 @@ export const selectableVerseTranslations = {
 		resource_name: 'Transliteration (Normal)',
 		language_id: 11115,
 		version: 2,
-		displayOrder: 1
+		order: 1
 	},
 	4: {
 		resource_id: 4,
 		resource_name: 'Transliteration (Advanced Tajweed)',
 		language_id: 11115,
 		version: 1,
-		displayOrder: 3,
+		order: 3,
 		font: 'font-serif'
 	},
 

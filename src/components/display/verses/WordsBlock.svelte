@@ -98,6 +98,7 @@
 		${$__currentPage !== 'mushaf' && fontSizes.arabicText} 
 		${displayIsContinuous && 'inline-block'}
 		${$__fontType === 9 && 'pb-4'}
+		${$__fontType === 10 && 'custom-majidi-font-color'}
 	`;
 
 	// Classes for v4 Hafs words:
@@ -132,11 +133,11 @@
 	`;
 
 	// Classes for end icons
-	// In Golden Glint theme, the end icon should be gold
+	// In Golden Glint theme, the end icon should be gold (except for Majidi Nastaleeq Digital Font)
 	$: endIconClasses = `
 		rounded-lg 
 		${wordAndEndIconCommonClasses}
-		${$__websiteTheme === 1 && `text-theme-accent`}
+		${$__websiteTheme === 1 && $__fontType !== 10 ? 'text-theme-accent' : ''}
 	`;
 
 	// Classes for word translation and transliteration
