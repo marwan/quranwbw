@@ -526,7 +526,7 @@ export function prepareVersesToPlay(key) {
 	}
 }
 
-// Fetch timestamps for word-by-word highlighting
+// Fetch timestamps for word by word highlighting
 async function fetchTimestampData() {
 	if (cachedTimestampData) return cachedTimestampData;
 	cachedTimestampData = await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');

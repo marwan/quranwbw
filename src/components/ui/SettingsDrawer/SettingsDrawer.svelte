@@ -498,7 +498,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Automatically scroll to the highlighted words while listening to the recitation. This option only works with reciters that support word-by-word highlighting.</p>
+						<p class={settingsDescriptionClasses}>Automatically scroll to the highlighted words while listening to the recitation. This option only works with reciters that support word by word highlighting.</p>
 					</div>
 				</div>
 			</div>
