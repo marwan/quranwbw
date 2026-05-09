@@ -11,6 +11,7 @@
 	import Cross from '$svgs/Cross.svelte';
 	import Import from '$svgs/Import.svelte';
 	import Export from '$svgs/Export.svelte';
+	import Spinner from '$svgs/Spinner.svelte';
 	import { __currentPage } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
@@ -80,7 +81,7 @@
 	let fileInput;
 
 	// True if any async operation is in progress
-	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring || !turnstileToken;
+	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
 
 	// DOM element where the Cloudflare Turnstile widget will be rendered
 	let turnstileContainer;
@@ -716,191 +717,202 @@
 		</p>
 	</div>
 
+	<!-- Security check status banner — shown while Turnstile is verifying in the background. -->
+	{#if !turnstileToken}
+		<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-center text-sm bg-theme-accent/5">
+			<span><Spinner size="8" inline={true} hideMessages={true} delay="0" /></span>
+			<span>Running a quick security check. Please wait a moment.</span>
+		</div>
+	{/if}
+
 	<!-- No backup key saved: onboarding options -->
-	{#if !savedBackupKey}
-		{#if view === 'keySetup'}
-			<div class="my-6 flex flex-col space-y-4 text-sm">
-				<!-- Option A: Generate a new backup key -->
-				<div class="flex flex-col space-y-2">
-					<span class="text-theme-accent">First time using this?</span>
-					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-						<div>Generate a backup key to save your settings online. You only need to do this once.</div>
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateBackupKey}>
-							<GenerateBackupKey />
-							<span>{isGenerating ? 'Generating…' : 'Generate Key'}</span>
+	<div class={!turnstileToken && disabledClasses}>
+		{#if !savedBackupKey}
+			{#if view === 'keySetup'}
+				<div class="my-6 flex flex-col space-y-4 text-sm">
+					<!-- Option A: Generate a new backup key -->
+					<div class="flex flex-col space-y-2">
+						<span class="text-theme-accent">First time using this?</span>
+						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+							<div>Generate a backup key to save your settings online. You only need to do this once.</div>
+							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateBackupKey}>
+								<GenerateBackupKey />
+								<span>{isGenerating ? 'Generating…' : 'Generate Key'}</span>
+							</button>
+						</div>
+					</div>
+
+					<div class="border-b border-theme-accent/20"></div>
+
+					<!-- Option B: Enter an existing backup key from another device -->
+					<div class="flex flex-col space-y-2">
+						<span class="text-theme-accent">Already have a backup key?</span>
+						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+							<div>Enter your backup key to load your saved settings on this device.</div>
+							<button
+								class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
+								on:click={() => {
+									view = 'keyEntry';
+								}}
+							>
+								<InputBackupKey />
+								<span>Enter Key</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Backup key entry panel -->
+			{#if view === 'keyEntry'}
+				<div class="my-6 flex flex-col space-y-4 text-sm">
+					<span class="text-theme-accent">Enter Your Backup Key</span>
+					<p>Please enter your backup key exactly as issued. Spaces or small changes will make it invalid.</p>
+
+					<div class="flex flex-col space-y-2">
+						<input type="text" bind:value={backupKeyInput} placeholder="e.g. pal10-hop30-sky21-key28" maxlength="23" spellcheck="false" autocomplete="off" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" />
+					</div>
+
+					<div class="flex flex-row space-x-2">
+						<button class="h-max whitespace-nowrap {buttonClasses} {(isBusy || !backupKeyRegex.test(backupKeyInput)) && disabledClasses}" on:click={handleValidateBackupKey}>
+							<Check />
+							<span>{isValidating ? 'Validating…' : 'Validate & Save'}</span>
 						</button>
+						<button
+							class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
+							on:click={() => {
+								view = 'keySetup';
+								backupKeyInput = '';
+							}}
+						>
+							<Cross />
+							<span>Cancel</span>
+						</button>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Backup key is saved: show backup / restore controls -->
+		{:else}
+			<div class="my-6 flex flex-col space-y-4 overflow-auto">
+				<!-- ----------------------------------------------------------------
+				SECTION 1: Backup key info + actions
+				Shows when the key was created (if known) and lets the user
+				copy, share, or forget the key stored on this device.
+			---------------------------------------------------------------- -->
+				<div class="flex flex-col space-y-2 text-sm">
+					<span class="text-theme-accent">Your Saved Backup Key</span>
+					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+						<div class="flex flex-col">
+							<p>Your backup key is stored on this device. Keys that go unused for 30 days are permanently deleted from the cloud.</p>
+							<!-- Only shown if the key was generated on this device (not when entered from another device) -->
+							{#if backupTimestamps.keyCreatedAt}
+								<p class="opacity-70 mt-2">Key created: {formatDate(backupTimestamps.keyCreatedAt)}</p>
+							{/if}
+						</div>
+
+						<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+							<!-- Copy the backup key to clipboard -->
+							<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyBackupKey} disabled={isBusy}>
+								<Copy />
+								<span>{hasCopiedBackupKey ? 'Copied' : 'Copy'}</span>
+							</button>
+
+							<!-- Open the device native share sheet with the backup key -->
+							<button
+								class="h-max whitespace-nowrap {buttonClasses}"
+								on:click={() => {
+									if (navigator.share) {
+										navigator.share({ title: 'My Backup Key', text: savedBackupKey });
+										window.umami?.track('Backup Key Shared');
+									} else {
+										// Fallback for browsers/devices that don't support the Web Share API
+										navigator.clipboard?.writeText(savedBackupKey);
+										showAlert('Share not supported on this device. Key copied to clipboard instead.');
+									}
+								}}
+							>
+								<Share />
+								<span>Share</span>
+							</button>
+
+							<!-- Remove the key from this device only — cloud backup is preserved -->
+							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This action removes the backup key locally and does not affect your cloud settings. Please note that unused backup keys are permanently deleted after 30 days.', null, deleteLocalBackupKey)}>
+								<Trash />
+								<span>Delete</span>
+							</button>
+						</div>
 					</div>
 				</div>
 
 				<div class="border-b border-theme-accent/20"></div>
 
-				<!-- Option B: Enter an existing backup key from another device -->
-				<div class="flex flex-col space-y-2">
-					<span class="text-theme-accent">Already have a backup key?</span>
-					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-						<div>Enter your backup key to load your saved settings on this device.</div>
-						<button
-							class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
-							on:click={() => {
-								view = 'keyEntry';
-							}}
-						>
-							<InputBackupKey />
-							<span>Enter Key</span>
-						</button>
-					</div>
-				</div>
-			</div>
-		{/if}
-
-		<!-- Backup key entry panel -->
-		{#if view === 'keyEntry'}
-			<div class="my-6 flex flex-col space-y-4 text-sm">
-				<span class="text-theme-accent">Enter Your Backup Key</span>
-				<p>Please enter your backup key exactly as issued. Spaces or small changes will make it invalid.</p>
-
-				<div class="flex flex-col space-y-2">
-					<input type="text" bind:value={backupKeyInput} placeholder="e.g. pal10-hop30-sky21-key28" maxlength="23" spellcheck="false" autocomplete="off" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" />
-				</div>
-
-				<div class="flex flex-row space-x-2">
-					<button class="h-max whitespace-nowrap {buttonClasses} {(isBusy || !backupKeyRegex.test(backupKeyInput)) && disabledClasses}" on:click={handleValidateBackupKey}>
-						<Check />
-						<span>{isValidating ? 'Validating…' : 'Validate & Save'}</span>
-					</button>
-					<button
-						class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
-						on:click={() => {
-							view = 'keySetup';
-							backupKeyInput = '';
-						}}
-					>
-						<Cross />
-						<span>Cancel</span>
-					</button>
-				</div>
-			</div>
-		{/if}
-
-		<!-- Backup key is saved: show backup / restore controls -->
-	{:else}
-		<div class="my-6 flex flex-col space-y-4 overflow-auto">
-			<!-- ----------------------------------------------------------------
-				SECTION 1: Backup key info + actions
-				Shows when the key was created (if known) and lets the user
-				copy, share, or forget the key stored on this device.
-			---------------------------------------------------------------- -->
-			<div class="flex flex-col space-y-2 text-sm">
-				<span class="text-theme-accent">Your Saved Backup Key</span>
-				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-					<div class="flex flex-col">
-						<p>Your backup key is stored on this device. Keys that go unused for 30 days are permanently deleted from the cloud.</p>
-						<!-- Only shown if the key was generated on this device (not when entered from another device) -->
-						{#if backupTimestamps.keyCreatedAt}
-							<p class="opacity-70 mt-2">Key created: {formatDate(backupTimestamps.keyCreatedAt)}</p>
-						{/if}
-					</div>
-					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-						<!-- Copy the backup key to clipboard -->
-						<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyBackupKey} disabled={isBusy}>
-							<Copy />
-							<span>{hasCopiedBackupKey ? 'Copied' : 'Copy'}</span>
-						</button>
-
-						<!-- Open the device native share sheet with the backup key -->
-						<button
-							class="h-max whitespace-nowrap {buttonClasses}"
-							on:click={() => {
-								if (navigator.share) {
-									navigator.share({ title: 'My Backup Key', text: savedBackupKey });
-									window.umami?.track('Backup Key Shared');
-								} else {
-									// Fallback for browsers/devices that don't support the Web Share API
-									navigator.clipboard?.writeText(savedBackupKey);
-									showAlert('Share not supported on this device. Key copied to clipboard instead.');
-								}
-							}}
-						>
-							<Share />
-							<span>Share</span>
-						</button>
-
-						<!-- Remove the key from this device only — cloud backup is preserved -->
-						<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This action removes the backup key locally and does not affect your cloud settings. Please note that unused backup keys are permanently deleted after 30 days.', null, deleteLocalBackupKey)}>
-							<Trash />
-							<span>Delete</span>
-						</button>
-					</div>
-				</div>
-			</div>
-
-			<div class="border-b border-theme-accent/20"></div>
-
-			<!-- ----------------------------------------------------------------
+				<!-- ----------------------------------------------------------------
 				SECTION 2: Cloud Backup & Restore
 				Both actions share one section with side-by-side buttons,
 				mirroring the layout of the local backup section below.
 				Restore enters a preview/confirmation state inline.
 			---------------------------------------------------------------- -->
-			<div class="flex flex-col space-y-2 text-sm">
-				<span class="text-theme-accent">Cloud Backup & Restore</span>
+				<div class="flex flex-col space-y-2 text-sm">
+					<span class="text-theme-accent">Cloud Backup & Restore</span>
 
-				<!-- Normal state: description + both buttons side by side -->
-				{#if !restorePreview}
-					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-						<div class="flex flex-col">
-							<p>Save your settings to the cloud or restore them from your last backup. Your current settings will not change until you confirm a restore.</p>
-							<!-- Show whichever timestamps are available -->
-							{#if backupTimestamps.lastBackedUpAt}
-								<p class="opacity-70 mt-2">Last backed up: {formatDate(backupTimestamps.lastBackedUpAt)}</p>
-							{/if}
-							{#if backupTimestamps.lastRestoredAt}
-								<p class="opacity-70 mt-1">Last restored: {formatDate(backupTimestamps.lastRestoredAt)}</p>
-							{/if}
-						</div>
-						<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-							<!-- Push current local settings to the cloud -->
-							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
-								<CloudBackup />
-								<span>{isBackingUp ? 'Backing up…' : 'Backup'}</span>
-							</button>
-
-							<!-- Fetch cloud settings and enter preview stage -->
-							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
-								<CloudRestore />
-								<span>{isRestoring ? 'Fetching…' : 'Restore'}</span>
-							</button>
-						</div>
-					</div>
-				{/if}
-
-				<!--
-					Restore preview (confirmation stage)
-					Replaces the normal state once cloud settings have been fetched.
-					Shows how many settings differ and asks the user to confirm or cancel.
-				-->
-				{#if restorePreview}
-					{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
-
-					{#if changedSettings.length !== 0}
+					<!-- Normal state: description + both buttons side by side -->
+					{#if !restorePreview}
 						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
-							<div>Your current settings on this device will be replaced to match the settings saved on the cloud. The page will reload to apply the changes.</div>
+							<div class="flex flex-col">
+								<p>Save your settings to the cloud or restore them from your last backup. Your current settings will not change until you confirm a restore.</p>
+								<!-- Show whichever timestamps are available -->
+								{#if backupTimestamps.lastBackedUpAt}
+									<p class="opacity-70 mt-2">Last backed up: {formatDate(backupTimestamps.lastBackedUpAt)}</p>
+								{/if}
+								{#if backupTimestamps.lastRestoredAt}
+									<p class="opacity-70 mt-1">Last restored: {formatDate(backupTimestamps.lastRestoredAt)}</p>
+								{/if}
+							</div>
 							<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}>
-									<Check />
-									<span>Apply</span>
+								<!-- Push current local settings to the cloud -->
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
+									<CloudBackup />
+									<span>{isBackingUp ? 'Backing up…' : 'Backup'}</span>
 								</button>
-								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}>
-									<Cross />
-									<span>Cancel</span>
+
+								<!-- Fetch cloud settings and enter preview stage -->
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
+									<CloudRestore />
+									<span>{isRestoring ? 'Fetching…' : 'Restore'}</span>
 								</button>
 							</div>
 						</div>
 					{/if}
-				{/if}
+
+					<!--
+					Restore preview (confirmation stage)
+					Replaces the normal state once cloud settings have been fetched.
+					Shows how many settings differ and asks the user to confirm or cancel.
+				-->
+					{#if restorePreview}
+						{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
+
+						{#if changedSettings.length !== 0}
+							<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+								<div>Your current settings on this device will be replaced to match the settings saved on the cloud. The page will reload to apply the changes.</div>
+								<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+									<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}>
+										<Check />
+										<span>Apply</span>
+									</button>
+									<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}>
+										<Cross />
+										<span>Cancel</span>
+									</button>
+								</div>
+							</div>
+						{/if}
+					{/if}
+				</div>
 			</div>
-		</div>
-	{/if}
+		{/if}
+	</div>
 
 	<!-- ----------------------------------------------------------------
 		SECTION 4: Local backup & restore
