@@ -31,33 +31,30 @@
 
 	$: displayIsContinuous = selectableDisplays[$__displayType].continuous;
 
-	// Dynamically load the fonts if mushaf fonts are selected
-	// v4 words are hidden by default and shown only when the font is loaded...
+	// Words start invisible and are revealed once the page font is loaded.
+	// `pageVisible` is intentionally a plain `let` (not a store) so each verse
+	// component manages its own page's visibility independently — setting it to
+	// `true` triggers Svelte to re-render and drop the `invisible` class naturally,
+	// without fighting Svelte's DOM patching via classList.remove().
+	let pageVisible = false;
+
 	if ([2, 3].includes($__fontType)) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
-			document.querySelectorAll(`.p${value.meta.page}`).forEach((element) => {
-				element.classList.remove('invisible');
-			});
+			pageVisible = true;
 		});
 	}
 
-	/**
-	 * Handles click interactions on words or verse-end icons depending on the current page and context.
-	 *
-	 * Behavior:
-	 * 1. **Morphology Page + Word Click**:
-	 *    - Sets the selected morphology key and navigates to the word's morphology details.
-	 *
-	 * 2. **Other Pages + Word Click (if word-level morphology is enabled or modal is visible)**:
-	 *    - Opens the morphology modal for the clicked word and sets the selected morphology key.
-	 *
-	 * 3. **General Case**:
-	 *    - Sets the verse key for tracking purposes.
-	 *    - If a word is clicked:
-	 *      - Triggers audio playback for that specific word.
-	 *    - If an end-verse icon is clicked:
-	 *      - Adds a bookmark (if continuous display is disabled).
-	 */
+	// Handles click interactions on words and verse-end icons.
+	//
+	// Word click behavior:
+	//   1. Morphology page → navigate to the word's morphology details page.
+	//   2. Other pages (if word morphology on click is enabled, or modal is open)
+	//      → open the morphology modal for the clicked word.
+	//   3. All other cases → set the verse key and play the word's audio.
+	//
+	// Verse-end icon click behavior:
+	//   - Adds a bookmark for that verse (only when not in continuous display mode,
+	//     since continuous mode has no per-verse end icons to bookmark against).
 	function wordClickHandler(props) {
 		if ($__currentPage === 'morphology' && props.type === 'word') {
 			__morphologyKey.set(props.key);
@@ -102,23 +99,28 @@
 	`;
 
 	// Classes for v4 Hafs words:
-	// 1. Special Firefox + Dark theme cases:
-	//    - If font type is 3 (Tajweed) → apply "hafs-palette-firefox-dark"
-	//      (fixes Firefox-specific rendering issues).
-	//    - If font type is 2 (Non-Tajweed) → no palette applied (leave empty).
 	//
-	// 2. Otherwise (all non-Firefox or other cases):
-	//    - If font type is 3 → apply "theme-palette-tajweed" (tajweed font coloring).
-	//    - Else → apply "theme-palette-normal" (default palette).
-	//    - If font type is 2 and theme is 5 (Mocha Night) → add "mocha-night-font-color".
-	//    - If font type is 2 and theme is 9 (Dark Luxury) → add "dark-luxury-font-color".
+	// Visibility:
+	//   - Words start invisible and become visible once the page font is loaded,
+	//     controlled via the `pageVisible` flag (set by loadFont's promise).
+	//     This prevents a flash of unstyled/missing glyphs before the font is ready.
 	//
-	// Summary:
-	// - Firefox + dark theme overrides the palette logic (tajweed → special class, non-tajweed → none).
-	// - All other browsers/themes follow the normal font-type and theme-based palettes.
+	// Palette (color) logic:
+	//   1. Firefox + dark theme overrides:
+	//      - Font type 3 (Tajweed) → "hafs-palette-firefox-dark" (Firefox-specific fix)
+	//      - Font type 2 (Non-Tajweed) → no palette class applied
+	//
+	//   2. All other browsers/themes:
+	//      - Font type 3 → "theme-palette-tajweed"
+	//      - All others → "theme-palette-normal"
+	//      - Font type 2 + Mocha Night (theme 5) → also adds "mocha-night-font-color"
+	//      - Font type 2 + Dark Luxury (theme 9) → also adds "dark-luxury-font-color"
+	const pageClass = `p${value.meta.page}`;
+
 	$: v4hafsClasses = `
-		invisible v4-words 
-		p${value.meta.page} 
+		v4-words 
+		${pageClass}
+		${pageVisible ? '' : 'invisible'}
 		${
 			isFirefoxDarkTajweed()
 				? 'hafs-palette-firefox-dark'

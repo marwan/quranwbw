@@ -327,32 +327,28 @@ export function updateSettings(props) {
 			userSettings.displaySettings.homepageLayoutPreferences = props.value;
 			break;
 
-		// for increasing/decreasing font sizes
+		// Increase/decrease font sizes by swapping the Tailwind font size class on all
+		// matching elements and persisting the new size to userSettings.
+		// Elements use a `data-fontSize` attribute to track their current size class,
+		// avoiding the need to guess which class to remove before adding the new one.
 		case 'arabicText': // Arabic words
 		case 'wordTranslationText': // word translations & transliterations
 		case 'verseTranslationText': // verse translations & transliterations
-			// change the font size for each 'element'
+			if (!props.value) break;
+
 			document.querySelectorAll(`.${props.type}`).forEach((element) => {
+				// e.g. "text-2xl"
 				const currentSize = element.getAttribute('data-fontSize');
 
-				// set the new index and size
-				let newSize = props.value;
+				// Swap old size for new
+				element.classList.replace(currentSize, props.value);
 
-				// perform the action
-				if (newSize !== undefined) {
-					// remove the current class
-					element.classList.remove(currentSize);
-
-					// add the new class
-					element.classList.add(newSize);
-
-					// update the attribute
-					element.setAttribute('data-fontSize', newSize);
-
-					// update it in localSettings
-					userSettings.displaySettings.fontSizes[`${props.type}`] = newSize;
-				}
+				// Keep attribute in sync
+				element.setAttribute('data-fontSize', props.value);
 			});
+
+			// Persist outside the loop — same value for all elements, only needs to run once
+			userSettings.displaySettings.fontSizes[props.type] = props.value;
 			break;
 	}
 
