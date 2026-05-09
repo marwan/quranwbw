@@ -327,6 +327,11 @@ export function updateSettings(props) {
 			userSettings.displaySettings.homepageLayoutPreferences = props.value;
 			break;
 
+		// for website git version
+		case 'websiteVersion':
+			userSettings.websiteVersion = props.value;
+			break;
+
 		// Increase/decrease font sizes by swapping the Tailwind font size class on all
 		// matching elements and persisting the new size to userSettings.
 		// Elements use a `data-fontSize` attribute to track their current size class,

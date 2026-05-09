@@ -150,32 +150,34 @@
 		}
 	})();
 
-	// Function to track the website Git version in Umami analytics
+	// Tracks the current website Git version in Umami analytics.
+	// Reads the previously sent version from userSettings to avoid sending
+	// duplicate events — only fires the Umami event when the version has changed.
+	// Always updates latestVersion so we have a record of what the user is on,
+	// regardless of whether the event was sent.
 	(function trackWebsiteVersion() {
 		try {
 			const currentVersion = __APP_VERSION__.split(' ')[0];
-			const storageKey = 'websiteVersionData';
+			const stored = JSON.parse(localStorage.getItem('userSettings')).websiteVersion;
 
-			// Get existing data or initialize
-			const data = JSON.parse(localStorage.getItem(storageKey)) || {
-				latestVersion: null,
-				sentVersion: null
+			const data = {
+				latestVersion: stored?.latestVersion ?? null,
+				sentVersion: stored?.sentVersion ?? null
 			};
 
 			// Always update the latest version
 			data.latestVersion = currentVersion;
 
-			// Check if this version was already sent
+			// Only send the Umami event if this version hasn't been tracked yet
 			if (data.sentVersion !== currentVersion) {
 				if (window.umami && typeof window.umami.track === 'function') {
 					window.umami.track('Website Version', { version: currentVersion });
 				}
-				// Mark as sent
 				data.sentVersion = currentVersion;
 			}
 
-			// Save back to localStorage
-			localStorage.setItem(storageKey, JSON.stringify(data));
+			// Persist back to userSettings
+			updateSettings({ type: 'websiteVersion', value: data });
 		} catch (error) {
 			console.warn(error);
 		}
