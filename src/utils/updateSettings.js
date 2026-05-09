@@ -87,8 +87,8 @@ export function updateSettings(props) {
 		case 'websiteTheme':
 			__websiteTheme.set(props.value);
 			userSettings.displaySettings.websiteTheme = props.value;
+			window.setTheme(props.value);
 			trackEvent = true;
-			location.reload();
 			break;
 
 		// for word translation view
