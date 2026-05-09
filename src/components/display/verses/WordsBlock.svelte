@@ -36,9 +36,11 @@
 	// component manages its own page's visibility independently — setting it to
 	// `true` triggers Svelte to re-render and drop the `invisible` class naturally,
 	// without fighting Svelte's DOM patching via classList.remove().
+	// Re-runs on theme change too, since switching themes resets words back to
+	// invisible (via v4hafsClasses) and we need to restore their visibility.
 	let pageVisible = false;
 
-	if ([2, 3].includes($__fontType)) {
+	$: if ([2, 3].includes($__fontType) || $__websiteTheme) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			pageVisible = true;
 		});

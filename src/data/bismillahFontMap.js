@@ -110,7 +110,7 @@ export const bismillahFontMap = {
 	// 10: Majidi Nastaleeq Digital Font
 	10: {
 		file: 'Majidi5_Bismillah-Bold',
-		version: 1,
+		version: 13,
 		bismillah: {
 			default: '﷽'
 		}
