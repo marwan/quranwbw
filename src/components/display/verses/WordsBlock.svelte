@@ -32,7 +32,7 @@
 	$: displayIsContinuous = selectableDisplays[$__displayType].continuous;
 
 	// Dynamically load the fonts if mushaf fonts are selected
-	//v4 words are hidden by default and shown only when the font is loaded...
+	// v4 words are hidden by default and shown only when the font is loaded...
 	if ([2, 3].includes($__fontType)) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			document.querySelectorAll(`.p${value.meta.page}`).forEach((element) => {

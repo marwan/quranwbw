@@ -2,6 +2,7 @@
 	export let key;
 
 	import Spinner from '$svgs/Spinner.svelte';
+	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { __fontType, __userSettings } from '$utils/stores';
 
@@ -29,6 +30,6 @@
 		{data.words.arabic.join(' ')}
 		<span class="colored-fonts">{data.words.end}</span>
 	</div>
-{:catch _}
-	<p>error.</p>
+{:catch error}
+	<ErrorLoadingData {error} />
 {/await}
