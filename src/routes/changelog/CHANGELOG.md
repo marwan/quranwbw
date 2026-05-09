@@ -1,3 +1,9 @@
+### Apr 9, 2026
+
+- **Majidi Nastaleeq Digital Font Added**: A new Qur’anic Nastaleeq-style font with built-in tajweed sign conventions (including Raa, Laam-ul-Jalaalah, Qalqalah, Ikhfaa, Tanween, and Ghunnah), offering an alternative visual reading experience while preserving key tajweed indicators.
+
+---
+
 ### Apr 5, 2026
 
 - **Hizb (Division) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur'an by its 60 Hizb divisions. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.
