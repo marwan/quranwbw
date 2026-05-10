@@ -158,6 +158,10 @@
 	(function trackWebsiteVersion() {
 		try {
 			const currentVersion = __APP_VERSION__.split(' ')[0];
+
+			// Skip tracking if the version is unknown (e.g. during local development)
+			if (!currentVersion || currentVersion === 'unknown') return;
+
 			const stored = JSON.parse(localStorage.getItem('userSettings')).websiteVersion;
 
 			const data = {

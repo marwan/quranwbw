@@ -430,6 +430,12 @@
 	async function handleRestoreConfirm() {
 		if (!restorePreview) return;
 
+		// Record the restore timestamp FIRST so it's included in the protected snapshot below
+		const ts = new Date().toISOString();
+		writeBackupData({ lastRestoredAt: ts });
+		backupTimestamps = { ...backupTimestamps, lastRestoredAt: ts };
+
+		// Read settings AFTER writing the timestamp so cloudBackupAndRestore is up to date
 		const currentSettings = readLocalSettings() || {};
 
 		// Snapshot the values we must never overwrite
@@ -446,12 +452,7 @@
 			if (value !== undefined) setNestedValue(merged, path, value);
 		}
 
-		// Record the restore timestamp before reloading the page
-		const ts = new Date().toISOString();
-		writeBackupData({ lastRestoredAt: ts });
-
-		// Queue the analytics event to be fired after the page reloads,
-		// since the reload happens before the track call can complete
+		// Queue the analytics event to be fired after the page reloads
 		localStorage.setItem('pendingUmamiEvent', 'Cloud Restore Applied');
 
 		applyRestoredSettings(merged);
