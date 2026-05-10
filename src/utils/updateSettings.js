@@ -332,6 +332,11 @@ export function updateSettings(props) {
 			userSettings.websiteVersion = props.value;
 			break;
 
+		// for cloud backup and restore
+		case 'cloudBackupAndRestore':
+			userSettings.cloudBackupAndRestore = props.value;
+			break;
+
 		// Increase/decrease font sizes by swapping the Tailwind font size class on all
 		// matching elements and persisting the new size to userSettings.
 		// Elements use a `data-fontSize` attribute to track their current size class,

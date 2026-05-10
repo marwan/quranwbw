@@ -60,7 +60,8 @@ export const defaultSettings = {
 	userNotes: {},
 	chapter: 1,
 	offlineModeSettings: {},
-	websiteVersion: {}
+	websiteVersion: {},
+	cloudBackupAndRestore: {}
 };
 
 // Do not continue without setting the default user's settings first

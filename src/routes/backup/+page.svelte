@@ -17,21 +17,18 @@
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { defaultSettings } from '$src/hooks.client';
 	import { onMount } from 'svelte';
+	import { updateSettings } from '$utils/updateSettings';
 
 	// QuranWBW's Cloud Backup API
 	const cloudBackupAPI = 'https://cloud-backup-api.quranwbw.com/user';
-
-	// The localStorage key where settings are stored
-	const settingsKey = 'userSettings';
-
-	// The localStorage key where we store the backup key + all timestamps as a JSON object
-	const cloudBackupKeyLocalStorageItemName = 'cloudBackupAndRestoreData';
 
 	// Settings paths that should NEVER be overwritten during a restore.
 	// Each entry is a dot-separated path into the userSettings object.
 	const settingsRestoreExclusions = [
 		'displaySettings.fontSizes',
 		'offlineModeSettings',
+		'websiteVersion',
+		'cloudBackupAndRestore',
 
 		// Some audio settings
 		'audioSettings.playBoth',
@@ -176,7 +173,7 @@
 	// Remove all locally stored backup data (key + timestamps).
 	// Does NOT delete the cloud backup — the user can re-enter the key at any time.
 	function deleteLocalBackupKey() {
-		localStorage.removeItem(cloudBackupKeyLocalStorageItemName);
+		updateSettings({ type: 'cloudBackupAndRestore', value: {} });
 		savedBackupKey = '';
 		backupTimestamps = { keyCreatedAt: null, lastBackedUpAt: null, lastRestoredAt: null };
 		restorePreview = null;
@@ -187,7 +184,7 @@
 	// Read the current settings from localStorage
 	function readLocalSettings() {
 		try {
-			const raw = localStorage.getItem(settingsKey);
+			const raw = localStorage.getItem('userSettings');
 			return raw ? JSON.parse(raw) : null;
 		} catch {
 			return null;
@@ -196,7 +193,7 @@
 
 	// Apply restored settings to localStorage and trigger a page reload so all stores pick up the new values
 	function applyRestoredSettings(settings) {
-		localStorage.setItem(settingsKey, JSON.stringify(settings));
+		localStorage.setItem('userSettings', JSON.stringify(settings));
 
 		// Reload so all Svelte stores re-initialise from localStorage
 		window.location.reload();
@@ -532,11 +529,11 @@
 		return changes;
 	}
 
-	// Read the entire backup data object from localStorage
+	// Read the cloud backup data object from userSettings in localStorage
 	function readBackupData() {
 		try {
-			const raw = localStorage.getItem(cloudBackupKeyLocalStorageItemName);
-			return raw ? JSON.parse(raw) : {};
+			const raw = localStorage.getItem('userSettings');
+			return raw ? (JSON.parse(raw).cloudBackupAndRestore ?? {}) : {};
 		} catch {
 			return {};
 		}
@@ -546,7 +543,7 @@
 	function writeBackupData(patch) {
 		const current = readBackupData();
 		const updated = { ...current, ...patch };
-		localStorage.setItem(cloudBackupKeyLocalStorageItemName, JSON.stringify(updated));
+		updateSettings({ type: 'cloudBackupAndRestore', value: updated });
 		return updated;
 	}
 
