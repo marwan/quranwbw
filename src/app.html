@@ -43,9 +43,9 @@
 				preloadFont(`${baseFontUrl}/juz_names-Regular.woff2`);
 				preloadFont(`${baseFontUrl}/surahs_v4-Regular.woff2`);
 			} else {
-				// On other pages, preload main Quran font and optionally Bismillah
-				const userSettings1 = JSON.parse(localStorage.getItem('userSettings'));
-				const fontType = Number(userSettings1?.displaySettings?.fontType ?? '1');
+				// On other pages, preload main Quran font
+				const userSettings = JSON.parse(localStorage.getItem('userSettings'));
+				const fontType = Number(userSettings?.displaySettings?.fontType ?? '1');
 
 				const fontMap = {
 					1: `${baseFontUrl}/qcf-uthmanic-digital.woff2`,
