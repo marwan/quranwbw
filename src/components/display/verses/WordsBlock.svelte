@@ -178,11 +178,8 @@
 			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}
 		>
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
-				<!-- Everything except Mushaf fonts -->
-				{#if ![2, 3].includes($__fontType)}
-					{arabicWords[word]}
-					<!-- Mushaf fonts -->
-				{:else}
+				<!-- Mushaf fonts -->
+				{#if [2, 3].includes($__fontType)}
 					<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" class={v4hafsClasses}>
 						<!-- word fix, see fixedMushafWords -->
 						{#if Object.prototype.hasOwnProperty.call(fixedMushafWords, wordKey)}
@@ -191,6 +188,10 @@
 							{arabicWords[word]}
 						{/if}
 					</span>
+
+					<!-- Everything except Mushaf fonts -->
+				{:else}
+					{arabicWords[word]}
 				{/if}
 			</span>
 
@@ -232,12 +233,13 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
-			<!-- Everything except Mushaf fonts -->
-			{#if ![2, 3].includes($__fontType)}
-				<span class="colored-fonts">{value.words.end}</span>
-				<!-- Mushaf fonts -->
-			{:else}
+			<!-- Mushaf fonts -->
+			{#if [2, 3].includes($__fontType)}
 				<span style="font-family: p{value.meta.page}" class="{v4hafsClasses} custom-ayah-icon-color">{value.words.end}</span>
+
+				<!-- Everything except Mushaf fonts -->
+			{:else}
+				<span class={$__fontType !== 10 && 'colored-fonts'}>{value.words.end}</span>
 			{/if}
 		</span>
 	</div>
