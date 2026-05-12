@@ -10,13 +10,12 @@
 	import { isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { bismillahFontMap } from '$data/bismillahFontMap';
-	import { loadFont } from '$utils/loadFont';
 
 	// True for font types that use the Uthmanic script (affects sizing and padding)
 	$: isUthmaniFontType = [1, 2, 3, 5, 7, 8].includes($__fontType);
 
 	// Holds any extra CSS palette class needed for the current font (e.g. Tajweed color palette)
-	$: customFontPalette = '';
+	let customFontPalette = '';
 
 	// Resolves the correct font file for the active font type, handles the
 	// Firefox dark-mode Tajweed special case, then loads the font via loadFont().
@@ -25,10 +24,9 @@
 		const elements = document.querySelectorAll('.bismillah');
 		elements.forEach((el) => el.classList.add('invisible'));
 
-		// Uthmanic Mushaf Tajweed
+		// Fall back to the Tajweed COLOR font if the active type isn't in the map
 		const defaultBismillah = bismillahFontMap[3].file;
 
-		// Fall back to the Tajweed COLOR font if the active type isn't in the map
 		let { file: fileName, version: fontVersion } = {
 			file: defaultBismillah,
 			version: 13
@@ -45,13 +43,25 @@
 			fileName = isFirefoxDarkTajweed() ? bismillahFontMap.firefoxDarkTajweed.file : defaultBismillah;
 			customFontPalette = isFirefoxDarkTajweed() ? 'hafs-palette-firefox-dark' : 'theme-palette-tajweed';
 			fontVersion = 13;
+		} else {
+			// Reset palette when switching away from font type 3
+			customFontPalette = '';
 		}
 
 		// Build the CDN URL with cache-busting version query param
 		const url = `${staticEndpoint}/fonts/Extras/bismillah/${fileName}.woff2?version=${fontVersion}`;
 
-		// Load the font under the CSS family name "bismillah", then reveal elements
-		loadFont('bismillah', url).then(() => {
+		// Remove ALL existing FontFace entries under the "bismillah" family —
+		// this forces the browser to load the correct file for the current font type
+		// rather than reusing a stale entry from a previous font type or page visit.
+		[...document.fonts].filter((f) => f.family === 'bismillah').forEach((f) => document.fonts.delete(f));
+
+		// Manage the FontFace directly so we have full control over when the font is registered and revealed.
+		const fontFace = new FontFace('bismillah', `url(${url})`);
+
+		document.fonts.add(fontFace);
+
+		fontFace.load().then(() => {
 			elements.forEach((el) => el.classList.remove('invisible'));
 		});
 	}
