@@ -428,16 +428,16 @@ svg {
 .hafs-palette-firefox-dark { font-palette: --palette0; }
 
 /* Majidi Nastaleeq — palette per theme */
-.theme-1 .custom-majidi-font-color, .theme-2 .custom-majidi-font-color, .theme-3 .custom-majidi-font-color {
-  font-palette: --palette0; /* Light themes */
+.theme-1 .custom-majidi-font-color, .theme-2 .custom-majidi-font-color, .theme-3 .custom-majidi-font-color, .theme-5 .custom-majidi-font-color, .theme-9 .custom-majidi-font-color {
+  font-palette: --palette0;
 }
 
 .theme-4 .custom-majidi-font-color {
   font-palette: --palette3; /* Sepia theme */
 }
 
-.theme-5 .custom-majidi-font-color, .theme-6 .custom-majidi-font-color, .theme-7 .custom-majidi-font-color, .theme-8 .custom-majidi-font-color, .theme-9 .custom-majidi-font-color {
-  font-palette: --palette1; /* Dark themes */
+.theme-6 .custom-majidi-font-color, .theme-7 .custom-majidi-font-color, .theme-8 .custom-majidi-font-color{
+  font-palette: --palette1;
 }
 
 #notes-value {
