@@ -428,15 +428,21 @@ svg {
 .hafs-palette-firefox-dark { font-palette: --palette0; }
 
 /* Majidi Nastaleeq — palette per theme */
-.theme-1 .custom-majidi-font-color, .theme-2 .custom-majidi-font-color, .theme-3 .custom-majidi-font-color, .theme-5 .custom-majidi-font-color, .theme-9 .custom-majidi-font-color {
+.theme-1 .custom-majidi-font-color, /* Golden Glint */
+.theme-2 .custom-majidi-font-color, /* Classic Light */
+.theme-3 .custom-majidi-font-color, /* Silver Lining */
+.theme-5 .custom-majidi-font-color, /* Mocha Night */
+.theme-9 .custom-majidi-font-color /* Dark Luxury */ {
   font-palette: --palette0;
 }
 
 .theme-4 .custom-majidi-font-color {
-  font-palette: --palette3; /* Sepia theme */
+  font-palette: --palette3; /* Vintage Sepia */
 }
 
-.theme-6 .custom-majidi-font-color, .theme-7 .custom-majidi-font-color, .theme-8 .custom-majidi-font-color{
+.theme-6 .custom-majidi-font-color, /* Midnight Blue */
+.theme-7 .custom-majidi-font-color, /* Forest Green */
+.theme-8 .custom-majidi-font-color /* Oled Black */ {
   font-palette: --palette1;
 }
 
