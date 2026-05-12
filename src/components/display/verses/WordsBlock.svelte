@@ -36,9 +36,11 @@
 	// component manages its own page's visibility independently — setting it to
 	// `true` triggers Svelte to re-render and drop the `invisible` class naturally,
 	// without fighting Svelte's DOM patching via classList.remove().
+	// Re-runs on theme change too, since switching themes resets words back to
+	// invisible (via v4hafsClasses) and we need to restore their visibility.
 	let pageVisible = false;
 
-	if ([2, 3].includes($__fontType)) {
+	$: if ([2, 3].includes($__fontType) || $__websiteTheme) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			pageVisible = true;
 		});
@@ -95,6 +97,7 @@
 		${$__currentPage !== 'mushaf' && fontSizes.arabicText} 
 		${displayIsContinuous && 'inline-block'}
 		${$__fontType === 9 && 'pb-4'}
+		${$__fontType === 10 && 'custom-majidi-font-color'}
 	`;
 
 	// Classes for v4 Hafs words:
@@ -134,11 +137,11 @@
 	`;
 
 	// Classes for end icons
-	// In Golden Glint theme, the end icon should be gold
+	// In Golden Glint theme, the end icon should be gold (except for Majidi Nastaleeq Digital Font)
 	$: endIconClasses = `
 		rounded-lg 
 		${wordAndEndIconCommonClasses}
-		${$__websiteTheme === 1 && `text-theme-accent`}
+		${$__websiteTheme === 1 && $__fontType !== 10 ? 'text-theme-accent' : ''}
 	`;
 
 	// Classes for word translation and transliteration
@@ -175,11 +178,8 @@
 			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}
 		>
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
-				<!-- Everything except Mushaf fonts -->
-				{#if ![2, 3].includes($__fontType)}
-					{arabicWords[word]}
-					<!-- Mushaf fonts -->
-				{:else}
+				<!-- Mushaf fonts -->
+				{#if [2, 3].includes($__fontType)}
 					<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" class={v4hafsClasses}>
 						<!-- word fix, see fixedMushafWords -->
 						{#if Object.prototype.hasOwnProperty.call(fixedMushafWords, wordKey)}
@@ -188,6 +188,10 @@
 							{arabicWords[word]}
 						{/if}
 					</span>
+
+					<!-- Everything except Mushaf fonts -->
+				{:else}
+					{arabicWords[word]}
 				{/if}
 			</span>
 
@@ -229,12 +233,13 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
-			<!-- Everything except Mushaf fonts -->
-			{#if ![2, 3].includes($__fontType)}
-				<span class="colored-fonts">{value.words.end}</span>
-				<!-- Mushaf fonts -->
-			{:else}
+			<!-- Mushaf fonts -->
+			{#if [2, 3].includes($__fontType)}
 				<span style="font-family: p{value.meta.page}" class="{v4hafsClasses} custom-ayah-icon-color">{value.words.end}</span>
+
+				<!-- Everything except Mushaf fonts -->
+			{:else}
+				<span class={$__fontType !== 10 && 'colored-fonts'}>{value.words.end}</span>
 			{/if}
 		</span>
 	</div>

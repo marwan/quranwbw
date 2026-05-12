@@ -63,11 +63,11 @@
 				<div id="font-type" class="text-md font-medium capitalize">{type}</div>
 				<div id="font-list" class="space-y-3">
 					{#if getFontVisibilityStatus(type) === 'has-visible'}
-						{#each Object.entries(selectableFontTypes).sort((a, b) => a[1].displayOrder - b[1].displayOrder) as [fontKey, fontType]}
+						{#each Object.entries(selectableFontTypes).sort((a, b) => a[1].order - b[1].order) as [fontKey, fontType]}
 							{#if fontType.type === type && shouldShowFontType(fontType, fontKey)}
 								<Radio name="fontType" bind:group={$__fontType} value={Number(fontKey)} on:change={(event) => updateSettings({ type: 'fontType', value: +event.target.value })} custom>
 									<div class="{individualRadioClasses} {$__fontType === Number(fontKey) && selectedRadioOrCheckboxClasses}">
-										<div class="w-full">{fontType.font}</div>
+										<div class="w-full">{fontType.name}</div>
 									</div>
 								</Radio>
 							{/if}

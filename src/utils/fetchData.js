@@ -7,7 +7,7 @@ import { selectableFontTypes, selectableWordTranslations, selectableWordTranslit
 // Keep track of in-progress fetches globally
 const inFlightRequests = new Map();
 
-// Fetches and combines word-by-word data for a chapter including Arabic, translation, transliteration, and metadata
+// Fetches and combines word by word data for a chapter including Arabic, translation, transliteration, and metadata
 export async function fetchChapterData(props) {
 	if (!props.preventStoreUpdate) __chapterData.set(null);
 

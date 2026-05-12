@@ -21,23 +21,6 @@ export const cdnStaticDataUrls = {
 	quranTopics: `${staticEndpoint}/others/quran-topics.json?version=1`
 };
 
-// FontType → { file, version }
-export const bismillahFonts = {
-	// Following fonts are based on font types
-	1: { file: 'qcf-bismillah-normal', version: 13 }, // Uthmanic Digital Font
-	2: { file: 'qcf-bismillah-normal', version: 13 }, // Uthmanic Mushaf non-Tajweed
-	3: { file: 'QCF_Bismillah_COLOR-Regular', version: 13 }, // Uthmanic Mushaf Tajweed
-	4: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Madinah Edition)
-	5: { file: 'Qcf-nastaleeq-bismillah-normal', version: 13 }, // Uthman Taha Digital
-	6: { file: 'IndopakBismillah-Arabic', version: 13 }, // Qalam Digital Font (Hanafi Edition)
-	7: { file: 'qcf-bismillah-bold', version: 13 }, // Uthmanic Digital Bold
-	8: { file: 'Qcf-nastaleeq-bismillah-bold', version: 13 }, // Uthman Taha Digital Bold
-	9: { file: 'MisbahBismillah-Arabic', version: 13 }, // Indonesian Isep Misbah Digital Font
-
-	// Following are special fonts not linked to any specific font types
-	firefoxDarkTajweed: { file: 'QCF_Bismillah_COLOR-Dark-FF-Regular', version: 13 } // Firefox Dark Mode Tajweed
-};
-
 // Map of morphology data URLs
 export const morphologyDataUrls = {
 	// Word summaries for each chapter (1-114)

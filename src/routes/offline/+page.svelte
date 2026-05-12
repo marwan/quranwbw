@@ -10,10 +10,11 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
-	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, bismillahFonts, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
+	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
 	import { getMushafWordFontLink, isIOSorMac } from '$utils/getMushafWordFontLink';
 	import { term } from '$utils/terminologies';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
+	import { bismillahFontMap } from '$data/bismillahFontMap';
 	import { clearDexieTable } from '$utils/dexie';
 
 	// Common messages
@@ -661,7 +662,7 @@
 	// Download all bismillah fonts
 	async function downloadAllBismillahFonts() {
 		try {
-			const fontPromises = Object.values(bismillahFonts).map(({ file, version }) => {
+			const fontPromises = Object.values(bismillahFontMap).map(({ file, version }) => {
 				const url = `${staticEndpoint}/fonts/Extras/bismillah/${file}.woff2?version=${version}`;
 				return fetch(url);
 			});
