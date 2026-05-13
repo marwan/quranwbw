@@ -1,32 +1,30 @@
 <script>
-	import Portal from 'svelte-portal';
-	import { createEventDispatcher, onMount } from 'svelte';
-	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
-	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
-	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
-	import Trash from '$svgs/Trash.svelte';
-	import { quranMetaData } from '$data/quranMeta';
-	import { updateSettings } from '$utils/updateSettings';
-	import { showConfirm } from '$utils/confirmationAlertHandler';
-
 	export let bookmark;
 	export let fullQuranTextData = null;
 	export let cardInnerClasses;
 	export let forceClose = 0; // Reactive prop to force close dropdown
 
+	import Portal from 'svelte-portal';
+	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
+	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
+	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
+	import Trash from '$svgs/Trash.svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import { quranMetaData } from '$data/quranMeta';
+	import { updateSettings } from '$utils/updateSettings';
+	import { showConfirm } from '$utils/confirmationAlertHandler';
+
 	const dispatch = createEventDispatcher();
-
-	let dropdownOpen = false;
-	let buttonElement;
 	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
-	let hasMounted = false;
-	let previousOpen = dropdownOpen;
-	let previousForceClose = forceClose;
-
-	// Parse bookmark reference
 	const [bookmarkChapter, bookmarkVerse] = bookmark.split(':').map(Number);
 	const chapterMeta = quranMetaData[bookmarkChapter];
 	const maxTextLength = 'max-w-[28vw] md:max-w-[115px]';
+
+	let dropdownOpen = false;
+	let buttonElement;
+	let hasMounted = false;
+	let previousOpen = dropdownOpen;
+	let previousForceClose = forceClose;
 
 	// Watch forceClose to close dropdown when parent scrolls
 	onMount(() => {

@@ -470,16 +470,22 @@ function getWordsInVerse(key) {
 	}
 }
 
-// Handler for verse play button and the play button in audio modal
+// Starts audio playback for a verse or word, depending on the user's audio type setting.
+// Called by the verse play button and the play button in the audio modal.
 export function playButtonHandler(key = null) {
 	const { audioType, timesToRepeat, language } = get(__audioSettings);
+
+	// Play from the first verse in the queue
 	if (audioType === 'verse') {
 		playVerseAudio({
 			key: `${window.versesToPlayArray[0]}`,
-			timesToRepeat: timesToRepeat,
-			language: language
+			timesToRepeat,
+			language
 		});
-	} else if (audioType === 'word') {
+	}
+
+	// Play all words starting from word 1 of the given key
+	else if (audioType === 'word') {
 		playWordAudio({
 			key: `${key}:1`,
 			playAllWords: true
@@ -526,7 +532,7 @@ export function prepareVersesToPlay(key) {
 	}
 }
 
-// Fetch timestamps for word-by-word highlighting
+// Fetch timestamps for word by word highlighting
 async function fetchTimestampData() {
 	if (cachedTimestampData) return cachedTimestampData;
 	cachedTimestampData = await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');

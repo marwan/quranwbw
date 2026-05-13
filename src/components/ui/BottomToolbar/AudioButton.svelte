@@ -6,23 +6,24 @@
 	import { __currentPage, __audioSettings, __fullVersesDisplayKeys } from '$utils/stores';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-	// quick play from first verse of page till the max chapter verses
+	// Toggle audio playback: stop if playing, or start from the first verse on the page
 	async function audioHandler() {
 		if (!(await checkOnlineAndAlert())) return;
 
 		if ($__audioSettings.isPlaying) {
 			resetAudioSettings({ location: 'end' });
 		} else {
-			// On juz or hizb pages, play only the verses in that specific section
+			// For juz/hizb pages, restrict playback to verses within that section
 			if (['juz', 'hizb'].includes($__currentPage)) {
 				setVersesToPlay({ verses: $__fullVersesDisplayKeys.split(',') });
 			}
-			// On other pages, play all verses available on the page
+			// For all other pages, play every verse visible on the page
 			else {
 				setVersesToPlay({ allVersesOnPage: true });
 			}
 
-			playButtonHandler();
+			// Begin playback from the first verse (verse or word mode, per user settings)
+			playButtonHandler(window.versesToPlayArray[0]);
 		}
 	}
 </script>
