@@ -93,7 +93,7 @@
 
 		{#if showDeleteButton}
 			<button on:click={() => showConfirm('Are you sure you want to reset this note? This action cannot be undone.', 'notesModal', () => resetNote())} class="w-full {buttonClasses}">
-				<Trash size={5} />
+				<Trash />
 				<span>Delete</span>
 			</button>
 		{/if}
