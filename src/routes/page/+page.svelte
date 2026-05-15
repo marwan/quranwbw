@@ -9,6 +9,7 @@
 	import Minimize from '$svgs/Minimize.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
+	import DevFontUploader from './DevFontUploader.svelte';
 	import { goto } from '$app/navigation';
 	import { onDestroy } from 'svelte';
 	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
@@ -270,3 +271,6 @@
 		<Tooltip arrow={false} type="light" class="z-30 hidden md:block font-normal">Minimal Mode</Tooltip>
 	</div>
 {/if}
+
+<!-- dev font uploader -->
+<DevFontUploader {page} />
