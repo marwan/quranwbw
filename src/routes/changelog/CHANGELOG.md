@@ -1,3 +1,9 @@
+### May 17, 2026
+
+- **Cloud Backup & Restore (Beta):** Added secure cloud-based backup and restore for user settings using a private backup key. You can now generate a backup key, backup your settings to the cloud, and restore them on any device without creating an account. The restore process includes a preview and confirmation step, preserves critical settings, and tracks backup/restore history locally.
+
+---
+
 ### May 12, 2026
 
 - **Majidi Nastaleeq Digital Font**: Added a new Qur'anic Nastaleeq-style font with built-in tajweed sign conventions (including Raa, Laam-ul-Jalaalah, Qalqalah, Ikhfaa, Tanween, and Ghunnah), offering an alternative visual reading experience while preserving key tajweed indicators.
@@ -43,7 +49,7 @@
 
 ### Feb 6, 2026
 
-- **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur'an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur’anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
+- **All-New Topics Page:** Introducing a brand-new Topics page that organizes the Qur'an into topics, concepts, names, and themes (A–Z) for easier exploration and study. Each entry provides relevant Qur'anic references, even when the exact keyword may not appear in the verse, helping you discover verses based on meaning and context rather than just words. You can access the Topics page from the top of the homepage, via the main navigation menu, or by clicking [here](/topics).
 
 ---
 
@@ -61,7 +67,7 @@
 
 ### Sep 28, 2025
 
-- **Manual Backup & Restore:** You can now **save and download a copy of your website settings** (including bookmarks and notes) and **restore them anytime**. This way, you’ll never have to worry about losing your important data again.
+- **Manual Backup & Restore:** You can now **save and download a copy of your website settings** (including bookmarks and notes) and **restore them anytime**. This way, you'll never have to worry about losing your important data again.
 
 ---
 
@@ -207,7 +213,7 @@
 
 ### Dec 29, 2024
 
-In this update, we’ve enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, ensured verse translations display in your selected order, and added a button to listen to a word directly on the morphology page. Enjoy these fantastic enhancements!
+In this update, we've enhanced audio playback with translation support and settings memory, introduced new reciters Ayman Suwayd and Ibrahim Al Akhdar, added custom chapter slugs for easy navigation, enabled simple Arabic verse copying, ensured verse translations display in your selected order, and added a button to listen to a word directly on the morphology page. Enjoy these fantastic enhancements!
 
 - **Enhanced Audio Modal:** Now allows translation playback and remembers your settings. Say goodbye to repetitive adjustments!
 - **New Reciters:** We are excited to welcome Ayman Suwayd and Ibrahim Al Akhdar. Enjoy their melodious recitations!

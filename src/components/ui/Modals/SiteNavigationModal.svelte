@@ -12,15 +12,17 @@
 	import About from '$svgs/About.svelte';
 	import Changelog from '$svgs/Changelog.svelte';
 	import Offline from '$svgs/Offline.svelte';
-	import LegacySite from '$svgs/LegacySite.svelte';
+	import BackupRestore from '$svgs/BackupRestore.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
+	import Book from '$svgs/Book.svelte';
 	import { disabledClasses } from '$data/commonClasses';
-	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
+	import { __siteNavigationModalVisible, __settingsDrawerHidden, __tajweedRulesModalVisible, __currentPage, __lastRead } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { isUserOnline } from '$utils/offlineModeHandler';
 
-	const linkClasses = 'w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5';
-	const linkTextClasses = 'text-xs md:text-sm text-left w-[-webkit-fill-available] truncate';
+	const linkClasses = 'w-full flex flex-row space-x-3 py-4 px-4 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5';
+	const linkTextClasses = 'text-sm text-left w-[-webkit-fill-available] truncate';
 
 	// Default to online; fall back gracefully if navigator is unavailable (e.g. SSR)
 	let userOnline = typeof navigator === 'undefined' ? true : navigator.onLine;
@@ -56,100 +58,107 @@
 	$: if ($__currentPage) __siteNavigationModalVisible.set(false);
 </script>
 
-<Modal id="siteNavigationModal" bind:open={$__siteNavigationModalVisible} transitionParams={getModalTransition('basic')} size="xs" class="rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" center outsideclose>
-	<h3 id="modal-title" class="mb-2 text-md font-semibold flex-shrink-0">Navigate</h3>
+<Modal id="siteNavigationModal" bind:open={$__siteNavigationModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+	<h3 id="modal-title" class="mb-6 text-xl font-medium flex-shrink-0">Navigate</h3>
 
-	<div class="flex-1 min-h-0 overflow-y-auto">
-		<div class="flex flex-col space-y-4">
-			<!-- modals / popups -->
-			<div class="flex flex-col space-y-2">
-				<div class="grid grid-cols-2 md:grid-cols-2 gap-1">
-					<!-- Search -->
-					<a href="/search" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1}>
-						<span><Search2 size={4} /></span>
-						<span class={linkTextClasses}>Search</span>
-					</a>
+	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+			<!-- Search -->
+			<a href="/search" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1}>
+				<span><Search2 /></span>
+				<span class={linkTextClasses}>Search</span>
+			</a>
 
-					<!-- settings modal -->
-					<button
-						on:click={() => {
-							__siteNavigationModalVisible.set(false);
-							__settingsDrawerHidden.set(false);
-						}}
-						class={linkClasses}
-					>
-						<span><Settings size={4} /></span>
-						<span class={linkTextClasses}>Settings</span>
-					</button>
+			<!-- Settings -->
+			<button
+				on:click={() => {
+					__siteNavigationModalVisible.set(false);
+					__settingsDrawerHidden.set(false);
+				}}
+				class={linkClasses}
+			>
+				<span><Settings /></span>
+				<span class={linkTextClasses}>Settings</span>
+			</button>
 
-					<!-- topics page link -->
-					<a href="/topics" class={linkClasses}>
-						<span><Topics size={4} /></span>
-						<span class={linkTextClasses}>Topics</span>
-					</a>
+			<!-- Topics -->
+			<a href="/topics" class={linkClasses}>
+				<span><Topics /></span>
+				<span class={linkTextClasses}>Topics</span>
+			</a>
 
-					<!-- Bookmarks -->
-					<a href="/bookmarks" class={linkClasses}>
-						<span><Bookmark size={4} /></span>
-						<span class={linkTextClasses}>Bookmarks</span>
-					</a>
+			<!-- Supplications -->
+			<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
+				<span><Supplication /></span>
+				<span class={linkTextClasses}>{term('supplications')}</span>
+			</a>
 
-					<!-- tajweed rules modal -->
-					<button
-						on:click={() => {
-							__siteNavigationModalVisible.set(false);
-							__tajweedRulesModalVisible.set(true);
-						}}
-						class={linkClasses}
-						data-umami-event="Tajweed Modal Button"
-					>
-						<span><TajweedRules size={4} /></span>
-						<span class={linkTextClasses}>{term('tajweed')} Rules</span>
-					</button>
+			<!-- Mushaf page -->
+			<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class={linkClasses}>
+				<span><Book /></span>
+				<span class={linkTextClasses}>Mushaf</span>
+			</a>
 
-					<!-- Supplications -->
-					<a href="/{term('supplications').toLowerCase()}" class={linkClasses}>
-						<span><Supplication size={4} /></span>
-						<span class={linkTextClasses}>{term('supplications')}</span>
-					</a>
+			<!-- Morphology -->
+			<a href="/morphology?word=1:1:1" class={linkClasses}>
+				<span><Morphology /></span>
+				<span class={linkTextClasses}>Morphology</span>
+			</a>
 
-					<!-- Morphology -->
-					<a href="/morphology?word=1:1:1" class={linkClasses}>
-						<span><Morphology size={4} /></span>
-						<span class={linkTextClasses}>Morphology</span>
-					</a>
+			<!-- Bookmarks -->
+			<a href="/bookmarks" class={linkClasses}>
+				<span><Bookmark /></span>
+				<span class={linkTextClasses}>Bookmarks</span>
+			</a>
 
-					<!-- Guess The Word -->
-					<a href="/games/guess-the-word" class={linkClasses}>
-						<span><Puzzle size={4} /></span>
-						<span class={linkTextClasses}>Word Game</span>
-					</a>
+			<!-- Guess The Word -->
+			<a href="/games/guess-the-word" class={linkClasses}>
+				<span><Puzzle /></span>
+				<span class={linkTextClasses}>Word Game</span>
+			</a>
 
-					<!-- changelog -->
-					<a href="/changelog" class={linkClasses}>
-						<span><Changelog size={4} /></span>
-						<span class={linkTextClasses}>Changelog</span>
-					</a>
+			<!-- Offline Mode -->
+			<a href="/offline" class={linkClasses}>
+				<span><Offline /></span>
+				<span class={linkTextClasses}>Offline Mode (Beta)</span>
+			</a>
 
-					<!-- About -->
-					<a href="/about" class={linkClasses}>
-						<span><About size={4} /></span>
-						<span class={linkTextClasses}>About</span>
-					</a>
+			<!-- Backup & Restore -->
+			<a href="/backup" class={linkClasses}>
+				<span><BackupRestore /></span>
+				<span class={linkTextClasses}>Backup & Restore (Beta)</span>
+			</a>
 
-					<!-- Offline Mode page -->
-					<a href="/offline" class={linkClasses}>
-						<span><Offline size={4} /></span>
-						<span class={linkTextClasses}>Offline Mode (Beta)</span>
-					</a>
+			<!-- Tajweed Rules -->
+			<button
+				on:click={() => {
+					__siteNavigationModalVisible.set(false);
+					__tajweedRulesModalVisible.set(true);
+				}}
+				class={linkClasses}
+				data-umami-event="Tajweed Modal Button"
+			>
+				<span><TajweedRules /></span>
+				<span class={linkTextClasses}>{term('tajweed')} Rules</span>
+			</button>
 
-					<!-- legacy site link -->
-					<a href="https://old.quranwbw.com/" target="_blank" rel="noopener noreferrer" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1} data-umami-event="Legacy Site Button">
-						<span><LegacySite size={4} /></span>
-						<span class={linkTextClasses}>Old Website</span>
-					</a>
-				</div>
-			</div>
+			<!-- Changelog -->
+			<a href="/changelog" class={linkClasses}>
+				<span><Changelog /></span>
+				<span class={linkTextClasses}>Changelog</span>
+			</a>
+
+			<!-- About -->
+			<a href="/about" class={linkClasses}>
+				<span><About /></span>
+				<span class={linkTextClasses}>About</span>
+			</a>
+
+			<!-- Old Website -->
+			<a href="https://old.quranwbw.com/" target="_blank" rel="noopener noreferrer" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1} data-umami-event="Legacy Site Button">
+				<span><LeftArrow /></span>
+				<span class={linkTextClasses}>Old Website</span>
+			</a>
 		</div>
 	</div>
 </Modal>

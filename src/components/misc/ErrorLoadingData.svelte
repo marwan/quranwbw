@@ -40,9 +40,9 @@
 </script>
 
 <div class="flex flex-col space-y-4 justify-center text-center !text-sm max-w-xl mx-auto" class:pt-[30vh]={center === true}>
-	<p>Sorry, we couldn’t load the data right now. Please try again in a {errorCode !== null ? `moment (${errorCode})` : 'moment'}.</p>
+	<p>Sorry, we couldn't load the data right now. Please try again in a {errorCode !== null ? `moment (${errorCode})` : 'moment'}.</p>
 
 	{#if !userOnline}
-		<p>It also looks like you’re currently offline. Please reconnect to the internet and, if you plan to use this page offline, make sure the required offline data is downloaded beforehand.</p>
+		<p>It also looks like you're currently offline. Please reconnect to the internet and, if you plan to use this page offline, make sure the required offline data is downloaded beforehand.</p>
 	{/if}
 </div>

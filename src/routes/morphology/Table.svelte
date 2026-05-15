@@ -3,6 +3,7 @@
 	export let tableType;
 	export let wordData;
 
+	import Plus from '$svgs/Plus.svelte';
 	import { selectableWordTranslations } from '$data/options';
 	import { __wordTranslation } from '$utils/stores';
 	import { buttonClasses, linkClasses } from '$data/commonClasses';
@@ -72,8 +73,11 @@
 			</div>
 
 			{#if totalAvailableWords > maxResultsToLoad}
-				<div class="text-center text-xs {lastWordToLoad === totalAvailableWords && 'hidden'}">
-					<button on:click={updateLastWordToLoad} class={buttonClasses} data-umami-event="Morphology Load More Button"> Load more </button>
+				<div class="text-center text-sm {lastWordToLoad === totalAvailableWords && 'hidden'}">
+					<button on:click={updateLastWordToLoad} class={buttonClasses} data-umami-event="Morphology Load More Button">
+						<Plus />
+						<span>Load More</span>
+					</button>
 				</div>
 			{/if}
 		</div>

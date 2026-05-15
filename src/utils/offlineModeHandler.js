@@ -103,7 +103,7 @@ export async function isUserOnline(timeout = 1000) {
 }
 
 export function showOfflineAlert() {
-	showAlert('It looks like you’re offline. Please connect to the internet to use this feature.', 'settings-drawer');
+	showAlert('It looks like you are offline. Please connect to the internet to use this feature.', 'settings-drawer');
 	return false;
 }
 

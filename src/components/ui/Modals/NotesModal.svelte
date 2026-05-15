@@ -1,5 +1,6 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
+	import Save from '$svgs/Save.svelte';
 	import Trash from '$svgs/Trash.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __verseKey, __userNotes, __notesModalVisible } from '$utils/stores';
@@ -80,18 +81,20 @@
 		<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent placeholder:text-theme-accent/50 resize-none" placeholder="Write your thoughts here..."></textarea>
 
 		{#if noteModifiedAt !== null}
-			<div id="notes-last-modified" class="text-xs mt-4">Modified {noteModifiedAt}.</div>
+			<div id="notes-last-modified" class="opacity-70 mt-4 text-sm">Last Modified: {noteModifiedAt}</div>
 		{/if}
 	</div>
 
 	<div class="flex flex-row space-x-2 flex-shrink-0 mt-4">
 		<button on:click={() => updateNote()} class="w-full {buttonClasses}">
-			{updateButtonText}
+			<Save />
+			<span>{updateButtonText}</span>
 		</button>
 
 		{#if showDeleteButton}
-			<button on:click={() => showConfirm('Are you sure you want to reset this note? This action cannot be undone.', 'notesModal', () => resetNote())} class="w-fit {buttonClasses}">
-				<span><Trash size={5} /></span>
+			<button on:click={() => showConfirm('Are you sure you want to reset this note? This action cannot be undone.', 'notesModal', () => resetNote())} class="w-full {buttonClasses}">
+				<Trash />
+				<span>Delete</span>
 			</button>
 		{/if}
 	</div>

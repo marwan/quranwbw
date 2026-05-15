@@ -3,6 +3,8 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import ArabicVerseWords from '$display/verses/ArabicVerseWords.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
+	import RightArrow from '$svgs/RightArrow.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __tafsirModalVisible, __verseKey, __verseTafsir } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
@@ -93,8 +95,14 @@
 		{#key verse}
 			{#await tafsirData then}
 				<div class="grid grid-cols-2 gap-4 w-full">
-					<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>Previous {term('verse')}</button>
-					<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>Next {term('verse')}</button>
+					<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>
+						<LeftArrow />
+						<span>Previous {term('verse')}</span>
+					</button>
+					<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>
+						<span>Next {term('verse')}</span>
+						<RightArrow />
+					</button>
 				</div>
 			{/await}
 		{/key}
