@@ -40,7 +40,7 @@
 	// invisible (via v4hafsClasses) and we need to restore their visibility.
 	let pageVisible = false;
 
-	$: if ([2, 3].includes($__fontType) || $__websiteTheme) {
+	$: if ([2, 3].includes($__fontType) && $__websiteTheme) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			pageVisible = true;
 		});

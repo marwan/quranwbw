@@ -26,7 +26,7 @@
 	let resultKeys;
 	let totalResults = 0;
 
-	// Cache object to store search results
+	// Cache object to store search results (keyed by query, stores combined results)
 	let searchCache = {};
 
 	// Single reactive statement for search
@@ -34,35 +34,91 @@
 		setVerseKeys();
 	}
 
-	// Get results from cache or API
-	async function getSearchResults(searchQuery) {
-		// Check cache first
-		if (searchCache[searchQuery]) {
-			updateURL(searchQuery);
-			return searchCache[searchQuery];
-		}
-
+	// Fetch results from the Kalimat semantic search API
+	async function fetchKalimatResults(query) {
 		try {
-			const response = await fetch(`https://api.kalimat.dev/search?query=${searchQuery}&numResults=50`, {
+			const response = await fetch(`https://api.kalimat.dev/search?query=${query}&numResults=10`, {
 				headers: {
 					'x-api-key': kalimatPublicApiKey
 				}
 			});
 
-			if (response.status !== 200) {
-				badRequest = true;
-				return null;
-			}
+			if (response.status !== 200) return null;
 
-			const data = await response.json();
-			searchCache[searchQuery] = data;
-			updateURL(searchQuery);
-			return data;
+			return await response.json();
 		} catch (error) {
-			console.warn(error);
-			badRequest = true;
+			// Log but don't throw — a Kalimat failure should not block Quran Cloud results
+			console.warn('[Kalimat API] fetch failed:', error);
 			return null;
 		}
+	}
+
+	// Fetch results from the Quran Cloud keyword search API (English translations)
+	// Returns an array of "chapter:verse" key strings, or [] on 404/error
+	async function fetchQuranCloudKeys(query) {
+		try {
+			const response = await fetch(`https://api.alquran.cloud/v1/search/${encodeURIComponent(query)}/all/en`);
+
+			// 404 means no matches found — treat as empty, not an error
+			if (response.status === 404) return [];
+
+			if (response.status !== 200) return [];
+
+			const json = await response.json();
+
+			// Guard against unexpected response shape
+			if (!json?.data?.matches || !Array.isArray(json.data.matches)) return [];
+
+			// Convert each match to a "chapter:verse" key and deduplicate within this API's results
+			const keySet = new Set();
+			for (const match of json.data.matches) {
+				const chapter = match?.surah?.number;
+				const verse = match?.numberInSurah;
+
+				// Skip malformed entries
+				if (!chapter || !verse) continue;
+
+				keySet.add(`${chapter}:${verse}`);
+			}
+
+			return Array.from(keySet);
+		} catch (error) {
+			// Log but don't throw — a Quran Cloud failure should not block Kalimat results
+			console.warn('[Quran Cloud API] fetch failed:', error);
+			return [];
+		}
+	}
+
+	// Fetch both APIs in parallel and return combined, deduplicated results
+	// Returns: { kalimatData, combinedVerseKeys }
+	async function fetchAllResults(query) {
+		// Fire both requests at the same time — neither waits for the other
+		const [kalimatData, quranCloudKeys] = await Promise.all([fetchKalimatResults(query), fetchQuranCloudKeys(query)]);
+
+		// Extract verse keys from Kalimat results
+		const { verseKeys: kalimatVerseKeys, navigationItems } = processKalimatResults(kalimatData);
+
+		// Merge keys from both APIs into a Set to automatically remove duplicates
+		const mergedKeySet = new Set([...kalimatVerseKeys, ...quranCloudKeys]);
+		const combinedVerseKeys = Array.from(mergedKeySet);
+
+		return { kalimatData, navigationItems, combinedVerseKeys };
+	}
+
+	// Get results from cache or fetch from both APIs
+	async function getSearchResults(query) {
+		// Return cached combined result if available
+		if (searchCache[query]) {
+			updateURL(query);
+			return searchCache[query];
+		}
+
+		const result = await fetchAllResults(query);
+
+		// Cache the combined result for this query
+		searchCache[query] = result;
+		updateURL(query);
+		return result;
 	}
 
 	// Function to update URL
@@ -72,8 +128,9 @@
 		}
 	}
 
-	// Process the API response and separate navigation items from verse keys
-	function processSearchResults(data) {
+	// Process only the Kalimat API response to extract verse keys and navigation items
+	// (Quran Cloud keys are already plain "chapter:verse" strings, no processing needed)
+	function processKalimatResults(data) {
 		if (!data || !Array.isArray(data)) return { verseKeys: [], navigationItems: [] };
 
 		const verseKeys = [];
@@ -111,17 +168,19 @@
 		fetchingNewData = true;
 		badRequest = false;
 
-		const data = await getSearchResults(searchQuery);
+		const result = await getSearchResults(searchQuery);
 
-		if (data) {
-			const { verseKeys, navigationItems } = processSearchResults(data);
+		if (result) {
+			const { navigationItems, combinedVerseKeys } = result;
 
 			navigationResults = navigationItems;
-			totalResults = data.length;
-			resultsFound = verseKeys.length > 0 || navigationItems.length > 0;
 
-			// Set verse keys for the Individual component
-			resultKeys = verseKeys.length > 0 ? sortVerseKeys(verseKeys) : null;
+			// Total results = unique verse keys + navigation items
+			totalResults = combinedVerseKeys.length + navigationItems.length;
+			resultsFound = combinedVerseKeys.length > 0 || navigationItems.length > 0;
+
+			// Sort the final merged verse keys before passing to the display component
+			resultKeys = combinedVerseKeys.length > 0 ? sortVerseKeys(combinedVerseKeys) : null;
 		} else {
 			navigationResults = [];
 			totalResults = 0;
@@ -193,7 +252,7 @@
 			<div id="search-block">
 				<div id="search-results-information" class="text-center text-xs">
 					{#if resultsFound}
-						<span>Showing {totalResults >= 50 ? 'top ' : ''}{totalResults} {totalResults === 1 ? 'result' : 'results'} related to "{searchQuery}".</span>
+						<span>Showing {totalResults} {totalResults === 1 ? 'result' : 'results'} related to "{searchQuery}".</span>
 					{:else if !resultsFound && navigationResults.length === 0}
 						<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results. Please try using a different keyword.</div>
 					{/if}
