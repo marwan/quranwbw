@@ -90,10 +90,13 @@
 	}
 
 	// Fetch both APIs in parallel and return combined, deduplicated results
-	// Returns: { kalimatData, combinedVerseKeys }
+	// Returns null if both APIs fail, otherwise { navigationItems, combinedVerseKeys }
 	async function fetchAllResults(query) {
 		// Fire both requests at the same time — neither waits for the other
 		const [kalimatData, quranCloudKeys] = await Promise.all([fetchKalimatResults(query), fetchQuranCloudKeys(query)]);
+
+		// If both APIs failed, signal a total failure to the caller
+		if (kalimatData === null && quranCloudKeys.length === 0) return null;
 
 		// Extract verse keys from Kalimat results
 		const { verseKeys: kalimatVerseKeys, navigationItems } = processKalimatResults(kalimatData);
@@ -102,7 +105,7 @@
 		const mergedKeySet = new Set([...kalimatVerseKeys, ...quranCloudKeys]);
 		const combinedVerseKeys = Array.from(mergedKeySet);
 
-		return { kalimatData, navigationItems, combinedVerseKeys };
+		return { navigationItems, combinedVerseKeys };
 	}
 
 	// Get results from cache or fetch from both APIs
@@ -182,7 +185,11 @@
 
 			// Sort the final merged verse keys before passing to the display component
 			resultKeys = combinedVerseKeys.length > 0 ? sortVerseKeys(combinedVerseKeys) : null;
-		} else {
+		}
+
+		// Both APIs returned no usable data
+		else {
+			badRequest = true;
 			navigationResults = [];
 			totalResults = 0;
 			resultsFound = false;
