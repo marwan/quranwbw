@@ -15,6 +15,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { getMushafWordFontLink, isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 
+	const mushafFontTypes = [2, 3];
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	const chapter = key.split(':')[0];
 	const verse = key.split(':')[1];
@@ -22,29 +23,35 @@
 	const transliterationWords = value.words.transliteration;
 	const translationWords = value.words.translation;
 
-	// fix for Ba'da Ma Ja'aka for page 254
+	// fix for Ba'da and Ma Ja'aka for page 254
 	// since it's just a cosmetic change, there's no need of changing it at database level
 	const fixedMushafWords = {
 		'13:37:8': 'ﱿ', // 6th line last word - Ba'da
 		'13:37:9': 'ﲀﲁ' // 7th line first word - Ma Ja'aka
 	};
 
-	$: displayIsContinuous = selectableDisplays[$__displayType].continuous;
-
 	// Words start invisible and are revealed once the page font is loaded.
 	// `pageVisible` is intentionally a plain `let` (not a store) so each verse
 	// component manages its own page's visibility independently — setting it to
 	// `true` triggers Svelte to re-render and drop the `invisible` class naturally,
 	// without fighting Svelte's DOM patching via classList.remove().
-	// Re-runs on theme change too, since switching themes resets words back to
-	// invisible (via v4hafsClasses) and we need to restore their visibility.
 	let pageVisible = false;
 
-	$: if ([2, 3].includes($__fontType) || $__websiteTheme) {
+	// Load the Mushaf font and reveal words whenever the font type switches to 2 or 3.
+	$: if (mushafFontTypes.includes($__fontType)) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			pageVisible = true;
 		});
 	}
+
+	// Re-run on theme change when already using font type 2 or 3 — switching themes
+	// resets words back to invisible (via v4hafsClasses) and we need to restore their visibility.
+	$: if ($__websiteTheme && mushafFontTypes.includes($__fontType)) {
+		pageVisible = true;
+	}
+
+	// True when the active display type renders verses as a continuous flow
+	$: displayIsContinuous = selectableDisplays[$__displayType].continuous;
 
 	// Handles click interactions on words and verse-end icons.
 	//
@@ -86,7 +93,7 @@
 		hover:cursor-pointer
 		hover:bg-theme-accent/5
 		${$__displayType === 1 ? 'text-center flex flex-col' : 'inline-flex flex-col'}
-		${selectableDisplays[$__displayType].layout === 'wbw' ? 'p-3' : [2, 3].includes($__fontType) ? ($__currentPage === 'mushaf' ? 'p-0' : 'px-0 py-1') : 'p-1'}
+		${selectableDisplays[$__displayType].layout === 'wbw' ? 'p-3' : mushafFontTypes.includes($__fontType) ? ($__currentPage === 'mushaf' ? 'p-0' : 'px-0 py-1') : 'p-1'}
 		${exampleVerse && '!p-0'}
 	`;
 
@@ -179,7 +186,7 @@
 		>
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 				<!-- Mushaf fonts -->
-				{#if [2, 3].includes($__fontType)}
+				{#if mushafFontTypes.includes($__fontType)}
 					<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" class={v4hafsClasses}>
 						<!-- word fix, see fixedMushafWords -->
 						{#if Object.prototype.hasOwnProperty.call(fixedMushafWords, wordKey)}
@@ -234,7 +241,7 @@
 	<div class={endIconClasses} on:click={() => wordClickHandler({ key, type: 'end' })}>
 		<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 			<!-- Mushaf fonts -->
-			{#if [2, 3].includes($__fontType)}
+			{#if mushafFontTypes.includes($__fontType)}
 				<span style="font-family: p{value.meta.page}" class="{v4hafsClasses} custom-ayah-icon-color">{value.words.end}</span>
 
 				<!-- Everything except Mushaf fonts -->
