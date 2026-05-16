@@ -164,6 +164,7 @@
 		searchQuery = query;
 	}
 
+	// Fetch results from both APIs, then update the reactive display variables
 	async function setVerseKeys() {
 		fetchingNewData = true;
 		badRequest = false;
