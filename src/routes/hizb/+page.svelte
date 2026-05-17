@@ -30,10 +30,12 @@
 
 	__pageURL.set(1);
 	__currentPage.set('hizb');
+
+	let description = `Quran ${term('hizb')} ${hizbNumber}`;
 </script>
 
 {#key hizbNumber}
-	<PageHead title={`${term('hizb')} ${hizbNumber}`} />
+	<PageHead title={`${term('hizb')} ${hizbNumber}`} {description} />
 {/key}
 
 {#await hizbKeysData}

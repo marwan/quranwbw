@@ -100,9 +100,10 @@
 	}
 
 	__currentPage.set('Guess The Word');
+	let description = 'Test your knowledge of Quranic vocabulary with our Guess The Word game!';
 </script>
 
-<PageHead title={'Guess The Word'} />
+<PageHead title={'Guess The Word'} {description} />
 
 <div class="space-y-12">
 	{#await randomWordsData}

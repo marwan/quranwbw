@@ -30,10 +30,12 @@
 
 	__pageURL.set(1);
 	__currentPage.set('juz');
+
+	let description = `Quran ${term('juz')} ${juzNumber}`;
 </script>
 
 {#key juzNumber}
-	<PageHead title={`${term('juz')} ${juzNumber}`} />
+	<PageHead title={`${term('juz')} ${juzNumber}`} {description} />
 {/key}
 
 {#await juzKeysData}

@@ -219,9 +219,10 @@
 	$__displayType = 4;
 
 	__currentPage.set('mushaf');
+	let description = `Mushaf page ${page} of Quran`;
 </script>
 
-<PageHead title={`Page ${page}`} />
+<PageHead title={`Page ${page}`} {description} />
 
 {#await pageData}
 	<Spinner />
