@@ -54,7 +54,7 @@
 	__currentPage.set('chapter');
 </script>
 
-<PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber})`} />
+<PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber}${$page.url.searchParams.get('startVerse') ? ':' + startVerse : ''})`} />
 
 {#await chapterData}
 	<Spinner />
