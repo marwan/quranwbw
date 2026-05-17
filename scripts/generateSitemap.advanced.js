@@ -122,7 +122,7 @@ const indexXml =
         .map(
             (f) => `
   <sitemap>
-    <loc>${baseURL}/static/${f}</loc>
+    <loc>${baseURL}/${f}</loc>
     <lastmod>${today}</lastmod>
   </sitemap>`
         )

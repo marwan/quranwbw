@@ -2,27 +2,27 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <sitemap>
-    <loc>https://quranwbw.com/static/sitemap-static.xml</loc>
+    <loc>https://quranwbw.com/sitemap-static.xml</loc>
     <lastmod>2026-05-17</lastmod>
   </sitemap>
 
   <sitemap>
-    <loc>https://quranwbw.com/static/sitemap-chapters.xml</loc>
+    <loc>https://quranwbw.com/sitemap-chapters.xml</loc>
     <lastmod>2026-05-17</lastmod>
   </sitemap>
 
   <sitemap>
-    <loc>https://quranwbw.com/static/sitemap-divisions.xml</loc>
+    <loc>https://quranwbw.com/sitemap-divisions.xml</loc>
     <lastmod>2026-05-17</lastmod>
   </sitemap>
 
   <sitemap>
-    <loc>https://quranwbw.com/static/sitemap-verses.xml</loc>
+    <loc>https://quranwbw.com/sitemap-verses.xml</loc>
     <lastmod>2026-05-17</lastmod>
   </sitemap>
 
   <sitemap>
-    <loc>https://quranwbw.com/static/sitemap-topics.xml</loc>
+    <loc>https://quranwbw.com/sitemap-topics.xml</loc>
     <lastmod>2026-05-17</lastmod>
   </sitemap>
 </sitemapindex>
