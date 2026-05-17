@@ -85,7 +85,7 @@ export const selectableFontTypes = {
 		name: 'Mushaf 1441H',
 		order: 3,
 		disallowedInPages: [],
-		version: 5
+		version: 6
 	},
 	3: {
 		id: 2,
@@ -93,7 +93,7 @@ export const selectableFontTypes = {
 		name: 'Mushaf Tajweed 1441H',
 		order: 4,
 		disallowedInPages: [],
-		version: 5
+		version: 6
 	},
 	4: {
 		id: 3,
@@ -141,7 +141,7 @@ export const selectableFontTypes = {
 		name: 'Indonesian Isep Misbah Digital Font',
 		order: 9,
 		disallowedInPages: ['mushaf'],
-		version: 2
+		version: 3
 	},
 	10: {
 		id: 13,
@@ -686,7 +686,7 @@ export const selectableWordTranslations = {
 	22: {
 		id: 22,
 		language: 'Sign Language',
-		version: 1
+		version: 2
 	}
 };
 
