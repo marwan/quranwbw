@@ -9,9 +9,10 @@
 	const html = marked.parse(markdown);
 
 	__currentPage.set('changelog');
+	let description = 'Discover the latest updates, features, and improvements in QuranWBW.com.';
 </script>
 
-<PageHead title={'Changelog'} />
+<PageHead title={'Changelog'} {description} />
 
 <div class="markdown mx-auto">
 	{@html html}

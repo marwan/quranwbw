@@ -85,9 +85,10 @@
 	});
 
 	__currentPage.set('topics');
+	let description = `See all verses in the Quran related to ${selectedTopicName}`;
 </script>
 
-<PageHead title="Topics" />
+<PageHead title="Topics" {description} />
 
 <div class="mx-auto max-w-6xl">
 	{#if isLoading}

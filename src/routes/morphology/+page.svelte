@@ -9,8 +9,9 @@
 	if (![1, 2].includes($__displayType)) $__displayType = 1;
 
 	__currentPage.set('morphology');
+	let description = `Morphology of the word "${$__morphologyKey}" in the Quran, including its root, pattern, and grammatical features.`;
 </script>
 
-<PageHead title={`Morphology ${$__morphologyKey}`} />
+<PageHead title={`Morphology ${$__morphologyKey}`} {description} />
 
 <MorphologyView {data} />

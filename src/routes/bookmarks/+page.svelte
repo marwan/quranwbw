@@ -9,9 +9,10 @@
 	if ([3, 4].includes($__displayType)) $__displayType = 1;
 
 	__currentPage.set('bookmarks');
+	let description = 'All the verses you have marked for quick reference.';
 </script>
 
-<PageHead title={'Bookmarks'} />
+<PageHead title={'Bookmarks'} {description} />
 
 <div id="individual-verses-block">
 	{#if $__userBookmarks.length === 0}

@@ -52,9 +52,10 @@
 	}
 
 	__currentPage.set('chapter');
+	let description = `Read Chapter ${$__chapterNumber} ${quranMetaData[$__chapterNumber].transliteration} of the Quran ${startVerse ? 'starting from ' + term('verse') + ' ' + startVerse : ''}.`;
 </script>
 
-<PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber}${$page.url.searchParams.get('startVerse') ? ':' + startVerse : ''})`} />
+<PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber}${$page.url.searchParams.get('startVerse') ? ':' + startVerse : ''})`} {description} />
 
 {#await chapterData}
 	<Spinner />
