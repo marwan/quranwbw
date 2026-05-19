@@ -12,6 +12,8 @@ export const wordsAudioURL = 'https://audios.quranwbw.com/words';
 
 export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4`;
 
+export const chapterHeaderFontLink = `${staticEndpoint}/fonts/Extras/chapter-headers/NeoHeader_COLOR-Regular.woff2?version=12`;
+
 const chapterHeaderBasePath = `${staticEndpoint}/fonts/Extras/chapter-headers/v2/Color`;
 export const chapterHeaderFontMap = {
 	regular: `${chapterHeaderBasePath}/QCF_SurahHeader_COLOR-Regular.woff2?version=1`,

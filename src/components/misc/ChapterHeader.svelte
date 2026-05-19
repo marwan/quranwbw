@@ -60,14 +60,14 @@
 	});
 </script>
 
+<!-- Mushaf layout: left-aligned, larger vertical padding, no explicit text-align -->
 {#if $__currentPage === 'mushaf'}
-	<!-- Mushaf layout: left-aligned, larger vertical padding, no explicit text-align -->
 	<div style="font-family: {activeFontFamily}; line-height: 0;" class="header invisible pt-4 md:pt-8 pb-6 text-[28vw] md:text-[195px] lg:text-[195px]">
 		{chapterHeaderCodes[chapter]}
 	</div>
+
+	<!-- Default layout: centred, zero line-height to tighten the decorative glyph, wider bottom padding to give breathing room below the header -->
 {:else}
-	<!-- Default layout: centred, zero line-height to tighten the decorative glyph,
-	     wider bottom padding to give breathing room below the header -->
 	<div style="font-family: {activeFontFamily}; line-height: 0;" class="header invisible pt-4 md:pt-8 pb-10 text-[26vw] md:text-[290px] lg:text-[300px] text-center">
 		{chapterHeaderCodes[chapter]}
 	</div>
