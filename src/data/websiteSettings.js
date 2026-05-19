@@ -6,13 +6,18 @@ export const websiteTitle = `Quran ${websiteTagline} - ${websiteURL}`;
 
 export const wbwLanguages = 'English, Urdu, Hindi, Indonesian, Bangla, Turkish, Tamil, French, German, Chinese, Malayalam, Divehi, Sindhi, Persian and Albanian';
 
-export const staticEndpoint = 'https://static.quranwbw.com/data/v4';
+export const staticEndpoint = 'https://new-chapter-headers.quranwbw-static.pages.dev/data/v4';
 
 export const wordsAudioURL = 'https://audios.quranwbw.com/words';
 
 export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4`;
 
-export const chapterHeaderFontLink = `${staticEndpoint}/fonts/Extras/chapter-headers/NeoHeader_COLOR-Regular.woff2?version=12`;
+const chapterHeaderBasePath = `${staticEndpoint}/fonts/Extras/chapter-headers/v2/Color`;
+export const chapterHeaderFontMap = {
+	regular: `${chapterHeaderBasePath}/QCF_SurahHeader_COLOR-Regular.woff2?version=1`,
+	wide: `${chapterHeaderBasePath}/QCF_SurahHeaderW_COLOR-Regular.woff2?version=1`,
+	ultraWide: `${chapterHeaderBasePath}/QCF_SurahHeaderUW_COLOR-Regular.woff2?version=1`
+};
 
 export const cdnStaticDataUrls = {
 	fullQuranUthmani: `${staticEndpoint}/full-quran/uthmani.json?version=1`,
