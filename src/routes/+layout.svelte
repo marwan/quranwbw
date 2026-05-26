@@ -18,6 +18,7 @@
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
 	import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
+	import AudioPlayer from '$src/components/audio/AudioPlayer.svelte';
 
 	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
@@ -195,6 +196,9 @@
 	<CopyShareVerseModal />
 	<FavoriteChaptersModal />
 	<ConfirmationAlertModal />
+
+	<!-- global audio player — kept outside the keyed block so it survives navigation -->
+	<AudioPlayer />
 
 	{#key $page.url.pathname}
 		<div in:fade={{ duration: 300 }}>

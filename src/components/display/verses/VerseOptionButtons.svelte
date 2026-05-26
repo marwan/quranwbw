@@ -10,8 +10,8 @@
 	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
 	import Eye from '$svgs/Eye.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
-	import { playVerseAudio, resetAudioSettings, showAudioModal, playButtonHandler, prepareVersesToPlay } from '$utils/audioController';
-	import { __currentPage, __userSettings, __audioSettings, __verseKey, __userNotes, __notesModalVisible, __playButtonsFunctionality, __displayType, __verseWordBlocks } from '$utils/stores';
+	import { playVerseAudio, resetAudioSettings, showAudioModal, playButtonHandler, prepareVersesToPlay, togglePlayPause } from '$utils/audioController';
+	import { __currentPage, __userSettings, __audioSettings, __verseKey, __userNotes, __notesModalVisible, __playButtonsFunctionality, __displayType, __verseWordBlocks, __playback } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { quranMetaData } from '$data/quranMeta';
@@ -27,8 +27,12 @@
 	$: userBookmarks = JSON.parse($__userSettings).userBookmarks;
 
 	async function audioHandler(key) {
-		// Stop any audio if something is playing
-		if ($__audioSettings.isPlaying) return resetAudioSettings({ location: 'end' });
+		// If a session is active for THIS verse, toggle pause/resume instead of restarting it
+		if ($__playback !== 'idle') {
+			if ($__audioSettings.playingKey === key) return togglePlayPause();
+			// A different verse is active — stop it first, then start this one
+			resetAudioSettings({ location: 'end' });
+		}
 
 		// For these pages, perform action depending on the play button functionality set by the user
 		if (['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb', 'topics'].includes($__currentPage)) {
@@ -88,7 +92,7 @@
 			<!-- play verse button -->
 			<button on:click={() => audioHandler(key)} class={buttonClasses} aria-label="Play">
 				<div>
-					<svelte:component this={$__audioSettings.isPlaying && $__audioSettings.playingKey === key ? Pause : Play} size={3.5} />
+					<svelte:component this={$__playback !== 'idle' && $__audioSettings.playingKey === key ? Pause : Play} size={3.5} />
 				</div>
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Play</Tooltip>
