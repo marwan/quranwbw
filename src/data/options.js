@@ -85,7 +85,7 @@ export const selectableFontTypes = {
 		name: 'Mushaf 1441H',
 		order: 3,
 		disallowedInPages: [],
-		version: 6
+		version: 7
 	},
 	3: {
 		id: 2,
@@ -93,7 +93,7 @@ export const selectableFontTypes = {
 		name: 'Mushaf Tajweed 1441H',
 		order: 4,
 		disallowedInPages: [],
-		version: 6
+		version: 7
 	},
 	4: {
 		id: 3,
