@@ -14,7 +14,7 @@
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import Edit2 from '$svgs/Edit2.svelte';
-	import Library from '$svgs/Library.svelte';
+	import Clock from '$svgs/Clock.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
 	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
@@ -326,7 +326,7 @@
 
 							{#if $__readingHistory.length > 1}
 								<button class="{continueReadingButtonClasses} flex-shrink-0 px-5" aria-label="Reading history" aria-haspopup="dialog" on:click={() => (readingHistoryModalOpen = true)}>
-									<Library size={4} />
+									<Clock size={5} />
 								</button>
 							{/if}
 						</div>
