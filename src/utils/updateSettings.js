@@ -31,9 +31,11 @@ import {
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__offlineModeSettings,
-	__homepageLayoutPreferences
+	__homepageLayoutPreferences,
+	__readingHistory
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
+import { updateReadingHistory } from '$utils/readingHistory';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -261,6 +263,8 @@ export function updateSettings(props) {
 				data['currentPage'] = get(__currentPage);
 				__lastRead.set(data);
 				userSettings.lastRead = props.value;
+				userSettings.readingHistory = updateReadingHistory({ history: userSettings.readingHistory, data });
+				__readingHistory.set(userSettings.readingHistory);
 			}
 			break;
 
