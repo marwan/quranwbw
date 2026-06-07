@@ -10,7 +10,7 @@
 </script>
 
 <Modal id="readingHistoryModal" bind:open transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
-	<h3 id="reading-history-modal-title" class="mb-6 text-xl font-medium flex-shrink-0">Reading History</h3>
+	<h3 id="reading-history-modal-title" class="mb-6 text-xl font-medium flex-shrink-0">Last read history</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
 		<div class="grid gap-3 w-full p-2">
@@ -19,7 +19,6 @@
 					<div class="flex-1 min-w-0 overflow-hidden">
 						<div class="line-clamp-1">
 							{item.chapter}. {quranMetaData[item.chapter].transliteration}
-							({quranMetaData[item.chapter].translation})
 						</div>
 
 						<div class="text-xs opacity-70">
