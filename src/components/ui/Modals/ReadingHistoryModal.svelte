@@ -2,7 +2,6 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import { __readingHistory } from '$utils/stores';
 	import { quranMetaData } from '$data/quranMeta';
-	import { term } from '$utils/terminologies';
 	import { individualCheckboxClasses } from '$data/commonClasses';
 	import { getModalTransition } from '$utils/getModalTransition';
 
@@ -14,16 +13,12 @@
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
 		<div class="grid gap-3 w-full p-2">
-			{#each $__readingHistory as item (item.id)}
+			{#each $__readingHistory as item, index (item.id)}
 				<a href={`/${item.chapter}?startVerse=${item.verse}`} class="{individualCheckboxClasses} flex items-center gap-3 w-full min-w-0 overflow-hidden" on:click={() => (open = false)}>
 					<div class="flex-1 min-w-0 overflow-hidden">
 						<div class="line-clamp-1">
-							{item.chapter}. {quranMetaData[item.chapter].transliteration}
-						</div>
-
-						<div class="text-xs opacity-70">
-							{term('verse')}
-							{item.verse}
+							#{index + 1}. {quranMetaData[item.chapter].transliteration}
+							({item.chapter}:{item.verse})
 						</div>
 					</div>
 
