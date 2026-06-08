@@ -12,26 +12,24 @@
 	import { tafsirDataUrls } from '$data/websiteSettings';
 
 	let tafsirData;
-	const tafsirLogPrefix = '[tafsir-modal]';
 
 	$: selectedTafsirId = $__verseTafsir || 30;
 	$: selectedTafsir = selectableTafsirs[selectedTafsirId];
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
-	$: {
-		if ($__tafsirModalVisible && selectedTafsir && chapter) {
-			tafsirData = loadTafsirData(selectedTafsir, selectedTafsirId, chapter);
-		}
+	// Re-fetch when the modal opens or the chapter/tafsir selection changes
+	$: if ($__tafsirModalVisible && selectedTafsir && chapter) {
+		tafsirData = loadTafsirData(selectedTafsir, selectedTafsirId, chapter);
 	}
 
-	// CSS classes for Tafsir text based on selected Tafsir language
+	// CSS classes for tafsir text; RTL + larger font for Arabic/Urdu tafsirs
 	$: tafsirTextClasses = `
 		flex flex-col space-y-4
 		${['Arabic', 'Urdu'].includes(selectedTafsir.language) && 'direction-rtl text-lg'}
 		${selectedTafsir.font}
 	`;
 
-	// Scroll to top if verse changes
+	// Scroll to top when navigating to a different verse
 	$: if ($__tafsirModalVisible && verse) {
 		try {
 			const tafsirModal = document.getElementById('tafsirModal');
@@ -43,18 +41,16 @@
 		}
 	}
 
-	// Replaces each newline (\n) with a configurable number of <br /> tags for HTML rendering
+	// Normalizes line breaks: blank lines become paragraph breaks, single newlines become <br />
 	function formatTafsir(text) {
-		const lineBreak = '<br />';
-		const paragraphBreak = '<br /><br />';
-
 		return String(text ?? '')
 			.trim()
 			.replace(/\r\n?/g, '\n')
-			.replace(/\n[ \t]*\n+/g, paragraphBreak)
-			.replace(/\n/g, lineBreak);
+			.replace(/\n[ \t]*\n+/g, '<br /><br />')
+			.replace(/\n/g, '<br />');
 	}
 
+	// Fetches the chapter JSON and returns a normalized { ayahs: [...] } object
 	async function loadTafsirData(selectedTafsir, selectedTafsirId, chapter) {
 		if (!selectedTafsir) {
 			throw new Error(`Unknown tafsir selected: ${selectedTafsirId}`);
@@ -63,96 +59,30 @@
 		const baseUrl = tafsirDataUrls[selectedTafsir.url];
 
 		if (!baseUrl) {
-			throw new Error(`Missing tafsir data URL for provider ${selectedTafsir.url}`);
+			throw new Error(`Missing tafsir data URL for provider: ${selectedTafsir.url}`);
 		}
 
 		const url = `${baseUrl}/${selectedTafsir.slug}/${chapter}.json`;
-		const context = {
-			chapter,
-			selectedTafsirId,
-			tafsirName: selectedTafsir.name,
-			slug: selectedTafsir.slug,
-			url
-		};
+		const data = await fetchAndCacheJson(url, 'tafsir');
 
-		console.info(`${tafsirLogPrefix} loading`, context);
-
-		try {
-			const data = await fetchAndCacheJson(url, 'tafsir');
-			const ayahs = normalizeTafsirAyahs(data, context);
-
-			console.info(`${tafsirLogPrefix} loaded`, {
-				...context,
-				responseShape: getTafsirResponseShape(data),
-				ayahsCount: ayahs.length,
-				firstAyahKeys: ayahs[0] && typeof ayahs[0] === 'object' ? Object.keys(ayahs[0]) : null
-			});
-
-			return { ayahs };
-		} catch (error) {
-			console.warn(`${tafsirLogPrefix} failed`, {
-				...context,
-				error
-			});
-			throw error;
-		}
+		return { ayahs: normalizeTafsirAyahs(data, selectedTafsir.name) };
 	}
 
-	function normalizeTafsirAyahs(data, context) {
-		if (Array.isArray(data)) {
-			return data;
-		}
+	// Supports both flat array and { ayahs: [...] } / { ayahs: {...} } response shapes
+	function normalizeTafsirAyahs(data, tafsirName) {
+		if (Array.isArray(data)) return data;
 
 		if (data && typeof data === 'object') {
-			if (Array.isArray(data.ayahs)) {
-				return data.ayahs;
-			}
-
-			if (data.ayahs && typeof data.ayahs === 'object') {
-				return Object.values(data.ayahs);
-			}
+			if (Array.isArray(data.ayahs)) return data.ayahs;
+			if (data.ayahs && typeof data.ayahs === 'object') return Object.values(data.ayahs);
 		}
 
-		const responseShape = getTafsirResponseShape(data);
-		console.warn(`${tafsirLogPrefix} unexpected response shape`, {
-			...context,
-			responseShape,
-			data
-		});
-
-		throw new Error(`Unexpected tafsir response shape for ${context.tafsirName}. Expected an array or an object with ayahs, received ${responseShape.type}.`);
+		throw new Error(`Unexpected response shape for tafsir: ${tafsirName}`);
 	}
 
-	function getTafsirResponseShape(data) {
-		if (Array.isArray(data)) {
-			return {
-				type: 'array',
-				length: data.length,
-				firstItemKeys: data[0] && typeof data[0] === 'object' ? Object.keys(data[0]) : null
-			};
-		}
-
-		if (data && typeof data === 'object') {
-			return {
-				type: 'object',
-				keys: Object.keys(data).slice(0, 10),
-				ayahsType: Array.isArray(data.ayahs) ? 'array' : typeof data.ayahs,
-				ayahsLength: Array.isArray(data.ayahs) ? data.ayahs.length : undefined
-			};
-		}
-
-		return {
-			type: typeof data,
-			value: data
-		};
-	}
-
+	// Returns the tafsir entry for the given chapter:verse, or undefined if not found
 	function findTafsirForVerse(ayahs, chapter, verse) {
-		return ayahs.find((tafsir) => Number(tafsir?.surah) === chapter && Number(tafsir?.ayah) === verse);
-	}
-
-	function createMissingTafsirError(chapter, verse) {
-		return new Error(`No tafsir text found for ${chapter}:${verse} in ${selectedTafsir?.name || 'the selected tafsir'}.`);
+		return ayahs.find((item) => Number(item?.surah) === chapter && Number(item?.ayah) === verse);
 	}
 </script>
 
@@ -182,14 +112,10 @@
 				<div class="text-sm flex flex-col space-y-6">
 					<div class="flex flex-col space-y-4">
 						<div class={tafsirTextClasses}>
-							{#if tafsir}
-								{#if tafsir.text}
-									{@html formatTafsir(tafsir.text)}
-								{:else}
-									<ErrorLoadingData center="false" error={createMissingTafsirError(chapter, verse)} />
-								{/if}
+							{#if tafsir?.text}
+								{@html formatTafsir(tafsir.text)}
 							{:else}
-								<ErrorLoadingData center="false" error={createMissingTafsirError(chapter, verse)} />
+								<ErrorLoadingData center="false" error={new Error(`No tafsir found for ${chapter}:${verse}`)} />
 							{/if}
 						</div>
 					</div>

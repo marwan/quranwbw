@@ -223,6 +223,7 @@ export const selectableTafsirs = {
 		url: 1
 	},
 
+	// Urdu
 	61: {
 		id: 61,
 		author: 'Hafiz Ibn Kathir',
