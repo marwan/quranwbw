@@ -12,16 +12,15 @@
 	import { tafsirDataUrls } from '$data/websiteSettings';
 
 	let tafsirData;
+	const tafsirLogPrefix = '[tafsir-modal]';
 
-	$: selectedTafirId = $__verseTafsir || 30;
-	$: selectedTafsir = selectableTafsirs[selectedTafirId];
+	$: selectedTafsirId = $__verseTafsir || 30;
+	$: selectedTafsir = selectableTafsirs[selectedTafsirId];
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
 
 	$: {
-		if ($__tafsirModalVisible) {
-			tafsirData = (async () => {
-				return await fetchAndCacheJson(`${tafsirDataUrls[selectedTafsir.url]}/${selectedTafsir.slug}/${chapter}.json`, 'tafsir');
-			})();
+		if ($__tafsirModalVisible && selectedTafsir && chapter) {
+			tafsirData = loadTafsirData(selectedTafsir, selectedTafsirId, chapter);
 		}
 	}
 
@@ -46,7 +45,114 @@
 
 	// Replaces each newline (\n) with a configurable number of <br /> tags for HTML rendering
 	function formatTafsir(text) {
-		return text.replace(/\n/g, '<br />'.repeat(selectedTafsir?.brPerNewline || 2));
+		const lineBreak = '<br />';
+		const paragraphBreak = '<br /><br />';
+
+		return String(text ?? '')
+			.trim()
+			.replace(/\r\n?/g, '\n')
+			.replace(/\n[ \t]*\n+/g, paragraphBreak)
+			.replace(/\n/g, lineBreak);
+	}
+
+	async function loadTafsirData(selectedTafsir, selectedTafsirId, chapter) {
+		if (!selectedTafsir) {
+			throw new Error(`Unknown tafsir selected: ${selectedTafsirId}`);
+		}
+
+		const baseUrl = tafsirDataUrls[selectedTafsir.url];
+
+		if (!baseUrl) {
+			throw new Error(`Missing tafsir data URL for provider ${selectedTafsir.url}`);
+		}
+
+		const url = `${baseUrl}/${selectedTafsir.slug}/${chapter}.json`;
+		const context = {
+			chapter,
+			selectedTafsirId,
+			tafsirName: selectedTafsir.name,
+			slug: selectedTafsir.slug,
+			url
+		};
+
+		console.info(`${tafsirLogPrefix} loading`, context);
+
+		try {
+			const data = await fetchAndCacheJson(url, 'tafsir');
+			const ayahs = normalizeTafsirAyahs(data, context);
+
+			console.info(`${tafsirLogPrefix} loaded`, {
+				...context,
+				responseShape: getTafsirResponseShape(data),
+				ayahsCount: ayahs.length,
+				firstAyahKeys: ayahs[0] && typeof ayahs[0] === 'object' ? Object.keys(ayahs[0]) : null
+			});
+
+			return { ayahs };
+		} catch (error) {
+			console.warn(`${tafsirLogPrefix} failed`, {
+				...context,
+				error
+			});
+			throw error;
+		}
+	}
+
+	function normalizeTafsirAyahs(data, context) {
+		if (Array.isArray(data)) {
+			return data;
+		}
+
+		if (data && typeof data === 'object') {
+			if (Array.isArray(data.ayahs)) {
+				return data.ayahs;
+			}
+
+			if (data.ayahs && typeof data.ayahs === 'object') {
+				return Object.values(data.ayahs);
+			}
+		}
+
+		const responseShape = getTafsirResponseShape(data);
+		console.warn(`${tafsirLogPrefix} unexpected response shape`, {
+			...context,
+			responseShape,
+			data
+		});
+
+		throw new Error(`Unexpected tafsir response shape for ${context.tafsirName}. Expected an array or an object with ayahs, received ${responseShape.type}.`);
+	}
+
+	function getTafsirResponseShape(data) {
+		if (Array.isArray(data)) {
+			return {
+				type: 'array',
+				length: data.length,
+				firstItemKeys: data[0] && typeof data[0] === 'object' ? Object.keys(data[0]) : null
+			};
+		}
+
+		if (data && typeof data === 'object') {
+			return {
+				type: 'object',
+				keys: Object.keys(data).slice(0, 10),
+				ayahsType: Array.isArray(data.ayahs) ? 'array' : typeof data.ayahs,
+				ayahsLength: Array.isArray(data.ayahs) ? data.ayahs.length : undefined
+			};
+		}
+
+		return {
+			type: typeof data,
+			value: data
+		};
+	}
+
+	function findTafsirForVerse(ayahs, chapter, verse) {
+		return ayahs.find((tafsir) => Number(tafsir?.surah) === chapter && Number(tafsir?.ayah) === verse);
+	}
+
+	function createMissingTafsirError(chapter, verse) {
+		return new Error(`No tafsir text found for ${chapter}:${verse} in ${selectedTafsir?.name || 'the selected tafsir'}.`);
 	}
 </script>
 
@@ -68,6 +174,7 @@
 			{#await tafsirData}
 				<Spinner inline={true} />
 			{:then data}
+				{@const tafsir = findTafsirForVerse(data.ayahs, chapter, verse)}
 				<div class="py-4">
 					<ArabicVerseWords key="{chapter}:{verse}" />
 				</div>
@@ -75,11 +182,15 @@
 				<div class="text-sm flex flex-col space-y-6">
 					<div class="flex flex-col space-y-4">
 						<div class={tafsirTextClasses}>
-							{#each Object.entries(data.ayahs) as [_, tafsir]}
-								{#if tafsir.surah === chapter && tafsir.ayah === verse}
+							{#if tafsir}
+								{#if tafsir.text}
 									{@html formatTafsir(tafsir.text)}
+								{:else}
+									<ErrorLoadingData center="false" error={createMissingTafsirError(chapter, verse)} />
 								{/if}
-							{/each}
+							{:else}
+								<ErrorLoadingData center="false" error={createMissingTafsirError(chapter, verse)} />
+							{/if}
 						</div>
 					</div>
 				</div>
