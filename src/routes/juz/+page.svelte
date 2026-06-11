@@ -8,6 +8,8 @@
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import { page } from '$app/stores';
 
+	$: description = `Quran ${term('juz')} ${juzNumber}`;
+
 	// Allow only supported display types; fallback to default without saving to settings
 	if ([3, 4].includes($__displayType)) $__displayType = 1;
 
@@ -30,8 +32,6 @@
 
 	__pageURL.set(1);
 	__currentPage.set('juz');
-
-	let description = `Quran ${term('juz')} ${juzNumber}`;
 </script>
 
 {#key juzNumber}

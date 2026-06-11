@@ -5,11 +5,12 @@
 	import { __currentPage, __displayType, __userBookmarks } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 
+	const description = 'All the verses you have marked for quick reference.';
+
 	// Allow only supported display types; fallback to default without saving to settings
 	if ([3, 4].includes($__displayType)) $__displayType = 1;
 
 	__currentPage.set('bookmarks');
-	let description = 'All the verses you have marked for quick reference.';
 </script>
 
 <PageHead title={'Bookmarks'} {description} />

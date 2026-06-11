@@ -22,6 +22,8 @@
 	import { fade } from 'svelte/transition';
 	import '$utils/swiped-events.min.js';
 
+	$: description = `Mushaf page ${page} of Quran`;
+
 	let pageData;
 	let startingLine;
 	let endingLine;
@@ -219,7 +221,6 @@
 	$__displayType = 4;
 
 	__currentPage.set('mushaf');
-	let description = `Mushaf page ${page} of Quran`;
 </script>
 
 <PageHead title={`Page ${page}`} {description} />
