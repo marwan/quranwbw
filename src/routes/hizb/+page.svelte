@@ -8,8 +8,6 @@
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import { page } from '$app/stores';
 
-	$: description = `Quran ${term('hizb')} ${hizbNumber}`;
-
 	// Allow only supported display types; fallback to default without saving to settings
 	if ([3, 4].includes($__displayType)) $__displayType = 1;
 
@@ -35,7 +33,7 @@
 </script>
 
 {#key hizbNumber}
-	<PageHead title={`${term('hizb')} ${hizbNumber}`} {description} />
+	<PageHead title={`${term('hizb')} ${hizbNumber}`} description={`Quran ${term('hizb')} ${hizbNumber}`} />
 {/key}
 
 {#await hizbKeysData}
