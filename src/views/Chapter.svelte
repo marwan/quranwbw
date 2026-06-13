@@ -19,6 +19,8 @@
 
 	let chapterData;
 
+	$: description = `Read Chapter ${$__chapterNumber} ${quranMetaData[$__chapterNumber].transliteration} of the Quran ${startVerse ? 'starting from ' + term('verse') + ' ' + startVerse : ''}.`;
+
 	// Fetch verses whenever there's a change in chapter or URL parameters
 	$: {
 		// Update current chapter number
@@ -52,10 +54,9 @@
 	}
 
 	__currentPage.set('chapter');
-	let description = `Read Chapter ${$__chapterNumber} ${quranMetaData[$__chapterNumber].transliteration} of the Quran ${startVerse ? 'starting from ' + term('verse') + ' ' + startVerse : ''}.`;
 </script>
 
-<PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber}${$page.url.searchParams.get('startVerse') ? ':' + startVerse : ''})`} {description} />
+<PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber}${$page.url.searchParams.get('startVerse') || data.verse ? ':' + startVerse : ''})`} {description} />
 
 {#await chapterData}
 	<Spinner />

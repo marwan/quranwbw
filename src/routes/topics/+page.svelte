@@ -25,6 +25,8 @@
 
 	let groupedTopics = {};
 
+	$: description = `See all verses in the Quran related to ${selectedTopicName}`;
+
 	// Group topics by first letter
 	$: {
 		groupedTopics = {};
@@ -85,7 +87,6 @@
 	});
 
 	__currentPage.set('topics');
-	let description = `See all verses in the Quran related to ${selectedTopicName}`;
 </script>
 
 <PageHead title="Topics" {description} />
