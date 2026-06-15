@@ -45,6 +45,7 @@ let __currentPage,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
 	__favoriteChaptersModalVisible,
+	__readingHistoryModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
@@ -176,6 +177,7 @@ if (browser) {
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
 	__favoriteChaptersModalVisible = writable(false);
+	__readingHistoryModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
 		type: null,
@@ -276,6 +278,7 @@ export {
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
 	__favoriteChaptersModalVisible,
+	__readingHistoryModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,

@@ -35,7 +35,7 @@ import {
 	__readingHistory
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
-import { updateReadingHistory } from '$utils/readingHistory';
+import { updateReadingHistory } from '$utils/readingHistoryHandler';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -256,13 +256,17 @@ export function updateSettings(props) {
 			__userNotes.set(userNotes);
 			break;
 
-		// for last read
+		// Update last read position and reading history when on a reader page
 		case 'lastRead':
 			if (['chapter', 'mushaf', 'juz', 'hizb'].includes(get(__currentPage))) {
 				const data = props.value;
 				data['currentPage'] = get(__currentPage);
+
+				// Update the last read store and persist to settings
 				__lastRead.set(data);
 				userSettings.lastRead = props.value;
+
+				// Append or update the reading history, then sync both
 				userSettings.readingHistory = updateReadingHistory({ history: userSettings.readingHistory, data });
 				__readingHistory.set(userSettings.readingHistory);
 			}

@@ -19,9 +19,8 @@
 	import UserNotes from '$display/UserNotes.svelte';
 	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
-	import ReadingHistoryModal from '$ui/Modals/ReadingHistoryModal.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __readingHistory, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __readingHistory, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible, __readingHistoryModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -51,7 +50,6 @@
 	let juzListOrder = [];
 	let hizbListOrder = [];
 	let homepageLayoutPreferences = $__homepageLayoutPreferences;
-	let readingHistoryModalOpen = false;
 
 	$: divisionsActiveTab = homepageLayoutPreferences?.divisionsActiveTab ?? 1;
 	$: extrasActiveTab = homepageLayoutPreferences?.extrasActiveTab ?? 1;
@@ -325,9 +323,10 @@
 							</a>
 
 							{#if $__readingHistory.length > 1}
-								<button class="{continueReadingButtonClasses} flex-shrink-0 px-5" aria-label="Reading history" aria-haspopup="dialog" on:click={() => (readingHistoryModalOpen = true)}>
+								<button class="{continueReadingButtonClasses} flex-shrink-0 px-5" on:click={() => __readingHistoryModalVisible.set(true)}>
 									<Clock size={5} />
 								</button>
+								<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Reading History</Tooltip>
 							{/if}
 						</div>
 					{/if}
@@ -411,5 +410,3 @@
 		</div>
 	</div>
 </div>
-
-<ReadingHistoryModal bind:open={readingHistoryModalOpen} />
