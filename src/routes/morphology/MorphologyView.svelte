@@ -2,6 +2,9 @@
 	export let data;
 
 	import Spinner from '$svgs/Spinner.svelte';
+	import Play from '$svgs/Play.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
+	import RightArrow from '$svgs/RightArrow.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
 	import Table from './Table.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
@@ -122,27 +125,39 @@
 		{#await allDataPromise}
 			<Spinner />
 		{:then allData}
-			<div class="space-y-6 my-8" in:fade={{ duration: 300 }}>
+			<div class="space-y-6" in:fade={{ duration: 300 }}>
 				{#if isMorphologyPage}
-					<div id="verse-navigator" class="flex flex-row justify-center space-x-8 text-sm">
+					<div id="verse-navigator" class="flex flex-row justify-center space-x-2 text-sm">
 						<!-- previous chapter -->
 						{#if verse === 1 && chapter > 1}
-							<a href="/morphology?word={+chapter - 1}:1" class={buttonOutlineClasses}>{@html '&#x2190;'} {term('chapter')} {+chapter - 1}</a>
-						{/if}
-
-						<!-- next verse -->
-						{#if verse > 1}
-							<a href="/morphology?word={chapter}:{+verse - 1}" class={buttonOutlineClasses}>{@html '&#x2190;'} {term('verse')} {chapter}:{+verse - 1}</a>
+							<a href="/morphology?word={+chapter - 1}:1" class={buttonOutlineClasses}>
+								<LeftArrow />
+								<span>{term('chapter')} {+chapter - 1}</span>
+							</a>
 						{/if}
 
 						<!-- previous verse -->
+						{#if verse > 1}
+							<a href="/morphology?word={chapter}:{+verse - 1}" class={buttonOutlineClasses}>
+								<LeftArrow />
+								<span>{term('verse')} {chapter}:{+verse - 1}</span>
+							</a>
+						{/if}
+
+						<!-- next verse -->
 						{#if verse < quranMetaData[chapter].verses}
-							<a href="/morphology?word={chapter}:{+verse + 1}" class={buttonOutlineClasses}>{term('verse')} {chapter}:{+verse + 1} {@html '&#x2192;'}</a>
+							<a href="/morphology?word={chapter}:{+verse + 1}" class={buttonOutlineClasses}>
+								<span>{term('verse')} {chapter}:{+verse + 1}</span>
+								<RightArrow />
+							</a>
 						{/if}
 
 						<!-- next chapter -->
 						{#if verse === quranMetaData[chapter].verses && chapter < 114}
-							<a href="/morphology?word={+chapter + 1}:1" class={buttonOutlineClasses}>{term('chapter')} {+chapter + 1} {@html '&#x2192;'}</a>
+							<a href="/morphology?word={+chapter + 1}:1" class={buttonOutlineClasses}>
+								<span>{term('chapter')} {+chapter + 1} </span>
+								<RightArrow />
+							</a>
 						{/if}
 					</div>
 				{/if}
@@ -164,12 +179,18 @@
 						</div>
 
 						<!-- Buttons -->
-						<div class="pt-4 flex flex-row justify-center space-x-2 text-xs">
-							<button class={buttonClasses} on:click={() => wordAudioController({ key: $__morphologyKey })}>Play Word</button>
+						<div class="pt-4 flex flex-row justify-center space-x-2 text-sm">
+							<button class={buttonClasses} on:click={() => wordAudioController({ key: $__morphologyKey })}>
+								<Play />
+								<span>Play Word</span>
+							</button>
 
 							<!-- Show the "goto verse" button if the user in on morphology page -->
 							{#if isMorphologyPage}
-								<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
+								<a href="/{chapter}/{verse}" class={buttonClasses}>
+									<span>Goto Verse</span>
+									<RightArrow />
+								</a>
 							{/if}
 						</div>
 					</div>

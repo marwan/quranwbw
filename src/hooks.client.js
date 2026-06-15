@@ -59,7 +59,9 @@ export const defaultSettings = {
 	userFavoriteChapters: [],
 	userNotes: {},
 	chapter: 1,
-	offlineModeSettings: {}
+	offlineModeSettings: {},
+	websiteVersion: {},
+	cloudBackupAndRestore: {}
 };
 
 // Do not continue without setting the default user's settings first

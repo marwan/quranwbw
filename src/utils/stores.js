@@ -42,7 +42,7 @@ let __currentPage,
 	__settingsSelectorModal,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
-	__copyShareVerseModalVisible,
+	__copyVerseModalVisible,
 	__favoriteChaptersModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
@@ -170,7 +170,7 @@ if (browser) {
 	});
 	__verseTranslationModalVisible = writable(false);
 	__morphologyModalVisible = writable(false);
-	__copyShareVerseModalVisible = writable(false);
+	__copyVerseModalVisible = writable(false);
 	__favoriteChaptersModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
@@ -269,7 +269,7 @@ export {
 	__settingsSelectorModal,
 	__verseTranslationModalVisible,
 	__morphologyModalVisible,
-	__copyShareVerseModalVisible,
+	__copyVerseModalVisible,
 	__favoriteChaptersModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,

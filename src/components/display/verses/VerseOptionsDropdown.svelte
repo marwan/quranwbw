@@ -16,7 +16,7 @@
 	import Copy from '$svgs/Copy.svelte';
 	import { showAudioModal } from '$utils/audioController';
 	import { selectableDisplays } from '$data/options';
-	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType, __morphologyKey } from '$utils/stores';
+	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType, __morphologyKey } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { sineIn } from 'svelte/easing';
@@ -71,7 +71,7 @@
 
 	const handleCopy = async () => {
 		if (!(await checkOnlineAndAlert())) return;
-		__copyShareVerseModalVisible.set(true);
+		__copyVerseModalVisible.set(true);
 		dropdownOpen = false;
 	};
 
