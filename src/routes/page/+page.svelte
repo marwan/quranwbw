@@ -221,7 +221,7 @@
 	__currentPage.set('mushaf');
 </script>
 
-<PageHead title={`Page ${page}`} />
+<PageHead title={`Page ${page}`} description={`Mushaf page ${page} of Quran`} />
 
 {#await pageData}
 	<Spinner />

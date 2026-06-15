@@ -102,7 +102,7 @@
 	__currentPage.set('Guess The Word');
 </script>
 
-<PageHead title={'Guess The Word'} />
+<PageHead title={'Guess The Word'} description="Test your knowledge of Quranic vocabulary with our Guess The Word game!" />
 
 <div class="space-y-12">
 	{#await randomWordsData}

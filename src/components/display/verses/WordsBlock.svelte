@@ -38,7 +38,7 @@
 	let pageVisible = false;
 
 	// Load the Mushaf font and reveal words whenever the font type switches to 2 or 3.
-	$: if (mushafFontTypes.includes($__fontType)) {
+	if (mushafFontTypes.includes($__fontType)) {
 		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
 			pageVisible = true;
 		});
