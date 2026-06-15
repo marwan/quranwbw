@@ -37,7 +37,7 @@
 	// Fetch results from the Kalimat semantic search API
 	async function fetchKalimatResults(query) {
 		try {
-			const response = await fetch(`https://api.kalimat.dev/search?query=${query}&numResults=10`, {
+			const response = await fetch(`https://api.kalimat.dev/api/v2/search?query=${query}&numResults=10`, {
 				headers: {
 					'x-api-key': kalimatPublicApiKey
 				}
@@ -45,7 +45,9 @@
 
 			if (response.status !== 200) return null;
 
-			return await response.json();
+			const json = await response.json();
+
+			return json?.data?.results ?? [];
 		} catch (error) {
 			// Log but don't throw — a Kalimat failure should not block Quran Cloud results
 			console.warn('[Kalimat API] fetch failed:', error);
