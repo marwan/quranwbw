@@ -1,4 +1,4 @@
-### May 16, 2026
+### Jun 15, 2026
 
 - **Improved Search Results**: Search now pulls from an additional source ([Al Quran Cloud](https://alquran.cloud/)) alongside the existing Kalimat API, resulting in broader and more comprehensive verse matches for any given query.
 
