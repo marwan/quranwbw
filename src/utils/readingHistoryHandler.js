@@ -13,17 +13,24 @@ let activeSessionId = null;
 export function updateReadingHistory({ history, data }) {
 	const activeEntry = history.find((entry) => entry.id === activeSessionId);
 
+	// Save the previous verse (one before current), but never go below verse 1
+	const verse = Math.max(1, data.verse - 1);
+
 	// Same chapter — just update the verse position without adding a new entry
 	if (activeEntry && activeEntry.chapter === data.chapter) {
-		activeEntry.verse = data.verse;
+		activeEntry.verse = verse;
 		return [...history];
 	}
+
+	// Skip if this chapter + verse combination already exists in history
+	const alreadyExists = history.some((entry) => entry.chapter === data.chapter && entry.verse === verse);
+	if (alreadyExists) return history;
 
 	// New chapter or new session — create a fresh entry and push it to the front
 	const newEntry = {
 		id: crypto.randomUUID(),
 		chapter: data.chapter,
-		verse: data.verse
+		verse: verse
 	};
 
 	activeSessionId = newEntry.id;
