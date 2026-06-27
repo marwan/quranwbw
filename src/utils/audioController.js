@@ -105,16 +105,16 @@ export function playNextVerse() {
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
-	console.log('🎵 playVerseAudio called with:', props.key);
+	console.log('playVerseAudio called with:', props.key);
 
 	const audioSettings = get(__audioSettings);
 	const [playChapter, playVerse] = props.key.split(':').map(Number);
 	let playBoth = false;
 
 	const isSeamlessContinuation = props.language === 'arabic' && isConsecutiveArabicVerse(props.key);
-	console.log('🔄 isSeamlessContinuation:', isSeamlessContinuation);
-	console.log('🎧 Current audio.src:', audio.src);
-	console.log('⏱️ Current audio.currentTime:', audio.currentTime);
+	console.log('isSeamlessContinuation:', isSeamlessContinuation);
+	console.log('Current audio.src:', audio.src);
+	console.log('Current audio.currentTime:', audio.currentTime);
 
 	if (!isSeamlessContinuation) resetAudioSettings();
 
