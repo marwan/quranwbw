@@ -4,7 +4,7 @@
 	import Trash from '$svgs/Trash.svelte';
 	import Refresh from '$svgs/Refresh.svelte';
 	import Info from '$svgs/Info.svelte';
-	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
+	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __reciter } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, checkOnlineAndAlert } from '$utils/offlineModeHandler';
 	import { updateSettings } from '$utils/updateSettings';
@@ -14,6 +14,9 @@
 	import { getMushafWordFontLink, isIOSorMac } from '$utils/getMushafWordFontLink';
 	import { term } from '$utils/terminologies';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
+	import { selectableReciters } from '$data/options';
+	import { quranMetaData } from '$data/quranMeta';
+	import { cacheVerseAudioFile } from '$utils/audioController';
 	import { bismillahFontMap } from '$data/bismillahFontMap';
 	import { clearDexieTable } from '$utils/dexie';
 
@@ -25,12 +28,19 @@
 	const totalChapters = 114;
 	const totalPages = 604;
 
+	// Total number of verses in the Quran (used for recitation pre-download progress)
+	const totalVerses = quranMetaData.slice(1).reduce((sum, chapter) => sum + chapter.verses, 0);
+
+	// Number of audio files fetched concurrently when pre-downloading a reciter
+	const recitationDownloadBatchSize = 10;
+
 	// Track download state
 	let isRegistering = false;
 	let isDownloadingChapter = false;
 	let isDownloadingMushaf = false;
 	let isDownloadingMorphology = false;
 	let isDownloadingTafsir = false;
+	let isDownloadingRecitation = false;
 	let downloadProgressPercentage = 0;
 
 	// Initialize structures on component load
@@ -39,12 +49,14 @@
 	ensureOfflineSettingsStructure('mushafData');
 	ensureOfflineSettingsStructure('morphologyData');
 	ensureOfflineSettingsStructure('tafsirData');
+	ensureOfflineSettingsStructure('recitationData');
 	ensureOfflineSettingsStructure('downloadedDataSettings', {
 		fontTypes: [],
 		wordTranslations: [],
 		wordTransliterations: [],
 		verseTranslations: [],
-		tafsirs: []
+		tafsirs: [],
+		reciters: []
 	});
 
 	// Reactive statement for local reference
@@ -56,15 +68,19 @@
 	$: isMushafDataDownloaded = offlineModeSettings?.mushafData?.downloaded ?? false;
 	$: isMorphologyDataDownloaded = offlineModeSettings?.morphologyData?.downloaded ?? false;
 	$: isTafsirDataDownloaded = offlineModeSettings?.tafsirData?.downloaded ?? false;
+	$: isRecitationDataDownloaded = offlineModeSettings?.recitationData?.downloaded ?? false;
 
 	// Track if ANY download is in progress
-	$: isDownloading = isRegistering || isDownloadingChapter || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir;
+	$: isDownloading = isRegistering || isDownloadingChapter || isDownloadingMushaf || isDownloadingMorphology || isDownloadingTafsir || isDownloadingRecitation;
 
 	// Check for specific data type mismatches (reactive to all relevant stores)
-	$: mismatchStatus = getOfflineSettingsMismatch($__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir, $__offlineModeSettings);
+	$: mismatchStatus = getOfflineSettingsMismatch($__fontType, $__wordTranslation, $__wordTransliteration, $__verseTranslations, $__verseTafsir, $__reciter, $__offlineModeSettings);
 
 	// Check if tafsir data has mismatch
 	$: hasTafsirMismatch = mismatchStatus.verseTafsir;
+
+	// Check if recitation data has mismatch (selected reciter differs from downloaded one)
+	$: hasRecitationMismatch = mismatchStatus.reciter;
 
 	// Define data sections configuration
 	$: dataSections = [
@@ -118,6 +134,17 @@
 			onDownload: handleDownloadTafsirData,
 			onDelete: () => handleDeleteSpecificData('tafsir_data', 'tafsirData'),
 			onRedownload: () => handleRedownloadData('tafsirData')
+		},
+		{
+			id: 'recitationData',
+			title: 'Recitation Data',
+			description: `These files let you listen to the entire Quran offline using your currently selected reciter (${selectableReciters[$__reciter]?.reciter ?? 'reciter'}). Downloading will save all ${totalVerses} verse audio files for this reciter. To save a different reciter, select it in your audio settings first, then download.`,
+			isDataDownloaded: isRecitationDataDownloaded,
+			isDownloading: isDownloadingRecitation,
+			showMismatchBanner: hasRecitationMismatch,
+			onDownload: handleDownloadRecitationData,
+			onDelete: () => handleDeleteSpecificData('quranwbw-audio-cache', 'recitationData'),
+			onRedownload: () => handleRedownloadData('recitationData')
 		}
 	];
 
@@ -188,14 +215,15 @@
 	}
 
 	// Helper function to add downloaded data settings
-	function addDownloadedDataSettings({ fontTypes, wordTranslation, wordTransliteration, verseTranslations, tafsir }) {
+	function addDownloadedDataSettings({ fontTypes, wordTranslation, wordTransliteration, verseTranslations, tafsir, reciter }) {
 		// Ensure structure exists
 		ensureOfflineSettingsStructure('downloadedDataSettings', {
 			fontTypes: [],
 			wordTranslations: [],
 			wordTransliterations: [],
 			verseTranslations: [],
-			tafsirs: []
+			tafsirs: [],
+			reciters: []
 		});
 
 		// Get current settings
@@ -230,6 +258,11 @@
 		//  Update tafsirs if provided
 		if (tafsir !== undefined && tafsir !== null) {
 			currentSettings.tafsirs = mergeArrays(currentSettings.tafsirs, tafsir);
+		}
+
+		// Update reciters if provided
+		if (reciter !== undefined && reciter !== null) {
+			currentSettings.reciters = mergeArrays(currentSettings.reciters || [], reciter);
 		}
 
 		// Save to localStorage
@@ -274,25 +307,26 @@
 
 	// Checks whether the user's current settings match downloaded offline data
 	// Returns an object with mismatch status for each data type
-	function getOfflineSettingsMismatch(fontType, wordTranslation, wordTransliteration, verseTranslations, verseTafsir, offlineSettings) {
+	function getOfflineSettingsMismatch(fontType, wordTranslation, wordTransliteration, verseTranslations, verseTafsir, reciter, offlineSettings) {
 		try {
 			const downloadedDataSettings = offlineSettings.downloadedDataSettings;
 			if (!downloadedDataSettings) {
-				return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false };
+				return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false, reciter: false };
 			}
 
-			const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [], tafsirs = [] } = downloadedDataSettings;
+			const { fontTypes = [], wordTranslations = [], wordTransliterations = [], verseTranslations: downloadedVerseTranslations = [], tafsirs = [], reciters = [] } = downloadedDataSettings;
 
 			return {
 				fontType: fontTypes.length > 0 && !fontTypes.includes(fontType),
 				wordTranslation: wordTranslations.length > 0 && !wordTranslations.includes(wordTranslation),
 				wordTransliteration: wordTransliterations.length > 0 && !wordTransliterations.includes(wordTransliteration),
 				verseTafsir: tafsirs.length > 0 && !tafsirs.includes(verseTafsir),
-				verseTranslations: downloadedVerseTranslations.length > 0 && Array.isArray(verseTranslations) && verseTranslations.some((t) => !downloadedVerseTranslations.includes(t))
+				verseTranslations: downloadedVerseTranslations.length > 0 && Array.isArray(verseTranslations) && verseTranslations.some((t) => !downloadedVerseTranslations.includes(t)),
+				reciter: reciters.length > 0 && !reciters.includes(reciter)
 			};
 		} catch (error) {
 			console.warn(error);
-			return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false };
+			return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false, reciter: false };
 		}
 	}
 
@@ -337,6 +371,11 @@
 			switch (objectName) {
 				case 'tafsirData': {
 					downloadedDataSettings.tafsirs = [];
+					break;
+				}
+
+				case 'recitationData': {
+					downloadedDataSettings.reciters = [];
 					break;
 				}
 
@@ -418,6 +457,11 @@
 				case 'tafsirData':
 					await handleDeleteSpecificData('tafsir_data', 'tafsirData');
 					await handleDownloadTafsirData();
+					break;
+
+				case 'recitationData':
+					await handleDeleteSpecificData('quranwbw-audio-cache', 'recitationData');
+					await handleDownloadRecitationData();
 					break;
 			}
 
@@ -644,6 +688,73 @@
 		}
 	}
 
+	// Cache all verse audio files for the currently selected reciter
+	async function handleDownloadRecitationData() {
+		if (!(await checkOnlineAndAlert())) return;
+
+		isDownloadingRecitation = true;
+		downloadProgressPercentage = 0;
+
+		ensureOfflineSettingsStructure('recitationData', {
+			downloaded: false,
+			downloadedAt: null
+		});
+
+		try {
+			const coreSteps = isServiceWorkerRegistered ? 0 : 4;
+			const totalStepsInDownloadProgress = coreSteps + totalVerses + 1;
+			let completedStepsInDownloadProgress = 0;
+
+			// Ensure core is downloaded first
+			await ensureCoreDataDownloaded(() => {
+				completedStepsInDownloadProgress++;
+				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+			});
+
+			const selectedReciterId = $__reciter;
+			const reciterUrl = selectableReciters[selectedReciterId].url;
+
+			// Build the full list of [chapter, verse] pairs across the whole Quran
+			const verseTasks = [];
+			for (let chapter = 1; chapter <= totalChapters; chapter++) {
+				for (let verse = 1; verse <= quranMetaData[chapter].verses; verse++) {
+					verseTasks.push([chapter, verse]);
+				}
+			}
+
+			// Download in small concurrent batches to speed things up without hammering the server
+			for (let i = 0; i < verseTasks.length; i += recitationDownloadBatchSize) {
+				const batch = verseTasks.slice(i, i + recitationDownloadBatchSize);
+
+				await Promise.all(
+					batch.map(async ([chapter, verse]) => {
+						await cacheVerseAudioFile(reciterUrl, chapter, verse);
+						completedStepsInDownloadProgress++;
+						updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+					})
+				);
+			}
+
+			// Track downloaded reciter
+			addDownloadedDataSettings({
+				reciter: selectedReciterId
+			});
+
+			updateOfflineSettingsStructure('recitationData', {
+				downloaded: true,
+				downloadedAt: new Date().toISOString()
+			});
+
+			window.umami?.track('Recitation Data Download');
+		} catch (error) {
+			console.warn(error);
+			showAlert(errorAlertMessage, '');
+		} finally {
+			isDownloadingRecitation = false;
+			downloadProgressPercentage = 100;
+		}
+	}
+
 	// Download and cache all essential CDN static data files
 	async function downloadAllCdnStaticData() {
 		try {
@@ -707,7 +818,9 @@
 			<div class="flex flex-col space-y-2 text-sm {(isDownloading && !section.isDownloading) || (section.isSectionDisabled && section.isSectionDisabled()) ? disabledClasses : ''}">
 				<div>
 					<span class="text-theme-accent">{section.title}</span>
-					<span class="opacity-70"> (~{section.dataSizeInMB} MB)</span>
+					{#if section.dataSizeInMB}
+						<span class="opacity-70"> (~{section.dataSizeInMB} MB)</span>
+					{/if}
 				</div>
 
 				<!-- Mismatch banner with re-download button -->

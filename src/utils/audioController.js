@@ -579,6 +579,26 @@ async function getAudioUrl(url, returnBlob = true) {
 	}
 }
 
+// Pre-download (cache) a single verse's audio file into the audio cache without playing it.
+// Used by the offline screen to predownload an entire reciter ahead of time.
+// Skips the network request if the file is already cached.
+export async function cacheVerseAudioFile(reciterUrl, chapter, verse) {
+	const fileName = `${String(chapter).padStart(3, '0')}${String(verse).padStart(3, '0')}.mp3`;
+	const url = `${reciterUrl}/${fileName}`;
+
+	const cache = await caches.open('quranwbw-audio-cache');
+
+	// Skip if already cached to avoid redundant downloads
+	const existing = await cache.match(url);
+	if (existing) return;
+
+	const response = await fetch(url);
+	if (!response.ok) throw new Error(`Failed to fetch audio: ${response.status}`);
+
+	// Clone before caching since the response body can only be consumed once
+	await cache.put(url, response.clone());
+}
+
 function scrollElementIntoView(id) {
 	try {
 		if (!id) return;
