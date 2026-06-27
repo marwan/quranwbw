@@ -15,11 +15,11 @@
 		<div class={toolbarInnerClasses}>
 			{#if $__audioSettings.isPlaying}
 				<div class="grid h-full max-w-md grid-cols-3 mx-auto">
-					<button on:click={() => playPreviousVerse()} class="inline-flex flex-col items-center justify-center px-5 rounded-e-full group {window.theme('hover')}">
+					<button on:click={() => playPreviousVerse()} class="inline-flex flex-col items-center justify-center px-5 rounded-e-full group hover:bg-theme-accent/5">
 						<ChevronLeft size={7} />
 					</button>
 					<AudioButton />
-					<button on:click={() => playNextVerse()} class="inline-flex flex-col items-center justify-center px-5 rounded-e-full group {window.theme('hover')}">
+					<button on:click={() => playNextVerse()} class="inline-flex flex-col items-center justify-center px-5 rounded-e-full group hover:bg-theme-accent/5">
 						<ChevronRight size={7} />
 					</button>
 				</div>
