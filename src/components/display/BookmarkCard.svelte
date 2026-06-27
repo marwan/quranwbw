@@ -1,32 +1,30 @@
 <script>
-	import Portal from 'svelte-portal';
-	import { createEventDispatcher, onMount } from 'svelte';
-	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
-	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
-	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
-	import Trash from '$svgs/Trash.svelte';
-	import { quranMetaData } from '$data/quranMeta';
-	import { updateSettings } from '$utils/updateSettings';
-	import { showConfirm } from '$utils/confirmationAlertHandler';
-
 	export let bookmark;
 	export let fullQuranTextData = null;
 	export let cardInnerClasses;
 	export let forceClose = 0; // Reactive prop to force close dropdown
 
+	import Portal from 'svelte-portal';
+	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
+	import DropdownItem from '$ui/FlowbiteSvelte/dropdown/DropdownItem.svelte';
+	import DotsHorizontal from '$svgs/DotsHorizontal.svelte';
+	import Trash from '$svgs/Trash.svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import { quranMetaData } from '$data/quranMeta';
+	import { updateSettings } from '$utils/updateSettings';
+	import { showConfirm } from '$utils/confirmationAlertHandler';
+
 	const dispatch = createEventDispatcher();
-
-	let dropdownOpen = false;
-	let buttonElement;
-	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
-	let hasMounted = false;
-	let previousOpen = dropdownOpen;
-	let previousForceClose = forceClose;
-
-	// Parse bookmark reference
+	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 	const [bookmarkChapter, bookmarkVerse] = bookmark.split(':').map(Number);
 	const chapterMeta = quranMetaData[bookmarkChapter];
 	const maxTextLength = 'max-w-[28vw] md:max-w-[115px]';
+
+	let dropdownOpen = false;
+	let buttonElement;
+	let hasMounted = false;
+	let previousOpen = dropdownOpen;
+	let previousForceClose = forceClose;
 
 	// Watch forceClose to close dropdown when parent scrolls
 	onMount(() => {
@@ -82,20 +80,23 @@
 	</a>
 
 	<!-- Options menu button -->
-	<button id="bookmark-menu-{bookmark.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={toggleDropdown} on:touchend|preventDefault|stopPropagation={toggleDropdown} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-none" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
+	<button
+		id="bookmark-menu-{bookmark.replace(':', '-')}"
+		bind:this={buttonElement}
+		on:click|stopPropagation={toggleDropdown}
+		on:touchend|preventDefault|stopPropagation={toggleDropdown}
+		class="absolute top-2 right-2 p-1 rounded-full hover:bg-theme-accent/5 opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-none"
+		aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'}
+		aria-expanded={dropdownOpen}
+		aria-haspopup="true"
+	>
 		<DotsHorizontal size={5} />
 	</button>
 </div>
 
 {#if buttonElement}
 	<Portal target="body">
-		<Dropdown
-			bind:open={dropdownOpen}
-			triggeredBy="#bookmark-menu-{bookmark.replace(':', '-')}"
-			strategy="fixed"
-			containerClass={`divide-y z-[1000] shadow-md border ${window.theme('border')}`}
-			class="px-2 my-2 w-max text-left font-sans direction-ltr"
-		>
+		<Dropdown bind:open={dropdownOpen} triggeredBy="#bookmark-menu-{bookmark.replace(':', '-')}" strategy="fixed" containerClass={`divide-y z-[1000] shadow-md border border-theme-accent/20`} class="px-2 my-2 w-max text-left font-sans direction-ltr">
 			<DropdownItem class={dropdownItemClasses} on:click={handleDeleteBookmark}>
 				<Trash size={4} aria-hidden="true" />
 				<span>Delete</span>

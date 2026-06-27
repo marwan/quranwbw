@@ -1,41 +1,15 @@
 <!-- AudioButton.svelte -->
 <script>
 	import PlaySolid from '$svgs/PlaySolid.svelte';
-	import Pause from '$svgs/Pause.svelte';
+	import PauseSolid from '$svgs/PauseSolid.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { __audioSettings } from '$utils/stores';
-	import { playVerseAudio, setVersesToPlay, resetAudioSettings, pauseOrResumeAudio } from '$utils/audioController';
-	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+	import { playVerseAudio, setVersesToPlay, pauseOrResumeAudio } from '$utils/audioController';
 
 	$: console.log({
 		audioElapsed: $__audioSettings.audioElapsed,
 		audioDuration: $__audioSettings.audioDuration
 	});
-
-	// quick play from first verse of page till the max chapter verses
-	async function audioHandler() {
-		if (!(await checkOnlineAndAlert())) return;
-
-		$__audioSettings.language = 'arabic';
-		$__audioSettings.playBoth = false;
-
-		if ($__audioSettings.isPlaying) {
-			resetAudioSettings({ location: 'end' });
-		} else {
-			setVersesToPlay({ allVersesOnPage: true });
-
-			playVerseAudio({
-				key: `${window.versesToPlayArray[0]}`,
-				timesToRepeat: 1,
-				language: 'arabic'
-			});
-		}
-	}
-
-	// For the stop button: fully stops
-	function handleStop() {
-		resetAudioSettings({ location: 'end' });
-	}
 
 	// For the play/pause toggle button:
 	function handlePlayPause() {
@@ -68,7 +42,7 @@
 <!-- play/pause button -->
 <div class="flex items-center justify-center">
 	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => handlePlayPause()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group {window.theme('input')} {window.theme('bgSecondaryDark')}" data-umami-event="Toolbar Play Button">
-		<span><svelte:component this={$__audioSettings.isPlaying ? Pause : PlaySolid} size={5} /></span>
+		<span><svelte:component this={$__audioSettings.isPlaying ? PauseSolid : PlaySolid} size={5} /></span>
 		<span class="sr-only">{$__audioSettings.isPlaying ? 'Pause' : 'Play'}</span>
 
 		<!-- show badge when a verse is playing -->

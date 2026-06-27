@@ -1,7 +1,6 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import markdown from './CHANGELOG.md?raw';
-
 	import { __currentPage } from '$utils/stores';
 	import { marked } from 'marked';
 
@@ -11,7 +10,7 @@
 	__currentPage.set('changelog');
 </script>
 
-<PageHead title={'Changelog'} />
+<PageHead title={'Changelog'} description="Discover the latest updates, features, and improvements in QuranWBW.com." />
 
 <div class="markdown mx-auto">
 	{@html html}

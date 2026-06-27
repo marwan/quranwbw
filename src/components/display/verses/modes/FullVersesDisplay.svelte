@@ -4,11 +4,12 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import WordByWord from '$display/layouts/WordByWord.svelte';
 	import Normal from '$display/layouts/Normal.svelte';
+	import SideBySide from '$display/layouts/SideBySide.svelte';
 	import TranslationTransliteration from '$display/layouts/TranslationTransliteration.svelte';
 	import Bismillah from '$misc/Bismillah.svelte';
 	import ChapterHeader from '$misc/ChapterHeader.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
-	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __currentPage, __keysToFetch, __pageURL } from '$utils/stores';
+	import { __displayType, __fontType, __wordTranslation, __wordTransliteration, __currentPage, __keysToFetch, __pageURL, __fullVersesDisplayKeys } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { isValidVerseKey } from '$utils/validateKey';
@@ -17,12 +18,16 @@
 	import { term } from '$utils/terminologies';
 	import { selectableDisplays } from '$data/options';
 
-	// set this so we can use it for the 'setPlayFromHere' functionality in the audio modal
+	// Set this so we can use it for the 'setPlayFromHere' functionality in the audio modal
 	$: $__keysToFetch = keys;
+
+	// Set the keys in this store for progress tracking
+	$__fullVersesDisplayKeys = keys;
 
 	const displayComponents = {
 		1: { component: WordByWord },
 		2: { component: Normal },
+		5: { component: SideBySide },
 		7: { component: TranslationTransliteration }
 	};
 
@@ -145,7 +150,9 @@
 	}
 
 	function gotoPreviousVerse(previousKey) {
-		goto(`?startKey=${previousKey}`, { replaceState: false });
+		const url = new URL(window.location.href);
+		url.searchParams.set('startKey', previousKey);
+		goto(url.pathname + url.search, { replaceState: false });
 		__pageURL.set(Math.random());
 	}
 
@@ -220,9 +227,20 @@
 		<ErrorLoadingData error={fetchError} />
 	{:else}
 		{#if showLoadPreviousVerseButton}
-			{@const previousKey = keysArray[getIndexOfKey(keyToStartWith) - 1]}
-			<div class={loadPrevNextVerseButtons}>
-				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {term('juz')}</button>
+			{@const currentIndex = getIndexOfKey(keyToStartWith)}
+			{@const previousKey = keysArray[currentIndex - 1]}
+			{@const currentFirstKey = keysArray[currentIndex]}
+			{@const isNextVerseFirst = currentFirstKey && Number(currentFirstKey.split(':')[1]) === 1}
+
+			<!--
+				When the current verse is the first verse of a new chapter (e.g. X:1),
+				a chapter header is rendered immediately after these buttons.
+				The chapter header applies negative margins, which overlap this area
+				and make the buttons partially unclickable. To counteract that layout overlap, 
+				we re-add bottom padding here so the buttons remain fully clickable.
+			-->
+			<div class="{loadPrevNextVerseButtons} {isNextVerseFirst && 'pb-12'}">
+				<button class="text-sm {buttonClasses}" on:click={() => __pageURL.set(Math.random())}>Start of {$__currentPage === 'hizb' ? term('hizb') : term('juz')}</button>
 				<button class="text-sm {buttonClasses}" on:click={() => gotoPreviousVerse(previousKey)}>Previous {term('verse')}</button>
 			</div>
 		{/if}
@@ -232,8 +250,8 @@
 				{@const key = keysArray[index]}
 				{@const value = dataMap[key]}
 
-				<!-- Only show Bismillah when its the Juz page -->
-				{#if $__currentPage === 'juz' && +key.split(':')[1] === 1}
+				<!-- Only show chapter header and Bismillah when on a division page -->
+				{#if ['juz', 'hizb'].includes($__currentPage) && +key.split(':')[1] === 1}
 					{@const chapter = +key.split(':')[0]}
 					<div class="mt-4">
 						<ChapterHeader {chapter} />

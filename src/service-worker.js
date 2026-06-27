@@ -24,8 +24,8 @@ import { build, files, version } from '$service-worker';
 const cacheNames = {
 	core: `quranwbw-cache-${version}`, // Core website files (versioned)
 	config: 'quranwbw-config', // User preferences (survives across versions)
+	audioData: 'quranwbw-audio-cache', // Audio files (recitations and word audios)
 	chapterData: 'quranwbw-chapter-data', // Chapter routes and data
-	juzData: 'quranwbw-juz-data', // Juz routes and data
 	mushafData: 'quranwbw-mushaf-data', // Mushaf pages and fonts
 	morphologyData: 'quranwbw-morphology-data', // Morphology data files
 	tafsirData: 'quranwbw-tafsir-data' // Tafsir data files
@@ -41,7 +41,7 @@ const precacheFiles = [
 ];
 
 // Important pages we want to cache
-const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics'];
+const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics', '/juz', '/hizb', '/page'];
 
 // This flag tracks whether the user has enabled offline mode
 // CRITICAL: This must be loaded from cache on startup!
@@ -298,9 +298,15 @@ self.addEventListener('message', (event) => {
 
 		event.waitUntil(
 			(async () => {
-				// Delete all caches
+				// Delete all caches except the audio cache
 				const keys = await caches.keys();
-				await Promise.all(keys.map((key) => caches.delete(key)));
+				await Promise.all(
+					keys.map((key) => {
+						if (key !== cacheNames.audioData) {
+							return caches.delete(key);
+						}
+					})
+				);
 
 				// Tell the website cache is cleared
 				const clients = await self.clients.matchAll();

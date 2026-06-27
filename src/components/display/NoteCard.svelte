@@ -20,7 +20,7 @@
 
 	let dropdownOpen = false;
 	let buttonElement;
-	const dropdownItemClasses = `flex flex-row items-center space-x-2 font-normal rounded-3xl ${window.theme('hover')}`;
+	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 	let hasMounted = false;
 	let previousOpen = dropdownOpen;
 	let previousForceClose = forceClose;
@@ -94,20 +94,14 @@
 	</a>
 
 	<!-- Options menu button -->
-	<button id="note-menu-{verse.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={toggleDropdown} class="absolute top-2 right-2 p-1 rounded-full {window.theme('hover')} opacity-70 hover:opacity-100 transition-opacity z-10" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
+	<button id="note-menu-{verse.replace(':', '-')}" bind:this={buttonElement} on:click|stopPropagation={toggleDropdown} class="absolute top-2 right-2 p-1 rounded-full hover:bg-theme-accent/5 opacity-70 hover:opacity-100 transition-opacity z-10" aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'} aria-expanded={dropdownOpen} aria-haspopup="true">
 		<DotsHorizontal size={5} />
 	</button>
 </div>
 
 {#if buttonElement}
 	<Portal target="body">
-		<Dropdown
-			bind:open={dropdownOpen}
-			triggeredBy="#note-menu-{verse.replace(':', '-')}"
-			strategy="fixed"
-			containerClass={`divide-y z-[1000] shadow-md border ${window.theme('border')}`}
-			class="px-2 my-2 w-max text-left font-sans direction-ltr"
-		>
+		<Dropdown bind:open={dropdownOpen} triggeredBy="#note-menu-{verse.replace(':', '-')}" strategy="fixed" containerClass={`divide-y z-[1000] shadow-md border border-theme-accent/20`} class="px-2 my-2 w-max text-left font-sans direction-ltr">
 			<DropdownItem class={dropdownItemClasses} on:click={handleEditNote}>
 				<EditIcon size={4} aria-hidden="true" />
 				<span>Edit</span>
