@@ -687,7 +687,7 @@
 			const totalStepsInDownloadProgress = totalChapters;
 			let completedStepsInDownloadProgress = 0;
 
-			for (let chapter = 1; chapter <= 1; chapter++) {
+			for (let chapter = 1; chapter <= totalChapters; chapter++) {
 				// 1. Determine ZIP URLs for chapter (chapter 2 is split into two ZIPs)
 				const zipUrls = chapter === 2 ? [`${zipFilesUrl}/2-1.zip`, `${zipFilesUrl}/2-2.zip`] : [`${zipFilesUrl}/${chapter}.zip`];
 
