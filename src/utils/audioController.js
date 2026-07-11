@@ -5,11 +5,27 @@ import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
-import { cacheTableMap } from '$utils/dexie';
 
-// Getting the audio element
+// <audio> element used for all verse and word playback
 let audio = document.querySelector('#player');
+
+// Tracks the last highlighted word to avoid redundant scrolls
 let lastPlayedKey = null;
+
+// Stores the active blob URL so it can be revoked to prevent memory leaks
+let lastBlobUrl = null;
+
+// Incrementing token to invalidate outdated async audio requests
+let activeAudioRequestId = 0;
+
+// Cached timestamp data to avoid repeated fetches during playback
+let cachedTimestampData = null;
+
+// Cache word counts per verse to avoid repeated reads in hot loops
+let wordsInVerseCache = {};
+
+// Prevents overlapping executions of the wordHighlighter handler
+let isHighlighting = false;
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -35,10 +51,36 @@ export async function playVerseAudio(props) {
 	const currentVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse).padStart(3, '0')}.mp3`;
 	const nextVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse + 1).padStart(3, '0')}.mp3`;
 
-	// Prefetch the next verse audio
-	fetch(`${reciterAudioUrl}/${nextVerseFileName}`);
+	// Prefetch next verse audio in the background so it's ready when needed
+	if (playVerse < quranMetaData[playChapter].verses) {
+		getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false);
+	}
 
-	audio.src = `${reciterAudioUrl}/${currentVerseFileName}`;
+	// Tag this request with a unique ID to detect if a newer request has superseded it
+	const requestId = ++activeAudioRequestId;
+	const audioUrl = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`);
+
+	// If URL is missing (e.g. offline + not cached), abort before touching the player state
+	if (!audioUrl) return;
+
+	// If a newer audio request was made while we were awaiting, discard this result
+	if (requestId !== activeAudioRequestId) {
+		// Clean up the blob URL to avoid memory leaks if one was created
+		if (audioUrl?.startsWith('blob:')) {
+			URL.revokeObjectURL(audioUrl);
+		}
+		return;
+	}
+
+	// Release the previous blob URL from memory before switching to the new one
+	if (lastBlobUrl) {
+		URL.revokeObjectURL(lastBlobUrl);
+	}
+
+	// Track the new blob URL so we can revoke it later when moving to the next verse
+	lastBlobUrl = audioUrl?.startsWith('blob:') ? audioUrl : null;
+
+	audio.src = audioUrl;
 	audio.currentTime = 0;
 	audio.load();
 	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
@@ -51,6 +93,7 @@ export async function playVerseAudio(props) {
 	// Attach word highlighting function for supported reciters
 	if (props.language === 'arabic' && reciter.wbw) {
 		await fetchTimestampData();
+		wordsInVerseCache[props.key] = getWordsInVerse(props.key);
 		audio.addEventListener('timeupdate', wordHighlighter);
 	}
 
@@ -59,17 +102,25 @@ export async function playVerseAudio(props) {
 		scrollElementIntoView(audioSettings.playingKey);
 	}
 
-	audio.onended = async function () {
+	// Use a named handler instead of audio.onended so it can be explicitly removed
+	// after firing, preventing handlers from stacking up across repeated plays
+	const onEndedHandler = async function () {
+		// Remove both listeners immediately to prevent any chance of double-firing
+		audio.removeEventListener('ended', onEndedHandler);
 		audio.removeEventListener('timeupdate', wordHighlighter);
+
 		const previousLanguage = props.language;
 
-		// Determine the delay based on audioDelay settings
+		// Calculate the delay between verses based on the user's audioDelay setting.
+		// The last delay option is a special case — it waits for the duration of the
+		// audio itself (i.e. a full extra play-length pause) rather than a fixed ms value
 		const delaySetting = audioSettings.audioDelay;
 		const delay = selectableAudioDelays[delaySetting]?.milliseconds || 0;
 		const isAudioLengthDelay = delaySetting === Math.max(...Object.keys(selectableAudioDelays).map(Number));
 		const calculatedDelay = isAudioLengthDelay ? (audio.duration || 0) * 1000 : delay;
 
-		// Play translation if needed
+		// If playing both languages, immediately follow Arabic with the translation
+		// before applying any delay or advancing to the next verse
 		if (playBoth && previousLanguage === 'arabic') {
 			return playVerseAudio({
 				key: `${props.key}`,
@@ -78,18 +129,16 @@ export async function playVerseAudio(props) {
 			});
 		}
 
-		// Delay before repeating
+		// Wait for the configured delay before moving to the next verse
 		if (calculatedDelay > 0) {
-			console.log(`Applying delay: ${calculatedDelay}ms`);
 			await new Promise((resolve) => setTimeout(resolve, calculatedDelay));
 		}
 
-		// If there are more verses to play, continue
+		// If there are more verses queued, remove the one that just finished
+		// and immediately start playing the next one in the list
 		if (window.versesToPlayArray?.length > 0) {
 			const index = window.versesToPlayArray.indexOf(audioSettings.playingKey);
-			if (index > -1) {
-				window.versesToPlayArray.splice(index, 1);
-			}
+			if (index > -1) window.versesToPlayArray.splice(index, 1);
 
 			if (window.versesToPlayArray.length > 0) {
 				return playVerseAudio({
@@ -100,72 +149,121 @@ export async function playVerseAudio(props) {
 			}
 		}
 
-		// Reset settings after playback ends
+		// No more verses to play — reset everything back to the default state
 		resetAudioSettings({ location: 'end' });
 	};
+
+	audio.addEventListener('ended', onEndedHandler);
 
 	__audioSettings.set(audioSettings);
 }
 
+// ============================================================
+// Fetch audio and cache it in the Cache API.
+// returnBlob=true  → cache + return a Blob URL for immediate playback
+// returnBlob=false → cache only, no Blob URL returned (used for prefetching)
+// ============================================================
+async function getAudioUrl(url, returnBlob = true) {
+	try {
+		const cache = await caches.open('quranwbw-audio-cache');
+
+		let response = await cache.match(url);
+
+		// If not cached, fetch from network and store for future use
+		if (!response) {
+			// Guard against fetching while offline — shows an alert to the user if offline
+			if (!(await checkOnlineAndAlert())) return;
+
+			console.log('[AudioCache] Fetching:', url);
+			response = await fetch(url);
+
+			if (!response.ok) {
+				throw new Error(`Failed to fetch audio: ${response.status}`);
+			}
+
+			// Clone before caching since response body can only be consumed once
+			await cache.put(url, response.clone());
+		} else {
+			console.log('[AudioCache] Using cached:', url);
+		}
+
+		// Prefetch calls stop here — no need to create a Blob URL
+		if (!returnBlob) return;
+
+		// Convert response to a Blob URL so the audio element can play it
+		const blob = await response.blob();
+		return URL.createObjectURL(blob);
+	} catch (error) {
+		// Fall back to the raw URL if anything goes wrong
+		console.warn('[AudioCache] Error:', error);
+		return url;
+	}
+}
+
 // Function to play word audio
 export async function playWordAudio(props) {
-	if (!(await checkOnlineAndAlert())) return;
-
 	resetAudioSettings();
 
 	const audioSettings = get(__audioSettings);
 	const currentAudioType = audioSettings.audioType;
 	const wordAudioVersion = 2;
 
+	// ================================
+	// Parse chapter, verse, and word number from props.key
+	// e.g. "2:255:7" -> chapter 2, verse 255, word 7 (defaults to 1)
 	const [wordChapter, wordVerse, wordNumber = 1] = props.key.split(':').map(Number);
+
+	// Build zero-padded filenames for current and next word audio files
 	const paddedChapter = String(wordChapter).padStart(3, '0');
 	const paddedVerse = String(wordVerse).padStart(3, '0');
 
-	const currentFileName = `${paddedChapter}_${paddedVerse}_${String(wordNumber).padStart(3, '0')}.mp3`;
-	const currentWordPath = `${wordChapter}/${currentFileName}`;
+	const currentWordFileName = `${paddedChapter}_${paddedVerse}_${String(wordNumber).padStart(3, '0')}.mp3`;
+	const nextWordFileName = `${paddedChapter}_${paddedVerse}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
 
-	const nextFileName = `${paddedChapter}_${paddedVerse}_${String(wordNumber + 1).padStart(3, '0')}.mp3`;
-	const nextWordPath = `${wordChapter}/${nextFileName}`;
+	const currentWordUrl = `${wordsAudioURL}/${wordChapter}/${currentWordFileName}?version=${wordAudioVersion}`;
+	const nextWordUrl = `${wordsAudioURL}/${wordChapter}/${nextWordFileName}?version=${wordAudioVersion}`;
 
-	let audioSrc = null;
-
-	// 1. Offline-first: check Dexie
+	// ================================
+	// Try prefetching next audio file only if there are more words in the verse
 	try {
-		const record = await cacheTableMap.word_audios.get(`/${wordChapter}/${currentFileName}`);
-		if (record?.audio) {
-			audioSrc = URL.createObjectURL(record.audio);
+		if (wordNumber < getWordsInVerse(`${wordChapter}:${wordVerse}`)) {
+			getAudioUrl(nextWordUrl, false);
 		}
 	} catch (error) {
-		console.warn('Offline audio lookup failed, falling back to network', error);
+		console.warn(error);
 	}
 
-	// 2. Fallback to network if needed
-	if (!audioSrc) {
-		audioSrc = `${wordsAudioURL}/${currentWordPath}?version=${wordAudioVersion}`;
-	}
+	// Tag this request with a unique ID to detect if a newer request has superseded it
+	const requestId = ++activeAudioRequestId;
+	const audioUrl = await getAudioUrl(currentWordUrl);
 
-	// 3. Prefetch next word if playAllWords is true (network only)
-	if (props.playAllWords) {
-		let nextWordInDexie = false;
+	// If URL is missing (e.g. offline + not cached — checkOnlineAndAlert already
+	// warned the user), abort before touching the player state
+	if (!audioUrl) return;
 
-		// Offline-first: check Dexie
-		try {
-			const nextRecord = await cacheTableMap.word_audios.get(`/${wordChapter}/${nextFileName}`);
-			nextWordInDexie = !!nextRecord?.audio;
-		} catch (error) {
-			console.warn('Offline next-word lookup failed', error);
+	// If a newer audio request was made while we were awaiting, discard this result
+	if (requestId !== activeAudioRequestId) {
+		// Clean up the blob URL to avoid memory leaks if one was created
+		if (audioUrl.startsWith('blob:')) {
+			URL.revokeObjectURL(audioUrl);
 		}
-
-		// Fallback to network if needed
-		if (!nextWordInDexie) {
-			fetch(`${wordsAudioURL}/${nextWordPath}?version=${wordAudioVersion}`);
-		}
+		return;
 	}
 
-	// 4. Play audio
-	audio.src = audioSrc;
+	// Release the previous blob URL from memory before switching to the new one
+	if (lastBlobUrl) {
+		URL.revokeObjectURL(lastBlobUrl);
+		lastBlobUrl = null;
+	}
+
+	// Track the new blob URL so we can revoke it later when moving to the next word
+	lastBlobUrl = audioUrl.startsWith('blob:') ? audioUrl : null;
+
+	audio.src = audioUrl;
+
+	//===========================================
+
 	audio.currentTime = 0;
-
 	audio.load();
 	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
 	audio.play();
@@ -178,19 +276,33 @@ export async function playWordAudio(props) {
 	// For debugging purposes, needs not be removed
 	console.log(`Playing word: ${audioSettings.playingWordKey}`);
 
-	audio.onended = function () {
-		// Cleanup object URL if offline audio was used
-		if (audioSrc.startsWith('blob:')) {
-			URL.revokeObjectURL(audioSrc);
+	// Use a named handler instead of audio.onended so it can be explicitly removed
+	// after firing, preventing handlers from stacking up across repeated plays
+	const onEndedHandler = function () {
+		// Remove the listener immediately to prevent any chance of double-firing
+		audio.removeEventListener('ended', onEndedHandler);
+
+		const hasNextWord = props.playAllWords && wordNumber < getWordsInVerse(audioSettings.playingKey);
+
+		// If we're NOT continuing to the next word, this is the end of the
+		// sequence — revoke the blob now instead of leaving it for the next
+		// playWordAudio call (which may not happen for a while, or ever)
+		if (!hasNextWord && lastBlobUrl) {
+			URL.revokeObjectURL(lastBlobUrl);
+			lastBlobUrl = null;
 		}
 
-		if (props.playAllWords && wordNumber < getWordsInVerse(audioSettings.playingKey)) {
+		// If playAllWords is enabled and there are still more words left in this
+		// verse, automatically advance to and play the next word
+		if (hasNextWord) {
 			return playWordAudio({ key: `${wordChapter}:${wordVerse}:${wordNumber + 1}`, playAllWords: true });
 		}
 
 		resetAudioSettings({ location: 'end' });
 		audioSettings.audioType = currentAudioType;
 	};
+
+	audio.addEventListener('ended', onEndedHandler);
 
 	__audioSettings.set(audioSettings);
 }
@@ -225,21 +337,37 @@ export function resetAudioSettings(props) {
 	try {
 		if (audio === null) audio = document.querySelector('#player');
 
+		// Stop playback and reset position
 		audio.pause();
 		audio.currentTime = 0;
 		audioSettings.isPlaying = false;
 		audioSettings.playingWordKey = null;
 
+		// If reset was triggered at the end of a playlist, clear the verses queue
 		if (props?.location === 'end') {
 			window.versesToPlayArray = [];
 		}
 
-		__audioSettings.set(audioSettings);
-		audio.removeEventListener('timeupdate', wordHighlighter);
+		// Invalidate any in-flight audio requests so they get discarded when they resolve
+		activeAudioRequestId++;
 
+		// Release the current blob URL from memory
+		if (lastBlobUrl) {
+			URL.revokeObjectURL(lastBlobUrl);
+			lastBlobUrl = null;
+		}
+
+		// Persist the updated audio state
+		__audioSettings.set(audioSettings);
+
+		// Stop word highlighting and clear any active highlights
+		audio.removeEventListener('timeupdate', wordHighlighter);
 		document.querySelectorAll('.word').forEach((element) => {
 			element.classList.remove('bg-black/5');
 		});
+
+		// Clear cached word counts to prevent stale data between playback sessions
+		wordsInVerseCache = {};
 	} catch (error) {
 		console.warn(error);
 	}
@@ -271,39 +399,44 @@ export async function wordAudioController(props) {
 	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key });
 }
 
-// Highlight words during audio playback based on timestamps
+// Highlight the currently playing word during verse audio playback.
 async function wordHighlighter() {
+	if (isHighlighting) return;
+	isHighlighting = true;
+
 	const audioSettings = get(__audioSettings);
 
 	try {
-		// Get the total number of words in the verse
+		// Get word count and timestamp data for the currently playing verse
 		const wordsInVerse = getWordsInVerse(audioSettings.playingKey);
-
-		// Retrieve verse timestamp data fetched in playVerseAudio function
 		const [chapter, verse] = audioSettings.playingKey.split(':').map(Number);
 		const reciterId = selectableReciters[get(__reciter)].id;
-		const timestampData = await fetchTimestampData();
-		const verseTimestamp = timestampData.data[chapter][verse][reciterId];
 
-		// Loop through all the words to highlight them
+		// cachedTimestampData is pre-populated in playVerseAudio before this
+		// listener is attached, so no async fetch is needed here
+		const verseTimestamp = cachedTimestampData.data[chapter][verse][reciterId];
+		const timestamps = verseTimestamp.split('|');
+
+		// Walk through each word and update playingWordKey to the latest word
+		// whose timestamp has been passed by the current audio position
 		for (let word = 0; word < wordsInVerse; word++) {
-			const wordTimestamp = verseTimestamp.split('|')[word];
-
-			// If the word timestamp is lower than the current audio time, update playingWordKey
-			if (wordTimestamp < audio.currentTime) {
+			if (timestamps[word] < audio.currentTime) {
 				audioSettings.playingWordKey = `${audioSettings.playingKey}:${word + 1}`;
 			}
 		}
 
-		// Update the audio settings
 		__audioSettings.set(audioSettings);
 
-		if (audioSettings.playingWordKey && lastPlayedKey !== audioSettings.playingWordKey) {
+		// Scroll the newly active word into view if auto-scroll is on and the word has changed
+		if (audioSettings.wbwAutoScrollEnabled && audioSettings.playingWordKey && lastPlayedKey !== audioSettings.playingWordKey) {
 			scrollElementIntoView(audioSettings.playingWordKey);
 			lastPlayedKey = audioSettings.playingWordKey;
 		}
 	} catch (error) {
 		console.warn(error);
+	} finally {
+		// Always release the guard so the next timeupdate event can run
+		isHighlighting = false;
 	}
 }
 
@@ -406,16 +539,22 @@ function getWordsInVerse(key) {
 	}
 }
 
-// Handler for verse play button and the play button in audio modal
-export function playButtonHandler(key) {
+// Starts audio playback for a verse or word, depending on the user's audio type setting.
+// Called by the verse play button and the play button in the audio modal.
+export function playButtonHandler(key = null) {
 	const { audioType, timesToRepeat, language } = get(__audioSettings);
+
+	// Play from the first verse in the queue
 	if (audioType === 'verse') {
 		playVerseAudio({
 			key: `${window.versesToPlayArray[0]}`,
-			timesToRepeat: timesToRepeat,
-			language: language
+			timesToRepeat,
+			language
 		});
-	} else if (audioType === 'word') {
+	}
+
+	// Play all words starting from word 1 of the given key
+	else if (audioType === 'word') {
 		playWordAudio({
 			key: `${key}:1`,
 			playAllWords: true
@@ -433,7 +572,7 @@ export function prepareVersesToPlay(key) {
 	const [chapter, verse] = key.split(':');
 	const { audioRange, startVerse, endVerse } = get(__audioSettings);
 	const versesInChapter = quranMetaData[chapter].verses;
-	const isSpecialPage = ['supplications', 'bookmarks', 'juz'].includes(get(__currentPage));
+	const isSpecialPage = ['supplications', 'bookmarks', 'juz', 'hizb'].includes(get(__currentPage));
 
 	// Helper function to set verses to play starting from the current key
 	const setPlayFromHere = () => {
@@ -462,9 +601,11 @@ export function prepareVersesToPlay(key) {
 	}
 }
 
-// Fetch timestamps for word-by-word highlighting
+// Fetch timestamps for word by word highlighting
 async function fetchTimestampData() {
-	return await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
+	if (cachedTimestampData) return cachedTimestampData;
+	cachedTimestampData = await fetchAndCacheJson(`${staticEndpoint}/timestamps/timestamps.json?version=2`, 'other');
+	return cachedTimestampData;
 }
 
 function scrollElementIntoView(id) {

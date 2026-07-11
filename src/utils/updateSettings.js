@@ -19,6 +19,7 @@ import {
 	__lastRead,
 	__wordTooltip,
 	__userBookmarks,
+	__userFavoriteChapters,
 	__wakeLockEnabled,
 	__userNotes,
 	__quizCorrectAnswers,
@@ -27,10 +28,10 @@ import {
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
-	__homepageExtrasPanelVisible,
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
-	__offlineModeSettings
+	__offlineModeSettings,
+	__homepageLayoutPreferences
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
@@ -200,6 +201,29 @@ export function updateSettings(props) {
 			__userBookmarks.set(userBookmarks);
 			break;
 
+		case 'userFavoriteChapters':
+			const chapterKey = props.key;
+			let userFavoriteChapters = userSettings['userFavoriteChapters'];
+
+			if (props.override) {
+				// Directly replace the entire favorites list (e.g. on initial load or bulk update)
+				userSettings.userFavoriteChapters = chapterKey;
+				userFavoriteChapters = chapterKey;
+			} else {
+				// Toggle: remove the chapter if already favorited, add it if not
+				if (userFavoriteChapters.includes(chapterKey)) {
+					userFavoriteChapters = userFavoriteChapters.filter((x) => x !== chapterKey);
+					window.umami?.track('Remove Chapter From Favorites');
+				} else {
+					userFavoriteChapters.push(chapterKey);
+					window.umami?.track('Add Chapter To Favorites');
+				}
+				userSettings.userFavoriteChapters = userFavoriteChapters;
+			}
+
+			__userFavoriteChapters.set(userFavoriteChapters);
+			break;
+
 		case 'userNotes':
 			const value = props.value;
 			const notes_key = props.key;
@@ -232,7 +256,7 @@ export function updateSettings(props) {
 
 		// for last read
 		case 'lastRead':
-			if (['chapter', 'mushaf', 'juz'].includes(get(__currentPage))) {
+			if (['chapter', 'mushaf', 'juz', 'hizb'].includes(get(__currentPage))) {
 				const data = props.value;
 				data['currentPage'] = get(__currentPage);
 				__lastRead.set(data);
@@ -279,12 +303,6 @@ export function updateSettings(props) {
 			userSettings.displaySettings.wordMorphologyOnClick = props.value;
 			break;
 
-		// for homepage's extras panel
-		case 'homepageExtrasPanelVisible':
-			__homepageExtrasPanelVisible.set(props.value);
-			userSettings.displaySettings.homepageExtrasPanelVisible = props.value;
-			break;
-
 		// for toggling website wide layout
 		case 'wideWesbiteLayoutEnabled':
 			__wideWesbiteLayoutEnabled.set(props.value);
@@ -303,32 +321,34 @@ export function updateSettings(props) {
 			userSettings.offlineModeSettings = props.value;
 			break;
 
-		// for increasing/decreasing font sizes
+		// for homepage layout preferences
+		case 'homepageLayoutPreferences':
+			__homepageLayoutPreferences.set(props.value);
+			userSettings.displaySettings.homepageLayoutPreferences = props.value;
+			break;
+
+		// Increase/decrease font sizes by swapping the Tailwind font size class on all
+		// matching elements and persisting the new size to userSettings.
+		// Elements use a `data-fontSize` attribute to track their current size class,
+		// avoiding the need to guess which class to remove before adding the new one.
 		case 'arabicText': // Arabic words
 		case 'wordTranslationText': // word translations & transliterations
 		case 'verseTranslationText': // verse translations & transliterations
-			// change the font size for each 'element'
+			if (!props.value) break;
+
 			document.querySelectorAll(`.${props.type}`).forEach((element) => {
+				// e.g. "text-2xl"
 				const currentSize = element.getAttribute('data-fontSize');
 
-				// set the new index and size
-				let newSize = props.value;
+				// Swap old size for new
+				element.classList.replace(currentSize, props.value);
 
-				// perform the action
-				if (newSize !== undefined) {
-					// remove the current class
-					element.classList.remove(currentSize);
-
-					// add the new class
-					element.classList.add(newSize);
-
-					// update the attribute
-					element.setAttribute('data-fontSize', newSize);
-
-					// update it in localSettings
-					userSettings.displaySettings.fontSizes[`${props.type}`] = newSize;
-				}
+				// Keep attribute in sync
+				element.setAttribute('data-fontSize', props.value);
 			});
+
+			// Persist outside the loop — same value for all elements, only needs to run once
+			userSettings.displaySettings.fontSizes[props.type] = props.value;
 			break;
 	}
 

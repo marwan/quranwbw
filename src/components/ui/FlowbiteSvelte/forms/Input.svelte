@@ -15,10 +15,10 @@
 	export let color = 'base';
 	export let floatClass = 'flex absolute inset-y-0 items-center';
 	const borderClasses = {
-		base: `border ${window.theme('border')}`
+		base: `border border-theme-accent/20`
 	};
 	const ringClasses = {
-		base: `${window.theme('input')}`
+		base: `focus:border-theme-accent focus:ring-theme-accent`
 	};
 	const colorClasses = {
 		base: ''
