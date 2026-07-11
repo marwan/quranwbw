@@ -216,8 +216,8 @@ async function getAudioUrl(url, returnBlob = true, dexieInfo) {
 		try {
 			await table.put({
 				key: dexieInfo.key,
-				audio: blob,
-				...dexieInfo.record
+				...dexieInfo.record,
+				audio: blob
 			});
 		} catch (error) {
 			console.warn('[AudioCache] Dexie write failed', error);
