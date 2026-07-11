@@ -5,6 +5,7 @@ import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+import { cacheTableMap } from '$utils/dexie';
 
 // <audio> element used for all verse and word playback
 let audio = document.querySelector('#player');
@@ -48,17 +49,31 @@ export async function playVerseAudio(props) {
 
 	const reciter = selectableReciters[get(__reciter)];
 	const reciterAudioUrl = props.language === 'arabic' ? reciter.url : selectableTranslationReciters[get(__translationReciter)].url;
+	const reciterId = props.language === 'arabic' ? reciter.id : selectableTranslationReciters[get(__translationReciter)].id;
+
 	const currentVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse).padStart(3, '0')}.mp3`;
 	const nextVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse + 1).padStart(3, '0')}.mp3`;
 
+	// Dexie key includes reciterId since the same verse has different audio per reciter
+	const currentDexieInfo = {
+		table: 'verse_audios',
+		key: `/${reciterId}/${playChapter}/${currentVerseFileName}`,
+		record: { chapter: playChapter, reciterId }
+	};
+	const nextDexieInfo = {
+		table: 'verse_audios',
+		key: `/${reciterId}/${playChapter}/${nextVerseFileName}`,
+		record: { chapter: playChapter, reciterId }
+	};
+
 	// Prefetch next verse audio in the background so it's ready when needed
 	if (playVerse < quranMetaData[playChapter].verses) {
-		getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false);
+		getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false, nextDexieInfo);
 	}
 
 	// Tag this request with a unique ID to detect if a newer request has superseded it
 	const requestId = ++activeAudioRequestId;
-	const audioUrl = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`);
+	const audioUrl = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`, true, currentDexieInfo);
 
 	// If URL is missing (e.g. offline + not cached), abort before touching the player state
 	if (!audioUrl) return;
@@ -159,39 +174,58 @@ export async function playVerseAudio(props) {
 }
 
 // ============================================================
-// Fetch audio and cache it in the Cache API.
-// returnBlob=true  → cache + return a Blob URL for immediate playback
-// returnBlob=false → cache only, no Blob URL returned (used for prefetching)
+// Fetch audio and return a playable Blob URL — Dexie-only, no Cache API.
+// returnBlob=true  → return a Blob URL for immediate playback
+// returnBlob=false → fetch/store only, no Blob URL returned (used for prefetching)
+//
+// dexieInfo → { table, key, record }
+//   table  → 'word_audios' or 'verse_audios'
+//   key    → unique lookup key for that table
+//   record → extra fields to store alongside `key` and `audio`
+//            (e.g. { chapter } for words, { chapter, reciterId } for verses)
 // ============================================================
-async function getAudioUrl(url, returnBlob = true) {
+async function getAudioUrl(url, returnBlob = true, dexieInfo) {
 	try {
-		const cache = await caches.open('quranwbw-audio-cache');
+		const table = cacheTableMap[dexieInfo.table];
 
-		let response = await cache.match(url);
-
-		// If not cached, fetch from network and store for future use
-		if (!response) {
-			// Guard against fetching while offline — shows an alert to the user if offline
-			if (!(await checkOnlineAndAlert())) return;
-
-			console.log('[AudioCache] Fetching:', url);
-			response = await fetch(url);
-
-			if (!response.ok) {
-				throw new Error(`Failed to fetch audio: ${response.status}`);
+		// 1. Check Dexie first
+		try {
+			const record = await table.get(dexieInfo.key);
+			if (record?.audio) {
+				console.log(`[AudioCache] Using Dexie (${dexieInfo.table}):`, dexieInfo.key);
+				if (!returnBlob) return;
+				return URL.createObjectURL(record.audio);
 			}
+		} catch (error) {
+			console.warn('[AudioCache] Dexie lookup failed, falling back to network', error);
+		}
 
-			// Clone before caching since response body can only be consumed once
-			await cache.put(url, response.clone());
-		} else {
-			console.log('[AudioCache] Using cached:', url);
+		// 2. Not in Dexie — fetch from network
+		if (!(await checkOnlineAndAlert())) return;
+
+		console.log('[AudioCache] Fetching:', url);
+		const response = await fetch(url);
+
+		if (!response.ok) {
+			throw new Error(`Failed to fetch audio: ${response.status}`);
+		}
+
+		const blob = await response.blob();
+
+		// 3. Store directly in Dexie
+		try {
+			await table.put({
+				key: dexieInfo.key,
+				audio: blob,
+				...dexieInfo.record
+			});
+		} catch (error) {
+			console.warn('[AudioCache] Dexie write failed', error);
 		}
 
 		// Prefetch calls stop here — no need to create a Blob URL
 		if (!returnBlob) return;
 
-		// Convert response to a Blob URL so the audio element can play it
-		const blob = await response.blob();
 		return URL.createObjectURL(blob);
 	} catch (error) {
 		// Fall back to the raw URL if anything goes wrong
@@ -223,19 +257,29 @@ export async function playWordAudio(props) {
 	const currentWordUrl = `${wordsAudioURL}/${wordChapter}/${currentWordFileName}?version=${wordAudioVersion}`;
 	const nextWordUrl = `${wordsAudioURL}/${wordChapter}/${nextWordFileName}?version=${wordAudioVersion}`;
 
-	// ================================
+	// Dexie keys match the format used by the bulk ZIP downloader: /{chapter}/{filename}
+	const currentDexieInfo = {
+		table: 'word_audios',
+		key: `/${wordChapter}/${currentWordFileName}`,
+		record: { chapter: wordChapter }
+	};
+	const nextDexieInfo = {
+		table: 'word_audios',
+		key: `/${wordChapter}/${nextWordFileName}`,
+		record: { chapter: wordChapter }
+	};
+
 	// Try prefetching next audio file only if there are more words in the verse
 	try {
 		if (wordNumber < getWordsInVerse(`${wordChapter}:${wordVerse}`)) {
-			getAudioUrl(nextWordUrl, false);
+			getAudioUrl(nextWordUrl, false, nextDexieInfo);
 		}
 	} catch (error) {
 		console.warn(error);
 	}
 
-	// Tag this request with a unique ID to detect if a newer request has superseded it
 	const requestId = ++activeAudioRequestId;
-	const audioUrl = await getAudioUrl(currentWordUrl);
+	const audioUrl = await getAudioUrl(currentWordUrl, true, currentDexieInfo);
 
 	// If URL is missing (e.g. offline + not cached — checkOnlineAndAlert already
 	// warned the user), abort before touching the player state
