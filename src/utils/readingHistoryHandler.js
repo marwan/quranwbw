@@ -22,7 +22,7 @@ export function updateReadingHistory({ history, data }) {
 		return [...history];
 	}
 
-	// Skip if this chapter + verse combination already exists in history
+	// Skip if this chapter + verse combination already exists in history (regardless of session)
 	const alreadyExists = history.some((entry) => entry.chapter === data.chapter && entry.verse === verse);
 	if (alreadyExists) return history;
 
