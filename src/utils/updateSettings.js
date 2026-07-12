@@ -266,8 +266,18 @@ export function updateSettings(props) {
 				__lastRead.set(data);
 				userSettings.lastRead = props.value;
 
-				// Append or update the reading history, then sync both
+				// Append or update the reading history
 				userSettings.readingHistory = updateReadingHistory({ history: userSettings.readingHistory, data });
+
+				// Dedup by chapter+verse, keeping the first (most recent) occurrence of each
+				const seen = new Set();
+				userSettings.readingHistory = userSettings.readingHistory.filter((entry) => {
+					const key = `${entry.chapter}:${entry.verse}`;
+					if (seen.has(key)) return false;
+					seen.add(key);
+					return true;
+				});
+
 				__readingHistory.set(userSettings.readingHistory);
 			}
 			break;
