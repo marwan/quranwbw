@@ -308,25 +308,25 @@
 			<!-- chapters tab -->
 			{#if divisionsActiveTab === chaptersTab}
 				<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
-					<!-- continue readin button -->
+					<!-- continue reading button -->
 					{#if lastReadExists}
 						{@const lastReadChapter = $__lastRead.chapter}
-						{@const lastReadVerse = $__lastRead.verse}
+						{@const lastReadVerse = Math.max(1, $__lastRead.verse - 1)}
 						<div class="flex flex-row space-x-2 mb-2">
 							<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
 								<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 								<span class="truncate">
-									<span class="md:hidden">Continue:</span>
-									<span class="hidden md:inline-block">Continue Reading:</span>
-									{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
+									<span class="md:hidden">Continue: {lastReadChapter}:{lastReadVerse}</span>
+									<span class="hidden md:inline-block">Continue Reading: {quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}</span>
 								</span>
 							</a>
 
 							{#if $__readingHistory.length > 1}
-								<button class="{continueReadingButtonClasses} flex-shrink-0 px-5" on:click={() => __readingHistoryModalVisible.set(true)}>
+								<button class="{continueReadingButtonClasses} w-full" on:click={() => __readingHistoryModalVisible.set(true)}>
 									<Clock size={5} />
+									<span class="md:hidden">History</span>
+									<span class="hidden md:inline-block">Reading History</span>
 								</button>
-								<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Reading History</Tooltip>
 							{/if}
 						</div>
 					{/if}
@@ -346,7 +346,7 @@
 				<div id="juz-tab-panel" role="tabpanel" aria-labelledby="juz-tab">
 					{#if lastReadExists}
 						{@const lastReadChapter = $__lastRead.chapter}
-						{@const lastReadVerse = $__lastRead.verse}
+						{@const lastReadVerse = Math.max(1, $__lastRead.verse - 1)}
 						{@const lastReadJuz = $__lastRead.juz}
 						<a href="/juz?id={lastReadJuz}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
@@ -389,7 +389,7 @@
 				<div id="hizb-tab-panel" role="tabpanel" aria-labelledby="hizb-tab">
 					{#if lastReadExists && $__lastRead.hizb}
 						{@const lastReadChapter = $__lastRead.chapter}
-						{@const lastReadVerse = $__lastRead.verse}
+						{@const lastReadVerse = Math.max(1, $__lastRead.verse - 1)}
 						{@const lastReadHizb = $__lastRead.hizb}
 						<a href="/hizb?id={lastReadHizb}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Hizb Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
