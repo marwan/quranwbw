@@ -151,7 +151,7 @@
 </script>
 
 <Modal id="audioModal" bind:open={$__audioModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl !theme max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" placement="center" position="bottom" outsideclose>
-	<h3 id="modal-title" class="mb-2 text-xl font-medium flex-shrink-0">{quranMetaData[$__audioSettings.playingChapter || 1].transliteration}, {$__audioSettings.playingKey}</h3>
+	<h3 class="mb-2 text-xl font-medium flex-shrink-0">{quranMetaData[$__audioSettings.playingChapter || 1].transliteration}, {$__audioSettings.playingKey}</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
 		<div class="flex flex-col">
