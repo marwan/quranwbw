@@ -82,8 +82,8 @@
 	}
 </script>
 
-<div class="relative note-menu-container {cardInnerClasses} !p-0 overflow-visible {dropdownOpen ? '!border-transparent' : ''}" role="article" aria-label="Note for {chapterMeta.transliteration} verse {verseNumber}">
-	<a href="{chapter}?startVerse={verseNumber}" class="!justify-start flex flex-col w-full p-5 {dropdownOpen ? 'pointer-events-none' : ''}" aria-label="Go to {chapterMeta.transliteration} verse {verseNumber}" on:click={handleCardClick}>
+<div class="relative note-menu-container {cardInnerClasses} p-0! overflow-visible {dropdownOpen ? 'border-transparent!' : ''}" role="article" aria-label="Note for {chapterMeta.transliteration} verse {verseNumber}">
+	<a href="{chapter}?startVerse={verseNumber}" class="justify-start! flex flex-col w-full p-5 {dropdownOpen ? 'pointer-events-none' : ''}" aria-label="Go to {chapterMeta.transliteration} verse {verseNumber}" on:click={handleCardClick}>
 		<div class="text-sm truncate {maxTextLength}">
 			{chapterMeta.transliteration} ({verse})
 		</div>
@@ -101,7 +101,7 @@
 
 {#if buttonElement}
 	<Portal target="body">
-		<Dropdown bind:open={dropdownOpen} triggeredBy="#note-menu-{verse.replace(':', '-')}" strategy="fixed" containerClass={`divide-y z-[1000] shadow-md border border-theme-accent/20`} class="px-2 my-2 w-max text-left font-sans direction-ltr">
+		<Dropdown bind:open={dropdownOpen} triggeredBy="#note-menu-{verse.replace(':', '-')}" strategy="fixed" containerClass={`divide-y z-1000 shadow-md border border-theme-accent/20`} class="px-2 my-2 w-max text-left font-sans direction-ltr">
 			<DropdownItem class={dropdownItemClasses} on:click={handleEditNote}>
 				<EditIcon size={4} aria-hidden="true" />
 				<span>Edit</span>

@@ -59,8 +59,8 @@
 	}
 </script>
 
-<div class="relative bookmark-menu-container {cardInnerClasses} !p-0 overflow-visible {dropdownOpen ? '!border-transparent' : ''}" role="article" aria-label="Bookmark for {chapterMeta.transliteration} verse {bookmarkVerse}">
-	<a href="{bookmarkChapter}?startVerse={bookmarkVerse}" class="!justify-start flex flex-col w-full p-5 {dropdownOpen ? 'pointer-events-none' : ''}" aria-label="Go to {chapterMeta.transliteration} verse {bookmarkVerse}">
+<div class="relative bookmark-menu-container {cardInnerClasses} p-0! overflow-visible {dropdownOpen ? 'border-transparent!' : ''}" role="article" aria-label="Bookmark for {chapterMeta.transliteration} verse {bookmarkVerse}">
+	<a href="{bookmarkChapter}?startVerse={bookmarkVerse}" class="justify-start! flex flex-col w-full p-5 {dropdownOpen ? 'pointer-events-none' : ''}" aria-label="Go to {chapterMeta.transliteration} verse {bookmarkVerse}">
 		<div class="text-sm truncate {maxTextLength}">
 			{chapterMeta.transliteration} ({bookmark})
 		</div>
@@ -85,7 +85,7 @@
 		bind:this={buttonElement}
 		on:click|stopPropagation={toggleDropdown}
 		on:touchend|preventDefault|stopPropagation={toggleDropdown}
-		class="absolute top-2 right-2 p-1 rounded-full hover:bg-theme-accent/5 opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-none"
+		class="absolute top-2 right-2 p-1 rounded-full hover:bg-theme-accent/5 opacity-70 hover:opacity-100 transition-opacity z-10 focus:outline-hidden"
 		aria-label={dropdownOpen ? 'Close menu' : 'Open options menu'}
 		aria-expanded={dropdownOpen}
 		aria-haspopup="true"
@@ -96,7 +96,7 @@
 
 {#if buttonElement}
 	<Portal target="body">
-		<Dropdown bind:open={dropdownOpen} triggeredBy="#bookmark-menu-{bookmark.replace(':', '-')}" strategy="fixed" containerClass={`divide-y z-[1000] shadow-md border border-theme-accent/20`} class="px-2 my-2 w-max text-left font-sans direction-ltr">
+		<Dropdown bind:open={dropdownOpen} triggeredBy="#bookmark-menu-{bookmark.replace(':', '-')}" strategy="fixed" containerClass={`divide-y z-1000 shadow-md border border-theme-accent/20`} class="px-2 my-2 w-max text-left font-sans direction-ltr">
 			<DropdownItem class={dropdownItemClasses} on:click={handleDeleteBookmark}>
 				<Trash size={4} aria-hidden="true" />
 				<span>Delete</span>

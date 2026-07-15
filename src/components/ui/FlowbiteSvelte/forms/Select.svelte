@@ -14,7 +14,7 @@
 		lg: 'text-base py-3 px-4'
 	};
 	let selectClass;
-	$: selectClass = twMerge(common, underline ? underlineClass : defaultClass, sizes[size], underline && '!px-0', $$props.class);
+	$: selectClass = twMerge(common, underline ? underlineClass : defaultClass, sizes[size], underline && 'px-0!', $$props.class);
 </script>
 
 <select {...$$restProps} bind:value class={selectClass} on:change on:contextmenu on:input>

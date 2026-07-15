@@ -9,8 +9,8 @@
 	import { selectedRadioOrCheckboxClasses, individualCheckboxClasses } from '$data/commonClasses';
 </script>
 
-<Modal id="favoriteChaptersModal" bind:open={$__favoriteChaptersModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
-	<h3 id="modal-title" class="mb-6 text-xl font-medium flex-shrink-0">Manage Favorite {term('chapters')}</h3>
+<Modal id="favoriteChaptersModal" bind:open={$__favoriteChaptersModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="rounded-b-none! md:rounded-3xl! max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+	<h3 id="modal-title" class="mb-6 text-xl font-medium shrink-0">Manage Favorite {term('chapters')}</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
 		<div class="grid gap-3 w-full">
@@ -24,7 +24,7 @@
 							</div>
 						</div>
 
-						<div class="chapter-icons text-4xl hidden md:inline-flex flex-shrink-0 text-theme-accent">
+						<div class="chapter-icons text-4xl hidden md:inline-flex shrink-0 text-theme-accent">
 							{@html `&#xE9${quranMetaData[chapter.id].icon};`}
 						</div>
 					</div>

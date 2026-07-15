@@ -196,12 +196,10 @@
 	<FavoriteChaptersModal />
 	<ConfirmationAlertModal />
 
-	{#key $page.url.pathname}
-		<div in:fade={{ duration: 300 }}>
-			<Navbar />
-			<SettingsDrawer />
-			<BottomToolbar />
-			<slot />
-		</div>
-	{/key}
+	<div in:fade={{ duration: 300 }}>
+		<Navbar />
+		<SettingsDrawer />
+		<BottomToolbar />
+		<slot />
+	</div>
 </div>

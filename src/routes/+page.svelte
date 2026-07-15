@@ -26,13 +26,13 @@
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
-	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
-	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5';
+	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center hover:bg-theme-accent/10 bg-theme-accent/5';
+	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm hover:bg-theme-accent/10 bg-theme-accent/5';
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
-	const cardInnerClasses = 'flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5 hover:bg-theme-accent/5';
-	const commontabClasses = 'px-2 md:px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
-	const tabDefaultBorder = `${commontabClasses} border-transparent`;
-	const tabActiveBorder = `${commontabClasses} border-theme-accent/20`;
+	const cardInnerClasses = 'flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer hover:bg-theme-accent/10 bg-theme-accent/5 hover:bg-theme-accent/5';
+	const commontabClasses = 'px-2 md:px-3 py-2 text-xs md:text-md cursor-pointer rounded-full';
+	const tabDefaultBorder = `${commontabClasses}`;
+	const tabActiveBorder = `${commontabClasses} bg-theme-accent/20`;
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 	const currentHour = new Date().getHours();
 
@@ -146,7 +146,7 @@
 		<div class="w-full flex flex-row justify-between text-sm">
 			<div>
 				<button
-					class="{topButtonClasses} !py-4 md:bg-transparent"
+					class="{topButtonClasses} py-4! md:bg-transparent cursor-pointer"
 					on:click={() => {
 						window.umami?.track('Homepage Search Button');
 						__quranNavigationModalVisible.set(true);
@@ -155,18 +155,18 @@
 					<Search2Bold size={4} />
 					<span class="hidden md:block">Search</span>
 				</button>
-				<a href="/topics" class="{topButtonClasses} !py-4 md:bg-transparent"><TopicsBold size={4} /><span class="hidden md:block">Topics</span></a>
-				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
-				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
-				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
+				<a href="/topics" class="{topButtonClasses} py-4! md:bg-transparent"><TopicsBold size={4} /><span class="hidden md:block">Topics</span></a>
+				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} py-4! md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
+				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class="{topButtonClasses} py-4! md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
+				<a href="/morphology?word=1:1" class="{topButtonClasses} py-4! md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
 			</div>
-			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
+			<button class="{topButtonClasses} py-4! md:bg-transparent" on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
 		</div>
 	</div>
 
 	<!-- mid section -->
-	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl !mt-2 bg-theme-accent/5 homepage-background-image">
-		<a href="/" class="flex flex-row space-x-4 px-2 items-center justify-left" aria-label="Home">
+	<div class="flex flex-col mb-4 py-8 px-6 md:px-8 rounded-xl mt-2! bg-theme-accent/5 homepage-background-image">
+		<div class="flex flex-row space-x-4 px-2 items-center justify-left select-none" aria-label="Home">
 			<div><Quran /></div>
 
 			<div class="flex flex-col">
@@ -180,7 +180,7 @@
 					<div class="hidden md:block">{siteDescriptionText[0]} {siteDescriptionText[1]}</div>
 				</div>
 			</div>
-		</a>
+		</div>
 	</div>
 
 	<!-- extras: continue reading, time specific chapters -->
@@ -222,58 +222,58 @@
 
 	<!-- chapter and most read tabs -->
 	<div id="homepage-tabs" style="margin-top: 0px;">
-		<div class="border-b border-theme-accent/20 mt-4"></div>
 
-		<div id="extras-tabs" class="flex items-center justify-between">
-			<div class="flex flex-row justify-center">
-				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!homepageLayoutPreferences.extrasPanelVisible && disabledClasses}">
-					<button on:click={() => changeTabs('extrasActiveTab', bookmarksTab)} class="{extrasActiveTab === bookmarksTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
-						<span>Bookmarks</span>
-						<span>{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
-					</button>
-					<button on:click={() => changeTabs('extrasActiveTab', notesTab)} class="{extrasActiveTab === notesTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Notes Tab Button">
-						<span>Notes</span>
-						<span>{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
-					</button>
-					<button on:click={() => changeTabs('extrasActiveTab', suggestionsTab)} class={extrasActiveTab === suggestionsTab ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
-				</div>
-			</div>
-
-			<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (homepageLayoutPreferences.extrasPanelVisible = !homepageLayoutPreferences.extrasPanelVisible)} data-umami-event="Toggle Panel Button">
-				<svelte:component this={homepageLayoutPreferences.extrasPanelVisible ? EyeCrossed : Eye} size={4} />
-			</button>
-			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.extrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
-		</div>
-
-		<div id="extras-panel" class="mb-4 pt-2 {homepageLayoutPreferences.extrasPanelVisible ? 'block' : 'hidden'}">
-			<!-- bookmarks tab -->
-			<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === bookmarksTab ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
-				<UserBookmarks {cardGridClasses} {cardInnerClasses} />
-			</div>
-
-			<!-- notes tab -->
-			<div class="notes-tab-panels space-y-12 {extrasActiveTab === notesTab ? 'block' : 'hidden'}" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab">
-				<UserNotes {cardGridClasses} {cardInnerClasses} />
-			</div>
-
-			<!-- suggestions tab -->
-			<div class="space-y-12 {extrasActiveTab === suggestionsTab ? 'block' : 'hidden'}" id="suggestions-tab-panel" role="tabpanel" aria-labelledby="suggestions-tab">
-				<div id="suggestions-chapters" class="flex flex-col space-y-4">
-					<div class="{cardGridClasses} grid-cols-1">
-						{#each Object.entries(mostRead) as [_, item]}
-							<a href={item.url} class="!justify-start {cardInnerClasses} flex-col">
-								<span class="text-sm">{quranMetaData[item.chapter].transliteration} ({item.verses})</span>
-								<div class="block text-xs opacity-70">{item.title}</div>
-							</a>
-						{/each}
+		<div class="bg-theme-accent/8 px-2 py-0.5 rounded-xl">
+			<div id="extras-tabs" class="flex items-center justify-between">
+				<div class="flex flex-row justify-center">
+					<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!homepageLayoutPreferences.extrasPanelVisible && disabledClasses}">
+						<button on:click={() => changeTabs('extrasActiveTab', bookmarksTab)} class="{extrasActiveTab === bookmarksTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
+							<span>Bookmarks</span>
+							<span>{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
+						</button>
+						<button on:click={() => changeTabs('extrasActiveTab', notesTab)} class="{extrasActiveTab === notesTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Notes Tab Button">
+							<span>Notes</span>
+							<span>{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
+						</button>
+						<button on:click={() => changeTabs('extrasActiveTab', suggestionsTab)} class={extrasActiveTab === suggestionsTab ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
 					</div>
+				</div>
 
-					<div class="px-2 text-xs opacity-70">Suggestions listed here are based on the most frequently read chapters and verses by muslim audience, as well as virtues derived from Hadiths. While some Hadiths highlighting these virtues may be considered weak by some scholars, using them for beneficial knowledge is also a widely accepted opinion.</div>
+				<button class="inline-flex p-2 rounded-full items-center hover:bg-theme-accent/10 bg-theme-accent/5" on:click={() => (homepageLayoutPreferences.extrasPanelVisible = !homepageLayoutPreferences.extrasPanelVisible)} data-umami-event="Toggle Panel Button">
+					<svelte:component this={homepageLayoutPreferences.extrasPanelVisible ? EyeCrossed : Eye} size={4} />
+				</button>
+				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.extrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
+			</div>
+
+			<div id="extras-panel" class="mb-4 pt-2 {homepageLayoutPreferences.extrasPanelVisible ? 'block' : 'hidden'}">
+				<!-- bookmarks tab -->
+				<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === bookmarksTab ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
+					<UserBookmarks {cardGridClasses} {cardInnerClasses} />
+				</div>
+
+				<!-- notes tab -->
+				<div class="notes-tab-panels space-y-12 {extrasActiveTab === notesTab ? 'block' : 'hidden'}" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab">
+					<UserNotes {cardGridClasses} {cardInnerClasses} />
+				</div>
+
+				<!-- suggestions tab -->
+				<div class="space-y-12 {extrasActiveTab === suggestionsTab ? 'block' : 'hidden'}" id="suggestions-tab-panel" role="tabpanel" aria-labelledby="suggestions-tab">
+					<div id="suggestions-chapters" class="flex flex-col space-y-4">
+						<div class="{cardGridClasses} grid-cols-1">
+							{#each Object.entries(mostRead) as [_, item]}
+								<a href={item.url} class="justify-start! {cardInnerClasses} flex-col">
+									<span class="text-sm">{quranMetaData[item.chapter].transliteration} ({item.verses})</span>
+									<div class="block text-xs opacity-70">{item.title}</div>
+								</a>
+							{/each}
+						</div>
+
+						<div class="px-2 text-xs opacity-70">Suggestions listed here are based on the most frequently read chapters and verses by muslim audience, as well as virtues derived from Hadiths. While some Hadiths highlighting these virtues may be considered weak by some scholars, using them for beneficial knowledge is also a widely accepted opinion.</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="border-b border-theme-accent/20"></div>
 
 		<div id="quran-division-tabs" class="mt-4">
 			<div class="flex flex-row items-center justify-between">
@@ -293,7 +293,7 @@
 				</div>
 
 				{#if showDivisionSort}
-					<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
+					<button class="inline-flex p-2 rounded-full items-center hover:bg-theme-accent/10 bg-theme-accent/5" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
 						<svelte:component this={currentSortIsAscending ? SortDescending : SortAscending} size={4} />
 					</button>
 					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">

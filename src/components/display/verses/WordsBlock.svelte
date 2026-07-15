@@ -94,7 +94,7 @@
 		hover:bg-theme-accent/5
 		${$__displayType === 1 ? 'text-center flex flex-col' : 'inline-flex flex-col'}
 		${selectableDisplays[$__displayType].layout === 'wbw' ? 'p-3' : mushafFontTypes.includes($__fontType) ? ($__currentPage === 'mushaf' ? 'p-0' : 'px-0 py-1') : 'p-1'}
-		${exampleVerse && '!p-0'}
+		${exampleVerse && 'p-0!'}
 	`;
 
 	// Classes for word spans

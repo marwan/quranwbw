@@ -17,7 +17,7 @@
 		lg: 'm-0.5 rounded-full p-2.5'
 	};
 	let buttonClass;
-	$: buttonClass = twMerge('focus:outline-none whitespace-normal', sizing[size], colors[color], color === 'default' && (background ? `` : ``), $$props.class);
+	$: buttonClass = twMerge('focus:outline-hidden whitespace-normal', sizing[size], colors[color], color === 'default' && (background ? `` : ``), $$props.class);
 	const svgSizes = {
 		xs: 'w-3 h-3',
 		sm: 'w-3.5 h-3.5',

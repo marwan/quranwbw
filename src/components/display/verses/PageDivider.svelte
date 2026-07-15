@@ -10,8 +10,7 @@
 		flex flex-row justify-center text-center mx-auto w-full mt-8 
 		${selectableDisplays[`${$__displayType}`].continuous ? 'mb-4' : 'mb-1'} 
 		py-2 px-4 text-sm rounded-full
-		border border-transparent hover:border-theme-accent
-		bg-theme-accent/5
+		bg-theme-accent/10
 	`;
 
 	$: dividerItems = [];

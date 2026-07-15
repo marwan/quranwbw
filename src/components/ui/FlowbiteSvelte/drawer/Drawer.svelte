@@ -5,8 +5,8 @@
 	export let activateClickOutside = true;
 	export let hidden = true;
 	export let position = 'fixed';
-	export let leftOffset = 'inset-y-0 start-0';
-	export let rightOffset = 'inset-y-0 end-0';
+	export let leftOffset = 'inset-y-0 inset-s-0';
+	export let rightOffset = 'inset-y-0 inset-e-0';
 	export let topOffset = 'inset-x-0 top-0';
 	export let bottomOffset = 'inset-x-0 bottom-0';
 	export let width = 'w-80';
@@ -22,7 +22,7 @@
 		switch (transitionType) {
 			case 'slide':
 				return slide(node, params);
-			case 'blur':
+			case 'blur-sm':
 				return blur(node, params);
 			case 'fade':
 				return fade(node, params);
@@ -40,7 +40,7 @@
 		hidden = !hidden;
 	};
 	const handleClickOutside = () => activateClickOutside && !hidden && handleDrawer();
-	let backdropDivClass = twMerge('settings-backdrop fixed top-0 start-0 z-50 w-full h-full', backdrop && bgColor, backdrop && bgOpacity);
+	let backdropDivClass = twMerge('settings-backdrop fixed top-0 inset-s-0 z-50 w-full h-full', backdrop && bgColor, backdrop && bgOpacity);
 	function clickOutsideWrapper(node, callback) {
 		return activateClickOutside ? clickOutside(node, callback) : undefined;
 	}
@@ -65,8 +65,8 @@
 @prop export let activateClickOutside: boolean = true;
 @prop export let hidden: boolean = true;
 @prop export let position: 'fixed' | 'absolute' = 'fixed';
-@prop export let leftOffset: string = 'inset-y-0 start-0';
-@prop export let rightOffset: string = 'inset-y-0 end-0';
+@prop export let leftOffset: string = 'inset-y-0 inset-s-0';
+@prop export let rightOffset: string = 'inset-y-0 inset-e-0';
 @prop export let topOffset: string = 'inset-x-0 top-0';
 @prop export let bottomOffset: string = 'inset-x-0 bottom-0';
 @prop export let width: string = 'w-80';

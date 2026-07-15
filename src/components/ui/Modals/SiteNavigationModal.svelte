@@ -19,7 +19,7 @@
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { isUserOnline } from '$utils/offlineModeHandler';
 
-	const linkClasses = 'w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5';
+	const linkClasses = 'w-full flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer hover:bg-theme-accent/10 bg-theme-accent/5';
 	const linkTextClasses = 'text-xs md:text-sm text-left w-[-webkit-fill-available] truncate';
 
 	// Default to online; fall back gracefully if navigator is unavailable (e.g. SSR)
@@ -57,7 +57,7 @@
 </script>
 
 <Modal id="siteNavigationModal" bind:open={$__siteNavigationModalVisible} transitionParams={getModalTransition('basic')} size="xs" class="rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" center outsideclose>
-	<h3 id="modal-title" class="mb-2 text-md font-semibold flex-shrink-0">Navigate</h3>
+	<h3 id="modal-title" class="mb-2 text-md font-semibold shrink-0">Navigate</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto">
 		<div class="flex flex-col space-y-4">

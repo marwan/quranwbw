@@ -13,7 +13,7 @@
 </script>
 
 {#if $__currentPage === 'mushaf'}
-	<div style="font-family: chapter-headers" class="header invisible leading-base pt-4 md:pt-8 pb-6 text-[28vw] md:text-[195px] lg:text-[195px]">{chapterHeaderCodes[chapter]}</div>
+	<div style="font-family: chapter-headers" class="header invisible leading-[0.3] pt-2 md:pt-4 pb-2 text-[28vw] md:text-[195px] lg:text-[195px]">{chapterHeaderCodes[chapter]}</div>
 {:else}
 	<div style="font-family: chapter-headers; line-height: 0;" class="header invisible leading-tight pt-4 md:pt-8 pb-10 text-[27vw] md:text-[195px] lg:text-[195px] text-center">{chapterHeaderCodes[chapter]}</div>
 {/if}

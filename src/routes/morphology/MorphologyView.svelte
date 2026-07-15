@@ -185,7 +185,7 @@
 										<div class="relative grid gap-4 grid-cols-2 row-gap-3 md:row-gap-4 md:grid-cols-6">
 											{#each Object.entries(allData.wordVerbsData.data[$__morphologyKey]) as [key, value]}
 												{#if value !== null}
-													<div class="flex flex-col py-5 duration-300 transform bg-theme-bg border border-theme-accent/20 rounded-3xl shadow-sm text-center hover:-translate-y-2">
+													<div class="flex flex-col py-5 duration-300 transform bg-theme-bg border border-theme-accent/20 rounded-3xl shadow-xs text-center hover:-translate-y-2">
 														<div class="flex items-center justify-center mb-2">
 															<p id="verb-1" class="text-xl md:text-2xl pb-4 leading-5 arabic-font-1">{value}</p>
 														</div>

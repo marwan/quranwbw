@@ -27,7 +27,7 @@
 		</div>
 	{:else}
 		<div>
-			<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
+			<div class="{cardGridClasses} grid-cols-2 md:grid-cols-4!">
 				{#each noteEntries as [verse, note] (verse)}
 					<NoteCard {verse} {note} {cardInnerClasses} forceClose={forceCloseDropdowns} />
 				{/each}

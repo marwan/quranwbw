@@ -13,7 +13,7 @@
 	// Fetch verse translations for pages other than chapter (reactive)
 	$: if ($__currentPage !== 'chapter') fetchVerseTranslationData({ reRenderWhenTheseUpdates: $__verseTranslations });
 
-	const footnoteSupClasses = 'ml-1 mt-1 px-2 py-1 rounded-full font-semibold cursor-pointer system-font border border-transparent hover:border-theme-accent bg-theme-accent/5';
+	const footnoteSupClasses = 'ml-1 mt-1 px-2 py-1 rounded-full font-semibold cursor-pointer system-font hover:bg-theme-accent/10 bg-theme-accent/5';
 
 	let footnoteId;
 	let footnoteChapter;
@@ -107,7 +107,7 @@
 					{@const translationFootnoteClasses = `hidden my-2 footnote-block px-2 py-2 border-2 border-theme-accent/20 rounded-2xl footnote-${value.meta.chapter}-${value.meta.verse}-${verseTranslationID}`}
 
 					<div class="flex flex-col print:break-inside-avoid">
-						<span class="{isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font} break-words">
+						<span class="{isTranslationRTL(verseTranslationID) && 'direction-rtl'} {selectableVerseTranslations[verseTranslationID].font} wrap-break-word">
 							{@html verseTextModifier(verseTranslation, verseTranslationID)}
 						</span>
 

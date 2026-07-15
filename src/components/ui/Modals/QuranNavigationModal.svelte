@@ -19,7 +19,7 @@
 	// CSS classes
 	const linkClasses = 'flex flex-row space-x-2 items-center';
 	const linkTextClasses = 'px-4 py-2 rounded-3xl border border-theme-accent/20 hover:bg-theme-accent/5 w-fit text-sm';
-	const listItemClasses = 'py-2 px-2 text-sm w-full text-left font-normal rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5';
+	const listItemClasses = 'py-2 px-2 text-sm w-full text-left font-normal rounded-3xl hover:bg-theme-accent/10 hover:bg-theme-accent/5';
 
 	let maxChaptersLoaded = false;
 	let maxVersesLoaded = false;
@@ -91,14 +91,14 @@
 	}
 </script>
 
-<Modal id="quranNavigationModal" bind:open={$__quranNavigationModalVisible} transitionParams={getModalTransition('top')} title="Navigate" size="md" class="!rounded-t-none md:!rounded-3xl" bodyClass="md:p-2 !border-t-0" headerClass="hidden" placement="center" position="top" outsideclose>
+<Modal id="quranNavigationModal" bind:open={$__quranNavigationModalVisible} transitionParams={getModalTransition('top')} title="Navigate" size="md" class="rounded-t-none! md:rounded-3xl!" bodyClass="md:p-2 border-t-0!" headerClass="hidden" placement="center" position="top" outsideclose>
 	<div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-col space-y-2 justify-between px-4 py-5 mx-auto`}>
 		<!-- search block -->
 		<div id="search-block" class="mx-2">
 			<div id="navigation-inputs" class="flex flex-col justify-start">
 				<div class="flex flex-row w-full h-fit items-center">
 					<form on:submit|preventDefault={() => (searchedKey = document.getElementById('searchKey').value)} class="flex flex-row w-full">
-						<Input id="searchKey" type="text" bind:value={searchedKey} autocomplete="off" {placeholder} size="md" class="bg-transparent rounded-3xl !text-center pl-10 px-8 placeholder:text-theme-accent/50">
+						<Input id="searchKey" type="text" bind:value={searchedKey} autocomplete="off" {placeholder} size="md" class="bg-transparent rounded-3xl text-center! pl-10 px-8 placeholder:text-theme-accent/50">
 							<Search slot="left" size={7} classes="pl-2 pt-1 {searchedKey.length > 0 && 'hidden'}" />
 							<CloseButton slot="right" on:click={() => (searchedKey = '')} class="pr-2 {searchedKey.length === 0 && 'hidden'}" />
 						</Input>
@@ -277,7 +277,7 @@
 
 		<!-- chapter and verse selectors -->
 		{#if $__currentPage !== 'home'}
-			<div id="chapter-and-verses-block" class="flex flex-row space-x-4 !mt-[-0rem] max-h-64 min-h-64 {searchedKey.length > 0 ? 'hidden' : 'block'}">
+			<div id="chapter-and-verses-block" class="flex flex-row space-x-4 mt-0! max-h-64 min-h-64 {searchedKey.length > 0 ? 'hidden' : 'block'}">
 				<!-- chapter selector -->
 				{#if !['morphology'].includes($__currentPage)}
 					<div class="flex flex-col py-2 space-y-2 w-full">

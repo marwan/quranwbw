@@ -14,7 +14,7 @@
 	// Public client-side API key (origin-restricted on API provider side)
 	const kalimatPublicApiKey = import.meta.env.VITE_KALIMAT_PUBLIC_API_KEY;
 
-	const linkClasses = 'w-fit flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5';
+	const linkClasses = 'w-fit flex flex-row space-x-2 py-4 px-4 rounded-xl items-center cursor-pointer hover:bg-theme-accent/10 bg-theme-accent/5';
 	const linkTextClasses = 'text-xs md:text-sm text-left w-fit capitalize truncate';
 
 	const params = new URLSearchParams(window.location.search);

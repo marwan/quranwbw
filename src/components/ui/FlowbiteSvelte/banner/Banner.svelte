@@ -11,7 +11,7 @@
 	const dispatch = createEventDispatcher();
 	$: dispatch(open ? 'open' : 'close');
 	const divClasses = {
-		default: `top-0 start-0 w-full border-b border-theme-accent/20`
+		default: `top-0 inset-s-0 w-full border-b border-theme-accent/20`
 	};
 	const insideDivClasses = {
 		default: 'items-center mx-auto'

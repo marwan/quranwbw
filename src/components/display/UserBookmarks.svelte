@@ -42,7 +42,7 @@
 		</div>
 	{:else}
 		<div>
-			<div class="{cardGridClasses} grid-cols-2 md:!grid-cols-4">
+			<div class="{cardGridClasses} grid-cols-2 md:grid-cols-4!">
 				{#each $__userBookmarks as bookmark (bookmark)}
 					<BookmarkCard {bookmark} {fullQuranTextData} {cardInnerClasses} forceClose={forceCloseDropdowns} />
 				{/each}

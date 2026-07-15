@@ -8,17 +8,17 @@
 
 	const modalPositions = {
 		default: {
-			dialogClasses: 'fixed top-0 start-0 end-0 h-modal md:inset-0 md:h-full z-50 w-full p-4 flex',
+			dialogClasses: 'fixed top-0 inset-s-0 inset-e-0 h-modal md:inset-0 md:h-full z-50 w-full p-4 flex',
 			innerClasses: 'flex relative',
 			sizes: 'w-full max-h-full'
 		},
 		top: {
-			dialogClasses: 'fixed top-0 start-0 end-0 h-full md:h-modal md:inset-0 md:h-full z-50 w-full md:p-4 flex',
+			dialogClasses: 'fixed top-0 inset-s-0 inset-e-0 h-full md:h-modal md:inset-0 md:h-full z-50 w-full md:p-4 flex',
 			innerClasses: 'flex fixed top-0 md:relative',
 			sizes: 'w-full max-h-full'
 		},
 		bottom: {
-			dialogClasses: 'fixed bottom-0 md:top-0 start-0 end-0 h-full md:h-modal md:inset-0 md:h-full z-50 w-full md:p-4 flex',
+			dialogClasses: 'fixed bottom-0 md:top-0 inset-s-0 inset-e-0 h-full md:h-modal md:inset-0 md:h-full z-50 w-full md:p-4 flex',
 			innerClasses: 'flex fixed bottom-0 md:relative',
 			sizes: 'w-full max-h-[90%]'
 		}
@@ -140,7 +140,7 @@
 				<!-- Modal body -->
 				<div class={bodyCls} role="document" on:keydown|stopPropagation={handleKeys} on:wheel|stopPropagation|passive>
 					{#if dismissable && !$$slots.header && !title}
-						<CloseButton name="Close modal" class="absolute top-3 end-2.5" {color} on:click={hide} />
+						<CloseButton name="Close modal" class="absolute top-3 inset-e-2.5" {color} on:click={hide} />
 					{/if}
 					<slot />
 				</div>

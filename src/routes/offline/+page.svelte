@@ -713,7 +713,7 @@
 				<!-- Mismatch banner with re-download button -->
 				{#if section.isDataDownloaded && section.showMismatchBanner}
 					<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-start text-sm bg-theme-accent/5">
-						<span class="flex-shrink-0 w-5 h-5 mt-1 md:mt-0.5"><Info /></span>
+						<span class="shrink-0 w-5 h-5 mt-1 md:mt-0.5"><Info /></span>
 						<span>{mismatchMessage}</span>
 					</div>
 				{/if}

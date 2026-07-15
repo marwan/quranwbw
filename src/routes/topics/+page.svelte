@@ -104,7 +104,7 @@
 		<div class="my-4">
 			<div class="mx-auto flex flex-wrap justify-center px-2">
 				{#each alphabet as letter}
-					<a href="#{letter}" class="ml-1 mt-1 px-2 py-1 rounded-full cursor-pointer no-underline min-w-[2rem] text-center border border-transparent hover:border-theme-accent bg-theme-accent/5">
+					<a href="#{letter}" class="ml-1 mt-1 px-2 py-1 rounded-full cursor-pointer no-underline min-w-8 text-center hover:bg-theme-accent/10 bg-theme-accent/5">
 						{letter}
 					</a>
 				{/each}

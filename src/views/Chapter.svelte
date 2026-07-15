@@ -18,23 +18,26 @@
 	import { fade } from 'svelte/transition';
 
 	let chapterData;
+	let loaded = false;
 
-	// Fetch verses whenever there's a change in chapter or URL parameters
+	// Fetch chapter data only when chapter number or font/translation settings change
 	$: {
-		// Update current chapter number
 		__chapterNumber.set(+data.chapter);
-
-		// Parse URL to get the range of verses to load
-		[startVerse, endVerse] = parseURL();
-
-		// Fetch chapter data
 		chapterData = fetchChapterData({ chapter: $__chapterNumber });
+		chapterData.then(() => { loaded = true; });
 
-		// Update the first verse on page
+		// Re-run when font or translation settings change (triggers re-fetch)
+		if ($__displayType || $__fontType || $__wordTranslation || $__wordTransliteration) {
+			// Do nothing except re-run the block
+		}
+	}
+
+	// Parse URL separately — no re-fetch needed on verse navigation
+	$: {
+		[startVerse, endVerse] = parseURL();
 		__firstVerseOnPage.set(startVerse);
 
-		// Check for store updates (page URL, display type, font type, word translation, transliteration)
-		if ($page.url.href || $__displayType || $__fontType || $__wordTranslation || $__wordTransliteration) {
+		if ($page.url.href) {
 			// Do nothing except re-run the block
 		}
 	}
@@ -57,7 +60,9 @@
 <PageHead title={`${quranMetaData[$__chapterNumber].transliteration} (${$__chapterNumber}${$page.url.searchParams.get('startVerse') || data.verse ? ':' + startVerse : ''})`} description={`Read Chapter ${$__chapterNumber} ${quranMetaData[$__chapterNumber].transliteration} of the Quran ${startVerse ? 'starting from ' + term('verse') + ' ' + startVerse : ''}.`} />
 
 {#await chapterData}
-	<Spinner />
+	{#if !loaded}
+		<Spinner />
+	{/if}
 {:then}
 	<div id="chapter-block" in:fade={{ duration: 300 }}>
 		<Bismillah {startVerse} />

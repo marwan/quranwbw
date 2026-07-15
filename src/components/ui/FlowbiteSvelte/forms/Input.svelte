@@ -18,7 +18,7 @@
 		base: `border border-theme-accent/20`
 	};
 	const ringClasses = {
-		base: `focus:border-theme-accent focus:ring-theme-accent`
+		base: `focus:border-theme-accent/50 focus:ring-theme-accent/50`
 	};
 	const colorClasses = {
 		base: ''
@@ -40,7 +40,7 @@
 
 <Wrapper class="relative w-full" show={$$slots.left || $$slots.right}>
 	{#if $$slots.left}
-		<div class="{twMerge(floatClass, $$props.classLeft)} start-0 ps-2.5 pointer-events-none">
+		<div class="{twMerge(floatClass, $$props.classLeft)} inset-s-0 ps-2.5 pointer-events-none">
 			<slot name="left" />
 		</div>
 	{/if}
@@ -48,7 +48,7 @@
 		<input {...$$restProps} bind:value on:blur on:change on:click on:contextmenu on:focus on:keydown on:keypress on:keyup on:mouseover on:mouseenter on:mouseleave on:paste on:input {...{ type }} class={inputClass} />
 	</slot>
 	{#if $$slots.right}
-		<div class="{twMerge(floatClass, $$props.classRight)} end-0 pe-2.5"><slot name="right" /></div>
+		<div class="{twMerge(floatClass, $$props.classRight)} inset-e-0 pe-2.5"><slot name="right" /></div>
 	{/if}
 </Wrapper>
 

@@ -81,10 +81,10 @@
 
 	// CSS classes
 	const settingsBlockClasses = 'space-y-2 py-6';
-	const selectorClasses = 'w-32 border border-theme-accent/20 text-left rounded-3xl focus:border-theme-accent focus:ring-theme-accent focus-within:ring-2 block p-2.5 truncate text-sm';
+	const selectorClasses = 'w-32 border border-theme-accent/20 text-left rounded-3xl focus:border-theme-accent focus:ring-theme-accent focus-within:ring-2 block py-[10px] px-[15px] truncate text-sm';
 	const settingsDescriptionClasses = 'mb-6 text-xs opacity-70';
-	const toggleBtnClasses = 'relative w-14 h-7 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:content-[""] after:absolute after:top-0.5 after:start-[4px] after:border after:rounded-full after:h-6 after:w-6 after:transition-all bg-theme-accent/15 after:bg-theme-bg after:border-theme-bg peer-checked:bg-theme-accent';
-	const rangeClasses = 'appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full bg-theme-accent/15 [&::-webkit-slider-thumb]:!bg-theme-accent';
+	const toggleBtnClasses = 'relative w-14 h-7 rounded-full peer peer-checked:after:translate-x-full peer-checked:rtl:after:-translate-x-full after:content-[""] after:absolute after:top-0.5 after:inset-s-[4px] after:border after:rounded-full after:h-6 after:w-6 after:transition-all bg-theme-accent/15 after:bg-theme-bg after:border-theme-bg peer-checked:bg-theme-accent';
+	const rangeClasses = 'appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full bg-theme-accent/15 [&::-webkit-slider-thumb]:bg-theme-accent!';
 
 	let settingsDrawerOpacity = 'opacity-100';
 	let settingsDrawerBackground = 'bg-theme-bg';
@@ -159,8 +159,8 @@
 		}, 0);
 	}
 
-	// Handle mouse enter event to show font size sliders
-	function onMouseEnter(selector) {
+	// Handle drag start on range slider to show font size preview
+	function onDragStart(selector) {
 		document.querySelectorAll('.fontSizeSliders').forEach((element) => {
 			element.classList.remove(`bg-theme-bg`, 'opacity-100');
 			element.classList.add('opacity-0', 'pointer-events-none');
@@ -175,8 +175,8 @@
 		selectedElement.classList.add('opacity-100', `bg-theme-bg`, 'rounded-3xl', 'shadow-lg', 'px-2');
 	}
 
-	// Handle mouse leave event to hide font size sliders
-	function onMouseLeave() {
+	// Handle drag end on range slider to hide font size preview
+	function onDragEnd() {
 		document.querySelectorAll('.fontSizeSliders').forEach((element) => {
 			element.classList.remove(`bg-theme-bg`, 'opacity-0', 'rounded-3xl', 'shadow-lg', 'px-2', 'pointer-events-none');
 			element.classList.add('opacity-100');
@@ -185,6 +185,12 @@
 		settingsDrawerOpacity = 'opacity-100';
 		settingsDrawerBackground = 'bg-theme-bg';
 		document.querySelector('.settings-backdrop').classList.remove('opacityyy-10');
+	}
+
+	// Global pointerup/mouseup/touchend listener to end drag on any range slider
+	if (typeof window !== 'undefined') {
+		window.addEventListener('mouseup', onDragEnd);
+		window.addEventListener('touchend', onDragEnd);
 	}
 
 	function getFontSizeIdByClass(className) {
@@ -219,7 +225,7 @@
 	{#if showAllSettings}
 		<div id="all-settings">
 			<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4 {settingsDrawerOpacity}">
-				<h5 id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold">Settings</h5>
+				<h5 id="drawer-label" class="inline-flex items-center my-4 text-1xl cursor-pointer font-semibold">Settings</h5>
 				<CloseButton on:click={() => ($__settingsDrawerHidden = true)} class="my-4 rounded-3xl" />
 			</div>
 
@@ -355,7 +361,7 @@
 					<div id="arabic-word-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">Arabic Word Size ({selectableFontSizes[arabicWordSizeValue].value.split('-')[1]})</span>
-							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('arabic-word-size-setting')} on:mouseleave={() => onMouseLeave()}>
+							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mousedown={() => onDragStart('arabic-word-size-setting')} on:touchstart={() => onDragStart('arabic-word-size-setting')}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={arabicWordSizeValue} class={rangeClasses} />
 							</div>
 						</div>
@@ -370,7 +376,7 @@
 								{$__signLanguageModeEnabled ? 'Sign Language Icon Size' : 'Word Translation/Transliteration Size'}
 								({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})
 							</span>
-							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('word-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
+							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mousedown={() => onDragStart('word-translation-size-setting')} on:touchstart={() => onDragStart('word-translation-size-setting')}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranlationTransliterationSizeValue} class={rangeClasses} />
 							</div>
 						</div>
@@ -382,7 +388,7 @@
 					<div id="verse-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">{term('verse')} Translation/Transliteration Size ({selectableFontSizes[verseTranlationTransliterationSizeValue].value.split('-')[1]})</span>
-							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('verse-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
+							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mousedown={() => onDragStart('verse-translation-size-setting')} on:touchstart={() => onDragStart('verse-translation-size-setting')}>
 								<Range min="1" max={maxFontSizeAllowed} bind:value={verseTranlationTransliterationSizeValue} class={rangeClasses} />
 							</div>
 						</div>
@@ -602,7 +608,7 @@
 	{#if showIndividualSetting}
 		<div id="individual-setting" transition:fly={{ duration: 150, x: 0, easing: sineIn }}>
 			<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4">
-				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>⟵ Back</button>
+				<button id="drawer-label" class="inline-flex items-center my-4 text-1xl cursor-pointer font-semibold" on:click={() => goBackToMainSettings()}>{"⇠"} Back</button>
 				<CloseButton on:click={() => ($__settingsDrawerHidden = true)} class="my-4 rounded-3xl" />
 			</div>
 

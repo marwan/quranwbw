@@ -1,10 +1,8 @@
 <script>
 	import * as dom from '@floating-ui/dom';
 	import { onMount, createEventDispatcher } from 'svelte';
-	import { twJoin } from 'tailwind-merge';
 	import Frame from './Frame.svelte';
 	export let activeContent = false;
-	export let arrow = true;
 	export let offset = 8;
 	export let placement = 'top';
 	export let trigger = 'hover';
@@ -24,7 +22,6 @@
 	$: placement && (referenceEl = referenceEl);
 	let referenceEl;
 	let floatingEl;
-	let arrowEl;
 	let contentEl;
 	let triggerEls = [];
 	let _blocked = false; // management of the race condition between focusin and click events
@@ -51,25 +48,12 @@
 			}, 100);
 		} else open = false;
 	};
-	let arrowSide;
-	const oppositeSideMap = {
-		left: 'right',
-		right: 'left',
-		bottom: 'top',
-		top: 'bottom'
-	};
-	$: middleware = [...middlewares, dom.offset(+offset), arrowEl && dom.arrow({ element: arrowEl, padding: 10 })];
+	$: middleware = [...middlewares, dom.offset(+offset)];
 	function updatePosition() {
 		dom.computePosition(referenceEl, floatingEl, { placement, strategy, middleware }).then(({ x, y, middlewareData, placement, strategy }) => {
 			floatingEl.style.position = strategy;
 			floatingEl.style.left = yOnly ? '0' : px(x);
 			floatingEl.style.top = px(y);
-			if (middlewareData.arrow && arrowEl instanceof HTMLDivElement) {
-				arrowEl.style.left = px(middlewareData.arrow.x);
-				arrowEl.style.top = px(middlewareData.arrow.y);
-				arrowSide = oppositeSideMap[placement.split('-')[0]];
-				arrowEl.style[arrowSide] = px(-arrowEl.offsetWidth / 2 - ($$props.border ? 1 : 0));
-			}
 		});
 	}
 	function init(node, _referenceEl) {
@@ -129,16 +113,6 @@
 	function optional(pred, func) {
 		return pred ? func : () => undefined;
 	}
-	let arrowClass;
-	$: arrowClass = twJoin('absolute pointer-events-none block w-[10px] h-[10px] rotate-45 bg-inherit border-inherit', $$props.border && arrowSide === 'bottom' && 'border-b border-e', $$props.border && arrowSide === 'top' && 'border-t border-s ', $$props.border && arrowSide === 'right' && 'border-t border-e ', $$props.border && arrowSide === 'left' && 'border-b border-s ');
-	function initArrow(node) {
-		arrowEl = node;
-		return {
-			destroy() {
-				arrowEl = null;
-			}
-		};
-	}
 </script>
 
 {#if !referenceEl}
@@ -148,7 +122,6 @@
 {#if referenceEl}
 	<Frame use={init} options={referenceEl} bind:open role="tooltip" tabindex={activeContent ? -1 : undefined} on:focusin={optional(activeContent, showHandler)} on:focusout={optional(activeContent, hideHandler)} on:mouseenter={optional(activeContent && !clickable, showHandler)} on:mouseleave={optional(activeContent && !clickable, hideHandler)} {...$$restProps}>
 		<slot />
-		{#if arrow}<div use:initArrow class={arrowClass} />{/if}
 	</Frame>
 {/if}
 
@@ -157,7 +130,6 @@
 [Go to docs](https://flowbite-svelte.com/)
 ## Props
 @prop export let activeContent: boolean = false;
-@prop export let arrow: boolean = true;
 @prop export let offset: number = 8;
 @prop export let placement: Placement = 'top';
 @prop export let trigger: 'hover' | 'click' | 'focus' = 'hover';
