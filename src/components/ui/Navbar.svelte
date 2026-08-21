@@ -74,9 +74,9 @@
 		return 0;
 	})();
 
-	// Get the chapter name for the navbar
+	// Get the chapter name for the navbar, prefixed with the chapter number
 	$: {
-		navbarChapterName = quranMetaData[$__chapterNumber].transliteration;
+		navbarChapterName = `${$__chapterNumber} - ${quranMetaData[$__chapterNumber].transliteration}`;
 
 		// Only show the translation if it's different from the transliteration
 		if (quranMetaData[$__chapterNumber].transliteration !== quranMetaData[$__chapterNumber].translation) {
