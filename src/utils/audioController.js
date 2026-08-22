@@ -112,12 +112,10 @@ export async function playVerseAudio(props) {
 		const previousLanguage = props.language;
 
 		// Calculate the delay between verses based on the user's audioDelay setting.
-		// The last delay option is a special case — it waits for the duration of the
-		// audio itself (i.e. a full extra play-length pause) rather than a fixed ms value
-		const delaySetting = audioSettings.audioDelay;
-		const delay = selectableAudioDelays[delaySetting]?.milliseconds || 0;
-		const isAudioLengthDelay = delaySetting === Math.max(...Object.keys(selectableAudioDelays).map(Number));
-		const calculatedDelay = isAudioLengthDelay ? (audio.duration || 0) * 1000 : delay;
+		// Audio length delay options wait for as long as the recitation would take at the chosen speed
+		const delayOption = selectableAudioDelays[audioSettings.audioDelay];
+		const audioLengthSpeed = delayOption?.audioLengthSpeed;
+		const calculatedDelay = audioLengthSpeed ? ((audio.duration || 0) * 1000) / audioLengthSpeed : delayOption?.milliseconds || 0;
 
 		// If playing both languages, immediately follow Arabic with the translation
 		// before applying any delay or advancing to the next verse
