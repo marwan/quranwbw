@@ -353,7 +353,7 @@
 
 		{#if $__audioSettings.audioType === 'verse'}
 			<div class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20">
-				<div class="flex flex-row space-x-4">
+				<div class="flex flex-row flex-wrap items-center gap-x-4 gap-y-3">
 					<!-- repeat times -->
 					<div class="flex flex-row space-x-2">
 						<span class="m-auto text-sm"> Repeat </span>
