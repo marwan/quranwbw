@@ -922,10 +922,9 @@ export const selectableAudioDelays = {
 	4: { id: 4, name: '5 seconds', milliseconds: 5000 },
 	5: { id: 5, name: '10 seconds', milliseconds: 10000 },
 	6: { id: 6, name: '15 seconds', milliseconds: 15000 },
-	7: { id: 7, name: 'Audio Length (1x)', milliseconds: 0, audioLengthSpeed: 1 },
-	8: { id: 8, name: 'Audio Length (0.5x)', milliseconds: 0, audioLengthSpeed: 0.5 },
-	9: { id: 9, name: 'Audio Length (0.75x)', milliseconds: 0, audioLengthSpeed: 0.75 },
-	11: { id: 11, name: 'Audio Length (1.25x)', milliseconds: 0, audioLengthSpeed: 1.25 }
+	7: { id: 7, name: 'Ayah Length (1x)', milliseconds: 0, audioLengthSpeed: 1 },
+	8: { id: 8, name: 'Ayah Length (0.5x)', milliseconds: 0, audioLengthSpeed: 0.5 },
+	11: { id: 11, name: 'Ayah Length (1.5x)', milliseconds: 0, audioLengthSpeed: 1.5 }
 };
 
 // The order the delay options are listed in
