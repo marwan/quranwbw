@@ -928,4 +928,18 @@ export const selectableAudioDelays = {
 	11: { id: 11, name: 'Audio Length (1.25x)', milliseconds: 0, audioLengthSpeed: 1.25 }
 };
 
+// The order the delay options are listed in
+export const selectableAudioDelaysOrder = [
+	1, // None
+	7, // Audio Length (1x)
+	8, // Audio Length (0.5x)
+	9, // Audio Length (0.75x)
+	11, // Audio Length (1.25x)
+	2, // 1 second
+	3, // 3 seconds
+	4, // 5 seconds
+	5, // 10 seconds
+	6 // 15 seconds
+];
+
 export const selectableRepeatTimes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50];

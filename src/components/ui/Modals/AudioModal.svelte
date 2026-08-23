@@ -10,7 +10,7 @@
 	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __reciter, __translationReciter, __playbackSpeed } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
-	import { selectableAudioDelays, selectableRepeatTimes, selectableReciters } from '$data/options';
+	import { selectableAudioDelays, selectableAudioDelaysOrder, selectableRepeatTimes, selectableReciters } from '$data/options';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { updateSettings } from '$utils/updateSettings';
@@ -26,6 +26,8 @@
 	let endVerseDropdownOpen = false;
 	let timesToRepeatDropdownOpen = false;
 	let audioDelayDropdownOpen = false;
+	// Listed in the order set by selectableAudioDelaysOrder rather than by id
+	const selectableAudioDelayOptions = selectableAudioDelaysOrder.map((id) => selectableAudioDelays[id]).filter(Boolean);
 	// Assisted highlights only with audio length delay is silent and only wbw timings
 	$: isAudioLengthDelay = selectableAudioDelays[$__audioSettings.audioDelay]?.audioLengthSpeed !== undefined;
 	$: reciterHasWordHighlights = selectableReciters[$__reciter]?.wbw === true;
@@ -69,7 +71,7 @@
 	}
 
 	// Default to no delay
-	if ($__audioSettings.audioDelay === undefined) {
+	if (selectableAudioDelays[$__audioSettings.audioDelay] === undefined) {
 		$__audioSettings.audioDelay = 1;
 	}
 
@@ -385,7 +387,7 @@
 							<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
 						</button>
 						<Dropdown bind:open={audioDelayDropdownOpen} class="max-h-52 overflow-y-auto my-2 px-2">
-							{#each Object.values(selectableAudioDelays) as delay}
+							{#each selectableAudioDelayOptions as delay}
 								<DropdownItem
 									class={dropdownItemClasses}
 									on:click={() => {
