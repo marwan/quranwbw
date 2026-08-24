@@ -930,10 +930,9 @@ export const selectableAudioDelays = {
 // The order the delay options are listed in
 export const selectableAudioDelaysOrder = [
 	1, // None
-	7, // Audio Length (1x)
 	8, // Audio Length (0.5x)
-	9, // Audio Length (0.75x)
-	11, // Audio Length (1.25x)
+	7, // Audio Length (1x)
+	11, // Audio Length (1.5x)
 	2, // 1 second
 	3, // 3 seconds
 	4, // 5 seconds
