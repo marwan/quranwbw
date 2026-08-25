@@ -144,6 +144,19 @@
 		updateSettings({ type: 'audioSettings', value: audioSettings });
 	}
 
+	function trackEvent(eventName, eventData) {
+		if (window.umami && typeof window.umami.track === 'function') {
+			window.umami.track(eventName, eventData);
+		}
+	}
+
+	function toggleAssistedHighlights() {
+		const newSetting = !$__audioSettings.assistedHighlightsDuringDelay;
+
+		$__audioSettings.assistedHighlightsDuringDelay = newSetting;
+		trackEvent('Toggle Assisted Word Highlights', { enabled: newSetting });
+	}
+
 	// This function toggles the rememberSettings property within the $__audioSettings object.
 	// Depending on the new state, it calls savedPlaySettingsHandler to either save or reset the audio settings.
 	function toggleRememberSettings() {
@@ -393,6 +406,7 @@
 									on:click={() => {
 										$__audioSettings.audioDelay = delay.id;
 										audioDelayDropdownOpen = !audioDelayDropdownOpen;
+										trackEvent('Audio Delay Option', { delay: delay.name });
 									}}>{delay.name}</DropdownItem
 								>
 							{/each}
@@ -402,7 +416,7 @@
 					<!-- assisted highlights during an audio length delay -->
 					{#if isAudioLengthDelay}
 						<div class="flex flex-col space-y-1 w-full {!reciterHasWordHighlights && disabledClasses}">
-							<Checkbox checked={$__audioSettings.assistedHighlightsDuringDelay} disabled={!reciterHasWordHighlights} on:click={() => ($__audioSettings.assistedHighlightsDuringDelay = !$__audioSettings.assistedHighlightsDuringDelay)} class="space-x-2 font-normal bg-theme-bg">
+							<Checkbox checked={$__audioSettings.assistedHighlightsDuringDelay} disabled={!reciterHasWordHighlights} on:click={() => toggleAssistedHighlights()} class="space-x-2 font-normal bg-theme-bg">
 								<span class="text-sm">Assisted Word Highlights</span>
 							</Checkbox>
 							<span class="text-xs opacity-70">
