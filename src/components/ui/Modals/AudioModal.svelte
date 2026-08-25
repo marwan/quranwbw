@@ -31,6 +31,7 @@
 	// Assisted highlights only with audio length delay is silent and only wbw timings
 	$: isAudioLengthDelay = selectableAudioDelays[$__audioSettings.audioDelay]?.audioLengthSpeed !== undefined;
 	$: reciterHasWordHighlights = selectableReciters[$__reciter]?.wbw === true;
+	$: isArabicPlayback = $__audioSettings.language === 'arabic';
 	let startVerseSearch = ''; // Holds search input for start verse
 	let endVerseSearch = ''; // Holds search input for end verse
 	$: versesInChapter = quranMetaData[$__chapterNumber].verses;
@@ -414,7 +415,7 @@
 					</div>
 
 					<!-- assisted highlights during an audio length delay -->
-					{#if isAudioLengthDelay}
+					{#if isAudioLengthDelay && isArabicPlayback}
 						<div class="flex flex-col space-y-1 w-full {!reciterHasWordHighlights && disabledClasses}">
 							<Checkbox checked={$__audioSettings.assistedHighlightsDuringDelay} disabled={!reciterHasWordHighlights} on:click={() => toggleAssistedHighlights()} class="space-x-2 font-normal bg-theme-bg">
 								<span class="text-sm">Assisted Word Highlights</span>
