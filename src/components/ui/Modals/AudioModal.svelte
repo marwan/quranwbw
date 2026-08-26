@@ -10,7 +10,7 @@
 	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __reciter, __translationReciter, __playbackSpeed } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
-	import { selectableAudioDelays, selectableRepeatTimes } from '$data/options';
+	import { selectableAudioDelays, selectableAudioDelaysOrder, selectableRepeatTimes, selectableReciters } from '$data/options';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { updateSettings } from '$utils/updateSettings';
@@ -26,6 +26,12 @@
 	let endVerseDropdownOpen = false;
 	let timesToRepeatDropdownOpen = false;
 	let audioDelayDropdownOpen = false;
+	// Listed in the order set by selectableAudioDelaysOrder rather than by id
+	const selectableAudioDelayOptions = selectableAudioDelaysOrder.map((id) => selectableAudioDelays[id]).filter(Boolean);
+	// Assisted highlights only with audio length delay is silent and only wbw timings
+	$: isAudioLengthDelay = selectableAudioDelays[$__audioSettings.audioDelay]?.audioLengthSpeed !== undefined;
+	$: reciterHasWordHighlights = selectableReciters[$__reciter]?.wbw === true;
+	$: isArabicPlayback = $__audioSettings.language === 'arabic';
 	let startVerseSearch = ''; // Holds search input for start verse
 	let endVerseSearch = ''; // Holds search input for end verse
 	$: versesInChapter = quranMetaData[$__chapterNumber].verses;
@@ -66,7 +72,7 @@
 	}
 
 	// Default to no delay
-	if ($__audioSettings.audioDelay === undefined) {
+	if (selectableAudioDelays[$__audioSettings.audioDelay] === undefined) {
 		$__audioSettings.audioDelay = 1;
 	}
 
@@ -114,7 +120,8 @@
 				language: source.language,
 				audioRange: source.audioRange,
 				timesToRepeat: source.timesToRepeat,
-				audioDelay: source.audioDelay
+				audioDelay: source.audioDelay,
+				assistedHighlightsDuringDelay: source.assistedHighlightsDuringDelay ?? defaultSettings.audioSettings.assistedHighlightsDuringDelay
 			});
 		};
 
@@ -136,6 +143,19 @@
 		$__audioSettings.playbackSpeed = $__playbackSpeed;
 
 		updateSettings({ type: 'audioSettings', value: audioSettings });
+	}
+
+	function trackEvent(eventName, eventData) {
+		if (window.umami && typeof window.umami.track === 'function') {
+			window.umami.track(eventName, eventData);
+		}
+	}
+
+	function toggleAssistedHighlights() {
+		const newSetting = !$__audioSettings.assistedHighlightsDuringDelay;
+
+		$__audioSettings.assistedHighlightsDuringDelay = newSetting;
+		trackEvent('Toggle Assisted Word Highlights', { enabled: newSetting });
 	}
 
 	// This function toggles the rememberSettings property within the $__audioSettings object.
@@ -349,7 +369,7 @@
 
 		{#if $__audioSettings.audioType === 'verse'}
 			<div class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20">
-				<div class="flex flex-row space-x-4">
+				<div class="flex flex-row flex-wrap items-center gap-x-4 gap-y-3">
 					<!-- repeat times -->
 					<div class="flex flex-row space-x-2">
 						<span class="m-auto text-sm"> Repeat </span>
@@ -381,17 +401,34 @@
 							<div>{selectableAudioDelays[$__audioSettings.audioDelay].name}</div>
 						</button>
 						<Dropdown bind:open={audioDelayDropdownOpen} class="max-h-52 overflow-y-auto my-2 px-2">
-							{#each Object.values(selectableAudioDelays) as delay}
+							{#each selectableAudioDelayOptions as delay}
 								<DropdownItem
 									class={dropdownItemClasses}
 									on:click={() => {
 										$__audioSettings.audioDelay = delay.id;
 										audioDelayDropdownOpen = !audioDelayDropdownOpen;
+										trackEvent('Audio Delay Option', { delay: delay.name });
 									}}>{delay.name}</DropdownItem
 								>
 							{/each}
 						</Dropdown>
 					</div>
+
+					<!-- assisted highlights during an audio length delay -->
+					{#if isAudioLengthDelay && isArabicPlayback}
+						<div class="flex flex-col space-y-1 w-full {!reciterHasWordHighlights && disabledClasses}">
+							<Checkbox checked={$__audioSettings.assistedHighlightsDuringDelay} disabled={!reciterHasWordHighlights} on:click={() => toggleAssistedHighlights()} class="space-x-2 font-normal bg-theme-bg">
+								<span class="text-sm">Assisted Word Highlights</span>
+							</Checkbox>
+							<span class="text-xs opacity-70">
+								{#if reciterHasWordHighlights}
+									Highlights the words at the reciter's pace during the silent delay, so you can follow along while repeating the {term('verse')}.
+								{:else}
+									Only available for reciters that support word by word highlighting.
+								{/if}
+							</span>
+						</div>
+					{/if}
 				</div>
 			</div>
 		{/if}
