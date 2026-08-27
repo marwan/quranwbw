@@ -31,6 +31,7 @@ let __currentPage,
 	__mushafPageDivisions,
 	__wordTooltip,
 	__audioSettings,
+	__playback,
 	__morphologyKey,
 	__firstVerseOnPage,
 	__audioModalVisible,
@@ -152,6 +153,9 @@ if (browser) {
 	// to store all the audio settings
 	__audioSettings = writable(userSettings.audioSettings);
 
+	// to store the live playback status: 'idle' | 'playing' | 'paused' (runtime only, not persisted)
+	__playback = writable('idle');
+
 	// to store the morphology verse/word key
 	__morphologyKey = writable(null);
 
@@ -258,6 +262,7 @@ export {
 	__mushafPageDivisions,
 	__wordTooltip,
 	__audioSettings,
+	__playback,
 	__morphologyKey,
 	__firstVerseOnPage,
 	__audioModalVisible,

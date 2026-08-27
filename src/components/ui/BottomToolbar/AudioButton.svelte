@@ -2,42 +2,46 @@
 	import PlaySolid from '$svgs/PlaySolid.svelte';
 	import PauseSolid from '$svgs/PauseSolid.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
-	import { playButtonHandler, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
-	import { __currentPage, __audioSettings, __fullVersesDisplayKeys } from '$utils/stores';
+	import { playButtonHandler, setVersesToPlay, togglePlayPause } from '$utils/audioController';
+	import { __currentPage, __audioSettings, __fullVersesDisplayKeys, __playback } from '$utils/stores';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+
+	// Reactive transport flags derived from the single playback status store
+	$: isPlaying = $__playback === 'playing';
+	$: isActive = $__playback !== 'idle';
 
 	// Toggle audio playback: stop if playing, or start from the first verse on the page
 	async function audioHandler() {
+		// An active session just toggles pause/resume — no queue rebuild, no network, works offline
+		if (isActive) return togglePlayPause();
+
+		// Idle: starting a fresh session needs the audio files, so check connectivity first
 		if (!(await checkOnlineAndAlert())) return;
 
-		if ($__audioSettings.isPlaying) {
-			resetAudioSettings({ location: 'end' });
-		} else {
-			// For juz/hizb pages, restrict playback to verses within that section
-			if (['juz', 'hizb'].includes($__currentPage)) {
-				setVersesToPlay({ verses: $__fullVersesDisplayKeys.split(',') });
-			}
-			// For all other pages, play every verse visible on the page
-			else {
-				setVersesToPlay({ allVersesOnPage: true });
-			}
-
-			// Begin playback from the first verse (verse or word mode, per user settings)
-			playButtonHandler(window.versesToPlayArray[0]);
+		// For juz/hizb pages, restrict playback to verses within that section
+		if (['juz', 'hizb'].includes($__currentPage)) {
+			setVersesToPlay({ verses: $__fullVersesDisplayKeys.split(',') });
 		}
+		// For all other pages, play every verse visible on the page
+		else {
+			setVersesToPlay({ allVersesOnPage: true });
+		}
+
+		// Begin playback from the first verse (verse or word mode, per user settings)
+		playButtonHandler(window.versesToPlayArray[0]);
 	}
 </script>
 
 <!-- play/pause button -->
 <div class="flex items-center justify-center">
-	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => audioHandler()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group focus:border-theme-accent focus:ring-theme-accent bg-theme-accent/15" data-umami-event="Toolbar Play Button">
-		<span><svelte:component this={$__audioSettings.isPlaying ? PauseSolid : PlaySolid} size={5} /></span>
-		<span class="sr-only">{$__audioSettings.isPlaying ? 'Pause' : 'Play'}</span>
+	<button type="button" title={isPlaying ? 'Pause' : 'Play'} on:click={() => audioHandler()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group focus:border-theme-accent focus:ring-theme-accent bg-theme-accent/15" data-umami-event="Toolbar Play Button">
+		<span><svelte:component this={isPlaying ? PauseSolid : PlaySolid} size={5} /></span>
+		<span class="sr-only">{isPlaying ? 'Pause' : 'Play'}</span>
 
 		<!-- show badge when a verse is playing -->
-		{#if $__audioSettings.isPlaying && $__audioSettings.audioType === 'verse'}
+		{#if isActive && $__audioSettings.audioType === 'verse'}
 			<div class="absolute inline-flex items-center justify-center z-30 text-xs px-2 rounded-3xl -top-3 border bg-theme-bg border-theme-accent/20">{$__audioSettings.playingKey}</div>
 		{/if}
 	</button>
 </div>
-<Tooltip arrow={false} type="light" class="hidden md:block font-normal">{$__audioSettings.isPlaying ? 'Pause' : 'Play'}</Tooltip>
+<Tooltip arrow={false} type="light" class="hidden md:block font-normal">{isPlaying ? 'Pause' : 'Play'}</Tooltip>
