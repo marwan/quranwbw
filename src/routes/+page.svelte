@@ -16,10 +16,11 @@
 	import Edit2 from '$svgs/Edit2.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
+	import UserColoredBookmarks from '$display/UserColoredBookmarks.svelte';
 	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __userColoredBookmarks, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -40,6 +41,7 @@
 	const bookmarksTab = 1;
 	const notesTab = 2;
 	const suggestionsTab = 3;
+	const coloredTab = 4;
 	const chaptersTab = 1;
 	const juzTab = 2;
 	const favoriteChaptersTab = 3;
@@ -58,6 +60,23 @@
 	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
+	$: totalColored = (() => {
+		try {
+			const map = $__userColoredBookmarks ?? {};
+			return Object.keys(map).filter((k) => {
+				// lightweight validation: must be chapter:verse with numbers
+				const parts = k.split(':');
+				if (parts.length !== 2) return false;
+				const ch = Number(parts[0]);
+				const vs = Number(parts[1]);
+				if (!Number.isInteger(ch) || !Number.isInteger(vs)) return false;
+				const col = Number(map[k]);
+				return col >= 1 && col <= 8;
+			}).length;
+		} catch {
+			return 0;
+		}
+	})();
 	$: hasFavorites = $__userFavoriteChapters.length > 0;
 	$: favoritesSortIsAscending = homepageLayoutPreferences.favoritesSortIsAscending ?? true;
 	$: sortedFavoriteChapters = favoritesSortIsAscending ? [...$__userFavoriteChapters].sort((a, b) => a - b) : [...$__userFavoriteChapters].sort((a, b) => b - a);
@@ -227,15 +246,51 @@
 		<div id="extras-tabs" class="flex items-center justify-between">
 			<div class="flex flex-row justify-center">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!homepageLayoutPreferences.extrasPanelVisible && disabledClasses}">
-					<button on:click={() => changeTabs('extrasActiveTab', bookmarksTab)} class="{extrasActiveTab === bookmarksTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
+					<button
+						on:click={() => changeTabs('extrasActiveTab', bookmarksTab)}
+						class="{extrasActiveTab === bookmarksTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate"
+						data-umami-event="Bookmarks Tab Button"
+						role="tab"
+						aria-selected={extrasActiveTab === bookmarksTab}
+						aria-controls="bookmarks-tab-panel"
+						id="bookmarks-tab"
+					>
 						<span>Bookmarks</span>
 						<span>{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
 					</button>
-					<button on:click={() => changeTabs('extrasActiveTab', notesTab)} class="{extrasActiveTab === notesTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Notes Tab Button">
+					<button
+						on:click={() => changeTabs('extrasActiveTab', notesTab)}
+						class="{extrasActiveTab === notesTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate"
+						data-umami-event="Notes Tab Button"
+						role="tab"
+						aria-selected={extrasActiveTab === notesTab}
+						aria-controls="notes-tab-panel"
+						id="notes-tab"
+					>
 						<span>Notes</span>
 						<span>{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 					</button>
-					<button on:click={() => changeTabs('extrasActiveTab', suggestionsTab)} class={extrasActiveTab === suggestionsTab ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
+					<button
+						on:click={() => changeTabs('extrasActiveTab', suggestionsTab)}
+						class={extrasActiveTab === suggestionsTab ? tabActiveBorder : tabDefaultBorder}
+						data-umami-event="Suggestions Tab Button"
+						role="tab"
+						aria-selected={extrasActiveTab === suggestionsTab}
+						aria-controls="suggestions-tab-panel"
+						id="suggestions-tab"
+					>Suggestions</button>
+					<button
+						on:click={() => changeTabs('extrasActiveTab', coloredTab)}
+						class="{extrasActiveTab === coloredTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate"
+						data-umami-event="Colored Bookmarks Tab Button"
+						role="tab"
+						aria-selected={extrasActiveTab === coloredTab}
+						aria-controls="colored-tab-panel"
+						id="colored-tab"
+					>
+						<span>Colored</span>
+						<span>{totalColored > 0 ? `(${totalColored})` : ''}</span>
+					</button>
 				</div>
 			</div>
 
@@ -270,6 +325,11 @@
 
 					<div class="px-2 text-xs opacity-70">Suggestions listed here are based on the most frequently read chapters and verses by muslim audience, as well as virtues derived from Hadiths. While some Hadiths highlighting these virtues may be considered weak by some scholars, using them for beneficial knowledge is also a widely accepted opinion.</div>
 				</div>
+			</div>
+
+			<!-- colored bookmarks tab -->
+			<div class="space-y-12 {extrasActiveTab === coloredTab ? 'block' : 'hidden'}" id="colored-tab-panel" role="tabpanel" aria-labelledby="colored-tab">
+				<UserColoredBookmarks {cardGridClasses} {cardInnerClasses} />
 			</div>
 		</div>
 

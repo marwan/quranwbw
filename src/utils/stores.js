@@ -10,6 +10,7 @@ let __currentPage,
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
+	__userColoredBookmarks,
 	__userFavoriteChapters,
 	__fontType,
 	__wordTranslation,
@@ -90,6 +91,9 @@ if (browser) {
 
 	// to store the user bookmarks
 	__userBookmarks = writable(userSettings.userBookmarks);
+
+	// to store the user's colored bookmarks (Record<verseKey, 1..8>)
+	__userColoredBookmarks = writable(userSettings.userColoredBookmarks ?? {});
 
 	// to store the user's favorite chapters
 	__userFavoriteChapters = writable(userSettings.userFavoriteChapters);
@@ -237,6 +241,7 @@ export {
 	__userSettings,
 	__userNotes,
 	__userBookmarks,
+	__userColoredBookmarks,
 	__userFavoriteChapters,
 	__fontType,
 	__wordTranslation,

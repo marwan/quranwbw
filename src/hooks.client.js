@@ -59,6 +59,7 @@ export const defaultSettings = {
 	userBookmarks: [],
 	userFavoriteChapters: [],
 	userNotes: {},
+	userColoredBookmarks: {},
 	chapter: 1,
 	offlineModeSettings: {}
 };
