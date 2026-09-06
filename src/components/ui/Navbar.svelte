@@ -5,7 +5,7 @@
 	import Mecca from '$svgs/Mecca.svelte';
 	import Madinah from '$svgs/Madinah.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled, __fullVersesDisplayKeys } from '$utils/stores';
+	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled, __fullVersesDisplayKeys, __chapterData, __verseKeyData } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	import { page } from '$app/stores';
@@ -43,32 +43,66 @@
 	$: revelationTerm = term(revelation.termKey);
 	$: RevelationIcon = revelation.Icon;
 
-	// Calculates reading progress (0–100%) — by verse fraction on chapter pages, or by position within the displayed verse keys on all other pages.
+	// cumulativeWords[verse] = number of words from the start of the chapter to that verse.
+	$: chapterWordCounts = (() => {
+		if ($__currentPage !== 'chapter' || !$__chapterData) return null;
+
+		const cumulativeWords = [0];
+		let total = 0;
+
+		for (let verse = 1; verse <= quranMetaData[$__chapterNumber].verses; verse++) {
+			total += $__chapterData[`${$__chapterNumber}:${verse}`]?.meta.words ?? 0;
+			cumulativeWords[verse] = total;
+		}
+
+		return { cumulativeWords, total };
+	})();
+
 	$: readingProgress = (() => {
 		// No progress if the user hasn't started reading yet
 		if (!Object.prototype.hasOwnProperty.call($__lastRead, 'chapter')) return 0;
 
-		// On the chapter page, progress = verses read / total verses in chapter
+		// progress = words read / total words in chapter
 		if ($__currentPage === 'chapter') {
-			return ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100;
+			if ($__lastRead.chapter !== $__chapterNumber || !chapterWordCounts?.total) return 0;
+
+			return ((chapterWordCounts.cumulativeWords[$__lastRead.verse] ?? 0) / chapterWordCounts.total) * 100;
 		}
 
-		// On other pages, progress is derived from the ordered list of displayed verse keys
 		if ($__fullVersesDisplayKeys?.length) {
 			// The store may hold a comma-separated string or an array — normalise to array
-			const keys = typeof $__fullVersesDisplayKeys === 'string' ? $__fullVersesDisplayKeys.split(',') : $__fullVersesDisplayKeys;
+			const verseKeys = typeof $__fullVersesDisplayKeys === 'string' ? $__fullVersesDisplayKeys.split(',') : $__fullVersesDisplayKeys;
 
-			// Find the last key that is at or before the user's current read position
-			const index = keys.findLastIndex((k) => {
-				const [kChap, kVerse] = k.split(':').map(Number);
-				return kChap < $__lastRead.chapter || (kChap === $__lastRead.chapter && kVerse <= $__lastRead.verse);
-			});
+			// A juz or hizb spans several chapters, so positions have to be compared across them.
+			// Multiply the chapter number by 1000 to ensure that the verse number doesn't affect the comparison.
+			const positionOf = (chapter, verse) => chapter * 1000 + verse;
+			const keyPosition = (verseKey) => positionOf(...verseKey.split(':').map(Number));
+
+			const lastReadPosition = positionOf($__lastRead.chapter, $__lastRead.verse);
+			if (lastReadPosition < keyPosition(verseKeys[0]) || lastReadPosition > keyPosition(verseKeys[verseKeys.length - 1])) return 0;
+
+			// Find the last key at or before the read position — it marks where to stop counting words
+			const index = verseKeys.findLastIndex((verseKey) => keyPosition(verseKey) <= lastReadPosition);
 
 			// If no key is before the last read position, the user hasn't reached this page yet
 			if (index === -1) return 0;
 
-			// Progress = position of last read key / total keys on this page
-			return ((index + 1) / keys.length) * 100;
+			// Progress = words up to the last read key / total words on this page
+			if ($__verseKeyData) {
+				let readWords = 0;
+				let totalWords = 0;
+
+				verseKeys.forEach((verseKey, keyIndex) => {
+					const words = $__verseKeyData[verseKey]?.words ?? 0;
+					totalWords += words;
+					if (keyIndex <= index) readWords += words;
+				});
+
+				if (totalWords > 0) return (readWords / totalWords) * 100;
+			}
+
+			// Fall back to the key position while the word counts are still loading
+			return ((index + 1) / verseKeys.length) * 100;
 		}
 
 		return 0;
