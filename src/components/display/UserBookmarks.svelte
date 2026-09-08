@@ -15,10 +15,12 @@
 
 	$: hasBookmarks = $__userBookmarks.length > 0;
 
+	// Load Quran data when bookmarks become available
 	$: if (hasBookmarks && !fullQuranTextData) {
 		loadQuranData();
 	}
 
+	// Load and cache the full Quran text data
 	async function loadQuranData() {
 		try {
 			fullQuranTextData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, 'other');
@@ -27,6 +29,7 @@
 		}
 	}
 
+	// Trigger all dropdowns to close
 	function handleScroll() {
 		forceCloseDropdowns += 1;
 	}

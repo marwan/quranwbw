@@ -18,12 +18,14 @@
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
 	import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
+	import ReadingHistoryModal from '$ui/Modals/ReadingHistoryModal.svelte';
 
 	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbarToolbarOnScroll } from '$utils/toggleNavbarToolbarOnScroll';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
+	import { isReaderPage, resetReadingHistorySession } from '$utils/readingHistoryHandler';
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
@@ -45,6 +47,11 @@
 	// Stop all audio when the page or chapter changes
 	$: if ($__currentPage || $__chapterNumber) {
 		resetAudioSettings({ location: 'end' });
+	}
+
+	// Reset the reading session whenever the user navigates away from a reader page
+	$: if ($__currentPage && !isReaderPage($__currentPage)) {
+		resetReadingHistorySession();
 	}
 
 	// Toggle distraction-free mushaf mode
@@ -194,6 +201,7 @@
 	<MorphologyModal />
 	<CopyShareVerseModal />
 	<FavoriteChaptersModal />
+	<ReadingHistoryModal />
 	<ConfirmationAlertModal />
 
 	{#key $page.url.pathname}
