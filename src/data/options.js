@@ -355,7 +355,7 @@ export const selectableVerseTranslations = {
 		resource_id: 33,
 		resource_name: 'Indonesian Islamic affairs ministry',
 		language_id: 67,
-		version: 1
+		version: 2
 	},
 	141: {
 		resource_id: 141,
