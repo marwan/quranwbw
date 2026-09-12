@@ -12,6 +12,14 @@ QuranWBW.com is your companion for reading, listening to, and learning the Holy 
 
 This is a passion project maintained in spare time. Development happens in bursts, and there may be periods of inactivity lasting weeks or months. Bug fixes and feature requests will be addressed as time permits. Your patience and understanding are appreciated.
 
+## Community
+You can join us on the official Discord Server : 
+<div align="center">
+  <a href="https://discord.gg/VSGJKsarxW">
+    <img src="https://img.shields.io/badge/Discord-Join_us-5865F2?logo=discord&logoColor=white" alt="Discord">
+  </a>
+</div>
+
 ## Stack & Architecture
 
 QuranWBW’s frontend is built with [SvelteKit](https://svelte.dev/), delivering a fast, lightweight, and highly reactive user experience.
