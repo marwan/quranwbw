@@ -10,6 +10,7 @@
 	import Menu from '$svgs/Menu.svelte';
 	import SupplicationBold from '$svgs/SupplicationBold.svelte';
 	import MorphologyBold from '$svgs/MorphologyBold.svelte';
+	import Discord from '$svgs/Discord.svelte';
 	import TopicsBold from '$svgs/TopicsBold.svelte';
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
@@ -26,7 +27,7 @@
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
-	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
+	const topButtonClasses = 'inline-flex items-center rounded-full px-3 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
 	const cardInnerClasses = 'flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5 hover:bg-theme-accent/5';
@@ -159,6 +160,7 @@
 				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
 				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
 				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
+				<a href="https://discord.gg/VSGJKsarxW" target="_blank" rel="noopener noreferrer" class="{topButtonClasses} !py-4 md:bg-transparent"><Discord size={4} /><span class="hidden md:block">Discord</span></a>
 			</div>
 			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
 		</div>
