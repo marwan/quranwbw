@@ -1,13 +1,15 @@
 import { get } from 'svelte/store';
 import { quranMetaData } from '$data/quranMeta';
-import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __keysToFetch, __displayType, __verseWordBlocks } from '$utils/stores';
+import { __reciter, __translationReciter, __playbackSpeed, __audioSettings, __audioModalVisible, __currentPage, __chapterNumber, __keysToFetch, __displayType, __verseWordBlocks, __playback } from '$utils/stores';
 import { staticEndpoint, wordsAudioURL } from '$data/websiteSettings';
 import { selectableReciters, selectableTranslationReciters, selectablePlaybackSpeeds, selectableAudioDelays } from '$data/options';
 import { fetchAndCacheJson } from '$utils/fetchData';
 import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-// <audio> element used for all verse and word playback
-let audio = document.querySelector('#player');
+// <audio> element used for all verse and word playback. Owned by AudioPlayer.svelte and
+// handed to this module via registerAudioElement() on mount, so it is null until then —
+// don't query the DOM at module load (the element no longer lives in app.html).
+let audio = null;
 
 // Tracks the last highlighted word to avoid redundant scrolls
 let lastPlayedKey = null;
@@ -26,6 +28,40 @@ let wordsInVerseCache = {};
 
 // Prevents overlapping executions of the wordHighlighter handler
 let isHighlighting = false;
+
+// Receives the shared <audio> node from AudioPlayer.svelte on mount, so the rest of this
+// module can drive playback without querying the DOM for #player.
+export function registerAudioElement(element) {
+	audio = element;
+}
+
+// Shared loader for verse and word playback: fetches (or pulls from cache) the audio at
+// `url`, swaps it into the shared element, and starts playback. Callers always run
+// resetAudioSettings() first (which detaches + revokes the previous blob), so there is no
+// stale src to collide with. Returns false when the request is aborted (offline/uncached) or
+// superseded by a newer one, so the caller can bail before touching playback state.
+async function loadAndPlay(url) {
+	const requestId = ++activeAudioRequestId;
+	const audioUrl = await getAudioUrl(url);
+
+	if (!audioUrl) return false;
+
+	// A newer request superseded this one while awaiting — discard the now-orphan blob
+	if (requestId !== activeAudioRequestId) {
+		if (audioUrl.startsWith('blob:')) URL.revokeObjectURL(audioUrl);
+		return false;
+	}
+
+	// Track the blob so resetAudioSettings can revoke it once this verse/word is done
+	lastBlobUrl = audioUrl.startsWith('blob:') ? audioUrl : null;
+
+	audio.src = audioUrl;
+	audio.currentTime = 0;
+	audio.load();
+	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
+	audio.play();
+	return true;
+}
 
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
@@ -56,39 +92,12 @@ export async function playVerseAudio(props) {
 		getAudioUrl(`${reciterAudioUrl}/${nextVerseFileName}`, false);
 	}
 
-	// Tag this request with a unique ID to detect if a newer request has superseded it
-	const requestId = ++activeAudioRequestId;
-	const audioUrl = await getAudioUrl(`${reciterAudioUrl}/${currentVerseFileName}`);
+	// Load + start; bail if offline/uncached or superseded by a newer request
+	if (!(await loadAndPlay(`${reciterAudioUrl}/${currentVerseFileName}`))) return;
 
-	// If URL is missing (e.g. offline + not cached), abort before touching the player state
-	if (!audioUrl) return;
-
-	// If a newer audio request was made while we were awaiting, discard this result
-	if (requestId !== activeAudioRequestId) {
-		// Clean up the blob URL to avoid memory leaks if one was created
-		if (audioUrl?.startsWith('blob:')) {
-			URL.revokeObjectURL(audioUrl);
-		}
-		return;
-	}
-
-	// Release the previous blob URL from memory before switching to the new one
-	if (lastBlobUrl) {
-		URL.revokeObjectURL(lastBlobUrl);
-	}
-
-	// Track the new blob URL so we can revoke it later when moving to the next verse
-	lastBlobUrl = audioUrl?.startsWith('blob:') ? audioUrl : null;
-
-	audio.src = audioUrl;
-	audio.currentTime = 0;
-	audio.load();
-	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
-	audio.play();
-
-	audioSettings.isPlaying = true;
 	audioSettings.playingKey = props.key;
 	audioSettings.audioType = 'verse';
+	__playback.set('playing');
 
 	// Attach word highlighting function for supported reciters
 	if (props.language === 'arabic' && reciter.wbw) {
@@ -184,40 +193,13 @@ export async function playWordAudio(props) {
 		console.warn(error);
 	}
 
-	// Tag this request with a unique ID to detect if a newer request has superseded it
-	const requestId = ++activeAudioRequestId;
-	const audioUrl = await getAudioUrl(`${wordsAudioURL}/${currentWordFileName}?version=2`);
+	// Load + start; bail if offline/uncached or superseded by a newer request
+	if (!(await loadAndPlay(`${wordsAudioURL}/${currentWordFileName}?version=2`))) return;
 
-	// If URL is missing (e.g. offline + not cached), abort before touching the player state
-	if (!audioUrl) return;
-
-	// If a newer audio request was made while we were awaiting, discard this result
-	if (requestId !== activeAudioRequestId) {
-		// Clean up the blob URL to avoid memory leaks if one was created
-		if (audioUrl?.startsWith('blob:')) {
-			URL.revokeObjectURL(audioUrl);
-		}
-		return;
-	}
-
-	// Release the previous blob URL from memory before switching to the new one
-	if (lastBlobUrl) {
-		URL.revokeObjectURL(lastBlobUrl);
-	}
-
-	// Track the new blob URL so we can revoke it later when moving to the next word
-	lastBlobUrl = audioUrl?.startsWith('blob:') ? audioUrl : null;
-
-	audio.src = audioUrl;
-	audio.currentTime = 0;
-	audio.load();
-	audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
-	audio.play();
-
-	audioSettings.isPlaying = true;
 	audioSettings.audioType = 'word';
 	audioSettings.playingKey = `${wordChapter}:${wordVerse}`;
 	audioSettings.playingWordKey = `${props.key}`;
+	__playback.set('playing');
 
 	// For debugging purposes, needs not be removed
 	console.log('playing word', '-', audioSettings.playingWordKey);
@@ -278,8 +260,8 @@ export function resetAudioSettings(props) {
 		// Stop playback and reset position
 		audio.pause();
 		audio.currentTime = 0;
-		audioSettings.isPlaying = false;
 		audioSettings.playingWordKey = null;
+		__playback.set('idle');
 
 		// If reset was triggered at the end of a playlist, clear the verses queue
 		if (props?.location === 'end') {
@@ -289,8 +271,12 @@ export function resetAudioSettings(props) {
 		// Invalidate any in-flight audio requests so they get discarded when they resolve
 		activeAudioRequestId++;
 
-		// Release the current blob URL from memory
+		// Detach the blob from the element BEFORE revoking it, so the element is never left
+		// pointing at a revoked URL — that dangling reference is what logged ERR_FILE_NOT_FOUND
+		// when advancing or stopping mid-playback.
 		if (lastBlobUrl) {
+			audio.removeAttribute('src');
+			audio.load();
 			URL.revokeObjectURL(lastBlobUrl);
 			lastBlobUrl = null;
 		}
@@ -311,6 +297,31 @@ export function resetAudioSettings(props) {
 	}
 }
 
+// Pause WITHOUT tearing anything down — keeps src, currentTime, the queue, the blob, and
+// the ended/timeupdate listeners intact, so resuming continues seamlessly. Internal: the UI
+// goes through togglePlayPause().
+function pause() {
+	if (!audio) return;
+	audio.pause();
+	__playback.set('paused');
+}
+
+// Resume from the exact paused position — no refetch or seek, the element still holds the
+// decoded audio. play() is imperative so we can catch the autoplay/abort rejection.
+function resume() {
+	if (!audio) return;
+	audio.play().catch((error) => console.warn(error));
+	__playback.set('playing');
+}
+
+// Toggle pause/resume for the current session. Does nothing when idle — starting a fresh
+// session (building the queue) is the caller's responsibility.
+export function togglePlayPause() {
+	const status = get(__playback);
+	if (status === 'playing') pause();
+	else if (status === 'paused') resume();
+}
+
 // Show audio modal with key
 export function showAudioModal(key) {
 	resetAudioSettings();
@@ -326,7 +337,7 @@ export async function wordAudioController(props) {
 	const chapter = +props.key.split(':')[0];
 	const verse = +props.key.split(':')[1];
 
-	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && reciter.wbw) {
+	if (get(__playback) !== 'idle' && audioSettings.audioType === 'verse' && reciter.wbw) {
 		const timestampData = await fetchTimestampData();
 		const verseTimestamp = timestampData.data[chapter][verse][reciter.id];
 		const wordTimestamp = verseTimestamp.split('|')[props.key.split(':')[2]];
