@@ -1,0 +1,945 @@
+<script>
+	import PageHead from '$misc/PageHead.svelte';
+	import GenerateBackupKey from '$svgs/GenerateBackupKey.svelte';
+	import InputBackupKey from '$svgs/InputBackupKey.svelte';
+	import CloudBackup from '$svgs/CloudBackup.svelte';
+	import CloudRestore from '$svgs/CloudRestore.svelte';
+	import Share from '$svgs/Share.svelte';
+	import Trash from '$svgs/Trash.svelte';
+	import Copy from '$svgs/Copy.svelte';
+	import Check from '$svgs/Check.svelte';
+	import Cross from '$svgs/Cross.svelte';
+	import Import from '$svgs/Import.svelte';
+	import Export from '$svgs/Export.svelte';
+	import Spinner from '$svgs/Spinner.svelte';
+	import { __currentPage } from '$utils/stores';
+	import { buttonClasses, disabledClasses } from '$data/commonClasses';
+	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
+	import { defaultSettings } from '$src/hooks.client';
+	import { onMount } from 'svelte';
+	import { updateSettings } from '$utils/updateSettings';
+
+	// QuranWBW's Cloud Backup API
+	const cloudBackupAPI = 'https://cloud-backup-api.quranwbw.com/user';
+
+	// Settings paths that should NEVER be overwritten during a restore.
+	// Each entry is a dot-separated path into the userSettings object.
+	const settingsRestoreExclusions = [
+		'displaySettings.fontSizes',
+		'offlineModeSettings',
+		'websiteVersion',
+		'cloudBackupAndRestore',
+
+		// Some audio settings
+		'audioSettings.playBoth',
+		'audioSettings.playingKey',
+		'audioSettings.playingWordKey',
+		'audioSettings.isPlaying',
+		'audioSettings.startVerse',
+		'audioSettings.endVerse'
+	];
+
+	const genericErrorMessage = 'Something went wrong. Please try again.';
+
+	// Strict format check: word##-word##-word##-word##
+	// Example: pal10-hop30-sky21-key28
+	const backupKeyRegex = /^[a-z]{3}[0-9]{2}-[a-z]{3}[0-9]{2}-[a-z]{3}[0-9]{2}-[a-z]{3}[0-9]{2}$/;
+
+	// The backup key currently saved in localStorage (auto-populated on mount)
+	let savedBackupKey = readBackupData().backupKey || '';
+
+	// All three timestamps we track — null means the event has never happened
+	let backupTimestamps = {
+		keyCreatedAt: readBackupData().keyCreatedAt || null, // When the backup key was first generated
+		lastBackedUpAt: readBackupData().lastBackedUpAt || null, // When settings were last pushed to the cloud
+		lastRestoredAt: readBackupData().lastRestoredAt || null // When settings were last pulled from the cloud
+	};
+
+	// Input field for entering an existing backup key from another device
+	let backupKeyInput = '';
+
+	// Controls which "panel" is shown: 'keySetup' | 'keyEntry'
+	let view = 'keySetup';
+
+	// Loading states for each async action
+	let isGenerating = false;
+	let isValidating = false;
+	let isBackingUp = false;
+	let isRestoring = false;
+
+	// Restore preview data — shown before applying to localStorage
+	let restorePreview = null; // { settings, backed_up_at }
+
+	// Copy button state for active backup key
+	let hasCopiedBackupKey = false;
+	let copyResetTimer;
+
+	// Reference to the hidden file input used for importing settings
+	let fileInput;
+
+	// True if any async operation is in progress
+	$: isBusy = isGenerating || isValidating || isBackingUp || isRestoring;
+
+	// DOM element where the Cloudflare Turnstile widget will be rendered
+	let turnstileContainer;
+
+	// Stores the verification token returned after a successful challenge
+	let turnstileToken = null;
+
+	// Stores the widget instance ID returned by Turnstile after render
+	let turnstileWidgetId = null;
+
+	// Renders the invisible Turnstile widget into the container.
+	// Safe to call multiple times — guards against double-rendering.
+	function renderTurnstile() {
+		// Don't re-render if already rendered or container isn't in the DOM yet
+		if (turnstileWidgetId !== null || !turnstileContainer) return;
+
+		turnstileWidgetId = window.turnstile.render(turnstileContainer, {
+			sitekey: '0x4AAAAAADH4gEOXypchOute',
+			appearance: 'always', // tells browser this is a visible widget (not hidden iframe)
+			execution: 'render', // run the challenge immediately on render
+			theme: 'light', // required for non-interactive mode
+
+			// Capture the token when the silent challenge passes
+			callback: (token) => {
+				turnstileToken = token;
+			},
+
+			// Automatically get a fresh token when the current one expires (~300s)
+			'refresh-expired': 'auto'
+		});
+	}
+
+	// Ensures Cloudflare Turnstile is loaded and ready before rendering it.
+	// Reuses an existing script if present, waits for initialization if still loading, or injects the script on first visit.
+	onMount(() => {
+		const existingScript = document.querySelector('script[data-turnstile]');
+
+		if (existingScript) {
+			if (window.turnstile) {
+				// Script already loaded and window.turnstile is ready — render immediately
+				renderTurnstile();
+			} else {
+				// Script tag exists but is still loading (e.g. navigated to this page
+				// before the async script finished). Wait for the onload callback.
+				window.onloadTurnstileCallback = renderTurnstile;
+			}
+		} else {
+			// First ever visit — inject the script dynamically
+			const script = document.createElement('script');
+			script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback';
+			script.async = true;
+			script.defer = true;
+
+			// Marker attribute used to detect the script on subsequent navigations
+			script.setAttribute('data-turnstile', 'true');
+
+			// Cloudflare calls this once window.turnstile is fully initialised
+			window.onloadTurnstileCallback = renderTurnstile;
+
+			document.head.appendChild(script);
+		}
+	});
+
+	// Fire any pending analytics event that was queued before a page reload
+	// (e.g. Cloud Restore Applied, which reloads the page immediately after tracking)
+	if (typeof window !== 'undefined') {
+		const pendingEvent = localStorage.getItem('pendingUmamiEvent');
+		if (pendingEvent) {
+			localStorage.removeItem('pendingUmamiEvent');
+			// Defer slightly so Umami has time to initialise after page load
+			setTimeout(() => window.umami?.track(pendingEvent), 500);
+		}
+	}
+
+	// Format an ISO date string into a human-readable local time
+	function formatDate(isoString) {
+		if (!isoString) return 'Unknown';
+		return new Date(isoString).toLocaleString(undefined, {
+			dateStyle: 'medium',
+			timeStyle: 'short'
+		});
+	}
+
+	// Persist the backup key and record the key creation timestamp.
+	// Called only when generating a brand-new key.
+	function persistBackupKey(backupKey) {
+		const data = writeBackupData({ backupKey, keyCreatedAt: new Date().toISOString() });
+		savedBackupKey = data.backupKey;
+		backupTimestamps = { ...backupTimestamps, keyCreatedAt: data.keyCreatedAt };
+	}
+
+	// Remove all locally stored backup data (key + timestamps).
+	// Does NOT delete the cloud backup — the user can re-enter the key at any time.
+	function deleteLocalBackupKey() {
+		updateSettings({ type: 'cloudBackupAndRestore', value: {} });
+		savedBackupKey = '';
+		backupTimestamps = { keyCreatedAt: null, lastBackedUpAt: null, lastRestoredAt: null };
+		restorePreview = null;
+		view = 'keySetup';
+		window.umami?.track('Backup Key Deleted');
+	}
+
+	// Read the current settings from localStorage
+	function readLocalSettings() {
+		try {
+			const raw = localStorage.getItem('userSettings');
+			return raw ? JSON.parse(raw) : null;
+		} catch {
+			return null;
+		}
+	}
+
+	// Apply restored settings to localStorage and trigger a page reload so all stores pick up the new values
+	function applyRestoredSettings(settings) {
+		localStorage.setItem('userSettings', JSON.stringify(settings));
+
+		// Reload so all Svelte stores re-initialise from localStorage
+		window.location.reload();
+	}
+
+	// Generic fetch wrapper that adds the x-backup-key header and sends the user's local timezone with every request
+	async function apiFetch(path, options = {}) {
+		// Guard: if Turnstile hasn't completed yet, block the request entirely.
+		// This can happen if the user finds a way to trigger a request before
+		// the security check finishes (e.g. via keyboard or programmatic call).
+		if (!turnstileToken) {
+			return { ok: false, status: 'verificationPending', json: {} };
+		}
+
+		// Get user's local IANA timezone (e.g. "Asia/Kolkata")
+		let localTimeZone = null;
+		try {
+			localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+		} catch {
+			// Ignore — timezone is optional
+		}
+
+		const headers = {
+			'Content-Type': 'application/json',
+
+			// Send backup key if available
+			...(savedBackupKey ? { 'x-backup-key': savedBackupKey } : {}),
+
+			// Send user's local timezone so the server can store timestamps in the user's local time
+			...(localTimeZone ? { 'x-user-timezone': localTimeZone } : {}),
+
+			// Send Turnstile token if available — verified server-side before any route handler runs
+			...(turnstileToken ? { 'x-turnstile-token': turnstileToken } : {}),
+
+			...(options.headers || {})
+		};
+
+		const response = await fetch(`${cloudBackupAPI}${path}`, {
+			...options,
+			headers
+		});
+
+		// Reset the Turnstile token after every request — tokens are single-use.
+		// The widget will silently generate a fresh one in the background,
+		// so it's ready by the time the user triggers the next action.
+		turnstileToken = null;
+		window.turnstile?.reset(turnstileWidgetId);
+
+		// Parse JSON even on error responses, but we only use it for data fields —
+		// never for message strings to display to users
+		const json = await response.json().catch(() => ({ code: response.status }));
+		return { ok: response.ok, status: response.status, json };
+	}
+
+	// Maps HTTP and application-specific status codes to user-facing error messages.
+	function getErrorForStatus(status, context) {
+		switch (status) {
+			case 400:
+				if (context === 'validate') return 'That backup key is not valid. Please double-check and try again.';
+				if (context === 'backup') return 'Could not save your settings. Please try again.';
+				return 'Something went wrong. Please try again.';
+
+			case 401:
+				return 'Security verification could not be completed. Please try again.';
+
+			case 403:
+				return 'This request is not allowed. Please try again.';
+
+			case 404:
+				if (context === 'validate') return 'Backup key not found. Please double-check and try again.';
+				if (context === 'restore') return 'No cloud backup found for this backup key. Backup your settings first.';
+				return 'Requested resource not found. Please try again.';
+
+			case 409:
+				return 'A conflict occurred. Please try again.';
+
+			case 413:
+				return 'Your settings are too large to backup.';
+
+			case 429:
+				if (context === 'generate') return 'Backup key generation limit reached. Please try again later.';
+				if (context === 'validate') return 'Too many validation attempts. Please try again later.';
+				return 'Too many requests. Please try again later.';
+
+			case 500:
+			case 502:
+			case 503:
+				return 'Server error. Please try again in a moment.';
+
+			case 'verificationPending':
+				return 'A security check is in progress to verify your request. This may take a little longer on slower networks. Please try again shortly.';
+
+			default:
+				return 'An unexpected error occurred. Please try again later.';
+		}
+	}
+
+	// Generate a brand-new anonymous backup key
+	async function handleGenerateBackupKey() {
+		isGenerating = true;
+
+		try {
+			const { ok, status, json } = await apiFetch('/keys/generate', { method: 'POST' });
+
+			if (!ok) {
+				showAlert(getErrorForStatus(status, 'generate'));
+				return;
+			}
+
+			// Store the backup key and record the creation timestamp
+			persistBackupKey(json.backupKey);
+
+			window.umami?.track('Backup Key Generated');
+		} catch {
+			// Network-level failure (offline, DNS, CORS, etc.)
+			showAlert(genericErrorMessage);
+		} finally {
+			isGenerating = false;
+		}
+	}
+
+	// Validate a manually entered backup key from another device
+	async function handleValidateBackupKey() {
+		const trimmed = backupKeyInput.trim();
+
+		if (!trimmed) {
+			showAlert('Please enter your backup key.');
+			return;
+		}
+
+		isValidating = true;
+
+		try {
+			const { ok, status } = await apiFetch('/keys/validate', {
+				method: 'GET',
+				headers: { 'x-backup-key': trimmed }
+			});
+
+			if (!ok) {
+				showAlert(getErrorForStatus(status, 'validate'));
+				return;
+			}
+
+			// Key is valid — save it locally without overwriting any existing timestamps
+			// (we don't know the original creation date when entering a key from another device)
+			writeBackupData({ backupKey: trimmed });
+			savedBackupKey = trimmed;
+			backupTimestamps = { ...backupTimestamps, ...readBackupData() };
+
+			backupKeyInput = '';
+			view = 'keySetup';
+
+			window.umami?.track('Backup Key Entered');
+		} catch {
+			showAlert(genericErrorMessage);
+		} finally {
+			isValidating = false;
+		}
+	}
+
+	// Backup current localStorage settings to the cloud
+	async function handleBackup() {
+		const settings = readLocalSettings();
+		if (!settings) {
+			showAlert('No local settings found to backup.');
+			return;
+		}
+
+		isBackingUp = true;
+
+		try {
+			const { ok, status } = await apiFetch('/settings/backup', {
+				method: 'POST',
+				body: JSON.stringify(settings)
+			});
+
+			if (!ok) {
+				showAlert(getErrorForStatus(status, 'backup'));
+				window.umami?.track('Cloud Backup Failed');
+				return;
+			}
+
+			// Record the backup timestamp locally
+			const ts = new Date().toISOString();
+			writeBackupData({ lastBackedUpAt: ts });
+			backupTimestamps = { ...backupTimestamps, lastBackedUpAt: ts };
+
+			window.umami?.track('Cloud Backup Success');
+
+			// Clear any open restore preview — its data is now stale after a fresh backup
+			restorePreview = null;
+		} catch {
+			showAlert(genericErrorMessage);
+		} finally {
+			isBackingUp = false;
+		}
+	}
+
+	// Fetch the cloud backup and show a preview before applying
+	async function handleRestorePreview() {
+		// Clear any existing preview before fetching fresh data
+		restorePreview = null;
+
+		isRestoring = true;
+
+		try {
+			const { ok, status, json } = await apiFetch('/settings/restore', { method: 'GET' });
+
+			if (!ok) {
+				showAlert(getErrorForStatus(status, 'restore'));
+				return;
+			}
+
+			restorePreview = json.data;
+
+			const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings);
+
+			// Show an alert if there is no difference between local and cloud settings
+			if (changedSettings.length === 0) {
+				restorePreview = null;
+				showAlert('Your local settings are already identical to this backup. No changes will be made.');
+			}
+
+			window.umami?.track('Cloud Restore Success');
+		} catch {
+			showAlert(genericErrorMessage);
+		} finally {
+			isRestoring = false;
+		}
+	}
+
+	// Apply the previewed settings after user confirms.
+	// Preserves settingsRestoreExclusions paths from the current local settings.
+	async function handleRestoreConfirm() {
+		if (!restorePreview) return;
+
+		// Record the restore timestamp FIRST so it's included in the protected snapshot below
+		const ts = new Date().toISOString();
+		writeBackupData({ lastRestoredAt: ts });
+		backupTimestamps = { ...backupTimestamps, lastRestoredAt: ts };
+
+		// Read settings AFTER writing the timestamp so cloudBackupAndRestore is up to date
+		const currentSettings = readLocalSettings() || {};
+
+		// Snapshot the values we must never overwrite
+		const protectedValues = settingsRestoreExclusions.map((path) => ({
+			path,
+			value: getNestedValue(currentSettings, path)
+		}));
+
+		// Deep-clone the incoming settings so we can safely mutate it
+		const merged = JSON.parse(JSON.stringify(restorePreview.settings));
+
+		// Re-apply all protected values on top of the incoming settings
+		for (const { path, value } of protectedValues) {
+			if (value !== undefined) setNestedValue(merged, path, value);
+		}
+
+		// Queue the analytics event to be fired after the page reloads
+		localStorage.setItem('pendingUmamiEvent', 'Cloud Restore Applied');
+
+		applyRestoredSettings(merged);
+	}
+
+	// Cancel the restore preview
+	function handleRestoreCancel() {
+		restorePreview = null;
+		window.umami?.track('Cloud Restore Cancelled');
+	}
+
+	// Copies the active backup key to the clipboard and briefly shows "Copied" feedback.
+	// Repeated clicks reset the timer so the feedback behaves correctly.
+	function handleCopyBackupKey() {
+		if (!savedBackupKey) return;
+
+		navigator.clipboard?.writeText(savedBackupKey);
+		hasCopiedBackupKey = true;
+
+		window.umami?.track('Backup Key Copied');
+
+		// Reset the "Copied" label after 2 seconds
+		clearTimeout(copyResetTimer);
+		copyResetTimer = setTimeout(() => {
+			hasCopiedBackupKey = false;
+		}, 2000);
+	}
+
+	// Reads a nested value from an object using a dot-separated path string
+	// e.g. getNestedValue(obj, 'displaySettings.fontSizes') → obj.displaySettings.fontSizes
+	function getNestedValue(obj, path) {
+		return path.split('.').reduce((current, key) => current?.[key], obj);
+	}
+
+	// Sets a nested value in an object using a dot-separated path string (mutates the object)
+	function setNestedValue(obj, path, value) {
+		const keys = path.split('.');
+		const lastKey = keys.pop();
+		const target = keys.reduce((current, key) => {
+			if (current[key] === undefined) current[key] = {};
+			return current[key];
+		}, obj);
+		target[lastKey] = value;
+	}
+
+	// Returns a flat list of { path, currentValue, newValue } for every leaf-level
+	// setting that differs between currentSettings and newSettings,
+	// skipping anything under settingsRestoreExclusions paths.
+	function getChangedSettings(currentSettings, newSettings, prefix = '', changes = []) {
+		// Collect all keys from both objects
+		const allKeys = new Set([...Object.keys(currentSettings || {}), ...Object.keys(newSettings || {})]);
+
+		for (const key of allKeys) {
+			const fullPath = prefix ? `${prefix}.${key}` : key;
+
+			// Skip anything in the do-not-restore list
+			if (settingsRestoreExclusions.some((blocked) => fullPath === blocked || fullPath.startsWith(blocked + '.'))) {
+				continue;
+			}
+
+			const currentVal = currentSettings?.[key];
+			const newVal = newSettings?.[key];
+
+			// If both sides are plain objects, recurse into them
+			if (currentVal !== null && newVal !== null && typeof currentVal === 'object' && !Array.isArray(currentVal) && typeof newVal === 'object' && !Array.isArray(newVal)) {
+				getChangedSettings(currentVal, newVal, fullPath, changes);
+			} else {
+				// Leaf value — record only if the value actually changed (deep compare via JSON)
+				if (JSON.stringify(currentVal) !== JSON.stringify(newVal)) {
+					changes.push({ path: fullPath, currentValue: currentVal, newValue: newVal });
+				}
+			}
+		}
+
+		return changes;
+	}
+
+	// Read the cloud backup data object from userSettings in localStorage
+	function readBackupData() {
+		try {
+			const raw = localStorage.getItem('userSettings');
+			return raw ? (JSON.parse(raw).cloudBackupAndRestore ?? {}) : {};
+		} catch {
+			return {};
+		}
+	}
+
+	// Merge a patch into the stored backup data object and persist it
+	function writeBackupData(patch) {
+		const current = readBackupData();
+		const updated = { ...current, ...patch };
+		updateSettings({ type: 'cloudBackupAndRestore', value: updated });
+		return updated;
+	}
+
+	// Programmatically open the file picker for importing settings
+	function triggerImport() {
+		fileInput.click();
+	}
+
+	// Handle selected file and confirm before importing settings
+	function handleFileChange(event) {
+		const file = event.target.files[0];
+		if (file) {
+			showConfirm('Are you sure you want to import settings? This will overwrite your current preferences.', 'settings-drawer', () => {
+				importSettings(file);
+				event.target.value = ''; // reset so the same file can be chosen again
+			});
+		}
+	}
+
+	// Deep-merge imported settings with defaults, enforcing type safety
+	function mergeWithDefaults(imported, defaults) {
+		// If default is a primitive, accept imported only if type matches
+		if (typeof defaults !== 'object' || defaults === null) {
+			return typeof imported === typeof defaults ? imported : defaults;
+		}
+
+		// If default is an array, accept imported only if it's also an array
+		if (Array.isArray(defaults)) {
+			return Array.isArray(imported) ? imported : defaults;
+		}
+
+		// For objects, recursively merge each key
+		const result = {};
+		for (const key in defaults) {
+			if (key in imported) {
+				result[key] = mergeWithDefaults(imported[key], defaults[key]);
+			} else {
+				result[key] = defaults[key]; // fallback to default if missing
+			}
+		}
+		return result;
+	}
+
+	// Encode settings: JSON stringify → reverse string → Base64
+	function encodeSettings(json) {
+		const str = JSON.stringify(json);
+		return btoa(str.split('').reverse().join(''));
+	}
+
+	// Decode settings: Base64 → reverse string → JSON parse
+	function decodeSettings(encoded) {
+		try {
+			const reversed = atob(encoded).split('').reverse().join('');
+			return JSON.parse(reversed);
+		} catch (error) {
+			console.warn(error);
+			throw new Error('Invalid settings file');
+		}
+	}
+
+	// Ensure exported filename always ends with .qwbw
+	function normalizeFilename(filename) {
+		if (filename.endsWith('.qwbw.txt')) {
+			return filename.replace(/\.qwbw\.txt$/, '.qwbw');
+		}
+		if (!filename.endsWith('.qwbw')) {
+			return filename + '.qwbw';
+		}
+		return filename;
+	}
+
+	// Import settings from a validated .qwbw file
+	function importSettings(file) {
+		// Validate file object
+		if (!file || !(file instanceof File)) {
+			showAlert('Invalid file.', 'settings-drawer');
+			return;
+		}
+
+		// Validate file extension
+		if (!file.name.endsWith('.qwbw') && !file.name.endsWith('.qwbw.txt')) {
+			showAlert('Invalid file type. Please select a QuranWBW settings file.', 'settings-drawer');
+			return;
+		}
+
+		// Track import event
+		window.umami.track('Import Settings');
+
+		const reader = new FileReader();
+
+		// Handle file load
+		reader.onload = function (e) {
+			try {
+				// Decode and parse imported settings
+				const imported = decodeSettings(e.target.result);
+
+				// Merge imported settings with defaults safely
+				const validated = mergeWithDefaults(imported, defaultSettings);
+
+				// Persist validated settings
+				localStorage.setItem('userSettings', JSON.stringify(validated));
+
+				// Reload to apply changes
+				location.reload();
+			} catch (error) {
+				showAlert('Something went wrong while importing the file.', 'settings-drawer');
+				console.warn(error);
+			}
+		};
+
+		// Read file as plain text
+		reader.readAsText(file);
+	}
+
+	// Export current settings to a downloadable .qwbw file
+	function exportSettings() {
+		// Load settings from localStorage
+		const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+
+		// Abort if no settings exist
+		if (!settings || Object.keys(settings).length === 0) {
+			showAlert('No settings found.', 'settings-drawer');
+			return;
+		}
+
+		// Encode settings for export
+		const encoded = encodeSettings(settings);
+
+		// Generate timestamped filename
+		const now = new Date();
+		const pad = (n) => n.toString().padStart(2, '0');
+		const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
+		const time = `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`; // HH-MM-SS
+
+		const rawFilename = `quranwbw-settings-${date}_${time}.qwbw`;
+		const filename = normalizeFilename(rawFilename);
+
+		// Create downloadable file
+		const blob = new Blob([encoded], { type: 'text/plain' });
+		const url = URL.createObjectURL(blob);
+
+		// Trigger browser download
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+
+		// Cleanup object URL
+		URL.revokeObjectURL(url);
+
+		// Track export event
+		window.umami.track('Export Settings');
+	}
+
+	__currentPage.set('Backup & Restore');
+</script>
+
+<PageHead title={'Backup & Restore'} />
+
+<div class="mx-auto">
+	<div class="markdown mx-auto">
+		<h3>Backup & Restore (Beta)</h3>
+		<p>
+			This page lets you backup and restore your settings in two ways: cloud backup and local file backup. Cloud backup securely saves your settings online using a private backup key, allowing you to restore them on any device without an account. Local backup lets you export your settings to a file and restore them manually at any time. Your backup key and files are the only way to recover your
+			settings, so keep them safe.
+		</p>
+	</div>
+
+	<!-- Security check status banner — shown while Turnstile is verifying in the background. -->
+	{#if !turnstileToken}
+		<div class="mt-4 p-3 rounded-md flex flex-row space-x-1 items-center text-sm bg-theme-accent/5">
+			<span><Spinner size="8" inline={true} hideMessages={true} delay="0" /></span>
+			<span>Running a quick security check. Please wait a moment.</span>
+		</div>
+	{/if}
+
+	<!-- No backup key saved: onboarding options -->
+	<div class={!turnstileToken && disabledClasses}>
+		{#if !savedBackupKey}
+			{#if view === 'keySetup'}
+				<div class="my-6 flex flex-col space-y-4 text-sm">
+					<!-- Option A: Generate a new backup key -->
+					<div class="flex flex-col space-y-2">
+						<span class="text-theme-accent">First time using this?</span>
+						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+							<div>Generate a backup key to save your settings online. You only need to do this once.</div>
+							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleGenerateBackupKey}>
+								<GenerateBackupKey />
+								<span>{isGenerating ? 'Generating…' : 'Generate Key'}</span>
+							</button>
+						</div>
+					</div>
+
+					<div class="border-b border-theme-accent/20"></div>
+
+					<!-- Option B: Enter an existing backup key from another device -->
+					<div class="flex flex-col space-y-2">
+						<span class="text-theme-accent">Already have a backup key?</span>
+						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+							<div>Enter your backup key to load your saved settings on this device.</div>
+							<button
+								class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
+								on:click={() => {
+									view = 'keyEntry';
+								}}
+							>
+								<InputBackupKey />
+								<span>Enter Key</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Backup key entry panel -->
+			{#if view === 'keyEntry'}
+				<div class="my-6 flex flex-col space-y-4 text-sm">
+					<span class="text-theme-accent">Enter Your Backup Key</span>
+					<p>Please enter your backup key exactly as issued. Spaces or small changes will make it invalid.</p>
+
+					<div class="flex flex-col space-y-2">
+						<input type="text" bind:value={backupKeyInput} placeholder="e.g. pal10-hop30-sky21-key28" maxlength="23" spellcheck="false" autocomplete="off" class="bg-transparent block py-4 pl-4 rounded-3xl w-full z-20 text-sm border placeholder:text-theme-accent/50 border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent" />
+					</div>
+
+					<div class="flex flex-row space-x-2">
+						<button class="h-max whitespace-nowrap {buttonClasses} {(isBusy || !backupKeyRegex.test(backupKeyInput)) && disabledClasses}" on:click={handleValidateBackupKey}>
+							<Check />
+							<span>{isValidating ? 'Validating…' : 'Validate & Save'}</span>
+						</button>
+						<button
+							class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}"
+							on:click={() => {
+								view = 'keySetup';
+								backupKeyInput = '';
+							}}
+						>
+							<Cross />
+							<span>Cancel</span>
+						</button>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Backup key is saved: show backup / restore controls -->
+		{:else}
+			<div class="my-6 flex flex-col space-y-4 overflow-auto">
+				<!-- ----------------------------------------------------------------
+				SECTION 1: Backup key info + actions
+				Shows when the key was created (if known) and lets the user
+				copy, share, or forget the key stored on this device.
+			---------------------------------------------------------------- -->
+				<div class="flex flex-col space-y-2 text-sm">
+					<span class="text-theme-accent">Your Saved Backup Key</span>
+					<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+						<div class="flex flex-col">
+							<p>Your backup key is stored on this device. Keys that go unused for 30 days are permanently deleted from the cloud.</p>
+							<!-- Only shown if the key was generated on this device (not when entered from another device) -->
+							{#if backupTimestamps.keyCreatedAt}
+								<p class="opacity-70 mt-2">Key created: {formatDate(backupTimestamps.keyCreatedAt)}</p>
+							{/if}
+						</div>
+
+						<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+							<!-- Copy the backup key to clipboard -->
+							<button class="h-max whitespace-nowrap {buttonClasses}" on:click={handleCopyBackupKey} disabled={isBusy}>
+								<Copy />
+								<span>{hasCopiedBackupKey ? 'Copied' : 'Copy'}</span>
+							</button>
+
+							<!-- Open the device native share sheet with the backup key -->
+							<button
+								class="h-max whitespace-nowrap {buttonClasses}"
+								on:click={() => {
+									if (navigator.share) {
+										navigator.share({ title: 'My Backup Key', text: savedBackupKey });
+										window.umami?.track('Backup Key Shared');
+									} else {
+										// Fallback for browsers/devices that don't support the Web Share API
+										navigator.clipboard?.writeText(savedBackupKey);
+										showAlert('Share not supported on this device. Key copied to clipboard instead.');
+									}
+								}}
+							>
+								<Share />
+								<span>Share</span>
+							</button>
+
+							<!-- Remove the key from this device only — cloud backup is preserved -->
+							<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This action removes the backup key locally and does not affect your cloud settings. Please note that unused backup keys are permanently deleted after 30 days.', null, deleteLocalBackupKey)}>
+								<Trash />
+								<span>Delete</span>
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="border-b border-theme-accent/20"></div>
+
+				<!-- ----------------------------------------------------------------
+				SECTION 2: Cloud Backup & Restore
+				Both actions share one section with side-by-side buttons,
+				mirroring the layout of the local backup section below.
+				Restore enters a preview/confirmation state inline.
+			---------------------------------------------------------------- -->
+				<div class="flex flex-col space-y-2 text-sm">
+					<span class="text-theme-accent">Cloud Backup & Restore</span>
+
+					<!-- Normal state: description + both buttons side by side -->
+					{#if !restorePreview}
+						<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+							<div class="flex flex-col">
+								<p>Save your settings to the cloud or restore them from your last backup. Your current settings will not change until you confirm a restore.</p>
+								<!-- Show whichever timestamps are available -->
+								{#if backupTimestamps.lastBackedUpAt}
+									<p class="opacity-70 mt-2">Last backed up: {formatDate(backupTimestamps.lastBackedUpAt)}</p>
+								{/if}
+								{#if backupTimestamps.lastRestoredAt}
+									<p class="opacity-70 mt-1">Last restored: {formatDate(backupTimestamps.lastRestoredAt)}</p>
+								{/if}
+							</div>
+							<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+								<!-- Push current local settings to the cloud -->
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will overwrite your previous cloud backup.', null, handleBackup)}>
+									<CloudBackup />
+									<span>{isBackingUp ? 'Backing up…' : 'Backup'}</span>
+								</button>
+
+								<!-- Fetch cloud settings and enter preview stage -->
+								<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestorePreview}>
+									<CloudRestore />
+									<span>{isRestoring ? 'Fetching…' : 'Restore'}</span>
+								</button>
+							</div>
+						</div>
+					{/if}
+
+					<!--
+					Restore preview (confirmation stage)
+					Replaces the normal state once cloud settings have been fetched.
+					Shows how many settings differ and asks the user to confirm or cancel.
+				-->
+					{#if restorePreview}
+						{@const changedSettings = getChangedSettings(readLocalSettings() || {}, restorePreview.settings)}
+
+						{#if changedSettings.length !== 0}
+							<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+								<div>Your current settings on this device will be replaced to match the settings saved on the cloud. The page will reload to apply the changes.</div>
+								<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+									<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={() => showConfirm('This will restore the saved backup to this device. Your current settings on this device will be replaced, and the page will reload.', null, handleRestoreConfirm)}>
+										<Check />
+										<span>Apply</span>
+									</button>
+									<button class="h-max whitespace-nowrap {buttonClasses} {isBusy && disabledClasses}" on:click={handleRestoreCancel}>
+										<Cross />
+										<span>Cancel</span>
+									</button>
+								</div>
+							</div>
+						{/if}
+					{/if}
+				</div>
+			</div>
+		{/if}
+	</div>
+
+	<!-- ----------------------------------------------------------------
+		SECTION 4: Local backup & restore
+		Allows exporting settings to a local file and restoring them manually.
+		Works offline and does not require a backup key or cloud access.
+		Importing a file will overwrite the current local settings.
+	---------------------------------------------------------------- -->
+	<div class="my-6 flex flex-col space-y-4 overflow-auto">
+		<div class="border-b border-theme-accent/20"></div>
+		<div class="flex flex-col space-y-2 text-sm">
+			<span class="text-theme-accent">Local Backup & Restore</span>
+			<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
+				<div class="flex flex-col">Save your settings to a local file or restore from a previously exported backup. Works offline, no backup key needed.</div>
+				<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+					<button class="h-max whitespace-nowrap {buttonClasses}" on:click={exportSettings}>
+						<Export />
+						<span>Backup</span>
+					</button>
+
+					<button class="h-max whitespace-nowrap {buttonClasses}" on:click={triggerImport}>
+						<Import />
+						<span>Restore</span>
+					</button>
+					<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Turnstile widget container — rendered as non-interactive but hidden via CSS -->
+<div bind:this={turnstileContainer} style="position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0.01; pointer-events: none; z-index: 9999;"></div>

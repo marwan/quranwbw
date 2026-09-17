@@ -443,7 +443,7 @@ export const selectableVerseTranslations = {
 		resource_id: 50,
 		resource_name: 'Jan Trust Foundation',
 		language_id: 158,
-		version: 1
+		version: 2
 	},
 	133: {
 		resource_id: 133,

@@ -15,8 +15,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import CloseButton from '$ui/FlowbiteSvelte/utils/CloseButton.svelte';
 	import ResetSettings from '$svgs/ResetSettings.svelte';
-	import Import from '$svgs/Import.svelte';
-	import Export from '$svgs/Export.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
 
 	import {
 		__currentPage,
@@ -53,7 +52,6 @@
 	import { fly } from 'svelte/transition';
 	import { term } from '$utils/terminologies';
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
-	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
@@ -110,8 +108,11 @@
 	// Get keys
 	$: wordTransliterationKey = Object.keys(selectableWordTransliterations).find((item) => selectableWordTransliterations[item].id === $__wordTransliteration);
 
-	// Hide settings drawer and go back to main settings on certain conditions
+	// Go back to main settings view on certain conditions
 	$: if ($__currentPage || $__settingsDrawerHidden) goBackToMainSettings();
+
+	// Hide the settings drawer whenever the page changes
+	$: if ($__currentPage) $__settingsDrawerHidden = true;
 
 	// Build a Set of all transliteration resource IDs (language_id === 11115)
 	const transliterationIdSet = new Set(
@@ -194,22 +195,6 @@
 			}
 		}
 		return null;
-	}
-
-	let fileInput;
-
-	function triggerImport() {
-		fileInput.click();
-	}
-
-	function handleFileChange(event) {
-		const file = event.target.files[0];
-		if (file) {
-			showConfirm('Are you sure you want to import settings? This will overwrite your current preferences.', 'settings-drawer', () => {
-				importSettings(file);
-				event.target.value = ''; // reset so the same file can be chosen again
-			});
-		}
 	}
 </script>
 
@@ -554,23 +539,8 @@
 					<div id="import-export-settings" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Backup & Restore</span>
-
-							<div class="flex flex-row space-x-2">
-								<button class="text-sm space-x-2 {buttonClasses}" on:click={exportSettings}>
-									<Export />
-									<span>Backup</span>
-								</button>
-								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Backup</Tooltip>
-
-								<button class="text-sm space-x-2 {buttonClasses}" on:click={triggerImport}>
-									<Import />
-									<span>Restore</span>
-								</button>
-								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Restore</Tooltip>
-								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
-							</div>
 						</div>
-						<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>
+						<p class={settingsDescriptionClasses}>Backup and restore options have moved to the <a href="/backup" class={linkClasses}>Backup & Restore</a> page, where you can manage both cloud backups and local file backups in one place.</p>
 					</div>
 
 					<div class="border-b border-theme-accent/20"></div>
@@ -579,13 +549,13 @@
 					<div id="reset-setting-button" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Reset Settings</span>
-							<button class="text-sm space-x-2 {buttonClasses}" on:click={() => showConfirm('This action will permanently erase all locally stored data for this website, including settings, bookmarks, notes, offline files, and cache. This cannot be undone.', 'settings-drawer', () => resetSettings())}>
+							<button class="text-sm space-x-2 {buttonClasses}" on:click={() => showConfirm('This action will permanently erase all locally stored data for this website, including settings, bookmarks, notes, offline files, cache, and your saved backup key. This cannot be undone.', 'settings-drawer', () => resetSettings())}>
 								<ResetSettings />
 								<span>Reset</span>
 							</button>
 							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Reset</Tooltip>
 						</div>
-						<p class={settingsDescriptionClasses}>Resets the website to a clean state by removing all saved settings, bookmarks, notes, offline data, and cached files from this device.</p>
+						<p class={settingsDescriptionClasses}>Resets the website to a clean state by removing all saved settings, bookmarks, notes, offline data, cached files, and your saved backup key from this device.</p>
 					</div>
 				</div>
 			</div>
@@ -602,7 +572,10 @@
 	{#if showIndividualSetting}
 		<div id="individual-setting" transition:fly={{ duration: 150, x: 0, easing: sineIn }}>
 			<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4">
-				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>⟵ Back</button>
+				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>
+					<span class="pt-1 mr-2"><LeftArrow size={7} /></span>
+					<span>Back</span>
+				</button>
 				<CloseButton on:click={() => ($__settingsDrawerHidden = true)} class="my-4 rounded-3xl" />
 			</div>
 

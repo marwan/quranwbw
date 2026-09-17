@@ -368,7 +368,7 @@
 			});
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		}
 	}
 
@@ -424,7 +424,7 @@
 			window.umami?.track(`Data Re-download: ${dataType}`);
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			window.umami?.track(`Data Re-download: ${dataType}`);
 		}
@@ -472,7 +472,7 @@
 			window.umami?.track('Chapter Data Download');
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			isDownloadingChapter = false;
 			downloadProgressPercentage = 100;
@@ -521,7 +521,7 @@
 			window.umami?.track('Mushaf Data Download');
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			isDownloadingMushaf = false;
 			downloadProgressPercentage = 100;
@@ -585,7 +585,7 @@
 			window.umami?.track('Morphology Data Download');
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			isDownloadingMorphology = false;
 			downloadProgressPercentage = 100;
@@ -637,7 +637,7 @@
 			window.umami?.track('Tafsir Data Download');
 		} catch (error) {
 			console.warn(error);
-			showAlert(errorAlertMessage, '');
+			showAlert(errorAlertMessage);
 		} finally {
 			isDownloadingTafsir = false;
 			downloadProgressPercentage = 100;
@@ -721,29 +721,36 @@
 				<div class="flex flex-row space-x-8 md:space-x-24 justify-between">
 					<div class="text-sm">{section.description}</div>
 
-					<div class="flex flex-row space-x-2">
+					<div class="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
 						{#if section.isDataDownloaded}
 							<!-- Re-download button (only shown when data is downloaded) -->
-							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses}" on:click={section.onRedownload} disabled={isDownloading}>
-								{#if section.isDownloading}
-									<span>{downloadProgressPercentage}%</span>
-								{:else}
-									<Refresh size={4} />
-								{/if}
+							<button class="h-max whitespace-nowrap {buttonClasses} {isDownloading && disabledClasses}" on:click={section.onRedownload}>
+								<Refresh />
+								<span>
+									{#if section.isDownloading}
+										{downloadProgressPercentage}%
+									{:else}
+										Refresh
+									{/if}
+								</span>
 							</button>
 
 							<!-- Delete button (only shown when data is downloaded) -->
-							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses}" on:click={() => showConfirm('Are you sure you want to delete this data?', '', section.onDelete)} disabled={isDownloading}>
-								<Trash size={4} />
+							<button class="h-max whitespace-nowrap {buttonClasses} {isDownloading && disabledClasses}" on:click={() => showConfirm('Are you sure you want to delete this data?', null, section.onDelete)}>
+								<Trash />
+								<span>Delete</span>
 							</button>
 						{:else}
 							<!-- Download button (only shown when data is NOT downloaded) -->
-							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses}" on:click={section.onDownload} disabled={isDownloading}>
-								{#if section.isDownloading}
-									<span>{downloadProgressPercentage}%</span>
-								{:else}
-									<Download size={4} />
-								{/if}
+							<button class="text-sm space-x-2 h-max whitespace-nowrap {buttonClasses} {isDownloading && disabledClasses}" on:click={section.onDownload}>
+								<Download />
+								<span>
+									{#if section.isDownloading}
+										{downloadProgressPercentage}%
+									{:else}
+										Download
+									{/if}
+								</span>
 							</button>
 						{/if}
 					</div>

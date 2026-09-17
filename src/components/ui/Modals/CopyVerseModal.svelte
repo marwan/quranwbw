@@ -2,8 +2,9 @@
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
+	import Copy from '$svgs/Copy.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __verseKey, __copyShareVerseModalVisible, __verseTranslationData } from '$utils/stores';
+	import { __verseKey, __copyVerseModalVisible, __verseTranslationData } from '$utils/stores';
 	import { linkClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
@@ -29,7 +30,7 @@
 	$: websiteLink = `https://quranwbw.com/${chapter}/${verse}`;
 
 	// Reset the generated data variable whenever any of the option changes
-	$: if ($__copyShareVerseModalVisible || $__verseKey || copyType || textType || includeKey || includeTranslationNames || includeFootNotes || includeLink) {
+	$: if ($__copyVerseModalVisible || $__verseKey || copyType || textType || includeKey || includeTranslationNames || includeFootNotes || includeLink) {
 		generatedVerseData = '';
 	}
 
@@ -155,7 +156,7 @@
 	}
 </script>
 
-<Modal id="copyShareVerseModal" bind:open={$__copyShareVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" placement="center" position="bottom" outsideclose>
+<Modal id="copyVerseModal" bind:open={$__copyVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" placement="center" position="bottom" outsideclose>
 	<h3 id="modal-title" class="mb-2 text-xl font-medium flex-shrink-0">
 		{quranMetaData[chapter || 1].transliteration}, {$__verseKey}
 	</h3>
@@ -270,6 +271,9 @@
 	</div>
 
 	<div class="flex-shrink-0 mt-4">
-		<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">Copy</button>
+		<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">
+			<Copy />
+			<span>Copy</span>
+		</button>
 	</div>
 </Modal>

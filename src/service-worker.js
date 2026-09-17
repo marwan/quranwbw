@@ -31,8 +31,8 @@ const cacheNames = {
 	tafsirData: 'quranwbw-tafsir-data' // Tafsir data files
 };
 
-// Files we should never cache (the service worker itself and its settings)
-const stuffNotToCache = ['/service-worker.js', '/service-worker-settings.json'];
+// Files we should never cache
+const stuffNotToCache = ['/service-worker.js'];
 
 // Static files built by SvelteKit (CSS, JS, images from /static folder)
 const precacheFiles = [
@@ -41,7 +41,7 @@ const precacheFiles = [
 ];
 
 // Important pages we want to cache
-const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics', '/juz', '/hizb', '/page'];
+const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics', '/juz', '/hizb', '/page', '/backup'];
 
 // This flag tracks whether the user has enabled offline mode
 // CRITICAL: This must be loaded from cache on startup!
@@ -334,7 +334,7 @@ self.addEventListener('fetch', (event) => {
 	const url = new URL(event.request.url);
 
 	// Ignore non-GET requests, excluded files, and connectivity checks
-	if (event.request.method !== 'GET' || stuffNotToCache.some((excluded) => url.pathname.includes(excluded)) || url.hostname === 'www.gstatic.com') {
+	if (event.request.method !== 'GET' || stuffNotToCache.some((excluded) => url.pathname.includes(excluded)) || url.hostname === 'www.gstatic.com' || url.hostname === 'cloud-backup-api.quranwbw.com') {
 		return;
 	}
 
