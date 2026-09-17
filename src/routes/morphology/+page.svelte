@@ -11,6 +11,6 @@
 	__currentPage.set('morphology');
 </script>
 
-<PageHead title={`Morphology ${$__morphologyKey}`} />
+<PageHead title={`Morphology ${$__morphologyKey}`} description={`Morphology of the word "${$__morphologyKey}" in the Quran, including its root, pattern, and grammatical features.`} />
 
 <MorphologyView {data} />

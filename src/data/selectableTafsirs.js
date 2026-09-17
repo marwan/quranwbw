@@ -224,15 +224,6 @@ export const selectableTafsirs = {
 	},
 
 	// Urdu
-	60: {
-		id: 60,
-		author: 'Sayyid Ibrahim Qutb',
-		language: 'Urdu',
-		name: 'Fi Zilal al-Quran',
-		slug: 'ur-tafsir-fe-zalul-quran-syed-qatab',
-		url: 1,
-		font: 'font-Urdu'
-	},
 	61: {
 		id: 61,
 		author: 'Hafiz Ibn Kathir',

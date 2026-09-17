@@ -112,12 +112,14 @@ export async function playVerseAudio(props) {
 		const previousLanguage = props.language;
 
 		// Calculate the delay between verses based on the user's audioDelay setting.
-		// The last delay option is a special case — it waits for the duration of the
-		// audio itself (i.e. a full extra play-length pause) rather than a fixed ms value
-		const delaySetting = audioSettings.audioDelay;
-		const delay = selectableAudioDelays[delaySetting]?.milliseconds || 0;
-		const isAudioLengthDelay = delaySetting === Math.max(...Object.keys(selectableAudioDelays).map(Number));
-		const calculatedDelay = isAudioLengthDelay ? (audio.duration || 0) * 1000 : delay;
+		// Audio length delay options wait for as long as the recitation would take at the chosen speed
+		const delayOption = selectableAudioDelays[audioSettings.audioDelay];
+		const audioLengthSpeed = delayOption?.audioLengthSpeed;
+		const calculatedDelay = audioLengthSpeed ? ((audio.duration || 0) * 1000) / audioLengthSpeed : delayOption?.milliseconds || 0;
+
+		// With audio length delay the verse is replayed silently
+		// words lighting up guide the reader
+		const assistedHighlightsEnabled = audioLengthSpeed && audioSettings.assistedHighlightsDuringDelay && reciter.wbw && props.language === 'arabic';
 
 		// If playing both languages, immediately follow Arabic with the translation
 		// before applying any delay or advancing to the next verse
@@ -130,7 +132,12 @@ export async function playVerseAudio(props) {
 		}
 
 		// Wait for the configured delay before moving to the next verse
-		if (calculatedDelay > 0) {
+		if (assistedHighlightsEnabled) {
+			await playAssistedHighlights(audioLengthSpeed, requestId);
+
+			// A stop or a newer request during the silent replay cancels the rest of the queue
+			if (requestId !== activeAudioRequestId) return;
+		} else if (calculatedDelay > 0) {
 			await new Promise((resolve) => setTimeout(resolve, calculatedDelay));
 		}
 
@@ -328,6 +335,52 @@ export async function wordAudioController(props) {
 	}
 
 	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key });
+}
+
+// Replay the verse that just finished with the audio muted
+// So word highlight plays at the delay's speed 
+async function playAssistedHighlights(speed, requestId) {
+	const originalPlaybackRate = audio.playbackRate;
+
+	try {
+		const audioSettings = get(__audioSettings);
+		audioSettings.playingWordKey = null;
+		__audioSettings.set(audioSettings);
+
+		audio.muted = true;
+		audio.currentTime = 0;
+		audio.playbackRate = speed;
+		audio.addEventListener('timeupdate', wordHighlighter);
+		await audio.play();
+
+		// Resolve on pause as well as ended, otherwise stopping mid-replay would leave
+		// this promise hanging and the player muted
+		await new Promise((resolve) => {
+			if (audio.paused || audio.ended) return resolve();
+
+			const onDone = () => {
+				audio.removeEventListener('ended', onDone);
+				audio.removeEventListener('pause', onDone);
+				resolve();
+			};
+
+			audio.addEventListener('ended', onDone);
+			audio.addEventListener('pause', onDone);
+		});
+	} catch (error) {
+		console.warn(error);
+	} finally {
+		audio.removeEventListener('timeupdate', wordHighlighter);
+		audio.muted = false;
+		audio.playbackRate = originalPlaybackRate;
+
+		// Leave no word highlighted going into the next verse
+		if (requestId === activeAudioRequestId) {
+			const settings = get(__audioSettings);
+			settings.playingWordKey = null;
+			__audioSettings.set(settings);
+		}
+	}
 }
 
 // Highlight the currently playing word during verse audio playback.

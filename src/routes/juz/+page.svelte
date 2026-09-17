@@ -33,7 +33,7 @@
 </script>
 
 {#key juzNumber}
-	<PageHead title={`${term('juz')} ${juzNumber}`} />
+	<PageHead title={`${term('juz')} ${juzNumber}`} description={`Quran ${term('juz')} ${juzNumber}`} />
 {/key}
 
 {#await juzKeysData}

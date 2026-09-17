@@ -1,6 +1,6 @@
 import { cacheTableMap } from '$utils/dexie';
 import { get } from 'svelte/store';
-import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
+import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __verseKeyData } from '$utils/stores';
 import { staticEndpoint, cdnStaticDataUrls } from '$data/websiteSettings';
 import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
@@ -58,7 +58,12 @@ export async function fetchChapterData(props) {
 	}
 
 	// Update store
-	if (!props.preventStoreUpdate) __chapterData.set(result);
+	if (!props.preventStoreUpdate) {
+		__chapterData.set(result);
+
+		// Verse metadata so reading progress bar can use word count
+		__verseKeyData.set(metaVerseData);
+	}
 
 	return result;
 }

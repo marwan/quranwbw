@@ -11,7 +11,7 @@
 	__currentPage.set('bookmarks');
 </script>
 
-<PageHead title={'Bookmarks'} />
+<PageHead title={'Bookmarks'} description="All the verses you have marked for quick reference." />
 
 <div id="individual-verses-block">
 	{#if $__userBookmarks.length === 0}

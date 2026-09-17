@@ -85,7 +85,7 @@ export const selectableFontTypes = {
 		name: 'Mushaf 1441H',
 		order: 3,
 		disallowedInPages: [],
-		version: 5
+		version: 7
 	},
 	3: {
 		id: 2,
@@ -93,7 +93,7 @@ export const selectableFontTypes = {
 		name: 'Mushaf Tajweed 1441H',
 		order: 4,
 		disallowedInPages: [],
-		version: 5
+		version: 7
 	},
 	4: {
 		id: 3,
@@ -141,7 +141,7 @@ export const selectableFontTypes = {
 		name: 'Indonesian Isep Misbah Digital Font',
 		order: 9,
 		disallowedInPages: ['mushaf'],
-		version: 2
+		version: 3
 	},
 	10: {
 		id: 13,
@@ -457,14 +457,14 @@ export const selectableVerseTranslations = {
 		resource_id: 1,
 		resource_name: 'Transliteration (Simple Tajweed)',
 		language_id: 11115,
-		version: 2,
+		version: 3,
 		order: 2
 	},
 	3: {
 		resource_id: 3,
 		resource_name: 'Transliteration (Syllables)',
 		language_id: 11115,
-		version: 2,
+		version: 3,
 		order: 4,
 		font: 'font-serif'
 	},
@@ -472,14 +472,14 @@ export const selectableVerseTranslations = {
 		resource_id: 57,
 		resource_name: 'Transliteration (Normal)',
 		language_id: 11115,
-		version: 2,
+		version: 3,
 		order: 1
 	},
 	4: {
 		resource_id: 4,
 		resource_name: 'Transliteration (Advanced Tajweed)',
 		language_id: 11115,
-		version: 1,
+		version: 2,
 		order: 3,
 		font: 'font-serif'
 	},
@@ -686,7 +686,7 @@ export const selectableWordTranslations = {
 	22: {
 		id: 22,
 		language: 'Sign Language',
-		version: 1
+		version: 2
 	}
 };
 
@@ -694,23 +694,23 @@ export const selectableWordTransliterations = {
 	1: {
 		id: 1,
 		language: 'Transliteration (Normal)',
-		version: 1
+		version: 2
 	},
 	2: {
 		id: 2,
 		language: 'Transliteration (Simple Tajweed)',
-		version: 1
+		version: 2
 	},
 	3: {
 		id: 3,
 		language: 'Transliteration (Advanced Tajweed)',
-		version: 1,
+		version: 2,
 		font: 'font-serif'
 	},
 	4: {
 		id: 4,
 		language: 'Transliteration (Syllables)',
-		version: 1,
+		version: 2,
 		font: 'font-serif'
 	}
 };
@@ -922,7 +922,22 @@ export const selectableAudioDelays = {
 	4: { id: 4, name: '5 seconds', milliseconds: 5000 },
 	5: { id: 5, name: '10 seconds', milliseconds: 10000 },
 	6: { id: 6, name: '15 seconds', milliseconds: 15000 },
-	7: { id: 7, name: 'Audio Length', milliseconds: 999 }
+	7: { id: 7, name: 'Ayah Length (1x)', milliseconds: 0, audioLengthSpeed: 1 },
+	8: { id: 8, name: 'Ayah Length (0.5x)', milliseconds: 0, audioLengthSpeed: 0.5 },
+	11: { id: 11, name: 'Ayah Length (1.5x)', milliseconds: 0, audioLengthSpeed: 1.5 }
 };
+
+// The order the delay options are listed in
+export const selectableAudioDelaysOrder = [
+	1, // None
+	8, // Audio Length (0.5x)
+	7, // Audio Length (1x)
+	11, // Audio Length (1.5x)
+	2, // 1 second
+	3, // 3 seconds
+	4, // 5 seconds
+	5, // 10 seconds
+	6 // 15 seconds
+];
 
 export const selectableRepeatTimes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50];

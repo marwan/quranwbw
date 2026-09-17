@@ -4,10 +4,15 @@
 
 ---
 
+### Jun 15, 2026
+
+- **Improved Search Results**: Search now pulls from an additional source ([Al Quran Cloud](https://alquran.cloud/)) alongside the existing Kalimat API, resulting in broader and more comprehensive verse matches for any given query.
+
+---
+
 ### May 12, 2026
 
 - **Majidi Nastaleeq Digital Font**: Added a new Qur'anic Nastaleeq-style font with built-in tajweed sign conventions (including Raa, Laam-ul-Jalaalah, Qalqalah, Ikhfaa, Tanween, and Ghunnah), offering an alternative visual reading experience while preserving key tajweed indicators.
-- **Live Theme Switching**: Themes now apply instantly without a page reload. Yes, this should have worked this way from the start. Better late than never.
 
 ---
 

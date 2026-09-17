@@ -33,7 +33,7 @@
 </script>
 
 {#key hizbNumber}
-	<PageHead title={`${term('hizb')} ${hizbNumber}`} />
+	<PageHead title={`${term('hizb')} ${hizbNumber}`} description={`Quran ${term('hizb')} ${hizbNumber}`} />
 {/key}
 
 {#await hizbKeysData}

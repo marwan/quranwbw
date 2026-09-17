@@ -59,7 +59,8 @@ let __currentPage,
 	__verseWordBlocks,
 	__offlineModeSettings,
 	__homepageLayoutPreferences,
-	__fullVersesDisplayKeys;
+	__fullVersesDisplayKeys,
+	__verseKeyData;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -225,6 +226,9 @@ if (browser) {
 
 	// to store the keys from FullVersesDisplay component for progress tracking
 	__fullVersesDisplayKeys = writable(null);
+
+	// to store the per verse metadata (page, juz, hizb, word count) for the whole Quran
+	__verseKeyData = writable(null);
 }
 
 export {
@@ -286,5 +290,6 @@ export {
 	__verseWordBlocks,
 	__offlineModeSettings,
 	__homepageLayoutPreferences,
-	__fullVersesDisplayKeys
+	__fullVersesDisplayKeys,
+	__verseKeyData
 };
