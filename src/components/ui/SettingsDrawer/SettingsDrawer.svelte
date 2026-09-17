@@ -17,6 +17,7 @@
 	import ResetSettings from '$svgs/ResetSettings.svelte';
 	import Import from '$svgs/Import.svelte';
 	import Export from '$svgs/Export.svelte';
+	import Copy from '$svgs/Copy.svelte';
 
 	import {
 		__currentPage,
@@ -54,7 +55,7 @@
 	import { term } from '$utils/terminologies';
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
-	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
@@ -209,6 +210,18 @@
 				importSettings(file);
 				event.target.value = ''; // reset so the same file can be chosen again
 			});
+		}
+	}
+
+	// copies userSettings localStorage value to clipboard
+	async function copySettings() {
+		const settings = localStorage.getItem('userSettings');
+		try {
+			await navigator.clipboard.writeText(settings);
+			showAlert('Settings copied to clipboard.', 'settings-drawer');
+		} catch (err) {
+			showAlert('Failed to copy settings. Please try again.', 'settings-drawer');
+			console.error('Failed to copy settings:', err);
 		}
 	}
 </script>
@@ -574,6 +587,20 @@
 					</div>
 
 					<div class="border-b border-theme-accent/20"></div>
+
+					<!-- copy-settings -->
+					<div id="copy-settings" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Copy Settings</span>
+
+							<button class="text-sm space-x-2 {buttonClasses}" on:click={copySettings}>
+								<Copy />
+								<span>Copy</span>
+							</button>
+							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Copy</Tooltip>
+						</div>
+						<p class={settingsDescriptionClasses}>Copy your settings as JSON to the clipboard.</p>
+					</div>
 
 					<!-- reset-setting-button -->
 					<div id="reset-setting-button" class={settingsBlockClasses}>
