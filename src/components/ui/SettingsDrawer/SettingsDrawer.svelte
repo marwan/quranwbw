@@ -602,6 +602,8 @@
 						<p class={settingsDescriptionClasses}>Copy your settings as JSON to the clipboard.</p>
 					</div>
 
+					<div class="border-b border-theme-accent/20"></div>
+
 					<!-- reset-setting-button -->
 					<div id="reset-setting-button" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
