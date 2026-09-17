@@ -119,6 +119,6 @@ export function exportSettings() {
 		window.umami.track('Export Settings');
 	} catch (err) {
 		console.error('Failed to export settings:', err);
-		showAlert(`Something went wrong while exporting your settings. Here's the error.<pre class="mt-4 p-4 text-xs bg-gray-100 rounded overflow-x-auto"><code>${err.stack || err.message}</code></pre>`, 'settings-drawer');
+		showAlert(`Something went wrong while exporting your settings. Here's the error.<pre class="mt-4 p-4 text-xs bg-theme-accent/5 rounded overflow-x-auto"><code>${err.stack || err.message}</code></pre>`, 'settings-drawer');
 	}
 }
