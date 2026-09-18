@@ -580,7 +580,7 @@
 									<span>Restore</span>
 								</button>
 								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Restore</Tooltip>
-								<input type="file" accept=".json" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
+								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 							</div>
 						</div>
 						<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>

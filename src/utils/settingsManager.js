@@ -25,25 +25,42 @@ function mergeWithDefaults(imported, defaults) {
 	return result;
 }
 
-// Normalize file name → force .json extension
+// Encode JSON: stringify → reverse → Base64
+function encodeSettings(json) {
+	const str = JSON.stringify(json);
+	return btoa(str.split('').reverse().join(''));
+}
+
+// Decode JSON: Base64 → reverse → parse
+function decodeSettings(encoded) {
+	try {
+		const reversed = atob(encoded).split('').reverse().join('');
+		return JSON.parse(reversed);
+	} catch (error) {
+		console.warn(error);
+		throw new Error('Invalid settings file');
+	}
+}
+
+// Normalize file name → force .qwbw extension
 function normalizeFilename(filename) {
-	if (!filename.endsWith('.json')) {
-		return filename + '.json';
+	if (filename.endsWith('.qwbw.txt')) {
+		return filename.replace(/\.qwbw\.txt$/, '.qwbw');
+	}
+	if (!filename.endsWith('.qwbw')) {
+		return filename + '.qwbw';
 	}
 	return filename;
 }
 
-// Import settings from a user-selected .json file
 export function importSettings(file) {
 	// Safeguard: basic checks
 	if (!file || !(file instanceof File)) {
 		showAlert('Invalid file.', 'settings-drawer');
 		return;
 	}
-
-	// Only accept .json files
-	if (!file.name.endsWith('.json')) {
-		showAlert('Invalid file type. Please select a JSON settings file.', 'settings-drawer');
+	if (!file.name.endsWith('.qwbw') && !file.name.endsWith('.qwbw.txt')) {
+		showAlert('Invalid file type. Please select a QuranWBW settings file.', 'settings-drawer');
 		return;
 	}
 
@@ -52,50 +69,44 @@ export function importSettings(file) {
 	const reader = new FileReader();
 	reader.onload = function (e) {
 		try {
-			// Parse the raw file text as JSON
-			const imported = JSON.parse(e.target.result);
+			const imported = decodeSettings(e.target.result);
 
 			// Merge with defaults (deep, with type checks)
 			const validated = mergeWithDefaults(imported, defaultSettings);
 
-			// Save merged settings back to localStorage
 			localStorage.setItem('userSettings', JSON.stringify(validated));
 
 			// Reload the page to apply settings
 			location.reload();
 		} catch (error) {
-			showAlert(`Something went wrong while importing the file. Here's the error.<pre class="mt-4 p-4 text-xs bg-theme-accent/5 rounded overflow-x-auto"><code>${error.stack || error.message}</code></pre>`, 'settings-drawer');
+			showAlert('Something went wrong while importing the file.', 'settings-drawer');
 			console.warn(error);
 		}
 	};
 	reader.readAsText(file);
 }
 
-// Export current settings as a downloadable .json file
 export function exportSettings() {
 	const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
-
-	// Bail out if there's nothing to export
 	if (!settings || Object.keys(settings).length === 0) {
 		showAlert('No settings found.', 'settings-drawer');
 		return;
 	}
 
 	try {
-		// Build a timestamped filename, e.g. quranwbw-settings-2026-09-17_14-05-32.json
+		const encoded = encodeSettings(settings);
+
 		const now = new Date();
 		const pad = (n) => n.toString().padStart(2, '0');
 		const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
 		const time = `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`; // HH-MM-SS
 
-		const rawFilename = `quranwbw-settings-${date}_${time}.json`;
+		const rawFilename = `quranwbw-settings-${date}_${time}.qwbw`;
 		const filename = normalizeFilename(rawFilename);
 
-		// Build a JSON blob straight from the settings object
-		const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+		const blob = new Blob([encoded], { type: 'text/plain' });
 		const url = URL.createObjectURL(blob);
 
-		// Trigger the download via a temporary anchor element
 		const a = document.createElement('a');
 		a.href = url;
 		a.download = filename;
@@ -103,7 +114,6 @@ export function exportSettings() {
 		a.click();
 		document.body.removeChild(a);
 
-		// Free up the object URL
 		URL.revokeObjectURL(url);
 
 		window.umami.track('Export Settings');
