@@ -93,27 +93,32 @@ export function exportSettings() {
 		return;
 	}
 
-	const encoded = encodeSettings(settings);
+	try {
+		const encoded = encodeSettings(settings);
 
-	const now = new Date();
-	const pad = (n) => n.toString().padStart(2, '0');
-	const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
-	const time = `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`; // HH-MM-SS
+		const now = new Date();
+		const pad = (n) => n.toString().padStart(2, '0');
+		const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
+		const time = `${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`; // HH-MM-SS
 
-	const rawFilename = `quranwbw-settings-${date}_${time}.qwbw`;
-	const filename = normalizeFilename(rawFilename);
+		const rawFilename = `quranwbw-settings-${date}_${time}.qwbw`;
+		const filename = normalizeFilename(rawFilename);
 
-	const blob = new Blob([encoded], { type: 'text/plain' });
-	const url = URL.createObjectURL(blob);
+		const blob = new Blob([encoded], { type: 'text/plain' });
+		const url = URL.createObjectURL(blob);
 
-	const a = document.createElement('a');
-	a.href = url;
-	a.download = filename;
-	document.body.appendChild(a);
-	a.click();
-	document.body.removeChild(a);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
 
-	URL.revokeObjectURL(url);
+		URL.revokeObjectURL(url);
 
-	window.umami.track('Export Settings');
+		window.umami.track('Export Settings');
+	} catch (err) {
+		console.error('Failed to export settings:', err);
+		showAlert(`Something went wrong while exporting your settings. Here's the error.<pre class="mt-4 p-4 text-xs bg-theme-accent/5 rounded overflow-x-auto"><code>${err.stack || err.message}</code></pre>`, 'settings-drawer');
+	}
 }
