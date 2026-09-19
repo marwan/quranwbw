@@ -122,6 +122,6 @@ export function exportSettings() {
 	} catch (error) {
 		console.error('Failed to export settings:', error);
 		window.rybbit.error(error);
-		showAlert(`Something went wrong while exporting your settings. Here's the error.<pre class="mt-4 p-4 text-xs bg-theme-accent/5 rounded overflow-x-auto"><code>${error.stack || error.message}</code></pre>`, 'settings-drawer');
+		showAlert('Something went wrong while exporting your settings.', 'settings-drawer');
 	}
 }
