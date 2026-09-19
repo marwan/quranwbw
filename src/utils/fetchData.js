@@ -16,7 +16,15 @@ export async function fetchChapterData(props) {
 	const wordTranslation = props.wordTranslation || get(__wordTranslation);
 	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
 
-	const { arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(fontType, wordTranslation, wordTransliteration);
+	let arabicWordData, translationWordData, transliterationWordData, metaVerseData;
+	try {
+		// Network fetch (via fetchWordData) wrapped for manual error logging
+		({ arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(fontType, wordTranslation, wordTransliteration));
+	} catch (error) {
+		console.error(error);
+		window.rybbit.error(error);
+		throw error;
+	}
 
 	const result = {};
 	const arabicVerses = arabicWordData[chapter] || {};
@@ -83,7 +91,16 @@ export async function fetchVerseTranslationData(props) {
 
 	for (const id of translations) {
 		const version = selectableVerseTranslations[id].version;
-		const cached = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+
+		let cached;
+		try {
+			// Network fetch wrapped for manual error logging
+			cached = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+		} catch (error) {
+			console.error(error);
+			window.rybbit.error(error);
+			cached = null;
+		}
 
 		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
 			updatedData[id] = cached;
@@ -182,11 +199,16 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	// 3. Otherwise start a new fetch and store the Promise
 	const fetchPromise = (async () => {
 		try {
+			// Network fetch wrapped for manual error logging
 			const response = await fetch(url);
 			if (!response.ok) throw new Error('Failed to fetch data from the CDN');
 			const data = await response.json();
 			await manageCache(cacheKey, type, data);
 			return data;
+		} catch (error) {
+			console.error(error);
+			window.rybbit.error(error);
+			throw error;
 		} finally {
 			inFlightRequests.delete(cacheKey);
 		}
@@ -238,7 +260,15 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		{ url: cdnStaticDataUrls.verseKeyData, type: 'other' }
 	];
 
-	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
+	let arabicWordData, translationWordData, transliterationWordData, metaVerseData;
+	try {
+		// Network fetch wrapped for manual error logging
+		[arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
+	} catch (error) {
+		console.error(error);
+		window.rybbit.error(error);
+		throw error;
+	}
 
 	return {
 		arabicWordData,
