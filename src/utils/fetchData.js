@@ -121,10 +121,21 @@ export async function fetchVerseTranslationData(props) {
 	const fetchPromises = idsToFetch.map(async (id) => {
 		const version = selectableVerseTranslations[id].version;
 		try {
+			// Network fetch wrapped for manual error logging
 			const res = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
 
 			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
-			const data = await res.json();
+
+			// Read as text first so a non-JSON body (e.g. "hello") can be logged instead of throwing a bare SyntaxError
+			const rawText = await res.text();
+			let data;
+			try {
+				data = JSON.parse(rawText);
+			} catch (error) {
+				console.error(error);
+				window.rybbit.error(error);
+				throw error;
+			}
 
 			return { id, data };
 		} catch (error) {
@@ -171,9 +182,21 @@ export async function fetchAndCacheJson(url, type = 'other') {
 				cacheKey,
 				(async () => {
 					try {
+						// Network fetch wrapped for manual error logging
 						const response = await fetch(url);
 						if (!response.ok) throw new Error('CDN response not ok');
-						const freshData = await response.json();
+
+						// Read as text first so a non-JSON body (e.g. "hello") can be logged instead of throwing a bare SyntaxError
+						const rawText = await response.text();
+						let freshData;
+						try {
+							freshData = JSON.parse(rawText);
+						} catch (error) {
+							console.error(error);
+							window.rybbit.error(error);
+							throw error;
+						}
+
 						await manageCache(cacheKey, type, freshData);
 						console.log(`[cache] background update done for ${cacheKey}`);
 						return freshData;
@@ -202,7 +225,18 @@ export async function fetchAndCacheJson(url, type = 'other') {
 			// Network fetch wrapped for manual error logging
 			const response = await fetch(url);
 			if (!response.ok) throw new Error('Failed to fetch data from the CDN');
-			const data = await response.json();
+
+			// Read as text first so a non-JSON body (e.g. "hello") can be logged instead of throwing a bare SyntaxError
+			const rawText = await response.text();
+			let data;
+			try {
+				data = JSON.parse(rawText);
+			} catch (error) {
+				console.error(error);
+				window.rybbit.error(error);
+				throw error;
+			}
+
 			await manageCache(cacheKey, type, data);
 			return data;
 		} catch (error) {
