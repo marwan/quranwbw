@@ -33,6 +33,7 @@
 		lastReadJuz = lastReadElement?.getAttribute('data-juz');
 	} catch (error) {
 		console.warn(error);
+		window.rybbit.error(error);
 	}
 
 	// Get the revelation type of the current chapter
@@ -129,6 +130,7 @@
 			}));
 		} catch (error) {
 			console.warn(error);
+			window.rybbit.error(error);
 		}
 	}
 
@@ -143,7 +145,7 @@
 			<span class="text-xs pl-2 hidden md:block">Home</span>
 		</a>
 
-		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5" on:click={() => __quranNavigationModalVisible.set(true)} data-umami-event="Navbar Navigation Button">
+		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5" on:click={() => __quranNavigationModalVisible.set(true)} data-rybbit-event="Navbar Navigation Button">
 			<!-- display the chapter name on chapter page -->
 			{#if $__currentPage === 'chapter'}
 				{@html navbarChapterName}

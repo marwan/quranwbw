@@ -156,6 +156,7 @@
 				document.getElementById('individual-setting').scrollIntoView();
 			} catch (error) {
 				console.warn(error);
+				window.rybbit.error(error);
 			}
 		}, 0);
 	}
@@ -219,9 +220,10 @@
 		try {
 			await navigator.clipboard.writeText(settings);
 			showAlert('Settings copied to clipboard.', 'settings-drawer');
-		} catch (err) {
+		} catch (error) {
 			showAlert('Failed to copy settings. Please try again.', 'settings-drawer');
-			console.error('Failed to copy settings:', err);
+			console.error('Failed to copy settings:', error);
+			window.rybbit.error(error);
 		}
 	}
 </script>
@@ -310,7 +312,7 @@
 							<div class="flex flex-row justify-between items-center">
 								<span class="block">Prevent Sleep</span>
 								<label class="inline-flex items-center cursor-pointer">
-									<input type="checkbox" value="" class="sr-only peer" checked={$__wakeLockEnabled} on:click={(event) => __wakeLockEnabled.set(event.target.checked)} data-umami-event="Toggle Prevent Sleep" />
+									<input type="checkbox" value="" class="sr-only peer" checked={$__wakeLockEnabled} on:click={(event) => __wakeLockEnabled.set(event.target.checked)} data-rybbit-event="Toggle Prevent Sleep" />
 									<div class={toggleBtnClasses}></div>
 								</label>
 							</div>
@@ -507,7 +509,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Auto-Scroll to Highlighted Words</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" class="sr-only peer" bind:checked={$__audioSettings.wbwAutoScrollEnabled} on:change={() => updateSettings({ type: 'audioSettings', value: $__audioSettings })} data-umami-event="Toggle WBW Auto Scroll" />
+								<input type="checkbox" class="sr-only peer" bind:checked={$__audioSettings.wbwAutoScrollEnabled} on:change={() => updateSettings({ type: 'audioSettings', value: $__audioSettings })} data-rybbit-event="Toggle WBW Auto Scroll" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -526,7 +528,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">English Terminologies</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__englishTerminology} on:click={(event) => updateSettings({ type: 'englishTerminology', value: event.target.checked })} data-umami-event="Toggle English Terminology" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__englishTerminology} on:click={(event) => updateSettings({ type: 'englishTerminology', value: event.target.checked })} data-rybbit-event="Toggle English Terminology" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -540,7 +542,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Hide Non-{term('supplications')} Words</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__hideNonDuaPart} on:click={(event) => updateSettings({ type: 'hideNonDuaPart', value: event.target.checked })} data-umami-event="Toggle Non-Dua Words" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__hideNonDuaPart} on:click={(event) => updateSettings({ type: 'hideNonDuaPart', value: event.target.checked })} data-rybbit-event="Toggle Non-Dua Words" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -554,7 +556,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Word Morphology On Click</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__wordMorphologyOnClick} on:click={(event) => updateSettings({ type: 'wordMorphologyOnClick', value: event.target.checked })} data-umami-event="Toggle Morphology On Click" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wordMorphologyOnClick} on:click={(event) => updateSettings({ type: 'wordMorphologyOnClick', value: event.target.checked })} data-rybbit-event="Toggle Morphology On Click" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>

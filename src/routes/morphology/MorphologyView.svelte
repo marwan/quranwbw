@@ -96,6 +96,7 @@
 				return uthmaniToKeys[uthmani] || [$__morphologyKey];
 			} catch (error) {
 				console.warn(error);
+				window.rybbit.error(error);
 				return [];
 			}
 		})();

@@ -112,6 +112,7 @@ export async function fetchVerseTranslationData(props) {
 			return { id, data };
 		} catch (error) {
 			console.warn(error);
+			window.rybbit.error(error);
 			return { id, data: null };
 		}
 	});
@@ -161,6 +162,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 						return freshData;
 					} catch (error) {
 						console.warn(error);
+						window.rybbit.error(error);
 					} finally {
 						inFlightRequests.delete(cacheKey);
 					}
@@ -218,6 +220,7 @@ async function manageCache(key, type, dataToSet = undefined) {
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
 		console.warn(error);
+		window.rybbit.error(error);
 		return dataToSet !== undefined ? false : null;
 	}
 }

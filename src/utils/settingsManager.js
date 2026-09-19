@@ -38,6 +38,7 @@ function decodeSettings(encoded) {
 		return JSON.parse(reversed);
 	} catch (error) {
 		console.warn(error);
+		window.rybbit.error(error);
 		throw new Error('Invalid settings file');
 	}
 }
@@ -64,7 +65,7 @@ export function importSettings(file) {
 		return;
 	}
 
-	window.umami.track('Import Settings');
+	window.rybbit.event('Import Settings');
 
 	const reader = new FileReader();
 	reader.onload = function (e) {
@@ -81,6 +82,7 @@ export function importSettings(file) {
 		} catch (error) {
 			showAlert('Something went wrong while importing the file.', 'settings-drawer');
 			console.warn(error);
+			window.rybbit.error(error);
 		}
 	};
 	reader.readAsText(file);
@@ -116,9 +118,10 @@ export function exportSettings() {
 
 		URL.revokeObjectURL(url);
 
-		window.umami.track('Export Settings');
-	} catch (err) {
-		console.error('Failed to export settings:', err);
-		showAlert(`Something went wrong while exporting your settings. Here's the error.<pre class="mt-4 p-4 text-xs bg-theme-accent/5 rounded overflow-x-auto"><code>${err.stack || err.message}</code></pre>`, 'settings-drawer');
+		window.rybbit.event('Export Settings');
+	} catch (error) {
+		console.error('Failed to export settings:', error);
+		window.rybbit.error(error);
+		showAlert(`Something went wrong while exporting your settings. Here's the error.<pre class="mt-4 p-4 text-xs bg-theme-accent/5 rounded overflow-x-auto"><code>${error.stack || error.message}</code></pre>`, 'settings-drawer');
 	}
 }

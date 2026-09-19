@@ -146,8 +146,8 @@
 	}
 
 	function trackEvent(eventName, eventData) {
-		if (window.umami && typeof window.umami.track === 'function') {
-			window.umami.track(eventName, eventData);
+		if (window.rybbit && typeof window.rybbit.event === 'function') {
+			window.rybbit.event(eventName, eventData);
 		}
 	}
 

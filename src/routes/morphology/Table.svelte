@@ -73,7 +73,7 @@
 
 			{#if totalAvailableWords > maxResultsToLoad}
 				<div class="text-center text-xs {lastWordToLoad === totalAvailableWords && 'hidden'}">
-					<button on:click={updateLastWordToLoad} class={buttonClasses} data-umami-event="Morphology Load More Button"> Load more </button>
+					<button on:click={updateLastWordToLoad} class={buttonClasses} data-rybbit-event="Morphology Load More Button"> Load more </button>
 				</div>
 			{/if}
 		</div>

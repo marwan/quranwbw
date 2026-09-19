@@ -77,7 +77,7 @@
 
 	// Track analytics
 	const trackEvent = (eventName) => {
-		window.umami.track(eventName);
+		window.rybbit.event(eventName);
 	};
 
 	// Menu items configuration
@@ -172,7 +172,7 @@
 			<!-- Main menu items -->
 			{#each menuItems as item (item.id)}
 				{#if item.show}
-					<DropdownItem class={dropdownItemClasses} on:click={item.handler} data-umami-event={item.analyticsEvent}>
+					<DropdownItem class={dropdownItemClasses} on:click={item.handler} data-rybbit-event={item.analyticsEvent}>
 						<svelte:component this={item.icon} />
 						<span>{item.text}</span>
 					</DropdownItem>

@@ -207,6 +207,7 @@
 				}
 			} catch (error) {
 				currentTheme = 1;
+				window.rybbit.error(error);
 			}
 
 			// Apply the theme class to the document's root element
@@ -239,8 +240,8 @@
 			document.head.appendChild(style);
 		</script>
 
-		<!-- Umami -->
-		<script defer src="%sveltekit.assets%/events.js" data-website-id="07f075d1-8ac0-4ee4-a1b8-9702acc06860"></script>
+		<!-- Rybbit -->
+		<script defer src="https://rybbit.quranwbw.com/api/script.js?siteId=42d6767e561a"></script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
