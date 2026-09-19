@@ -109,10 +109,10 @@ export function showOfflineAlert() {
 
 // Checks internet connectivity and shows the offline alert if unavailable.
 // Returns true if online, false if offline.
-export async function checkOnlineAndAlert() {
+export async function checkOnlineAndAlert({ suppressAlert = false } = {}) {
 	const online = await isUserOnline();
 	if (online) return true;
 
-	showOfflineAlert();
+	if (!suppressAlert) showOfflineAlert();
 	return false;
 }
