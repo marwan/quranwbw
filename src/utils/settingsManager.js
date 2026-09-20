@@ -30,25 +30,27 @@ function mergeWithDefaults(imported, defaults) {
 	return result;
 }
 
-// Encode JSON: stringify → reverse → UTF-8 bytes → Base64
+// Encode JSON: stringify → reverse (by code point) → UTF-8 bytes → Base64
 function encodeSettings(json) {
 	const str = JSON.stringify(json);
-	const reversed = str.split('').reverse().join('');
+	// Array.from splits by Unicode code point, not UTF-16 code unit —
+	// keeps surrogate pairs (emoji etc.) intact when reversing
+	const reversed = Array.from(str).reverse().join('');
 	const bytes = new TextEncoder().encode(reversed);
 	// convert byte array to a Latin1-safe binary string for btoa
 	const binary = Array.from(bytes, (b) => String.fromCharCode(b)).join('');
 	return btoa(binary);
 }
 
-// Decode JSON: Base64 → UTF-8 bytes → reverse → parse
-// This is the real gatekeeper now that we no longer trust file extensions:
-// any file that doesn't decode into valid JSON is rejected here.
+// Decode JSON: Base64 → UTF-8 bytes → reverse (by code point) → parse
 function decodeSettings(encoded) {
 	try {
 		const binary = atob(encoded.trim());
 		const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
-		const reversed = new TextDecoder().decode(bytes);
-		const str = reversed.split('').reverse().join('');
+		// fatal: true throws on malformed UTF-8 instead of silently inserting U+FFFD,
+		// so a corrupted/tampered file fails here rather than passing through as "valid" JSON
+		const reversed = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+		const str = Array.from(reversed).reverse().join('');
 		const parsed = JSON.parse(str);
 
 		// enforce that decoded content is a plain object (not an array, string, number, etc.)
