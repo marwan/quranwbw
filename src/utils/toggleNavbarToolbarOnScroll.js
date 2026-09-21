@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { __currentPage, __topNavbarVisible, __bottomToolbarVisible, __audioSettings } from '$utils/stores';
+import { __currentPage, __topNavbarVisible, __bottomToolbarVisible, __audioSettings, __playback } from '$utils/stores';
 
 // Threshold (px) before navbars hide when scrolling down
 const scrollHideThreshold = 100;
@@ -91,13 +91,13 @@ function hideNavbars() {
 	if (window.scrollY <= scrollHideThreshold) return;
 
 	const currentPage = get(__currentPage);
-	const { isPlaying, audioType } = get(__audioSettings);
+	const { audioType } = get(__audioSettings);
 
 	// On juz/hizb pages, keep the top navbar visible — only hide the bottom toolbar
 	const shouldShowTopNavbar = alwaysShowTopNavbarPages.includes(currentPage);
 
 	// Keep the bottom toolbar visible if verse audio is actively playing
-	const shouldShowBottomToolbar = isPlaying && audioType === 'verse';
+	const shouldShowBottomToolbar = get(__playback) !== 'idle' && audioType === 'verse';
 
 	__topNavbarVisible.set(shouldShowTopNavbar);
 	__bottomToolbarVisible.set(shouldShowBottomToolbar);
