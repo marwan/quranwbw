@@ -77,7 +77,7 @@
 
 	// Track analytics
 	const trackEvent = (eventName) => {
-		window.rybbit.event(eventName);
+		window.rybbit?.event(eventName);
 	};
 
 	// Menu items configuration

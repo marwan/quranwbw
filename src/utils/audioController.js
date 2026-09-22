@@ -182,7 +182,7 @@ export async function playWordAudio(props) {
 		}
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 	}
 
 	// Tag this request with a unique ID to detect if a newer request has superseded it
@@ -309,7 +309,7 @@ export function resetAudioSettings(props) {
 		wordsInVerseCache = {};
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 	}
 }
 
@@ -371,7 +371,7 @@ async function playAssistedHighlights(speed, requestId) {
 		});
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 	} finally {
 		audio.removeEventListener('timeupdate', wordHighlighter);
 		audio.muted = false;
@@ -421,7 +421,7 @@ async function wordHighlighter() {
 		}
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 	} finally {
 		// Always release the guard so the next timeupdate event can run
 		isHighlighting = false;
@@ -632,7 +632,7 @@ async function getAudioUrl(url, returnBlob = true) {
 	} catch (error) {
 		// Fall back to the raw URL if anything goes wrong
 		console.warn('[AudioCache] Error:', error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 		return url;
 	}
 }
@@ -649,6 +649,6 @@ function scrollElementIntoView(id) {
 		});
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 	}
 }

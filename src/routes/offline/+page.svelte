@@ -268,7 +268,7 @@
 			});
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -293,7 +293,7 @@
 			};
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false };
 		}
 	}
@@ -370,7 +370,7 @@
 			});
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		}
 	}
@@ -396,7 +396,7 @@
 			updateSettings({ type: 'offlineModeSettings', value: {} });
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 		}
 	}
 
@@ -428,7 +428,7 @@
 			window.rybbit?.event(`Data Re-download: ${dataType}`);
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			window.rybbit?.event(`Data Re-download: ${dataType}`);
@@ -477,7 +477,7 @@
 			window.rybbit?.event('Chapter Data Download');
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingChapter = false;
@@ -527,7 +527,7 @@
 			window.rybbit?.event('Mushaf Data Download');
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMushaf = false;
@@ -592,7 +592,7 @@
 			window.rybbit?.event('Morphology Data Download');
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMorphology = false;
@@ -645,7 +645,7 @@
 			window.rybbit?.event('Tafsir Data Download');
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingTafsir = false;
@@ -664,7 +664,7 @@
 			console.log('All CDN static data cached successfully');
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -681,7 +681,7 @@
 			console.log('All bismillah fonts cached successfully');
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -693,7 +693,7 @@
 			console.log('Chapter header font cached successfully');
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}

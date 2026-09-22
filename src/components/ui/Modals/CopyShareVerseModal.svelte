@@ -47,7 +47,7 @@
 			return wordsArray.join(' ');
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			return key;
 		}
 	}

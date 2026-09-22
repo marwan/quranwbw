@@ -22,7 +22,7 @@ export async function fetchChapterData(props) {
 		({ arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(fontType, wordTranslation, wordTransliteration));
 	} catch (error) {
 		console.error(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 		throw error;
 	}
 
@@ -98,7 +98,7 @@ export async function fetchVerseTranslationData(props) {
 			cached = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
 		} catch (error) {
 			console.error(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			cached = null;
 		}
 
@@ -133,14 +133,14 @@ export async function fetchVerseTranslationData(props) {
 				data = JSON.parse(rawText);
 			} catch (error) {
 				console.error(error);
-				window.rybbit.error(error);
+				window.rybbit?.error(error);
 				throw error;
 			}
 
 			return { id, data };
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			return { id, data: null };
 		}
 	});
@@ -193,7 +193,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 							freshData = JSON.parse(rawText);
 						} catch (error) {
 							console.error(error);
-							window.rybbit.error(error);
+							window.rybbit?.error(error);
 							throw error;
 						}
 
@@ -202,7 +202,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 						return freshData;
 					} catch (error) {
 						console.warn(error);
-						window.rybbit.error(error);
+						window.rybbit?.error(error);
 					} finally {
 						inFlightRequests.delete(cacheKey);
 					}
@@ -233,7 +233,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 				data = JSON.parse(rawText);
 			} catch (error) {
 				console.error(error);
-				window.rybbit.error(error);
+				window.rybbit?.error(error);
 				throw error;
 			}
 
@@ -241,7 +241,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 			return data;
 		} catch (error) {
 			console.error(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			throw error;
 		} finally {
 			inFlightRequests.delete(cacheKey);
@@ -276,7 +276,7 @@ async function manageCache(key, type, dataToSet = undefined) {
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 		return dataToSet !== undefined ? false : null;
 	}
 }
@@ -300,7 +300,7 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		[arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
 	} catch (error) {
 		console.error(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 		throw error;
 	}
 

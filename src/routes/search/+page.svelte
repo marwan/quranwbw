@@ -51,7 +51,7 @@
 		} catch (error) {
 			// Log but don't throw — a Kalimat failure should not block Quran Cloud results
 			console.warn('[Kalimat API] fetch failed:', error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			return null;
 		}
 	}
@@ -88,7 +88,7 @@
 		} catch (error) {
 			// Log but don't throw — a Quran Cloud failure should not block Kalimat results
 			console.warn('[Quran Cloud API] fetch failed:', error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			return [];
 		}
 	}

@@ -50,7 +50,7 @@
 		const footnotes = $__verseTranslationData?.[footnoteTranslation]?.[`${footnoteChapter}:${footnoteVerse}`]?.footnotes;
 		footnoteText = footnotes?.[footnoteId - 1] || 'Footnote not available.';
 
-		window.rybbit.event('Verse Footnote Button');
+		window.rybbit?.event('Verse Footnote Button');
 	}
 
 	$: {

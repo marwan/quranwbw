@@ -169,7 +169,7 @@
 					});
 				} catch (error) {
 					console.warn(error);
-					window.rybbit.error(error);
+					window.rybbit?.error(error);
 				}
 			});
 
@@ -190,7 +190,7 @@
 			return { verses: sortedVerses };
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 			return { verses: {} };
 		}
 	}

@@ -49,7 +49,7 @@ export async function registerServiceWorker() {
 		return { success: true, registration };
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 		return { success: false, error: error.message };
 	}
 }
@@ -69,7 +69,7 @@ export async function unregisterServiceWorkerAndClearCache() {
 		console.log('All service workers unregistered and caches cleared.');
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 	}
 }
 
@@ -100,7 +100,7 @@ export async function isUserOnline(timeout = 1000) {
 	} catch (error) {
 		clearTimeout(id);
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 		return false;
 	}
 }

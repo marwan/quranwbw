@@ -156,7 +156,7 @@
 				document.getElementById('individual-setting').scrollIntoView();
 			} catch (error) {
 				console.warn(error);
-				window.rybbit.error(error);
+				window.rybbit?.error(error);
 			}
 		}, 0);
 	}
@@ -224,7 +224,7 @@
 		} catch (error) {
 			showAlert('Failed to copy settings. Please try again.', 'settings-drawer');
 			console.error('Failed to copy settings:', error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 		}
 	}
 </script>

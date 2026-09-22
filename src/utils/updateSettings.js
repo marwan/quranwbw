@@ -354,7 +354,7 @@ export function updateSettings(props) {
 
 	// Track event change
 	if (trackEvent) {
-		// window.rybbit.event('Setting Change', { type: props.type, value: props.value });
+		// window.rybbit?.event('Setting Change', { type: props.type, value: props.value });
 	}
 
 	// update the settings back into localStorage and global store

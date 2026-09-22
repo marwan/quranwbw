@@ -37,7 +37,7 @@ export async function deleteDexieDatabase() {
 		console.log(`Dexie database "${db.name}" deleted`);
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 		throw error;
 	}
 }

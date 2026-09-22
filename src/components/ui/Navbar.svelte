@@ -33,7 +33,7 @@
 		lastReadJuz = lastReadElement?.getAttribute('data-juz');
 	} catch (error) {
 		console.warn(error);
-		window.rybbit.error(error);
+		window.rybbit?.error(error);
 	}
 
 	// Get the revelation type of the current chapter
@@ -130,7 +130,7 @@
 			}));
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 		}
 	}
 

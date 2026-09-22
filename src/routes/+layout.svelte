@@ -67,7 +67,7 @@
 					wakeLock = await navigator.wakeLock.request('screen');
 				} catch (error) {
 					console.warn(error);
-					window.rybbit.error(error);
+					window.rybbit?.error(error);
 				}
 			}
 		} else {
@@ -168,8 +168,8 @@
 
 			// Check if this version was already sent
 			if (data.sentVersion !== currentVersion) {
-				if (window.rybbit && typeof window.rybbit.event === 'function') {
-					window.rybbit.event('Website Version', { version: currentVersion });
+				if (window.rybbit && typeof window.rybbit?.event === 'function') {
+					window.rybbit?.event('Website Version', { version: currentVersion });
 				}
 				// Mark as sent
 				data.sentVersion = currentVersion;
@@ -179,7 +179,7 @@
 			localStorage.setItem(storageKey, JSON.stringify(data));
 		} catch (error) {
 			console.warn(error);
-			window.rybbit.error(error);
+			window.rybbit?.error(error);
 		}
 	})();
 </script>

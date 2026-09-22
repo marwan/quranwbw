@@ -146,8 +146,8 @@
 	}
 
 	function trackEvent(eventName, eventData) {
-		if (window.rybbit && typeof window.rybbit.event === 'function') {
-			window.rybbit.event(eventName, eventData);
+		if (window.rybbit && typeof window.rybbit?.event === 'function') {
+			window.rybbit?.event(eventName, eventData);
 		}
 	}
 
