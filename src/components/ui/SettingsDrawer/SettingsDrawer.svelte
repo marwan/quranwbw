@@ -220,6 +220,7 @@
 		try {
 			await navigator.clipboard.writeText(settings);
 			showAlert('Settings copied to clipboard.', 'settings-drawer');
+			window.rybbit?.event('Copy Settings Button');
 		} catch (error) {
 			showAlert('Failed to copy settings. Please try again.', 'settings-drawer');
 			console.error('Failed to copy settings:', error);
