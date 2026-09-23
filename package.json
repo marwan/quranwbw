@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite dev --host",
 		"build": "vite build",
+		"test:quiz": "node --test tests/guessTheWordSet.test.js",
 		"preview": "vite build && vite preview",
 		"start": "node build",
 		"lint:unused": "eslint . --ext .js,.svelte --max-warnings=0"

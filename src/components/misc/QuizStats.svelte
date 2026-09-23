@@ -7,7 +7,7 @@
 
 <div id="quiz-stats" class="flex flex-col items-center mt-2 md:mt-6 w-full">
 	<div
-		class="flex flex-row flex-nowrap items-center justify-center gap-3 md:gap-6 p-2 md:p-3 rounded-2xl border-2 shadow-sm w-full max-w-lg {window.theme('border')} {window.theme('bgMain')}"
+		class="flex flex-row flex-nowrap items-center justify-center gap-3 md:gap-6 p-2 md:p-3 rounded-2xl border-2 shadow-sm w-full max-w-lg border-theme-accent/20 bg-theme-bg"
 	>
 		<div class="flex flex-col items-center text-center space-y-1">
 			<span class="text-xs md:text-sm font-semibold">Current Score</span>
@@ -18,7 +18,7 @@
 			</div>
 		</div>
 
-		<div class="self-stretch border-l {window.theme('border')} opacity-60" />
+		<div class="self-stretch border-l border-theme-accent/20 opacity-60" />
 
 		<div class="flex flex-col items-center text-center space-y-1">
 			<span class="text-xs md:text-sm font-semibold">All-Time Score</span>
