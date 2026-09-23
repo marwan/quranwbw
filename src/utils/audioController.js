@@ -119,7 +119,7 @@ export async function playVerseAudio(props) {
 
 		// With audio length delay the verse is replayed silently
 		// words lighting up guide the reader
-		const assistedHighlightsEnabled = audioLengthSpeed && audioSettings.assistedHighlightsDuringDelay && reciter.wbw && props.language === 'arabic';
+		const assistedHighlightsEnabled = props.advancedPlay && audioLengthSpeed && audioSettings.assistedHighlightsDuringDelay && reciter.wbw && props.language === 'arabic';
 
 		// If playing both languages, immediately follow Arabic with the translation
 		// before applying any delay or advancing to the next verse
@@ -127,7 +127,8 @@ export async function playVerseAudio(props) {
 			return playVerseAudio({
 				key: `${props.key}`,
 				timesToRepeat: +props.timesToRepeat,
-				language: 'translation'
+				language: 'translation',
+				advancedPlay: props.advancedPlay
 			});
 		}
 
@@ -151,7 +152,8 @@ export async function playVerseAudio(props) {
 				return playVerseAudio({
 					key: `${window.versesToPlayArray[0]}`,
 					timesToRepeat: +props.timesToRepeat,
-					language: audioSettings.language
+					language: audioSettings.language,
+					advancedPlay: props.advancedPlay
 				});
 			}
 		}
@@ -525,7 +527,7 @@ function getWordsInVerse(key) {
 
 // Starts audio playback for a verse or word, depending on the user's audio type setting.
 // Called by the verse play button and the play button in the audio modal.
-export function playButtonHandler(key = null) {
+export function playButtonHandler(key = null, { advancedPlay = false } = {}) {
 	const { audioType, timesToRepeat, language } = get(__audioSettings);
 
 	// Play from the first verse in the queue
@@ -533,7 +535,8 @@ export function playButtonHandler(key = null) {
 		playVerseAudio({
 			key: `${window.versesToPlayArray[0]}`,
 			timesToRepeat,
-			language
+			language,
+			advancedPlay
 		});
 	}
 
