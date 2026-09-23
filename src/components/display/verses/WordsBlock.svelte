@@ -36,6 +36,7 @@
 	// `true` triggers Svelte to re-render and drop the `invisible` class naturally,
 	// without fighting Svelte's DOM patching via classList.remove().
 	let pageVisible = false;
+	let lastWordInteractionWasTouch = false;
 
 	// Load the Mushaf font and reveal words whenever the font type switches to 2 or 3.
 	if (mushafFontTypes.includes($__fontType)) {
@@ -59,7 +60,9 @@
 	//   1. Morphology page → navigate to the word's morphology details page.
 	//   2. Other pages (if word morphology on click is enabled, or modal is open)
 	//      → open the morphology modal for the clicked word.
-	//   3. All other cases → set the verse key and play the word's audio.
+	//   3. All other cases → set the verse key and play the word's audio. Touch
+	//      interactions suppress the offline alert so the existing tooltip remains
+	//      available when audio cannot be played.
 	//
 	// Verse-end icon click behavior:
 	//   - Adds a bookmark for that verse (only when not in continuous display mode,
@@ -75,7 +78,8 @@
 			__verseKey.set(props.key);
 
 			if (props.type === 'word') {
-				wordAudioController({ key: props.key });
+				wordAudioController({ key: props.key, suppressOfflineAlert: lastWordInteractionWasTouch });
+				lastWordInteractionWasTouch = false;
 			} else if (props.type === 'end') {
 				if (!displayIsContinuous) {
 					updateSettings({
@@ -167,6 +171,10 @@
 	function getWordKey(wordIndex) {
 		return `${chapter}:${verse}:${wordIndex + 1}`;
 	}
+
+	function recordWordInteraction(event) {
+		lastWordInteractionWasTouch = event.pointerType === 'touch';
+	}
 </script>
 
 <!-- words -->
@@ -182,6 +190,7 @@
 				${$__audioSettings.playingWordKey === wordKey || ($__currentPage === 'morphology' && $__morphologyKey === wordKey) || ($__morphologyModalVisible && $__morphologyKey === wordKey) ? 'bg-theme-accent/15' : ''}
 				${$__currentPage === 'supplications' && word + 1 < (supplicationsFromQuran[key] || 0) ? ($__hideNonDuaPart ? 'hidden' : 'opacity-30') : ''}
 			`.trim()}
+			on:pointerdown={recordWordInteraction}
 			on:click={() => wordClickHandler({ key: wordKey, type: 'word' })}
 		>
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
