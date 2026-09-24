@@ -145,17 +145,10 @@
 		updateSettings({ type: 'audioSettings', value: audioSettings });
 	}
 
-	function trackEvent(eventName, eventData) {
-		if (window.rybbit && typeof window.rybbit?.event === 'function') {
-			window.rybbit?.event(eventName, eventData);
-		}
-	}
-
 	function toggleAssistedHighlights() {
 		const newSetting = !$__audioSettings.assistedHighlightsDuringDelay;
-
 		$__audioSettings.assistedHighlightsDuringDelay = newSetting;
-		trackEvent('Toggle Assisted Word Highlights', { enabled: newSetting });
+		window.rybbit?.event('Toggle Assisted Word Highlights', { enabled: newSetting ? 'true' : 'false' });
 	}
 
 	// This function toggles the rememberSettings property within the $__audioSettings object.
@@ -407,7 +400,7 @@
 									on:click={() => {
 										$__audioSettings.audioDelay = delay.id;
 										audioDelayDropdownOpen = !audioDelayDropdownOpen;
-										trackEvent('Audio Delay Option', { delay: delay.name });
+										window.rybbit?.event('Audio Delay Option', { delay: delay.name });
 									}}>{delay.name}</DropdownItem
 								>
 							{/each}
