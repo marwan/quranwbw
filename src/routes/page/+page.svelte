@@ -11,7 +11,7 @@
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
 	import { onDestroy } from 'svelte';
-	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
+	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
@@ -217,8 +217,13 @@
 		}
 	});
 
-	// Only allow continuous normal mode, without saving the setting
-	$__displayType = 4;
+	     // (fix) removed the stray, unconditional `$__displayType = 4;` line that used to sit here. 
+         // It raced against +layout.svelte's `$: if ($__currentPage === 'mushaf') { $__displayType = 6; }` 
+         // block — that block only re-runs when $__currentPage actually *changes*, so if it was 
+         // already 'mushaf' (or the reactive flush order didn't favor it), the correction never 
+         // re-fired and $__displayType stayed stuck at 4 ("Continuous Normal") even though this 
+         // page always renders in Mushaf layout regardless of $__displayType. The layout already 
+         // owns forcing displayType to 6 for the Mushaf page, so this file doesn't need to touch it.
 
 	__currentPage.set('mushaf');
 </script>
