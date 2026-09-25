@@ -424,8 +424,6 @@
 					await handleDownloadTafsirData();
 					break;
 			}
-
-			window.rybbit?.event(`Data Re-download: ${dataType}`);
 		} catch (error) {
 			console.warn(error);
 			window.rybbit?.error(error);
