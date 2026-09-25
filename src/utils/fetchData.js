@@ -121,21 +121,10 @@ export async function fetchVerseTranslationData(props) {
 	const fetchPromises = idsToFetch.map(async (id) => {
 		const version = selectableVerseTranslations[id].version;
 		try {
-			// Network fetch wrapped for manual error logging
-			const res = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+			// fetchAndCacheJson already returns parsed data (or throws), not a raw Response
+			const data = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
 
-			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
-
-			// Read as text first so a non-JSON body (e.g. "hello") can be logged instead of throwing a bare SyntaxError
-			const rawText = await res.text();
-			let data;
-			try {
-				data = JSON.parse(rawText);
-			} catch (error) {
-				console.error(error);
-				window.rybbit?.error(error);
-				throw error;
-			}
+			if (!data) throw new Error(`Failed to fetch translation ID ${id}`);
 
 			return { id, data };
 		} catch (error) {
