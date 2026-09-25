@@ -75,11 +75,6 @@
 		dropdownOpen = false;
 	};
 
-	// Track analytics
-	const trackEvent = (eventName) => {
-		window.rybbit?.event(eventName);
-	};
-
 	// Menu items configuration
 	$: menuItems = [
 		{
@@ -181,7 +176,7 @@
 
 			<!-- Mode switching items -->
 			{#each modeItems as item}
-				<DropdownItem class={dropdownItemClasses} href={item.href} on:click={() => trackEvent(item.analyticsEvent)}>
+				<DropdownItem class={dropdownItemClasses} href={item.href} on:click={() => window.rybbit?.event(item.analyticsEvent)}>
 					<svelte:component this={item.icon} />
 					<span>{item.text}</span>
 				</DropdownItem>
