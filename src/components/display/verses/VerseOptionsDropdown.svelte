@@ -75,11 +75,6 @@
 		dropdownOpen = false;
 	};
 
-	// Track analytics
-	const trackEvent = (eventName) => {
-		window.umami.track(eventName);
-	};
-
 	// Menu items configuration
 	$: menuItems = [
 		{
@@ -172,7 +167,7 @@
 			<!-- Main menu items -->
 			{#each menuItems as item (item.id)}
 				{#if item.show}
-					<DropdownItem class={dropdownItemClasses} on:click={item.handler} data-umami-event={item.analyticsEvent}>
+					<DropdownItem class={dropdownItemClasses} on:click={item.handler} data-rybbit-event={item.analyticsEvent}>
 						<svelte:component this={item.icon} />
 						<span>{item.text}</span>
 					</DropdownItem>
@@ -181,7 +176,7 @@
 
 			<!-- Mode switching items -->
 			{#each modeItems as item}
-				<DropdownItem class={dropdownItemClasses} href={item.href} on:click={() => trackEvent(item.analyticsEvent)}>
+				<DropdownItem class={dropdownItemClasses} href={item.href} on:click={() => window.rybbit?.event(item.analyticsEvent)}>
 					<svelte:component this={item.icon} />
 					<span>{item.text}</span>
 				</DropdownItem>

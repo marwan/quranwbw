@@ -182,6 +182,7 @@ export async function playWordAudio(props) {
 		}
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 
 	// Tag this request with a unique ID to detect if a newer request has superseded it
@@ -308,6 +309,7 @@ export function resetAudioSettings(props) {
 		wordsInVerseCache = {};
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 }
 
@@ -338,7 +340,7 @@ export async function wordAudioController(props) {
 }
 
 // Replay the verse that just finished with the audio muted
-// So word highlight plays at the delay's speed 
+// So word highlight plays at the delay's speed
 async function playAssistedHighlights(speed, requestId) {
 	const originalPlaybackRate = audio.playbackRate;
 
@@ -369,6 +371,7 @@ async function playAssistedHighlights(speed, requestId) {
 		});
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	} finally {
 		audio.removeEventListener('timeupdate', wordHighlighter);
 		audio.muted = false;
@@ -418,6 +421,7 @@ async function wordHighlighter() {
 		}
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	} finally {
 		// Always release the guard so the next timeupdate event can run
 		isHighlighting = false;
@@ -628,6 +632,7 @@ async function getAudioUrl(url, returnBlob = true, suppressOfflineAlert = false)
 	} catch (error) {
 		// Fall back to the raw URL if anything goes wrong
 		console.warn('[AudioCache] Error:', error);
+		window.rybbit?.error(error);
 		return url;
 	}
 }
@@ -644,5 +649,6 @@ function scrollElementIntoView(id) {
 		});
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 }

@@ -13,12 +13,10 @@ QuranWBW.com is your companion for reading, listening to, and learning the Holy 
 This is a passion project maintained in spare time. Development happens in bursts, and there may be periods of inactivity lasting weeks or months. Bug fixes and feature requests will be addressed as time permits. Your patience and understanding are appreciated.
 
 ## Community
-You can join us on the official Discord Server : 
-<div align="center">
-  <a href="https://discord.gg/VSGJKsarxW">
-    <img src="https://img.shields.io/badge/Discord-Join_us-5865F2?logo=discord&logoColor=white" alt="Discord">
-  </a>
-</div>
+
+Join the official QuranWBW Discord server to discuss the project, share feedback, report issues, suggest features, and connect with other users and contributors.
+
+**[Join us on Discord](https://discord.gg/VSGJKsarxW)**.
 
 ## Stack & Architecture
 
@@ -108,6 +106,6 @@ QuranWBW welcomes focused contributions that improve the project. You can help b
 
 We can't accept large unfocused PRs, unreviewed AI-generated code, or changes that deviate from the existing design language.
 
-If you're unsure about anything, don't hesitate to open an issue, join our [WhatsApp group](https://chat.whatsapp.com/CtrbWUB4GTyDdZWXWujVSl), or [email us](mailto:quranwbw@gmail.com). We also have a private Discord channel, which you can join upon request.
+If you're unsure about anything, don't hesitate to open an issue, join our [Discord server](https://discord.gg/VSGJKsarxW), or [email us](mailto:quranwbw@gmail.com).
 
 Your contributions, big or small, help make QuranWBW better for everyone.
