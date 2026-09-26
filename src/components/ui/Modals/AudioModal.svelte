@@ -40,8 +40,7 @@
 	$: if ($__audioModalVisible) {
 		window.versesToPlayArray = []; // clear verses just in case
 
-		const { startVerse, endVerse, timesToRepeat, playingChapter } = $__audioSettings;
-		const playingVersesInChapter = quranMetaData[playingChapter].verses;
+		const { startVerse, endVerse, timesToRepeat } = $__audioSettings;
 
 		// Set verses to play based on audio range setting
 		prepareVersesToPlay($__audioSettings.playingKey);
@@ -52,8 +51,8 @@
 		}
 
 		// Validate verse and repeat times
-		invalidStartVerse = startVerse < 1 || startVerse > playingVersesInChapter;
-		invalidEndVerse = endVerse < 1 || endVerse > playingVersesInChapter || endVerse < startVerse;
+		invalidStartVerse = startVerse < 1 || startVerse > versesInChapter;
+		invalidEndVerse = endVerse < 1 || endVerse > versesInChapter || endVerse < startVerse;
 		invalidTimesToRepeat = !selectableRepeatTimes.includes(timesToRepeat);
 	}
 
@@ -93,13 +92,13 @@
 	}
 
 	// Properly set the max verses allowed
-	$: if ($__audioSettings.playingChapter && $__audioSettings.endVerse > quranMetaData[$__audioSettings.playingChapter].verses) {
-		$__audioSettings.endVerse = quranMetaData[$__audioSettings.playingChapter].verses;
+	$: if ($__chapterNumber && $__audioSettings.endVerse > versesInChapter) {
+		$__audioSettings.endVerse = versesInChapter;
 	}
 
 	// Update the end verse whenever the audio modal opens
 	$: if ($__audioModalVisible) {
-		$__audioSettings.endVerse = quranMetaData[$__audioSettings.playingChapter].verses;
+		$__audioSettings.endVerse = versesInChapter;
 	}
 
 	// End verse checks
