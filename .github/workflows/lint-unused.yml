@@ -2,6 +2,8 @@ name: Lint Unused Check
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 jobs:
