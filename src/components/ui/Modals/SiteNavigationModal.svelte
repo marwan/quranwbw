@@ -136,7 +136,7 @@
 					__tajweedRulesModalVisible.set(true);
 				}}
 				class={linkClasses}
-				data-umami-event="Tajweed Modal Button"
+				data-rybbit-event="Tajweed Modal Button"
 			>
 				<span><TajweedRules /></span>
 				<span class={linkTextClasses}>{term('tajweed')} Rules</span>
@@ -155,7 +155,7 @@
 			</a>
 
 			<!-- Old Website -->
-			<a href="https://old.quranwbw.com/" target="_blank" rel="noopener noreferrer" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1} data-umami-event="Legacy Site Button">
+			<a href="https://old.quranwbw.com/" target="_blank" rel="noopener noreferrer" class={`${linkClasses} ${!userOnline && disabledClasses}`} aria-disabled={!userOnline} tabindex={userOnline ? undefined : -1} data-rybbit-event="Legacy Site Button">
 				<span><LeftArrow /></span>
 				<span class={linkTextClasses}>Old Website</span>
 			</a>

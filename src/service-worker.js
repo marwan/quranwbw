@@ -34,6 +34,9 @@ const cacheNames = {
 // Files we should never cache
 const stuffNotToCache = ['/service-worker.js'];
 
+// URLs that should never be intercepted or cached
+const externalUrlsNotToCache = ['gstatic.com', 'rybbit.quranwbw.com', 'cloud-backup-api.quranwbw.com'];
+
 // Static files built by SvelteKit (CSS, JS, images from /static folder)
 const precacheFiles = [
 	...files, // Static files from /static folder
@@ -334,7 +337,7 @@ self.addEventListener('fetch', (event) => {
 	const url = new URL(event.request.url);
 
 	// Ignore non-GET requests, excluded files, and connectivity checks
-	if (event.request.method !== 'GET' || stuffNotToCache.some((excluded) => url.pathname.includes(excluded)) || url.hostname === 'www.gstatic.com' || url.hostname === 'cloud-backup-api.quranwbw.com') {
+	if (event.request.method !== 'GET' || stuffNotToCache.some((excluded) => url.pathname.includes(excluded)) || externalUrlsNotToCache.some((excluded) => url.href.includes(excluded))) {
 		return;
 	}
 

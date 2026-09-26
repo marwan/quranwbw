@@ -58,7 +58,7 @@
 
 		__verseKey.set(verse);
 		__notesModalVisible.set(true);
-		window.umami?.track('Edit Note Menu');
+		window.rybbit?.event('Edit Note Menu');
 	}
 
 	function handleDeleteNote(event) {
@@ -71,7 +71,7 @@
 				key: verse,
 				value: ''
 			});
-			window.umami?.track('Delete Note Menu');
+			window.rybbit?.event('Delete Note Menu');
 		});
 	}
 

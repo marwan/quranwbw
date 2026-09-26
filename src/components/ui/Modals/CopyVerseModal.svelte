@@ -48,6 +48,7 @@
 			return wordsArray.join(' ');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			return key;
 		}
 	}
@@ -262,7 +263,7 @@
 			<div class="text-xs opacity-70 mb-6 text-left">
 				{#if copyType === 1 || copyType === 3}
 					<span>Text copied to clipboard.</span>
-					<button on:click={downloadTextFile(`quran-${chapter}-${verse}`, generatedVerseData)} class={linkClasses} data-umami-event="Download Verse File Button">Click here to download it as a file.</button>
+					<button on:click={downloadTextFile(`quran-${chapter}-${verse}`, generatedVerseData)} class={linkClasses} data-rybbit-event="Download Verse File Button">Click here to download it as a file.</button>
 				{:else}
 					<span>Link copied to clipboard.</span>
 				{/if}
@@ -271,7 +272,7 @@
 	</div>
 
 	<div class="flex-shrink-0 mt-4">
-		<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-umami-event="Copy Verse Button">
+		<button class="w-full {buttonClasses}" on:click={processAndCopyVerseData} data-rybbit-event="Copy Verse Button">
 			<Copy />
 			<span>Copy</span>
 		</button>

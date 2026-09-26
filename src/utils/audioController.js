@@ -178,15 +178,16 @@ export async function playWordAudio(props) {
 	// Try prefetching next audio file only if there are more words in the verse
 	try {
 		if (wordNumber < getWordsInVerse(`${wordChapter}:${wordVerse}`)) {
-			getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false);
+			getAudioUrl(`${wordsAudioURL}/${nextWordFileName}?version=2`, false, props.suppressOfflineAlert);
 		}
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 
 	// Tag this request with a unique ID to detect if a newer request has superseded it
 	const requestId = ++activeAudioRequestId;
-	const audioUrl = await getAudioUrl(`${wordsAudioURL}/${currentWordFileName}?version=2`);
+	const audioUrl = await getAudioUrl(`${wordsAudioURL}/${currentWordFileName}?version=2`, true, props.suppressOfflineAlert);
 
 	// If URL is missing (e.g. offline + not cached), abort before touching the player state
 	if (!audioUrl) return;
@@ -308,6 +309,7 @@ export function resetAudioSettings(props) {
 		wordsInVerseCache = {};
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 }
 
@@ -334,11 +336,11 @@ export async function wordAudioController(props) {
 		return (audio.currentTime = wordTimestamp);
 	}
 
-	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key });
+	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key, suppressOfflineAlert: props.suppressOfflineAlert });
 }
 
 // Replay the verse that just finished with the audio muted
-// So word highlight plays at the delay's speed 
+// So word highlight plays at the delay's speed
 async function playAssistedHighlights(speed, requestId) {
 	const originalPlaybackRate = audio.playbackRate;
 
@@ -369,6 +371,7 @@ async function playAssistedHighlights(speed, requestId) {
 		});
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	} finally {
 		audio.removeEventListener('timeupdate', wordHighlighter);
 		audio.muted = false;
@@ -418,6 +421,7 @@ async function wordHighlighter() {
 		}
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	} finally {
 		// Always release the guard so the next timeupdate event can run
 		isHighlighting = false;
@@ -595,7 +599,7 @@ async function fetchTimestampData() {
 // Fetch audio and cache it in the Cache API.
 // returnBlob=true  → cache + return a Blob URL for immediate playback
 // returnBlob=false → cache only, no Blob URL returned (used for prefetching)
-async function getAudioUrl(url, returnBlob = true) {
+async function getAudioUrl(url, returnBlob = true, suppressOfflineAlert = false) {
 	try {
 		const cache = await caches.open('quranwbw-audio-cache');
 
@@ -604,7 +608,7 @@ async function getAudioUrl(url, returnBlob = true) {
 		// If not cached, fetch from network and store for future use
 		if (!response) {
 			// Guard against fetching while offline — shows an alert to the user if offline
-			if (!(await checkOnlineAndAlert())) return;
+			if (!(await checkOnlineAndAlert({ suppressAlert: suppressOfflineAlert }))) return;
 
 			console.log('[AudioCache] Fetching:', url);
 			response = await fetch(url);
@@ -628,6 +632,7 @@ async function getAudioUrl(url, returnBlob = true) {
 	} catch (error) {
 		// Fall back to the raw URL if anything goes wrong
 		console.warn('[AudioCache] Error:', error);
+		window.rybbit?.error(error);
 		return url;
 	}
 }
@@ -644,5 +649,6 @@ function scrollElementIntoView(id) {
 		});
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 }

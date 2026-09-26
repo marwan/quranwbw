@@ -82,6 +82,7 @@
 			}
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	}
 
@@ -115,6 +116,7 @@
 			versesLoadType = 'next';
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	}
 
@@ -211,6 +213,7 @@
 		} catch (error) {
 			fetchError = error;
 			console.warn(error);
+			window.rybbit?.error(error);
 		} finally {
 			isLoading = false;
 		}

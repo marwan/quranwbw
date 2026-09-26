@@ -67,6 +67,7 @@
 					wakeLock = await navigator.wakeLock.request('screen');
 				} catch (error) {
 					console.warn(error);
+					window.rybbit?.error(error);
 				}
 			}
 		} else {
@@ -150,11 +151,7 @@
 		}
 	})();
 
-	// Tracks the current website Git version in Umami analytics.
-	// Reads the previously sent version from userSettings to avoid sending
-	// duplicate events — only fires the Umami event when the version has changed.
-	// Always updates latestVersion so we have a record of what the user is on,
-	// regardless of whether the event was sent.
+	// Function to track the website Git version in Rybbit analytics
 	(function trackWebsiteVersion() {
 		try {
 			const currentVersion = __APP_VERSION__.split(' ')[0];
@@ -172,10 +169,10 @@
 			// Always update the latest version
 			data.latestVersion = currentVersion;
 
-			// Only send the Umami event if this version hasn't been tracked yet
+			// Only send the Rybbit event if this version hasn't been tracked yet
 			if (data.sentVersion !== currentVersion) {
-				if (window.umami && typeof window.umami.track === 'function') {
-					window.umami.track('Website Version', { version: currentVersion });
+				if (window.rybbit && typeof window.rybbit?.event === 'function') {
+					window.rybbit?.event('Website Version', { version: currentVersion });
 				}
 				data.sentVersion = currentVersion;
 			}
@@ -184,6 +181,7 @@
 			updateSettings({ type: 'websiteVersion', value: data });
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	})();
 </script>
