@@ -15,7 +15,7 @@
 	import SettingsSelectorModal from '$ui/Modals/SettingsSelectorModal.svelte';
 	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
 	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
-	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
+	import CopyVerseModal from '$ui/Modals/CopyVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
 	import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
 
@@ -155,28 +155,30 @@
 	(function trackWebsiteVersion() {
 		try {
 			const currentVersion = __APP_VERSION__.split(' ')[0];
-			const storageKey = 'websiteVersionData';
 
-			// Get existing data or initialize
-			const data = JSON.parse(localStorage.getItem(storageKey)) || {
-				latestVersion: null,
-				sentVersion: null
+			// Skip tracking if the version is unknown (e.g. during local development)
+			if (!currentVersion || currentVersion === 'unknown') return;
+
+			const stored = JSON.parse(localStorage.getItem('userSettings')).websiteVersion;
+
+			const data = {
+				latestVersion: stored?.latestVersion ?? null,
+				sentVersion: stored?.sentVersion ?? null
 			};
 
 			// Always update the latest version
 			data.latestVersion = currentVersion;
 
-			// Check if this version was already sent
+			// Only send the Rybbit event if this version hasn't been tracked yet
 			if (data.sentVersion !== currentVersion) {
 				if (window.rybbit && typeof window.rybbit?.event === 'function') {
 					window.rybbit?.event('Website Version', { version: currentVersion });
 				}
-				// Mark as sent
 				data.sentVersion = currentVersion;
 			}
 
-			// Save back to localStorage
-			localStorage.setItem(storageKey, JSON.stringify(data));
+			// Persist back to userSettings
+			updateSettings({ type: 'websiteVersion', value: data });
 		} catch (error) {
 			console.warn(error);
 			window.rybbit?.error(error);
@@ -194,7 +196,7 @@
 	<SettingsSelectorModal />
 	<VerseTranslationModal />
 	<MorphologyModal />
-	<CopyShareVerseModal />
+	<CopyVerseModal />
 	<FavoriteChaptersModal />
 	<ConfirmationAlertModal />
 

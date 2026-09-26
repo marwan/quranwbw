@@ -6,6 +6,8 @@
 	import Chapter from '$display/verses/modes/Chapter.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
+	import LeftArrow from '$svgs/LeftArrow.svelte';
+	import SectionStart from '$svgs/SectionStart.svelte';
 	import { parseURL } from '$utils/parseURL';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { quranMetaData } from '$data/quranMeta';
@@ -67,8 +69,14 @@
 			<!-- buttons to start chapter from start and load previous verse -->
 			{#if startVerse > 1}
 				<div class={loadPrevNextVerseButtons}>
-					<a href="/{$__chapterNumber}" class="text-sm {buttonClasses}"> Start of {term('chapter')} </a>
-					<button on:click={loadPreviousVerse} class="text-sm {buttonClasses}"> Previous {term('verse')} </button>
+					<a href="/{$__chapterNumber}" class="text-sm {buttonClasses}">
+						<SectionStart />
+						<span>Start of {term('chapter')} </span>
+					</a>
+					<button on:click={loadPreviousVerse} class="text-sm {buttonClasses}">
+						<LeftArrow />
+						<span> Previous {term('verse')} </span>
+					</button>
 				</div>
 			{/if}
 

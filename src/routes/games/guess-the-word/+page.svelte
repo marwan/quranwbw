@@ -3,10 +3,11 @@
 	import Spinner from '$svgs/Spinner.svelte';
 	import Check from '$svgs/Check.svelte';
 	import Cross from '$svgs/Cross.svelte';
+	import RightArrow from '$svgs/RightArrow.svelte';
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
-	import { buttonClasses, buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
+	import { buttonClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
 	import { updateSettings } from '$utils/updateSettings';
 	import { playWordAudio } from '$utils/audioController';
 	import { fetchWordData } from '$utils/fetchData';
@@ -150,13 +151,19 @@
 				<!-- confirm-button -->
 				{#if !answerChecked}
 					<div id="confirm-button" class="{selection === null || answerChecked === true ? disabledClasses : null} w-full">
-						<button class="{buttonClasses} w-full" on:click={() => checkAnswer()}>Confirm</button>
+						<button class="{buttonClasses} w-full" on:click={() => checkAnswer()}>
+							<span><Check /></span>
+							<span>Confirm</span>
+						</button>
 					</div>
 				{/if}
 
 				<!-- skip-word-button -->
 				<div id="skip-word-button" class="w-full">
-					<button class="{buttonOutlineClasses} w-full" on:click={() => setRandomWord()}>{answerChecked ? 'Next' : 'Skip'} {@html '&#x2192;'}</button>
+					<button class="{buttonClasses} w-full" on:click={() => setRandomWord()}>
+						<span>{answerChecked ? 'Next' : 'Skip'}</span>
+						<RightArrow />
+					</button>
 				</div>
 			</div>
 
