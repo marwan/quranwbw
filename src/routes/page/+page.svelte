@@ -217,14 +217,6 @@
 		}
 	});
 
-	     // (fix) removed the stray, unconditional `$__displayType = 4;` line that used to sit here. 
-         // It raced against +layout.svelte's `$: if ($__currentPage === 'mushaf') { $__displayType = 6; }` 
-         // block — that block only re-runs when $__currentPage actually *changes*, so if it was 
-         // already 'mushaf' (or the reactive flush order didn't favor it), the correction never 
-         // re-fired and $__displayType stayed stuck at 4 ("Continuous Normal") even though this 
-         // page always renders in Mushaf layout regardless of $__displayType. The layout already 
-         // owns forcing displayType to 6 for the Mushaf page, so this file doesn't need to touch it.
-
 	__currentPage.set('mushaf');
 </script>
 
