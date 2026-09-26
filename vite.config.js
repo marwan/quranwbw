@@ -1,5 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { svelteTesting } from '@testing-library/svelte/vite';
+import { defineConfig } from 'vitest/config';
 import { execSync } from 'node:child_process';
 import { config } from 'dotenv';
 
@@ -34,7 +35,11 @@ function getVersion() {
 }
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [sveltekit(), svelteTesting()],
+	test: {
+		environment: 'jsdom',
+		include: ['src/**/*.test.js']
+	},
 	define: {
 		__APP_VERSION__: JSON.stringify(getVersion())
 	},
