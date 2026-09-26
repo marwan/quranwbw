@@ -145,11 +145,11 @@
 	// Fire any pending analytics event that was queued before a page reload
 	// (e.g. Cloud Restore Applied, which reloads the page immediately after tracking)
 	if (typeof window !== 'undefined') {
-		const pendingEvent = localStorage.getItem('pendingUmamiEvent');
+		const pendingEvent = localStorage.getItem('pendingRybbitEvent');
 		if (pendingEvent) {
-			localStorage.removeItem('pendingUmamiEvent');
-			// Defer slightly so Umami has time to initialise after page load
-			setTimeout(() => window.umami?.track(pendingEvent), 500);
+			localStorage.removeItem('pendingRybbitEvent');
+			// Defer slightly so Rybbit has time to initialise after page load
+			setTimeout(() => window.rybbit?.event(pendingEvent), 500);
 		}
 	}
 
@@ -178,7 +178,7 @@
 		backupTimestamps = { keyCreatedAt: null, lastBackedUpAt: null, lastRestoredAt: null };
 		restorePreview = null;
 		view = 'keySetup';
-		window.umami?.track('Backup Key Deleted');
+		window.rybbit?.event('Backup Key Deleted');
 	}
 
 	// Read the current settings from localStorage
@@ -306,7 +306,7 @@
 			// Store the backup key and record the creation timestamp
 			persistBackupKey(json.backupKey);
 
-			window.umami?.track('Backup Key Generated');
+			window.rybbit?.event('Backup Key Generated');
 		} catch {
 			// Network-level failure (offline, DNS, CORS, etc.)
 			showAlert(genericErrorMessage);
@@ -346,7 +346,7 @@
 			backupKeyInput = '';
 			view = 'keySetup';
 
-			window.umami?.track('Backup Key Entered');
+			window.rybbit?.event('Backup Key Entered');
 		} catch {
 			showAlert(genericErrorMessage);
 		} finally {
@@ -372,7 +372,7 @@
 
 			if (!ok) {
 				showAlert(getErrorForStatus(status, 'backup'));
-				window.umami?.track('Cloud Backup Failed');
+				window.rybbit?.event('Cloud Backup Failed');
 				return;
 			}
 
@@ -381,7 +381,7 @@
 			writeBackupData({ lastBackedUpAt: ts });
 			backupTimestamps = { ...backupTimestamps, lastBackedUpAt: ts };
 
-			window.umami?.track('Cloud Backup Success');
+			window.rybbit?.event('Cloud Backup Success');
 
 			// Clear any open restore preview — its data is now stale after a fresh backup
 			restorePreview = null;
@@ -417,7 +417,7 @@
 				showAlert('Your local settings are already identical to this backup. No changes will be made.');
 			}
 
-			window.umami?.track('Cloud Restore Success');
+			window.rybbit?.event('Cloud Restore Success');
 		} catch {
 			showAlert(genericErrorMessage);
 		} finally {
@@ -453,7 +453,7 @@
 		}
 
 		// Queue the analytics event to be fired after the page reloads
-		localStorage.setItem('pendingUmamiEvent', 'Cloud Restore Applied');
+		localStorage.setItem('pendingRybbitEvent', 'Cloud Restore Applied');
 
 		applyRestoredSettings(merged);
 	}
@@ -461,7 +461,7 @@
 	// Cancel the restore preview
 	function handleRestoreCancel() {
 		restorePreview = null;
-		window.umami?.track('Cloud Restore Cancelled');
+		window.rybbit?.event('Cloud Restore Cancelled');
 	}
 
 	// Copies the active backup key to the clipboard and briefly shows "Copied" feedback.
@@ -472,7 +472,7 @@
 		navigator.clipboard?.writeText(savedBackupKey);
 		hasCopiedBackupKey = true;
 
-		window.umami?.track('Backup Key Copied');
+		window.rybbit?.event('Backup Key Copied');
 
 		// Reset the "Copied" label after 2 seconds
 		clearTimeout(copyResetTimer);
@@ -631,7 +631,7 @@
 		}
 
 		// Track import event
-		window.umami.track('Import Settings');
+		window.rybbit?.event('Import Settings');
 
 		const reader = new FileReader();
 
@@ -698,7 +698,7 @@
 		URL.revokeObjectURL(url);
 
 		// Track export event
-		window.umami.track('Export Settings');
+		window.rybbit?.event('Export Settings');
 	}
 
 	__currentPage.set('Backup & Restore');
@@ -822,7 +822,7 @@
 								on:click={() => {
 									if (navigator.share) {
 										navigator.share({ title: 'My Backup Key', text: savedBackupKey });
-										window.umami?.track('Backup Key Shared');
+										window.rybbit?.event('Backup Key Shared');
 									} else {
 										// Fallback for browsers/devices that don't support the Web Share API
 										navigator.clipboard?.writeText(savedBackupKey);
