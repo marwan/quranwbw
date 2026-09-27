@@ -10,10 +10,11 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
-	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, bismillahFonts, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
+	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
 	import { getMushafWordFontLink, isIOSorMac } from '$utils/getMushafWordFontLink';
 	import { term } from '$utils/terminologies';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
+	import { bismillahFontMap } from '$data/bismillahFontMap';
 	import { clearDexieTable } from '$utils/dexie';
 
 	// Common messages
@@ -183,7 +184,7 @@
 			});
 		}
 
-		window.umami?.track(`Delete Specific Cache (${cacheName})`);
+		window.rybbit?.event(`Delete Specific Cache (${cacheName})`);
 	}
 
 	// Helper function to add downloaded data settings
@@ -267,6 +268,7 @@
 			});
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -291,6 +293,7 @@
 			};
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false };
 		}
 	}
@@ -367,6 +370,7 @@
 			});
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		}
 	}
@@ -392,6 +396,7 @@
 			updateSettings({ type: 'offlineModeSettings', value: {} });
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	}
 
@@ -419,13 +424,12 @@
 					await handleDownloadTafsirData();
 					break;
 			}
-
-			window.umami?.track(`Data Re-download: ${dataType}`);
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
-			window.umami?.track(`Data Re-download: ${dataType}`);
+			window.rybbit?.event(`Data Re-download: ${dataType}`);
 		}
 	}
 
@@ -468,9 +472,10 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			window.umami?.track('Chapter Data Download');
+			window.rybbit?.event('Chapter Data Download');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingChapter = false;
@@ -517,9 +522,10 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			window.umami?.track('Mushaf Data Download');
+			window.rybbit?.event('Mushaf Data Download');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMushaf = false;
@@ -581,9 +587,10 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			window.umami?.track('Morphology Data Download');
+			window.rybbit?.event('Morphology Data Download');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMorphology = false;
@@ -633,9 +640,10 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			window.umami?.track('Tafsir Data Download');
+			window.rybbit?.event('Tafsir Data Download');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingTafsir = false;
@@ -654,6 +662,7 @@
 			console.log('All CDN static data cached successfully');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -661,7 +670,7 @@
 	// Download all bismillah fonts
 	async function downloadAllBismillahFonts() {
 		try {
-			const fontPromises = Object.values(bismillahFonts).map(({ file, version }) => {
+			const fontPromises = Object.values(bismillahFontMap).map(({ file, version }) => {
 				const url = `${staticEndpoint}/fonts/Extras/bismillah/${file}.woff2?version=${version}`;
 				return fetch(url);
 			});
@@ -670,6 +679,7 @@
 			console.log('All bismillah fonts cached successfully');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -681,6 +691,7 @@
 			console.log('Chapter header font cached successfully');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}

@@ -1,6 +1,5 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import Check from '$svgs/Check.svelte';
 	import { onMount } from 'svelte';
 	import { __verseTafsir, __offlineModeSettings } from '$utils/stores';
 	import { verseTafsirLanguages, selectableTafsirs } from '$data/selectableTafsirs';
@@ -49,10 +48,6 @@
 												<span>{tafsir.name}</span>
 												<!-- <span class="text-xs font-normal">{tafsir.author}</span> -->
 											</div>
-
-											{#if $__verseTafsir === tafsir.id}
-												<Check size={5} />
-											{/if}
 										</div>
 									</Radio>
 								</div>

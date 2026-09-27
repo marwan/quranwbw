@@ -17,6 +17,7 @@
 	import ResetSettings from '$svgs/ResetSettings.svelte';
 	import Import from '$svgs/Import.svelte';
 	import Export from '$svgs/Export.svelte';
+	import Copy from '$svgs/Copy.svelte';
 
 	import {
 		__currentPage,
@@ -39,7 +40,8 @@
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
 		__wideWesbiteLayoutEnabled,
-		__signLanguageModeEnabled
+		__signLanguageModeEnabled,
+		__audioSettings
 	} from '$utils/stores';
 
 	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
@@ -53,7 +55,7 @@
 	import { term } from '$utils/terminologies';
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
-	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
@@ -83,7 +85,7 @@
 	const selectorClasses = 'w-32 border border-theme-accent/20 text-left rounded-3xl focus:border-theme-accent focus:ring-theme-accent focus-within:ring-2 block p-2.5 truncate text-sm';
 	const settingsDescriptionClasses = 'mb-6 text-xs opacity-70';
 	const toggleBtnClasses = 'relative w-14 h-7 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:content-[""] after:absolute after:top-0.5 after:start-[4px] after:border after:rounded-full after:h-6 after:w-6 after:transition-all bg-theme-accent/15 after:bg-theme-bg after:border-theme-bg peer-checked:bg-theme-accent';
-	const rangeClasses = 'appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full bg-theme-accent/10 [&::-webkit-slider-thumb]:!bg-theme-accent';
+	const rangeClasses = 'appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full bg-theme-accent/15 [&::-webkit-slider-thumb]:!bg-theme-accent';
 
 	let settingsDrawerOpacity = 'opacity-100';
 	let settingsDrawerBackground = 'bg-theme-bg';
@@ -154,6 +156,7 @@
 				document.getElementById('individual-setting').scrollIntoView();
 			} catch (error) {
 				console.warn(error);
+				window.rybbit?.error(error);
 			}
 		}, 0);
 	}
@@ -208,6 +211,20 @@
 				importSettings(file);
 				event.target.value = ''; // reset so the same file can be chosen again
 			});
+		}
+	}
+
+	// copies userSettings localStorage value to clipboard
+	async function copySettings() {
+		const settings = localStorage.getItem('userSettings');
+		try {
+			await navigator.clipboard.writeText(settings);
+			showAlert('Settings copied to clipboard.', 'settings-drawer');
+			window.rybbit?.event('Copy Settings Button');
+		} catch (error) {
+			showAlert('Failed to copy settings. Please try again.', 'settings-drawer');
+			console.error('Failed to copy settings:', error);
+			window.rybbit?.error(error);
 		}
 	}
 </script>
@@ -296,7 +313,7 @@
 							<div class="flex flex-row justify-between items-center">
 								<span class="block">Prevent Sleep</span>
 								<label class="inline-flex items-center cursor-pointer">
-									<input type="checkbox" value="" class="sr-only peer" checked={$__wakeLockEnabled} on:click={(event) => __wakeLockEnabled.set(event.target.checked)} data-umami-event="Toggle Prevent Sleep" />
+									<input type="checkbox" value="" class="sr-only peer" checked={$__wakeLockEnabled} on:click={(event) => __wakeLockEnabled.set(event.target.checked)} data-rybbit-event="Toggle Prevent Sleep" />
 									<div class={toggleBtnClasses}></div>
 								</label>
 							</div>
@@ -485,6 +502,20 @@
 						</div>
 						<p class={settingsDescriptionClasses}>Select what happens when you click on the play button for a {term('verse')}.</p>
 					</div>
+
+					<div class="border-b border-theme-accent/20"></div>
+
+					<!-- wbw-autoscroll-setting -->
+					<div id="wbw-autoscroll-setting" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Auto-Scroll to Highlighted Words</span>
+							<label class="inline-flex items-center cursor-pointer">
+								<input type="checkbox" class="sr-only peer" bind:checked={$__audioSettings.wbwAutoScrollEnabled} on:change={() => updateSettings({ type: 'audioSettings', value: $__audioSettings })} data-rybbit-event="Toggle WBW Auto Scroll" />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Automatically scroll to the highlighted words while listening to the recitation. This option only works with reciters that support word by word highlighting.</p>
+					</div>
 				</div>
 			</div>
 
@@ -498,7 +529,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">English Terminologies</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__englishTerminology} on:click={(event) => updateSettings({ type: 'englishTerminology', value: event.target.checked })} data-umami-event="Toggle English Terminology" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__englishTerminology} on:click={(event) => updateSettings({ type: 'englishTerminology', value: event.target.checked })} data-rybbit-event="Toggle English Terminology" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -512,7 +543,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Hide Non-{term('supplications')} Words</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__hideNonDuaPart} on:click={(event) => updateSettings({ type: 'hideNonDuaPart', value: event.target.checked })} data-umami-event="Toggle Non-Dua Words" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__hideNonDuaPart} on:click={(event) => updateSettings({ type: 'hideNonDuaPart', value: event.target.checked })} data-rybbit-event="Toggle Non-Dua Words" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -526,7 +557,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Word Morphology On Click</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__wordMorphologyOnClick} on:click={(event) => updateSettings({ type: 'wordMorphologyOnClick', value: event.target.checked })} data-umami-event="Toggle Morphology On Click" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wordMorphologyOnClick} on:click={(event) => updateSettings({ type: 'wordMorphologyOnClick', value: event.target.checked })} data-rybbit-event="Toggle Morphology On Click" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -552,10 +583,26 @@
 									<span>Restore</span>
 								</button>
 								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Restore</Tooltip>
-								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
+								<input type="file" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 							</div>
 						</div>
 						<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>
+					</div>
+
+					<div class="border-b border-theme-accent/20"></div>
+
+					<!-- copy-settings -->
+					<div id="copy-settings" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Copy Settings</span>
+
+							<button class="text-sm space-x-2 {buttonClasses}" on:click={copySettings}>
+								<Copy />
+								<span>Copy</span>
+							</button>
+							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Copy</Tooltip>
+						</div>
+						<p class={settingsDescriptionClasses}>Copy your settings as JSON to the clipboard.</p>
 					</div>
 
 					<div class="border-b border-theme-accent/20"></div>
@@ -587,7 +634,7 @@
 	{#if showIndividualSetting}
 		<div id="individual-setting" transition:fly={{ duration: 150, x: 0, easing: sineIn }}>
 			<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4">
-				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>← Back</button>
+				<button id="drawer-label" class="inline-flex items-center my-4 text-3xl font-semibold" on:click={() => goBackToMainSettings()}>⟵ Back</button>
 				<CloseButton on:click={() => ($__settingsDrawerHidden = true)} class="my-4 rounded-3xl" />
 			</div>
 

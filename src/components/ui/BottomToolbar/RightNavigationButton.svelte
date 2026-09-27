@@ -4,22 +4,41 @@
 	import { __chapterNumber, __currentPage, __pageNumber } from '$utils/stores';
 	import { disabledClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
+	import { page } from '$app/stores';
 
 	let linkHref;
 	let linkText;
 	let linkDisabled;
 
 	$: {
+		const id = Number($page.url.searchParams.get('id')) || 1;
+
+		// Chapter navigation (left to right)
 		if ($__currentPage === 'chapter') {
-			// Set properties for next chapter navigation (left to right)
 			linkHref = $__chapterNumber + 1;
 			linkText = `Next ${term('chapter')}`;
 			linkDisabled = $__chapterNumber === 114;
-		} else if ($__currentPage === 'mushaf') {
-			// Set properties for previous page navigation (right to left)
+		}
+
+		// Mushaf navigation (right to left)
+		else if ($__currentPage === 'mushaf') {
 			linkHref = `page?id=${$__pageNumber - 1}`;
 			linkText = 'Previous Page';
 			linkDisabled = $__pageNumber === 1;
+		}
+
+		// Juz navigation (left to right)
+		else if ($__currentPage === 'juz') {
+			linkHref = `juz?id=${id + 1}`;
+			linkText = `Next ${term('juz')}`;
+			linkDisabled = id === 30;
+		}
+
+		// Hizb navigation (left to right)
+		else if ($__currentPage === 'hizb') {
+			linkHref = `hizb?id=${id + 1}`;
+			linkText = `Next ${term('hizb')}`;
+			linkDisabled = id === 60;
 		}
 	}
 </script>

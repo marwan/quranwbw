@@ -27,7 +27,7 @@
 	</h3>
 
 	<div class="flex flex-col">
-		<p>{$__confirmationAlertModal.message}</p>
+		<p>{@html $__confirmationAlertModal.message}</p>
 
 		<div class="flex flex-row gap-2 mt-6">
 			{#if $__confirmationAlertModal.type === 'confirm'}

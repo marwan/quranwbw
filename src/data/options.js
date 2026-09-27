@@ -1,7 +1,7 @@
 export const selectableDisplays = {
 	1: {
 		displayID: 1,
-		displayName: 'Word by Word',
+		displayName: 'Word By Word',
 		displayComponent: 'WBWDisplay',
 		layout: 'wbw',
 		continuous: false,
@@ -21,7 +21,7 @@ export const selectableDisplays = {
 	},
 	3: {
 		displayID: 3,
-		displayName: 'Continuous Word by Word',
+		displayName: 'Continuous Word By Word',
 		displayComponent: 'ContinuousDisplay',
 		layout: 'wbw',
 		continuous: true,
@@ -46,7 +46,7 @@ export const selectableDisplays = {
 		layout: 'normal',
 		continuous: false,
 		customClasses: null,
-		disallowedInPages: ['supplications', 'bookmarks', 'morphology', 'juz', 'hizb', 'search', 'topics'],
+		disallowedInPages: ['morphology', 'search'],
 		disallowedInFontTypes: [9]
 	},
 	6: {
@@ -74,74 +74,82 @@ export const selectableFontTypes = {
 	1: {
 		id: 1,
 		type: 'Uthmanic',
-		font: 'Digital Font',
-		displayOrder: 1,
+		name: 'Digital Font',
+		order: 1,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	2: {
 		id: 2,
 		type: 'Uthmanic',
-		font: 'Mushaf 1441H',
-		displayOrder: 3,
+		name: 'Mushaf 1441H',
+		order: 3,
 		disallowedInPages: [],
-		version: 5
+		version: 7
 	},
 	3: {
 		id: 2,
 		type: 'Uthmanic',
-		font: 'Mushaf Tajweed 1441H',
-		displayOrder: 4,
+		name: 'Mushaf Tajweed 1441H',
+		order: 4,
 		disallowedInPages: [],
-		version: 5
+		version: 7
 	},
 	4: {
 		id: 3,
 		type: 'Indopak / Nastaleeq',
-		font: 'Qalam Digital Font (Madinah Edition)',
-		displayOrder: 5,
+		name: 'Qalam Digital Font (Madinah Edition)',
+		order: 5,
 		disallowedInPages: ['mushaf'],
 		version: 7
 	},
 	5: {
 		id: 5,
 		type: 'Indopak / Nastaleeq',
-		font: 'Uthman Taha Digital Font',
-		displayOrder: 7,
+		name: 'Uthman Taha Digital Font',
+		order: 7,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	6: {
 		id: 6,
 		type: 'Indopak / Nastaleeq',
-		font: 'Qalam Digital Font (Hanafi Edition)',
-		displayOrder: 6,
+		name: 'Qalam Digital Font (Hanafi Edition)',
+		order: 6,
 		disallowedInPages: ['mushaf'],
 		version: 7
 	},
 	7: {
 		id: 1,
 		type: 'Uthmanic',
-		font: 'Digital Bold Font',
-		displayOrder: 2,
+		name: 'Digital Bold Font',
+		order: 2,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	8: {
 		id: 5,
 		type: 'Indopak / Nastaleeq',
-		font: 'Uthman Taha Digital Bold Font',
-		displayOrder: 8,
+		name: 'Uthman Taha Digital Bold Font',
+		order: 8,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	9: {
 		id: 9,
 		type: 'Indopak / Nastaleeq',
-		font: 'Indonesian Isep Misbah Digital Font',
-		displayOrder: 9,
+		name: 'Indonesian Isep Misbah Digital Font',
+		order: 9,
 		disallowedInPages: ['mushaf'],
-		version: 2
+		version: 3
+	},
+	10: {
+		id: 13,
+		type: 'Indopak / Nastaleeq',
+		name: 'Majidi Nastaleeq Digital Font',
+		order: 10,
+		disallowedInPages: ['mushaf'],
+		version: 1
 	}
 };
 
@@ -455,30 +463,30 @@ export const selectableVerseTranslations = {
 		resource_id: 1,
 		resource_name: 'Transliteration (Simple Tajweed)',
 		language_id: 11115,
-		version: 2,
-		displayOrder: 2
+		version: 3,
+		order: 2
 	},
 	3: {
 		resource_id: 3,
 		resource_name: 'Transliteration (Syllables)',
 		language_id: 11115,
-		version: 2,
-		displayOrder: 4,
+		version: 3,
+		order: 4,
 		font: 'font-serif'
 	},
 	57: {
 		resource_id: 57,
 		resource_name: 'Transliteration (Normal)',
 		language_id: 11115,
-		version: 2,
-		displayOrder: 1
+		version: 3,
+		order: 1
 	},
 	4: {
 		resource_id: 4,
 		resource_name: 'Transliteration (Advanced Tajweed)',
 		language_id: 11115,
-		version: 1,
-		displayOrder: 3,
+		version: 2,
+		order: 3,
 		font: 'font-serif'
 	},
 
@@ -684,7 +692,7 @@ export const selectableWordTranslations = {
 	22: {
 		id: 22,
 		language: 'Sign Language',
-		version: 1
+		version: 2
 	}
 };
 
@@ -692,23 +700,23 @@ export const selectableWordTransliterations = {
 	1: {
 		id: 1,
 		language: 'Transliteration (Normal)',
-		version: 1
+		version: 2
 	},
 	2: {
 		id: 2,
 		language: 'Transliteration (Simple Tajweed)',
-		version: 1
+		version: 2
 	},
 	3: {
 		id: 3,
 		language: 'Transliteration (Advanced Tajweed)',
-		version: 1,
+		version: 2,
 		font: 'font-serif'
 	},
 	4: {
 		id: 4,
 		language: 'Transliteration (Syllables)',
-		version: 1,
+		version: 2,
 		font: 'font-serif'
 	}
 };
@@ -716,17 +724,19 @@ export const selectableWordTransliterations = {
 export const selectableReciters = {
 	1: {
 		id: 1,
-		reciter: 'Abdul Basit (Mujawwad)',
+		reciter: 'Abdul Basit',
 		url: 'https://everyayah.com/data/Abdul_Basit_Mujawwad_128kbps',
 		image: 'abdul-baset-abdel-samad-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw', 'mujawwad']
 	},
 	2: {
 		id: 2,
-		reciter: 'Abdul Basit (Murattal)',
+		reciter: 'Abdul Basit',
 		url: 'https://everyayah.com/data/Abdul_Basit_Murattal_192kbps',
 		image: 'abdul-baset-abdel-samad-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw', 'murattal']
 	},
 	3: {
 		id: 3,
@@ -751,7 +761,8 @@ export const selectableReciters = {
 		reciter: 'Hani Ar-Rifai',
 		url: 'https://everyayah.com/data/Hani_Rifai_192kbps',
 		image: 'hani-ar-rifai-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw']
 	},
 	7: {
 		id: 7,
@@ -768,28 +779,32 @@ export const selectableReciters = {
 	},
 	9: {
 		id: 9,
-		reciter: 'Mahmoud Khalil Al-Husary (with gaps)',
+		reciter: 'Mahmoud Khalil Al-Husary',
 		url: 'https://everyayah.com/data/Husary_Muallim_128kbps',
-		image: 'mahmoud-khalil-al-hussary-profile.webp'
+		image: 'mahmoud-khalil-al-hussary-profile.webp',
+		tags: ['gaps']
 	},
 	10: {
 		id: 10,
 		reciter: 'Mishary Rashid Alafasy',
 		url: 'https://everyayah.com/data/Alafasy_128kbps',
 		image: 'mishary-rashid-alafasy-medium.webp',
-		wbw: true
+		wbw: true,
+		tags: ['wbw']
 	},
 	11: {
 		id: 11,
-		reciter: 'Mohamed El-Minshawi (Mujawwad)',
+		reciter: 'Mohamed El-Minshawi',
 		url: 'https://everyayah.com/data/Minshawy_Mujawwad_192kbps',
-		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp'
+		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp',
+		tags: ['mujawwad']
 	},
 	12: {
 		id: 12,
-		reciter: 'Mohamed El-Minshawi (Teacher)',
+		reciter: 'Mohamed El-Minshawi',
 		url: 'https://everyayah.com/data/Minshawy_Teacher_128kbps',
-		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp'
+		image: 'mohammed-al-minshawi-hafs-an-assem-medium.webp',
+		tags: ['teacher']
 	},
 	13: {
 		id: 13,
@@ -856,7 +871,7 @@ export const selectableReciters = {
 
 export const selectableTranslationReciters = {
 	1: { id: 1, reciter: 'English - Ibrahim Walk (Sahih International)', url: 'https://everyayah.com/data/English/Sahih_Intnl_Ibrahim_Walk_192kbps/' },
-	2: { id: 2, reciter: 'Urdu - Dr. Farhat Hashmi (word by word)', url: 'https://everyayah.com/data/translations/urdu_farhat_hashmi/' },
+	2: { id: 2, reciter: 'Urdu - Dr. Farhat Hashmi (Word By Word)', url: 'https://everyayah.com/data/translations/urdu_farhat_hashmi/' },
 	3: { id: 3, reciter: 'Urdu - Shamshad Ali Khan', url: 'https://everyayah.com/data/translations/urdu_shamshad_ali_khan_46kbps/' }
 };
 
@@ -913,7 +928,22 @@ export const selectableAudioDelays = {
 	4: { id: 4, name: '5 seconds', milliseconds: 5000 },
 	5: { id: 5, name: '10 seconds', milliseconds: 10000 },
 	6: { id: 6, name: '15 seconds', milliseconds: 15000 },
-	7: { id: 7, name: 'Audio Length', milliseconds: 999 }
+	7: { id: 7, name: 'Ayah Length (1x)', milliseconds: 0, audioLengthSpeed: 1 },
+	8: { id: 8, name: 'Ayah Length (0.5x)', milliseconds: 0, audioLengthSpeed: 0.5 },
+	11: { id: 11, name: 'Ayah Length (1.5x)', milliseconds: 0, audioLengthSpeed: 1.5 }
 };
+
+// The order the delay options are listed in
+export const selectableAudioDelaysOrder = [
+	1, // None
+	8, // Audio Length (0.5x)
+	7, // Audio Length (1x)
+	11, // Audio Length (1.5x)
+	2, // 1 second
+	3, // 3 seconds
+	4, // 5 seconds
+	5, // 10 seconds
+	6 // 15 seconds
+];
 
 export const selectableRepeatTimes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50];

@@ -1,6 +1,5 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
-	import Check from '$svgs/Check.svelte';
 	import { onMount } from 'svelte';
 	import { __wordTransliteration, __offlineModeSettings } from '$utils/stores';
 	import { selectableWordTransliterations } from '$data/options';
@@ -40,10 +39,6 @@
 				<Radio name="wordTranslation" bind:group={$__wordTransliteration} value={translation.id} on:change={(event) => updateSettings({ type: 'wordTransliteration', value: +event.target.value })} custom>
 					<div class="{individualRadioClasses} {$__wordTransliteration === translation.id && selectedRadioOrCheckboxClasses}">
 						<div class="w-full">{translation.language}</div>
-
-						{#if $__wordTransliteration === translation.id}
-							<Check size={5} />
-						{/if}
 					</div>
 				</Radio>
 			{/if}

@@ -43,9 +43,9 @@
 				preloadFont(`${baseFontUrl}/juz_names-Regular.woff2`);
 				preloadFont(`${baseFontUrl}/surahs_v4-Regular.woff2`);
 			} else {
-				// On other pages, preload main Quran font and optionally Bismillah
-				const userSettings1 = JSON.parse(localStorage.getItem('userSettings'));
-				const fontType = Number(userSettings1?.displaySettings?.fontType ?? '1');
+				// On other pages, preload main Quran font
+				const userSettings = JSON.parse(localStorage.getItem('userSettings'));
+				const fontType = Number(userSettings?.displaySettings?.fontType ?? '1');
 
 				const fontMap = {
 					1: `${baseFontUrl}/qcf-uthmanic-digital.woff2`,
@@ -56,7 +56,8 @@
 					6: `${baseFontUrl}/AlQuranNeo5x2.woff2`,
 					7: `${baseFontUrl}/qcf-uthmanic-digital-Bold.woff2`,
 					8: `${baseFontUrl}/NastaleeqB_COLOR-Regular.woff2`,
-					9: `${baseFontUrl}/LPMQIsepMisbah-Regular.woff2`
+					9: `${baseFontUrl}/LPMQIsepMisbah-Regular.woff2`,
+					10: `${baseFontUrl}/Majidi5_QWBW-Bold.woff2`
 				};
 
 				const fontUrl = fontMap[fontType];
@@ -261,6 +262,7 @@
 				}
 			} catch (error) {
 				currentTheme = 1;
+				window.rybbit?.error(error);
 			}
 
 			// Apply the theme class to the document's root element
@@ -280,38 +282,21 @@
 			const style = document.createElement('style');
 			style.textContent = `
 				[type='checkbox'], [type='checkbox']:checked {
-						background-color: transparent !important;
-						border-color: ${accentHex} !important;
+					background-color: transparent !important;
+					border-color: ${accentHex} !important;
 				}
 				[type='checkbox']:checked {
-						background-color: transparent !important;
-						border-color: ${accentHex} !important;
-						background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23${accentNoHash}'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>") !important;
+					background-color: transparent !important;
+					border-color: ${accentHex} !important;
+					background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 507.506 507.506' fill='%23${accentNoHash}'><g><path d='M163.865,436.934c-14.406,0.006-28.222-5.72-38.4-15.915L9.369,304.966c-12.492-12.496-12.492-32.752,0-45.248l0,0 c12.496-12.492,32.752-12.492,45.248,0l109.248,109.248L452.889,79.942c12.496-12.492,32.752-12.492,45.248,0l0,0 c12.492,12.496,12.492,32.752,0,45.248L202.265,421.019C192.087,431.214,178.271,436.94,163.865,436.934z'/></g></svg>") !important;
 				}
 			`;
 
 			document.head.appendChild(style);
 		</script>
 
-		<!-- Custom theme styles -->
-		<script>
-			// Apply the theme class to the document's root element
-			document.documentElement.classList += `theme-${currentTheme} bg-theme-bg`;
-
-			// If user has a custom theme saved, override the CSS variables
-			try {
-				const customTheme = JSON.parse(localStorage.getItem('customTheme'));
-				if (customTheme && currentTheme === 999) {
-					// use theme-id 999 for custom
-					document.documentElement.style.setProperty('--theme-bg-rgb', customTheme.bg);
-					document.documentElement.style.setProperty('--theme-accent-rgb', customTheme.accent);
-					document.documentElement.style.setProperty('--theme-text-rgb', customTheme.text);
-				}
-			} catch (e) {}
-		</script>
-
-		<!-- Umami -->
-		<script defer src="%sveltekit.assets%/events.js" data-website-id="07f075d1-8ac0-4ee4-a1b8-9702acc06860"></script>
+		<!-- Rybbit -->
+		<script defer src="https://rybbit.quranwbw.com/api/script.js?siteId=42d6767e561a"></script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

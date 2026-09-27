@@ -21,7 +21,7 @@
 
 	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
-	import { toggleNavbar } from '$utils/toggleNavbar';
+	import { toggleNavbarToolbarOnScroll } from '$utils/toggleNavbarToolbarOnScroll';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	import { fade } from 'svelte/transition';
@@ -67,6 +67,7 @@
 					wakeLock = await navigator.wakeLock.request('screen');
 				} catch (error) {
 					console.warn(error);
+					window.rybbit?.error(error);
 				}
 			}
 		} else {
@@ -86,13 +87,13 @@
 	function setDefaultPaddings() {
 		// paddingTop = $__currentPage === 'home' ? 'pt-16' : defaultPaddingTop;
 		paddingTop = $__currentPage === 'home' ? 'pt-0' : defaultPaddingTop;
-		paddingBottom = $__currentPage === 'chapter' ? 'pb-24' : defaultPaddingBottom;
+		paddingBottom = ['chapter', 'juz', 'hizb'].includes($__currentPage) ? 'pb-24' : defaultPaddingBottom;
 		paddingX = $__currentPage === 'mushaf' ? 'px-0 md:px-4' : $__currentPage === 'home' ? 'px-0' : 'px-4';
 	}
 
-	// Toggle bottom nav on scroll
+	// Update navbar and bottom toolbar visibility based on scroll
 	document.body.onscroll = () => {
-		debounce(toggleNavbar, 0);
+		debounce(toggleNavbarToolbarOnScroll, 0);
 	};
 
 	// Mushaf Page Handling
@@ -150,7 +151,7 @@
 		}
 	})();
 
-	// Function to track the website Git version in Umami analytics
+	// Function to track the website Git version in Rybbit analytics
 	(function trackWebsiteVersion() {
 		try {
 			const currentVersion = __APP_VERSION__.split(' ')[0];
@@ -167,8 +168,8 @@
 
 			// Check if this version was already sent
 			if (data.sentVersion !== currentVersion) {
-				if (window.umami && typeof window.umami.track === 'function') {
-					window.umami.track('Website Version', { version: currentVersion });
+				if (window.rybbit && typeof window.rybbit?.event === 'function') {
+					window.rybbit?.event('Website Version', { version: currentVersion });
 				}
 				// Mark as sent
 				data.sentVersion = currentVersion;
@@ -178,6 +179,7 @@
 			localStorage.setItem(storageKey, JSON.stringify(data));
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	})();
 </script>

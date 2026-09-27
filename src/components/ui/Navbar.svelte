@@ -2,12 +2,13 @@
 	import Menu from '$svgs/Menu.svelte';
 	import Home from '$svgs/Home.svelte';
 	import ChevronDown from '$svgs/ChevronDown.svelte';
-	import { quranMetaData } from '$data/quranMeta';
-	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled } from '$utils/stores';
-	import { term } from '$utils/terminologies';
-	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	import Mecca from '$svgs/Mecca.svelte';
 	import Madinah from '$svgs/Madinah.svelte';
+	import { quranMetaData } from '$data/quranMeta';
+	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled, __fullVersesDisplayKeys, __chapterData, __verseKeyData } from '$utils/stores';
+	import { term } from '$utils/terminologies';
+	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+	import { page } from '$app/stores';
 
 	let lastReadPage;
 	let lastReadJuz;
@@ -32,6 +33,7 @@
 		lastReadJuz = lastReadElement?.getAttribute('data-juz');
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 
 	// Get the revelation type of the current chapter
@@ -42,12 +44,74 @@
 	$: revelationTerm = term(revelation.termKey);
 	$: RevelationIcon = revelation.Icon;
 
-	// Calculate the scroll progress percentage for the current chapter
-	$: chapterProgress = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter') ? ($__lastRead.verse / quranMetaData[$__lastRead.chapter].verses) * 100 : 0;
+	// cumulativeWords[verse] = number of words from the start of the chapter to that verse.
+	$: chapterWordCounts = (() => {
+		if ($__currentPage !== 'chapter' || !$__chapterData) return null;
 
-	// Get the chapter name for the navbar
+		const cumulativeWords = [0];
+		let total = 0;
+
+		for (let verse = 1; verse <= quranMetaData[$__chapterNumber].verses; verse++) {
+			total += $__chapterData[`${$__chapterNumber}:${verse}`]?.meta.words ?? 0;
+			cumulativeWords[verse] = total;
+		}
+
+		return { cumulativeWords, total };
+	})();
+
+	$: readingProgress = (() => {
+		// No progress if the user hasn't started reading yet
+		if (!Object.prototype.hasOwnProperty.call($__lastRead, 'chapter')) return 0;
+
+		// progress = words read / total words in chapter
+		if ($__currentPage === 'chapter') {
+			if ($__lastRead.chapter !== $__chapterNumber || !chapterWordCounts?.total) return 0;
+
+			return ((chapterWordCounts.cumulativeWords[$__lastRead.verse] ?? 0) / chapterWordCounts.total) * 100;
+		}
+
+		if ($__fullVersesDisplayKeys?.length) {
+			// The store may hold a comma-separated string or an array — normalise to array
+			const verseKeys = typeof $__fullVersesDisplayKeys === 'string' ? $__fullVersesDisplayKeys.split(',') : $__fullVersesDisplayKeys;
+
+			// A juz or hizb spans several chapters, so positions have to be compared across them.
+			// Multiply the chapter number by 1000 to ensure that the verse number doesn't affect the comparison.
+			const positionOf = (chapter, verse) => chapter * 1000 + verse;
+			const keyPosition = (verseKey) => positionOf(...verseKey.split(':').map(Number));
+
+			const lastReadPosition = positionOf($__lastRead.chapter, $__lastRead.verse);
+			if (lastReadPosition < keyPosition(verseKeys[0]) || lastReadPosition > keyPosition(verseKeys[verseKeys.length - 1])) return 0;
+
+			// Find the last key at or before the read position — it marks where to stop counting words
+			const index = verseKeys.findLastIndex((verseKey) => keyPosition(verseKey) <= lastReadPosition);
+
+			// If no key is before the last read position, the user hasn't reached this page yet
+			if (index === -1) return 0;
+
+			// Progress = words up to the last read key / total words on this page
+			if ($__verseKeyData) {
+				let readWords = 0;
+				let totalWords = 0;
+
+				verseKeys.forEach((verseKey, keyIndex) => {
+					const words = $__verseKeyData[verseKey]?.words ?? 0;
+					totalWords += words;
+					if (keyIndex <= index) readWords += words;
+				});
+
+				if (totalWords > 0) return (readWords / totalWords) * 100;
+			}
+
+			// Fall back to the key position while the word counts are still loading
+			return ((index + 1) / verseKeys.length) * 100;
+		}
+
+		return 0;
+	})();
+
+	// Get the chapter name for the navbar, prefixed with the chapter number
 	$: {
-		navbarChapterName = quranMetaData[$__chapterNumber].transliteration;
+		navbarChapterName = `${$__chapterNumber} - ${quranMetaData[$__chapterNumber].transliteration}`;
 
 		// Only show the translation if it's different from the transliteration
 		if (quranMetaData[$__chapterNumber].transliteration !== quranMetaData[$__chapterNumber].translation) {
@@ -66,8 +130,12 @@
 			}));
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	}
+
+	// Set the Juz or Hizb Id
+	$: juzOrHizbId = Number($page.url.searchParams.get('id')) || 1;
 </script>
 
 <nav id="navbar" class={navbarClasses}>
@@ -77,7 +145,7 @@
 			<span class="text-xs pl-2 hidden md:block">Home</span>
 		</a>
 
-		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5" on:click={() => __quranNavigationModalVisible.set(true)} data-umami-event="Navbar Navigation Button">
+		<button class="flex items-center p-3 text-sm w-auto p-2 rounded-3xl border border-transparent hover:border-theme-accent hover:bg-theme-accent/5" on:click={() => __quranNavigationModalVisible.set(true)} data-rybbit-event="Navbar Navigation Button">
 			<!-- display the chapter name on chapter page -->
 			{#if $__currentPage === 'chapter'}
 				{@html navbarChapterName}
@@ -92,7 +160,8 @@
 
 			<!-- display only the division title for juz/hizb page -->
 			{#if ['juz', 'hizb'].includes($__currentPage)}
-				{document.title.split(' - ')[0]}
+				{term($__currentPage)}
+				{juzOrHizbId}
 				<ChevronDown />
 			{/if}
 
@@ -137,8 +206,11 @@
 				<span>{lastReadJuz ? `${term('juz')} ${lastReadJuz}` : '...'}</span>
 			</div>
 		</div>
+	{/if}
 
-		<div id="chapter-progress-bar" class="fixed inset-x-0 z-20 h-1 rounded-r-3xl bg-theme-accent" style="width: {chapterProgress}%" />
+	<!-- Show the progress tracker for specific pages only -->
+	{#if ['chapter', 'juz', 'hizb'].includes($__currentPage)}
+		<div id="progress-bar" class="fixed inset-x-0 z-20 h-1 rounded-r-3xl bg-theme-accent" style="width: {readingProgress}%" />
 	{/if}
 
 	<!-- mini nav for mushaf page -->

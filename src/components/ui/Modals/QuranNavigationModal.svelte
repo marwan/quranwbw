@@ -120,7 +120,7 @@
 							<div id="last-read-links" class="py-2 space-y-2">
 								<span class="text-xs font-semibold pt-2">Last Read</span>
 								<div class={linkClasses}>
-									<span>{@html '&#10230'}</span>
+									<span>⟶</span>
 									<a href="/{lastReadChapter}/{lastReadVerse}" class={linkTextClasses}>{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}</a>
 								</div>
 							</div>
@@ -131,7 +131,7 @@
 							<span class="text-xs font-semibold pt-2">Suggestions</span>
 							{#each Object.entries(mostRead) as [_, item]}
 								<div class={linkClasses}>
-									<span>{@html '&#10230'}</span>
+									<span>⟶</span>
 									<a href={item.url} class={linkTextClasses}>{quranMetaData[item.chapter].transliteration} ({item.verses})</a>
 								</div>
 							{/each}
@@ -151,7 +151,7 @@
 										<div id="current-chapter-links" class="py-2 space-y-2">
 											<span class="text-xs font-semibold">Current {term('chapter')}</span>
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/{$__chapterNumber}?startVerse={value}" class={linkTextClasses}>{term('verse')} {value}</a>
 											</div>
 										</div>
@@ -167,12 +167,12 @@
 									{#if $__currentPage === 'mushaf'}
 										{#if key === 'chapter'}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/page?id={startPageOfChapters[value]}" class={linkTextClasses}>{term('chapter')} {value} ({quranMetaData[value].transliteration})</a>
 											</div>
 										{:else if key === 'page'}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/page?id={value}" class={linkTextClasses}>Page {value}</a>
 											</div>
 										{/if}
@@ -181,17 +181,17 @@
 										{#await verseKeyData then verseKeyData}
 											{#if key === 'juz'}
 												<div class={linkClasses}>
-													<span>{@html '&#10230'}</span>
+													<span>⟶</span>
 													<a href="/page?id={verseKeyData[juzMeta[value - 1].from].page}" class={linkTextClasses}>{term('juz')} {value}</a>
 												</div>
 											{:else if key === 'hizb'}
 												<div class={linkClasses}>
-													<span>{@html '&#10230'}</span>
+													<span>⟶</span>
 													<a href="/page?id={verseKeyData[hizbMeta[value - 1].from].page}" class={linkTextClasses}>{term('hizb')} {value}</a>
 												</div>
 											{:else if key === 'key'}
 												<div class={linkClasses}>
-													<span>{@html '&#10230'}</span>
+													<span>⟶</span>
 													<a href="/page?id={verseKeyData[value].page}" class={linkTextClasses}>{quranMetaData[value.split(':')[0]].transliteration}, {term('verse')} {value.split(':')[1]} (Page {verseKeyData[value].page})</a>
 												</div>
 											{/if}
@@ -199,41 +199,41 @@
 									{:else if $__chapterNumber !== 'mushaf'}
 										{#if key === 'chapter'}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/{value}" class={linkTextClasses}>{term('chapter')} {value} ({quranMetaData[value].transliteration})</a>
 											</div>
 										{:else if key === 'page'}
 											{@const [pageChapter, pageVerse] = pageNumberKeys[value - 1].split(':').map(Number)}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/{pageChapter}/{pageVerse}" class={linkTextClasses}>Page {value} ({quranMetaData[pageChapter].transliteration})</a>
 											</div>
 
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/page?id={value}" class={linkTextClasses}>Mushaf Page {value} ({quranMetaData[pageNumberKeys[value - 1].split(':')[0]].transliteration})</a>
 											</div>
 										{:else if key === 'juz'}
 											{@const [juzChapter, juzVerse] = juzMeta[value - 1]['from'].split(':').map(Number)}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/{juzChapter}/{juzVerse}" class={linkTextClasses}>{term('juz')} {value} ({juzMeta[value - 1].name})</a>
 											</div>
 										{:else if key === 'hizb'}
 											{@const [hizbChapter, hizbVerse] = hizbMeta[value - 1]['from'].split(':').map(Number)}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/{hizbChapter}/{hizbVerse}" class={linkTextClasses}>{term('hizb')} {value}</a>
 											</div>
 										{:else if key === 'key'}
 											{@const [keyChapter, keyVerse] = value.split(':').map(Number)}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/{keyChapter}/{keyVerse}" class={linkTextClasses}>{quranMetaData[keyChapter].transliteration}, {term('verse')} {keyVerse}</a>
 											</div>
 										{:else if key === 'supplications'}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/{term('supplications').toLowerCase()}#{value}" class={linkTextClasses}>{quranMetaData[value.split(':')[0]].transliteration}, {value} ({term('supplications').slice(0, -1)}) </a>
 											</div>
 										{/if}
@@ -242,7 +242,7 @@
 									<!-- word key -->
 									{#if key === 'word'}
 										<div class={linkClasses}>
-											<span>{@html '&#10230'}</span>
+											<span>⟶</span>
 											<a href="/morphology?word={value}" class={linkTextClasses}>Word {value} Morphology</a>
 										</div>
 									{/if}
@@ -251,7 +251,7 @@
 									{#if key === 'chapters' && Object.keys(value).length > 0}
 										{#each Object.entries(value) as [key, value]}
 											<div class={linkClasses}>
-												<span>{@html '&#10230'}</span>
+												<span>⟶</span>
 												<a href="/{key}" class={linkTextClasses}>{term('chapter')} {value.transliteration} <span class="hidden md:inline-block">({value.translation})</span></a>
 											</div>
 										{/each}
@@ -265,7 +265,7 @@
 							<div id="search-quran" class="py-2 space-y-2">
 								<span class="text-xs font-semibold">Search Quran</span>
 								<div class={linkClasses}>
-									<span>{@html '&#10230'}</span>
+									<span>⟶</span>
 									<a href="/search?query={searchedKey}" class={linkTextClasses}>"{searchedKey}"</a>
 								</div>
 							</div>

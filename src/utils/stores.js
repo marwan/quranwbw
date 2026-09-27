@@ -58,7 +58,9 @@ let __currentPage,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
 	__offlineModeSettings,
-	__homepageLayoutPreferences;
+	__homepageLayoutPreferences,
+	__fullVersesDisplayKeys,
+	__verseKeyData;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -221,6 +223,12 @@ if (browser) {
 
 	// to store all the homepage layout preferences like active tabs, sort order, etc...
 	__homepageLayoutPreferences = writable(userSettings.displaySettings.homepageLayoutPreferences);
+
+	// to store the keys from FullVersesDisplay component for progress tracking
+	__fullVersesDisplayKeys = writable(null);
+
+	// to store the per verse metadata (page, juz, hizb, word count) for the whole Quran
+	__verseKeyData = writable(null);
 }
 
 export {
@@ -281,5 +289,7 @@ export {
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
 	__offlineModeSettings,
-	__homepageLayoutPreferences
+	__homepageLayoutPreferences,
+	__fullVersesDisplayKeys,
+	__verseKeyData
 };

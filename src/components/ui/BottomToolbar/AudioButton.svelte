@@ -2,34 +2,35 @@
 	import PlaySolid from '$svgs/PlaySolid.svelte';
 	import PauseSolid from '$svgs/PauseSolid.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
-	import { __audioSettings } from '$utils/stores';
-	import { playVerseAudio, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
+	import { playButtonHandler, setVersesToPlay, resetAudioSettings } from '$utils/audioController';
+	import { __currentPage, __audioSettings, __fullVersesDisplayKeys } from '$utils/stores';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
-	// quick play from first verse of page till the max chapter verses
+	// Toggle audio playback: stop if playing, or start from the first verse on the page
 	async function audioHandler() {
 		if (!(await checkOnlineAndAlert())) return;
-
-		$__audioSettings.language = 'arabic';
-		$__audioSettings.playBoth = false;
 
 		if ($__audioSettings.isPlaying) {
 			resetAudioSettings({ location: 'end' });
 		} else {
-			setVersesToPlay({ allVersesOnPage: true });
+			// For juz/hizb pages, restrict playback to verses within that section
+			if (['juz', 'hizb'].includes($__currentPage)) {
+				setVersesToPlay({ verses: $__fullVersesDisplayKeys.split(',') });
+			}
+			// For all other pages, play every verse visible on the page
+			else {
+				setVersesToPlay({ allVersesOnPage: true });
+			}
 
-			playVerseAudio({
-				key: `${window.versesToPlayArray[0]}`,
-				timesToRepeat: 1,
-				language: 'arabic'
-			});
+			// Begin playback from the first verse (verse or word mode, per user settings)
+			playButtonHandler(window.versesToPlayArray[0]);
 		}
 	}
 </script>
 
 <!-- play/pause button -->
 <div class="flex items-center justify-center">
-	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => audioHandler()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group focus:border-theme-accent focus:ring-theme-accent bg-theme-accent/15" data-umami-event="Toolbar Play Button">
+	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => audioHandler()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group focus:border-theme-accent focus:ring-theme-accent bg-theme-accent/15" data-rybbit-event="Toolbar Play Button">
 		<span><svelte:component this={$__audioSettings.isPlaying ? PauseSolid : PlaySolid} size={5} /></span>
 		<span class="sr-only">{$__audioSettings.isPlaying ? 'Pause' : 'Play'}</span>
 

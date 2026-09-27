@@ -1,3 +1,15 @@
+### Jun 15, 2026
+
+- **Improved Search Results**: Search now pulls from an additional source ([Al Quran Cloud](https://alquran.cloud/)) alongside the existing Kalimat API, resulting in broader and more comprehensive verse matches for any given query.
+
+---
+
+### May 12, 2026
+
+- **Majidi Nastaleeq Digital Font**: Added a new Qur'anic Nastaleeq-style font with built-in tajweed sign conventions (including Raa, Laam-ul-Jalaalah, Qalqalah, Ikhfaa, Tanween, and Ghunnah), offering an alternative visual reading experience while preserving key tajweed indicators.
+
+---
+
 ### Apr 5, 2026
 
 - **Hizb (Division) Pages:** Added dedicated Hizb pages, allowing you to navigate the Qur'an by its 60 Hizb divisions. These pages are accessible via URLs like [quranwbw.com/hizb/1](https://quranwbw.com/hizb/1), [quranwbw.com/hizb/60](https://quranwbw.com/hizb/60), and so on, making structured reading and revision even easier.
@@ -30,7 +42,7 @@
 
 ### Feb 11, 2026
 
-- **Advanced Tajweed & Syllables Transliteration:** Added two new word-by-word transliterations — **Advanced Tajweed** and **Syllables** — along with one new verse-by-verse transliteration (**Advanced Tajweed**). Existing transliterations have also been updated with improvements and fixes for better accuracy and readability.
+- **Advanced Tajweed & Syllables Transliteration:** Added two new word by word transliterations — **Advanced Tajweed** and **Syllables** — along with one new verse-by-verse transliteration (**Advanced Tajweed**). Existing transliterations have also been updated with improvements and fixes for better accuracy and readability.
 
 ---
 
@@ -141,7 +153,7 @@
 
 ### Mar 1, 2025
 
-- **Re-added Persian Word-by-Word Language:** The **Persian word-by-word translation** is back after being temporarily removed in a previous update. Thank you for your patience!
+- **Re-added Persian word by word Language:** The **Persian word by word translation** is back after being temporarily removed in a previous update. Thank you for your patience!
 
 ---
 
@@ -167,7 +179,7 @@
 
 ### Feb 16, 2025
 
-- **New Verse & Word-by-Word Languages:** Added support for **Albanian** and **Sindhi** translations, expanding accessibility for more users.
+- **New Verse & word by word Languages:** Added support for **Albanian** and **Sindhi** translations, expanding accessibility for more users.
 
 ---
 
@@ -227,7 +239,7 @@ We hope you enjoy the new and improved QuranWBW experience! In case you'd still 
 
 Here are the highlights of this update:
 
-- **Expanded Language Options:** Word-by-word translations now available in Chinese, Divehi, French, German, and Malayalam.
+- **Expanded Language Options:** word by word translations now available in Chinese, Divehi, French, German, and Malayalam.
 - **King Fahad Quran Printing Complex Fonts:** Includes Tajweed color-coded support based on Dar Al Marifa Easy Quran Mushaf.
 - **New Themes and Styles:** Fresh themes in Blue, Green, and Sepia, along with enhanced Light and Black themes.
 - **Tooltip and Popup Features:** Tooltips for word meanings and transliterations.

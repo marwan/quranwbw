@@ -148,7 +148,7 @@
 				<button
 					class="{topButtonClasses} !py-4 md:bg-transparent"
 					on:click={() => {
-						window.umami?.track('Homepage Search Button');
+						window.rybbit?.event('Homepage Search Button');
 						__quranNavigationModalVisible.set(true);
 					}}
 				>
@@ -189,7 +189,7 @@
 			<div class="w-full flex flex-row space-x-4 items-center">
 				<div class="flex flex-row space-x-2 w-full">
 					{#if isFriday}
-						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Kahf Reminder Button')}>
+						<a href="/18" class="{topButtonClasses} truncate w-full" on:click={() => window.rybbit?.event('Al-Kahf Reminder Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[18].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Friday Reminder:</span>
@@ -199,7 +199,7 @@
 					{/if}
 
 					{#if isNight}
-						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Waaqia Reminder Button')}>
+						<a href="/56" class="{topButtonClasses} truncate w-full" on:click={() => window.rybbit?.event('Al-Waaqia Reminder Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[56].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Evening Reminder:</span>
@@ -207,7 +207,7 @@
 							</div>
 						</a>
 
-						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.umami.track('Al-Mulk Reminder Button')}>
+						<a href="/67" class="{topButtonClasses} truncate w-full" on:click={() => window.rybbit?.event('Al-Mulk Reminder Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[67].icon};`}</span>
 							<div class="flex flex-row truncate">
 								<span class="hidden md:block mr-1">Night Reminder:</span>
@@ -227,19 +227,19 @@
 		<div id="extras-tabs" class="flex items-center justify-between">
 			<div class="flex flex-row justify-center">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2 {!homepageLayoutPreferences.extrasPanelVisible && disabledClasses}">
-					<button on:click={() => changeTabs('extrasActiveTab', bookmarksTab)} class="{extrasActiveTab === bookmarksTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Bookmarks Tab Button">
+					<button on:click={() => changeTabs('extrasActiveTab', bookmarksTab)} class="{extrasActiveTab === bookmarksTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-rybbit-event="Bookmarks Tab Button">
 						<span>Bookmarks</span>
 						<span>{totalBookmarks > 0 ? `(${totalBookmarks})` : ''}</span>
 					</button>
-					<button on:click={() => changeTabs('extrasActiveTab', notesTab)} class="{extrasActiveTab === notesTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-umami-event="Notes Tab Button">
+					<button on:click={() => changeTabs('extrasActiveTab', notesTab)} class="{extrasActiveTab === notesTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center truncate" data-rybbit-event="Notes Tab Button">
 						<span>Notes</span>
 						<span>{totalNotes > 0 ? `(${totalNotes})` : ''}</span>
 					</button>
-					<button on:click={() => changeTabs('extrasActiveTab', suggestionsTab)} class={extrasActiveTab === suggestionsTab ? tabActiveBorder : tabDefaultBorder} data-umami-event="Suggestions Tab Button">Suggestions</button>
+					<button on:click={() => changeTabs('extrasActiveTab', suggestionsTab)} class={extrasActiveTab === suggestionsTab ? tabActiveBorder : tabDefaultBorder} data-rybbit-event="Suggestions Tab Button">Suggestions</button>
 				</div>
 			</div>
 
-			<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (homepageLayoutPreferences.extrasPanelVisible = !homepageLayoutPreferences.extrasPanelVisible)} data-umami-event="Toggle Panel Button">
+			<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (homepageLayoutPreferences.extrasPanelVisible = !homepageLayoutPreferences.extrasPanelVisible)} data-rybbit-event="Toggle Panel Button">
 				<svelte:component this={homepageLayoutPreferences.extrasPanelVisible ? EyeCrossed : Eye} size={4} />
 			</button>
 			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">{homepageLayoutPreferences.extrasPanelVisible ? 'Hide Panel' : 'Show Panel'}</Tooltip>
@@ -278,22 +278,22 @@
 		<div id="quran-division-tabs" class="mt-4">
 			<div class="flex flex-row items-center justify-between">
 				<div class="flex text-sm font-medium text-center justify-center space-x-1 md:space-x-4 rounded-full py-2">
-					<button id="favorite-chapters-tab" on:click={() => changeTabs('divisionsActiveTab', favoriteChaptersTab)} class="{divisionsActiveTab === favoriteChaptersTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center" data-umami-event="Favorite Chapters Tab Button" aria-label={`Favorite ${term('chapters')}`} title={`Favorite ${term('chapters')}`}>
+					<button id="favorite-chapters-tab" on:click={() => changeTabs('divisionsActiveTab', favoriteChaptersTab)} class="{divisionsActiveTab === favoriteChaptersTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-1 items-center" data-rybbit-event="Favorite Chapters Tab Button" aria-label={`Favorite ${term('chapters')}`} title={`Favorite ${term('chapters')}`}>
 						<svelte:component this={divisionsActiveTab === favoriteChaptersTab ? StarFilled : Star} size={4} />
 					</button>
-					<button on:click={() => changeTabs('divisionsActiveTab', chaptersTab)} class="{divisionsActiveTab === chaptersTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Chapters Tab Button">
+					<button on:click={() => changeTabs('divisionsActiveTab', chaptersTab)} class="{divisionsActiveTab === chaptersTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-rybbit-event="Chapters Tab Button">
 						<span>{term('chapters')}</span>
 					</button>
-					<button on:click={() => changeTabs('divisionsActiveTab', juzTab)} class="{divisionsActiveTab === juzTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Juz Tab Button">
+					<button on:click={() => changeTabs('divisionsActiveTab', juzTab)} class="{divisionsActiveTab === juzTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-rybbit-event="Juz Tab Button">
 						<span>{term('juzs')}</span>
 					</button>
-					<button on:click={() => changeTabs('divisionsActiveTab', hizbTab)} class="{divisionsActiveTab === hizbTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-umami-event="Hizb Tab Button">
+					<button on:click={() => changeTabs('divisionsActiveTab', hizbTab)} class="{divisionsActiveTab === hizbTab ? tabActiveBorder : tabDefaultBorder} flex flex-row space-x-2 items-center" data-rybbit-event="Hizb Tab Button">
 						<span>{term('hizbs')}</span>
 					</button>
 				</div>
 
 				{#if showDivisionSort}
-					<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => sortDivisions()} data-umami-event="Homepage Divisions Sort Button">
+					<button class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => sortDivisions()} data-rybbit-event="Homepage Divisions Sort Button">
 						<svelte:component this={currentSortIsAscending ? SortDescending : SortAscending} size={4} />
 					</button>
 					<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">
@@ -311,7 +311,7 @@
 					{#if lastReadExists}
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
-						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Chapter Button')}>
+						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.rybbit?.event('Continue Chapter Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span class="truncate">
 								<span class="md:hidden">Continue:</span>
@@ -338,7 +338,7 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadJuz = $__lastRead.juz}
-						<a href="/juz?id={lastReadJuz}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Juz Button')}>
+						<a href="/juz?id={lastReadJuz}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.rybbit?.event('Continue Juz Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('juz')}
@@ -381,7 +381,7 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
 						{@const lastReadHizb = $__lastRead.hizb}
-						<a href="/hizb?id={lastReadHizb}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.umami.track('Continue Hizb Button')}>
+						<a href="/hizb?id={lastReadHizb}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.rybbit?.event('Continue Hizb Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('hizb')}

@@ -15,7 +15,7 @@ export function getMushafWordFontLink(page) {
 	if (isIOSorMac() && isAppleLightThemeWithoutCOLRv1Support && isTajweedFontType) {
 		basePath = 'OT-SVG-LIGHT';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-		fontVersion = 1;
+		fontVersion = 2;
 	}
 
 	// Firefox cannot correctly handle multiple COLRv1 palettes in dark themes, resulting in missing or incorrect colors
@@ -23,7 +23,7 @@ export function getMushafWordFontLink(page) {
 	else if (isFirefoxDarkTajweed()) {
 		basePath = 'COLRv1-Dark-FF';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-		fontVersion = 12;
+		fontVersion = 13;
 	}
 
 	// The default COLRv1 font is based on a light Tajweed palette, which causing visibility problems for non-Tajweed words in certain themes
@@ -38,7 +38,7 @@ export function getMushafWordFontLink(page) {
 	else {
 		basePath = 'COLRv1';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-		fontVersion = 12;
+		fontVersion = 13;
 	}
 
 	return `${mushafWordFontLink}/${basePath}/${fileName}?version=${fontVersion}`;

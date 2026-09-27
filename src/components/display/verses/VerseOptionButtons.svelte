@@ -31,7 +31,7 @@
 		if ($__audioSettings.isPlaying) return resetAudioSettings({ location: 'end' });
 
 		// For these pages, perform action depending on the play button functionality set by the user
-		if (['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb'].includes($__currentPage)) {
+		if (['chapter', 'mushaf', 'supplications', 'bookmarks', 'juz', 'hizb', 'topics'].includes($__currentPage)) {
 			switch ($__playButtonsFunctionality.verse) {
 				// Play Verse
 				case 1:
