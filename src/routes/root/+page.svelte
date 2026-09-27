@@ -29,9 +29,9 @@
 
 	// fetch everything this page needs, in parallel
 	$: allDataPromise = (async () => {
-		// detailed root info, straight from openfurqan - no proxy needed
-		const rootInfoPromise = fetch(`http://localhost:7500/v2/openfurqan-proxy?url=https://openfurqan.com/api/lexicon/root/${encodeURIComponent(root)}?v=3&mode=full`).then((res) => {
-			if (!res.ok) throw new Error(`OpenFurqan API returned ${res.status}`);
+		// detailed root info, straight from the API
+		const rootInfoPromise = fetch(`http://localhost:7500/v2/root-details?root=${encodeURIComponent(root)}`).then((res) => {
+			if (!res.ok) throw new Error(`Root details API returned ${res.status}`);
 			return res.json();
 		});
 
