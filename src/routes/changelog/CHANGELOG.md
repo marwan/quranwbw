@@ -1,3 +1,22 @@
+### Sep 27, 2026
+
+- **New Themes:** Added five new themes — **Ash Noir**, **Teal Ember**, **Linen Clay**, **Olive Mist**, and **Frost Slate** — providing additional dark, warm, and light color options for the reading experience.
+
+---
+
+### Sep 23, 2026
+
+- **Offline Word Tooltips:** You can now view word tooltips by clicking on a word while using the website in Offline Mode. Previously, clicking a word while offline would simply show an offline alert.
+
+---
+
+### Aug 23, 2026
+
+- **Assisted Word Highlights:** Added an optional Assisted Word Highlights feature that highlights each word at the reciter's pace during silent audio-length delays, helping you follow along while repeating a verse. Available for reciters that support word-by-word highlighting.
+- **Audio Length Delay Speeds:** Added multiple speed options for Audio Length delays, allowing you to choose 0.5×, 0.75×, 1×, or 1.25× the recitation length between verses.
+
+---
+
 ### Jun 15, 2026
 
 - **Improved Search Results**: Search now pulls from an additional source ([Al Quran Cloud](https://alquran.cloud/)) alongside the existing Kalimat API, resulting in broader and more comprehensive verse matches for any given query.
