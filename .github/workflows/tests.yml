@@ -1,4 +1,4 @@
-name: Lint Unused Check
+name: Unit Tests
 
 on:
   push:
@@ -6,8 +6,11 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,5 +25,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run lint
-        run: npm run lint:unused
+      - name: Run tests
+        run: npm test
