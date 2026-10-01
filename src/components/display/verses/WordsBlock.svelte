@@ -255,7 +255,7 @@
 
 				<!-- Everything except Mushaf fonts -->
 			{:else}
-				<span class={$__fontType !== 10 && 'colored-fonts'}>{value.words.end}</span>
+				<span class={$__fontType !== 10 && 'end-icon-colored'}>{value.words.end}</span>
 			{/if}
 		</span>
 	</div>

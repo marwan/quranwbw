@@ -28,7 +28,7 @@
 {:then data}
 	<div class="direction-rtl leading-normal arabic-font-{fontType} {fontSizes.arabicText}">
 		{data.words.arabic.join(' ')}
-		<span class={$__fontType !== 10 && 'colored-fonts'}>{data.words.end}</span>
+		<span class={$__fontType !== 10 && 'end-icon-colored'}>{data.words.end}</span>
 	</div>
 {:catch error}
 	<ErrorLoadingData {error} />
