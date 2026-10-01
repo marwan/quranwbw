@@ -290,85 +290,85 @@ svg {
 }
 
 /* Golden Glint */
-@font-palette-values --header-theme-1 {
+@font-palette-values --header1 {
   font-family: "chapter-headers";
   base-palette: 7;
 }
 
 /* Classic Light */
-@font-palette-values --header-theme-2 {
+@font-palette-values --header2 {
   font-family: "chapter-headers";
   base-palette: 0;
 }
 
 /* Silver Lining */
-@font-palette-values --header-theme-3 {
+@font-palette-values --header3 {
   font-family: "chapter-headers";
   base-palette: 8;
 }
 
 /* Vintage Sepia */
-@font-palette-values --header-theme-4 {
+@font-palette-values --header4 {
   font-family: "chapter-headers";
   base-palette: 5;
 }
 
 /* Mocha Night */
-@font-palette-values --header-theme-5 {
+@font-palette-values --header5 {
   font-family: "chapter-headers";
   base-palette: 9;
 }
 
 /* Midnight Blue */
-@font-palette-values --header-theme-6 {
+@font-palette-values --header6 {
   font-family: "chapter-headers";
   base-palette: 3;
 }
 
 /* Forest Green */
-@font-palette-values --header-theme-7 {
+@font-palette-values --header7 {
   font-family: "chapter-headers";
   base-palette: 1;
 }
 
 /* Oled Black */
-@font-palette-values --header-theme-8 {
+@font-palette-values --header8 {
   font-family: "chapter-headers";
   base-palette: 4;
 }
 
 /* Dark Luxury */
-@font-palette-values --header-theme-9 {
+@font-palette-values --header9 {
   font-family: "chapter-headers";
   base-palette: 6;
 }
 
 /* Ash Noir */
-@font-palette-values --header-theme-10 {
+@font-palette-values --header10 {
   font-family: "chapter-headers";
   base-palette: 13;
 }
 
 /* Teal Ember */
-@font-palette-values --header-theme-11 {
+@font-palette-values --header11 {
   font-family: "chapter-headers";
   base-palette: 14;
 }
 
 /* Linen Clay */
-@font-palette-values --header-theme-12 {
+@font-palette-values --header12 {
   font-family: "chapter-headers";
   base-palette: 10;
 }
 
 /* Olive Mist */
-@font-palette-values --header-theme-13 {
+@font-palette-values --header13 {
   font-family: "chapter-headers";
   base-palette: 11;
 }
 
 /* Frost Slate */
-@font-palette-values --header-theme-14 {
+@font-palette-values --header14 {
   font-family: "chapter-headers";
   base-palette: 12;
 }
