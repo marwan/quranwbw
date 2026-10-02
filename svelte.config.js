@@ -1,17 +1,17 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
-// PLATFORM: 'cloudflare' | 'vercel' | 'node' (VPS / Docker)
-const platform = process.env.PLATFORM || 'node';
+// ADAPTER: 'auto' | 'vercel' | 'node' (VPS / Docker)
+const platform = process.env.ADAPTER || 'node';
 
 const adapterPackages = {
-	cloudflare: '@sveltejs/adapter-auto',
+	auto: '@sveltejs/adapter-auto',
 	vercel: '@sveltejs/adapter-vercel',
 	node: '@sveltejs/adapter-node'
 };
 
 if (!adapterPackages[platform]) {
-	throw new Error(`Unknown PLATFORM "${platform}". Use: ${Object.keys(adapterPackages).join(', ')}`);
+	throw new Error(`Unknown ADAPTER "${platform}". Use: ${Object.keys(adapterPackages).join(', ')}`);
 }
 
 // only the selected adapter gets loaded
