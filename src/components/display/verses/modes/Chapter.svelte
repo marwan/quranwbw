@@ -32,6 +32,11 @@
 	const urlParams = new URLSearchParams(window.location.search);
 	const startVerseParam = urlParams.get('startVerse');
 	const chapterTotalVerses = quranMetaData[$__chapterNumber].verses;
+
+	// /<chapter>/<verse> ya /<chapter>/<start>-<end> par auto "Continue Reading" band
+	const pathParts = window.location.pathname.replace(/^\/+/, '').split('/');
+	const isExplicitVerseLink = pathParts.length >= 2 && pathParts[1] !== '';
+
 	let versesLoadType; // previous/next
 	let nextVersesProps = {};
 	let nextVersesStart;
@@ -40,7 +45,6 @@
 	// Function to load the next set of verses
 	function loadNextVerses() {
 		versesLoadType = 'next';
-
 
 		// Max verses to load when the next set is requested
 		const versesToLoad = 5;
@@ -54,7 +58,7 @@
 
 		// Define the new starting and ending range
 		nextVersesStart = lastVerseOnPage + 1;
-		nextVersesEnd = Math.min(nextVersesStart + versesToLoad, chapterTotalVerses);
+		nextVersesEnd = Math.min(nextVersesStart + versesToLoad - 1, chapterTotalVerses);
 
 		// Setting the nextVersesProps
 		nextVersesProps = {
@@ -82,8 +86,8 @@
 		<svelte:component this={displayComponents[JSON.parse($__userSettings).displaySettings.displayType].component} key={`${$__chapterNumber}:${verse}`} value={$__chapterData[`${$__chapterNumber}:${verse}`]} />
 	{/each}
 
-	<!-- if the verses are being shown to the user in a modal/drawer, then do not show the loadNextVersesButton -->
-	{#if isExampleVerse === undefined}
+	<!-- modal/drawer ya explicit verse/range link ho to loadNextVersesButton na dikhao -->
+	{#if isExampleVerse === undefined && !isExplicitVerseLink}
 		<!-- only show the button when the last verse on page is less than total verses in chapter -->
 		<!-- invisible for now... -->
 		{#if endVerse < chapterTotalVerses && document.getElementById('loadVersesButton') === null}
