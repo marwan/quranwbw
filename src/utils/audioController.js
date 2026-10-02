@@ -402,6 +402,10 @@ async function wordHighlighter() {
 		// cachedTimestampData is pre-populated in playVerseAudio before this
 		// listener is attached, so no async fetch is needed here
 		const verseTimestamp = cachedTimestampData.data[chapter][verse][reciterId];
+
+		// No timestamps for this reciter/verse (e.g. reciter changed mid-playback), skip highlighting
+		if (!verseTimestamp) return;
+
 		const timestamps = verseTimestamp.split('|');
 
 		// Walk through each word and update playingWordKey to the latest word
