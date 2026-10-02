@@ -22,7 +22,6 @@ export async function fetchChapterData(props) {
 		({ arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(fontType, wordTranslation, wordTransliteration));
 	} catch (error) {
 		console.error(error);
-		window.rybbit?.error(error);
 		throw error;
 	}
 
@@ -98,7 +97,6 @@ export async function fetchVerseTranslationData(props) {
 			cached = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
 		} catch (error) {
 			console.error(error);
-			window.rybbit?.error(error);
 			cached = null;
 		}
 
@@ -129,7 +127,6 @@ export async function fetchVerseTranslationData(props) {
 			return { id, data };
 		} catch (error) {
 			console.warn(error);
-			window.rybbit?.error(error);
 			return { id, data: null };
 		}
 	});
@@ -173,7 +170,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 					try {
 						// Network fetch wrapped for manual error logging
 						const response = await fetch(url);
-						if (!response.ok) throw new Error('CDN response not ok');
+						if (!response.ok) throw new Error(`CDN response not ok: ${response.status}`);
 
 						// Read as text first so a non-JSON body (e.g. "hello") can be logged instead of throwing a bare SyntaxError
 						const rawText = await response.text();
@@ -182,7 +179,6 @@ export async function fetchAndCacheJson(url, type = 'other') {
 							freshData = JSON.parse(rawText);
 						} catch (error) {
 							console.error(error);
-							window.rybbit?.error(error);
 							throw error;
 						}
 
@@ -191,7 +187,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 						return freshData;
 					} catch (error) {
 						console.warn(error);
-						window.rybbit?.error(error);
+						reportFetchError(error, url);
 					} finally {
 						inFlightRequests.delete(cacheKey);
 					}
@@ -213,7 +209,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 		try {
 			// Network fetch wrapped for manual error logging
 			const response = await fetch(url);
-			if (!response.ok) throw new Error('Failed to fetch data from the CDN');
+			if (!response.ok) throw new Error(`Failed to fetch data from the CDN: ${response.status}`);
 
 			// Read as text first so a non-JSON body (e.g. "hello") can be logged instead of throwing a bare SyntaxError
 			const rawText = await response.text();
@@ -222,7 +218,6 @@ export async function fetchAndCacheJson(url, type = 'other') {
 				data = JSON.parse(rawText);
 			} catch (error) {
 				console.error(error);
-				window.rybbit?.error(error);
 				throw error;
 			}
 
@@ -230,7 +225,7 @@ export async function fetchAndCacheJson(url, type = 'other') {
 			return data;
 		} catch (error) {
 			console.error(error);
-			window.rybbit?.error(error);
+			reportFetchError(error, url);
 			throw error;
 		} finally {
 			inFlightRequests.delete(cacheKey);
@@ -265,7 +260,7 @@ async function manageCache(key, type, dataToSet = undefined) {
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
 		console.warn(error);
-		window.rybbit?.error(error);
+		reportFetchError(error, key);
 		return dataToSet !== undefined ? false : null;
 	}
 }
@@ -289,7 +284,6 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		[arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
 	} catch (error) {
 		console.error(error);
-		window.rybbit?.error(error);
 		throw error;
 	}
 
@@ -299,4 +293,14 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		transliterationWordData,
 		metaVerseData
 	};
+}
+
+// Attach the URL to an error (if missing) and report it to rybbit
+function reportFetchError(error, url) {
+	try {
+		if (!error.message.includes(url)) error.message += ` ${url}`;
+	} catch {
+		// message is read-only on some errors (e.g. DOMException), report as-is
+	}
+	window.rybbit?.error(error);
 }
