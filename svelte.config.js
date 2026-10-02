@@ -2,7 +2,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
 // ADAPTER: 'auto' | 'vercel' | 'node' (VPS / Docker)
-const platform = process.env.ADAPTER || 'node';
+const platform = process.env.ADAPTER || 'auto';
 
 const adapterPackages = {
 	auto: '@sveltejs/adapter-auto',
