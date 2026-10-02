@@ -169,8 +169,7 @@ export const selectableThemes = {
 	11: { id: 11, name: 'Teal Ember', color: 'dark' },
 	12: { id: 12, name: 'Linen Clay', color: 'light' },
 	13: { id: 13, name: 'Olive Mist', color: 'light' },
-	14: { id: 14, name: 'Frost Slate', color: 'light' },
-	15: { id: 15, name: 'Desert Dune', color: 'light' }
+	14: { id: 14, name: 'Frost Slate', color: 'light' }
 };
 
 export const verseTranslationsLanguages = [
