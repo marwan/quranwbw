@@ -118,11 +118,17 @@ export async function fetchVerseTranslationData(props) {
 	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
 		const version = selectableVerseTranslations[id].version;
+		const url = `${staticEndpoint}/verse-translations/${id}.json?version=${version}`;
+
 		try {
 			// fetchAndCacheJson already returns parsed data (or throws), not a raw Response
-			const data = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+			const data = await fetchAndCacheJson(url, 'translation');
 
-			if (!data) throw new Error(`Failed to fetch translation ID ${id}`);
+			// Valid JSON can still be falsy (null, false, 0), which fetchAndCacheJson doesn't report
+			if (!data) {
+				reportFetchError(new Error(`Failed to fetch translation ID ${id}`), url);
+				return { id, data: null };
+			}
 
 			return { id, data };
 		} catch (error) {
