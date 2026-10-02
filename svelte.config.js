@@ -5,7 +5,7 @@ import path from 'path';
 const platform = process.env.PLATFORM || 'node';
 
 const adapterPackages = {
-	cloudflare: '@sveltejs/adapter-cloudflare',
+	cloudflare: '@sveltejs/adapter-auto',
 	vercel: '@sveltejs/adapter-vercel',
 	node: '@sveltejs/adapter-node'
 };
