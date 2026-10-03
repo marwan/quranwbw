@@ -308,7 +308,7 @@
 				const families = {
 					base: `${baseFonts}, ${pages}`,
 					font: `"bismillah", ${pages}`,
-					'ayah-icon': pages
+					'custom-end-icon-color': pages
 				};
 
 				// base-palette index for each --headerN (header1 ... header15)
@@ -343,13 +343,13 @@
 				// custom config by theme id
 				// palette kinds -> --theme-<id>-<kind>
 				//   font: { base } -> uses the theme text color automatically, add fill: [hex, indices] to override
-				//   ayah-icon: { base, colors: { index: hex } }
+				//   custom-end-icon-color: { base, colors: { index: hex } }
 				// bismillah (optional) -> .theme-<id> .colored-bismillah { color }
 				//   true = theme text color (or the font fill override) | '#hex' = explicit color
 				//   omit it to leave the bismillah color untouched
 				const customPalettes = {
 					// Golden Glint
-					1: { 'ayah-icon': { base: 0, colors: { 10: '#008000', 11: '#b1901f', 12: '#f8efd3', 13: '#000000' } }, font: { base: 3 }, bismillah: true },
+					1: { 'custom-end-icon-color': { base: 0, colors: { 10: '#008000', 11: '#b1901f', 12: '#f8efd3', 13: '#000000' } }, font: { base: 3 }, bismillah: true },
 
 					// Classic Light
 					2: { font: { base: 3 }, bismillah: true },
@@ -425,6 +425,9 @@
 							.join(', ');
 
 						rules.push(rule(`--theme-${id}-${kind}`, families[kind], base, overrides));
+
+						// custom end icon palettes also get a class rule: .theme-<id> .custom-end-icon-color
+						if (kind === 'custom-end-icon-color') rules.push(`.theme-${id} .custom-end-icon-color { font-palette: --theme-${id}-custom-end-icon-color !important; }`);
 					}
 				}
 
