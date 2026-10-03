@@ -10,7 +10,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
-	import { onDestroy } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
@@ -29,6 +29,8 @@
 	let verses = [];
 	let lines = [];
 	let pageBlock;
+	let fontSize = 20;
+	let resizeTimer;
 
 	// Store parsed page data in a variable instead of reading from localStorage on every render
 	let pageDataStore = {};
@@ -209,8 +211,28 @@
 		pageBlock.addEventListener('swiped-right', swipedRightHandler);
 	}
 
-	// Cleanup when the component is destroyed
+	// Calculate font size from viewport width: fixed 36px on tablet/desktop, ~5.4% of width on mobile snapped to the nearest 2px
+	function getFontSize() {
+		const width = window.innerWidth;
+		return width >= 768 ? 36 : Math.round((width * 0.054) / 2) * 2;
+	}
+
+	// Debounced resize handler: wait 150ms after the last resize event before updating, so mushaf fonts aren't re-rasterized on every pixel change
+	function updateFontSize() {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(() => (fontSize = getFontSize()), 150);
+	}
+
+	// Set the initial font size and start listening for resizes (browser only)
+	onMount(() => {
+		fontSize = getFontSize();
+		window.addEventListener('resize', updateFontSize);
+	});
+
+	// Remove the resize and swipe listeners and clear any pending timer when the component is destroyed
 	onDestroy(() => {
+		clearTimeout(resizeTimer);
+		if (typeof window !== 'undefined') window.removeEventListener('resize', updateFontSize);
 		if (pageBlock) {
 			if (swipedLeftHandler) pageBlock.removeEventListener('swiped-left', swipedLeftHandler);
 			if (swipedRightHandler) pageBlock.removeEventListener('swiped-right', swipedRightHandler);
@@ -228,7 +250,7 @@
 	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" in:fade={{ duration: 300 }} bind:this={pageBlock}>
 		<div class="space-y-2 mt-2.5">
 			<!-- single page -->
-			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
+			<div style="font-size: {fontSize}px" class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto {+page === 1 ? 'space-y-1' : 'space-y-2'}">
 				{#each Array.from(Array(endingLine + 1).keys()).slice(startingLine) as line}
 					<!-- show the chapter header if it's the first verse of that chapter -->
 					{#if chapters.length > 0 && lines.includes(line) && verses[lines.indexOf(line)] === 1}
