@@ -60,11 +60,6 @@
 		networkCheckPerformed = true;
 	});
 
-	// turns "totalOccurrences" into "total occurrences" for display in the stats section
-	function humanizeKey(key) {
-		return key.replace(/([A-Z])/g, ' $1').trim();
-	}
-
 	// fetch everything this page needs, in parallel
 	$: allDataPromise = (async () => {
 		// detailed root info, from our own root-details endpoint
@@ -93,12 +88,12 @@
 			<Spinner />
 		{:then allData}
 			{@const info = allData.rootInfo}
+			{@const statItems = [
+				{ label: 'Total Occurrences', value: allData.wordsWithSameRootData?.data?.[root]?.length },
+				{ label: 'Derivative Count', value: info.stats?.derivativeCount },
+				{ label: 'Lemma Count', value: info.lemmas?.length }
+			].filter((item) => typeof item.value === 'number')}
 			<div class="my-4" in:fade={{ duration: 300 }}>
-				<!-- ============================================================ -->
-				<!-- ROOT HEADER - the only centered part of the page.            -->
-				<!-- main root word, split into individual letters below it,      -->
-				<!-- each letter with its transliteration underneath.             -->
-				<!-- ============================================================ -->
 				<div id="root-header" class="text-center pb-8 border-b border-theme-accent/20">
 					<p class="text-4xl md:text-5xl arabic-font-1 leading-loose">{info.rootArabic || root}</p>
 
@@ -106,31 +101,21 @@
 						{#each rootLetters as letter}
 							<div class="flex flex-col items-center">
 								<span class="text-2xl md:text-3xl arabic-font-1">{letter}</span>
-								<span class="text-xs md:text-sm opacity-70">{letterTransliteration[letter] || letter}</span>
+								<span class="text-xs md:text-sm">{letterTransliteration[letter] || letter}</span>
 							</div>
 						{/each}
 					</div>
 
 					{#if info.rootMeaning}
-						<p class="mt-3 text-sm md:text-base opacity-70 capitalize">{info.rootMeaning}</p>
+						<p class="mt-3 text-sm md:text-base capitalize">{info.rootMeaning}</p>
 					{/if}
 				</div>
 
-				<!-- ============================================================ -->
-				<!-- EVERYTHING BELOW follows the same repeating section layout:  -->
-				<!-- <div class="section">                                        -->
-				<!--   <h3 class="section-title">...</h3>                         -->
-				<!--   ...content, left-aligned, no boxes/cards...                -->
-				<!-- </div>                                                       -->
-				<!-- to add a new data block later, copy one of these sections    -->
-				<!-- and swap the heading + content - nothing else needs to       -->
-				<!-- change to keep it matching the rest of the page.             -->
-				<!-- ============================================================ -->
 				<div id="root-details">
 					<!-- core meanings -->
 					{#if info.coreMeanings?.length}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Core Meanings</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Core Meanings</h3>
 
 							<p class="text-sm md:text-base">
 								{info.coreMeanings.join(' · ')}
@@ -138,14 +123,14 @@
 						</div>
 					{/if}
 
-					<!-- stats: total occurrences, derivative count, surah count, ayah count -->
-					{#if info.stats}
+					<!-- stats: total occurrences (words sharing this root), derivative count, lemma count -->
+					{#if statItems.length}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Stats</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Stats</h3>
 
 							<p class="text-sm md:text-base">
-								{#each Object.entries(info.stats) as [key, value], i}
-									<span class="opacity-70 capitalize">{humanizeKey(key)}:</span> <span class="font-medium">{value}</span>{i < Object.entries(info.stats).length - 1 ? ' · ' : ''}
+								{#each statItems as item, i}
+									<span>{item.label}:</span> <span class="font-medium">{item.value}</span>{i < statItems.length - 1 ? ' · ' : ''}
 								{/each}
 							</p>
 						</div>
@@ -154,11 +139,11 @@
 					<!-- derivatives - flat inline form/count list, same style as stats -->
 					{#if info.derivatives?.length}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Derivatives</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Derivatives</h3>
 
 							<p class="text-sm md:text-base">
 								{#each info.derivatives as derivative, i}
-									<span class="arabic-font-1 text-base md:text-lg">{derivative.form}</span> <span class="opacity-70">({derivative.count})</span>{i < info.derivatives.length - 1 ? ' · ' : ''}
+									<span class="arabic-font-1 text-base md:text-lg">{derivative.form}</span> <span>({derivative.count})</span>{i < info.derivatives.length - 1 ? ' · ' : ''}
 								{/each}
 							</p>
 						</div>
@@ -167,7 +152,7 @@
 					<!-- lemmas - flat inline list, same style as core meanings -->
 					{#if info.lemmas?.length}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Lemmas</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Lemmas</h3>
 
 							<p class="arabic-font-1 text-base md:text-lg">
 								{info.lemmas.join('  ·  ')}
@@ -178,7 +163,7 @@
 					<!-- lane's lexicon definitions - long-form english text with embedded arabic terms -->
 					{#if info.definitions?.length}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Lexicon Definition</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Lexicon Definition</h3>
 
 							<div class="text-sm md:text-base leading-relaxed space-y-4">
 								{#each info.definitions as definition}
@@ -191,10 +176,10 @@
 					<!-- grammar + derivative note -->
 					{#if info.lexSnapshot?.wordGrammar || info.lexSnapshot?.derivativeNote}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Grammar</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Grammar</h3>
 
 							{#if info.lexSnapshot.wordGrammar}
-								<p class="text-sm md:text-base capitalize opacity-70">{info.lexSnapshot.wordGrammar}</p>
+								<p class="text-sm md:text-base capitalize">{info.lexSnapshot.wordGrammar}</p>
 							{/if}
 
 							{#if info.lexSnapshot.derivativeNote}
@@ -206,7 +191,7 @@
 					<!-- root definition (html, contains the root breakdown + form counts) -->
 					{#if info.lexSnapshot?.rootDefinitionHtml}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Root Definition</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Root Definition</h3>
 
 							<div class="text-sm md:text-base leading-relaxed">
 								{@html info.lexSnapshot.rootDefinitionHtml}
@@ -217,7 +202,7 @@
 					<!-- main definition (html, contains numbered senses + example ayahs) -->
 					{#if info.lexSnapshot?.mainDefinitionHtml}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Main Definition</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Main Definition</h3>
 
 							<div class="text-sm md:text-base leading-relaxed">
 								{@html info.lexSnapshot.mainDefinitionHtml}
@@ -228,7 +213,7 @@
 					<!-- every entry (root itself + each derived form) - no cards, just a divided stack -->
 					{#if info.lexSnapshot?.entries?.length}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">All Entries</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">All Entries</h3>
 
 							<div class="divide-y divide-theme-accent/20">
 								{#each info.lexSnapshot.entries as entry (entry.id)}
@@ -244,7 +229,7 @@
 					<!-- words with same root - reusing the existing Table component, tableType 1 like the morphology page -->
 					{#if allData?.wordsWithSameRootData?.data && root in allData.wordsWithSameRootData.data}
 						<div class="py-6">
-							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">Words With Same Root</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Words With Same Root</h3>
 
 							<Table wordKeys={allData.wordsWithSameRootData.data[root]} tableType={1} wordData={allData.wordData} showTableTitle={false} />
 						</div>
