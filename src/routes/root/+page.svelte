@@ -230,7 +230,7 @@
 						<div class="py-6 border-b border-theme-accent/20">
 							<h3 class="text-sm uppercase tracking-wide opacity-70 mb-3">All Entries</h3>
 
-							<div class="divide-y divide-theme-accent/10">
+							<div class="divide-y divide-theme-accent/20">
 								{#each info.lexSnapshot.entries as entry (entry.id)}
 									<div class="py-3">
 										<p class="arabic-font-1 text-base md:text-lg mb-1">{entry.label}</p>
