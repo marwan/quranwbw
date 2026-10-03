@@ -81,6 +81,8 @@
 				let uthmani = Array.isArray(keyMeta) ? keyMeta[0] : null;
 				wordRoot = Array.isArray(keyMeta) ? keyMeta[1] : '';
 
+				console.log(wordRoot);
+
 				// Remove trailing pause mark (e.g., ۖ, ۗ, etc.) from uthmani using defined symbols
 				const unwantedSymbolsArray = ['ۖ', 'ۗ', 'ۘ', 'ۙ', 'ۚ', 'ۛ', 'ۜ', '۩', '۞'];
 				const unwantedRegex = new RegExp(`[${unwantedSymbolsArray.join('')}]`, 'g');
@@ -172,6 +174,8 @@
 							{#if isMorphologyPage}
 								<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
 							{/if}
+
+							<a href="/root" class={buttonClasses}>Root Details</a>
 						</div>
 					</div>
 				{/if}
@@ -198,13 +202,6 @@
 									</div>
 								</div>
 							</div>
-						</div>
-					{/if}
-
-					<!-- Word with same root -->
-					{#if allData?.wordsWithSameRootData?.data && wordRoot && wordRoot in allData.wordsWithSameRootData.data}
-						<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 border-theme-accent/20">
-							<Table wordKeys={allData.wordsWithSameRootData.data[wordRoot]} tableType={1} wordData={allData.wordData} />
 						</div>
 					{/if}
 
