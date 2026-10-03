@@ -126,8 +126,8 @@
 	//   2. All other browsers/themes:
 	//      - Font type 3 → "theme-palette-tajweed"
 	//      - All others → "theme-palette-normal"
-	//      - Font type 2 + Mocha Night (theme 5) → also adds "mocha-night-font-color"
-	//      - Font type 2 + Dark Luxury (theme 9) → also adds "dark-luxury-font-color"
+	//      - Font type 2 + Mocha Night (theme 5) → also adds "mocha-night-custom-font-color"
+	//      - Font type 2 + theme 9 or theme 11 → also adds "dark-luxury-and-teal-ember-custom-font-color"
 	const pageClass = `p${value.meta.page}`;
 
 	$: v4hafsClasses = `
@@ -141,8 +141,8 @@
 					? ''
 					: `
 						${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
-						${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
-						${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
+						${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-custom-font-color' : ''}
+						${$__fontType === 2 && [9, 11].includes($__websiteTheme) ? 'dark-luxury-and-teal-ember-custom-font-color' : ''}
 					`
 		}
 	`;

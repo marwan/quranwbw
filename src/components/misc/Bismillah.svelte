@@ -6,7 +6,7 @@
 	export let startVerse = null;
 	export let page = null;
 
-	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
+	import { __currentPage, __chapterNumber, __fontType } from '$utils/stores';
 	import { isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 	import { staticEndpoint } from '$data/websiteSettings';
 	import { bismillahFontMap } from '$data/bismillahFontMap';
@@ -86,8 +86,7 @@
 
 	// Classes shared across both chapter and mushaf bismillah containers
 	$: commonClasses = `
-		${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : ''}
-		${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''}
+		${$__fontType === 2 && 'colored-bismillah'}
 		${customFontPalette}
 	`;
 

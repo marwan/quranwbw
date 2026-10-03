@@ -16,8 +16,8 @@
 						<Radio name="websiteTheme" bind:group={$__websiteTheme} value={theme.id} on:change={(event) => updateSettings({ type: 'websiteTheme', value: +event.target.value })} custom>
 							<div class="{individualRadioClasses} {$__websiteTheme === theme.id && selectedRadioOrCheckboxClasses}">
 								<!-- <div class="flex flex-row pr-2">
-									<div class="w-4 h-8 rounded-l-full {window.theme('bgMain', theme.id)}"></div>
-									<div class="w-4 h-8 rounded-r-full {window.theme('bgSecondary', theme.id)}"></div>
+									<div class="w-4 h-8 rounded-l-full bg-theme-bg"></div>
+									<div class="w-4 h-8 rounded-r-full bg-theme-accent"></div>
 								</div> -->
 								<div class="w-full">{theme.name}</div>
 							</div>

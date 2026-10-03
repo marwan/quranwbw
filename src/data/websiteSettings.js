@@ -13,7 +13,7 @@ export const wordsAudioURL = 'https://audios.quranwbw.com/words';
 
 export const mushafWordFontLink = `${staticEndpoint}/fonts/Hafs/KFGQPC-v4`;
 
-export const chapterHeaderFontLink = `${staticEndpoint}/fonts/Extras/chapter-headers/v2/Color/QCF_SurahHeader_COLOR-Regular.woff2?version=3`;
+export const chapterHeaderFontLink = `${staticEndpoint}/fonts/Extras/chapter-headers/v2/Color/QCF_SurahHeader_COLOR-Regular.woff2?version=4`;
 
 export const cdnStaticDataUrls = {
 	fullQuranUthmani: `${staticEndpoint}/full-quran/uthmani.json?version=1`,
