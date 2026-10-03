@@ -295,6 +295,155 @@
 			document.head.appendChild(style);
 		</script>
 
+		<!-- Generates all @font-palette-values rules (and bismillah colors) at load -->
+		<script>
+			(() => {
+				// all 604 page font families: p1, p2, ... p604
+				const pages = Array.from({ length: 604 }, (_, i) => `p${i + 1}`).join(', ');
+
+				// non-page fonts that palettes also need to apply to
+				const baseFonts = '"Uthmani-Hafs", "Uthmani-Hafs-Bold", "Nastaleeq-Hafs", "Nastaleeq-Hafs-Bold", "bismillah", "tajweed-rules", "Majidi-Nastaleeq"';
+
+				// font-family list per palette kind
+				const families = {
+					base: `${baseFonts}, ${pages}`,
+					font: `"bismillah", ${pages}`,
+					'ayah-icon': pages
+				};
+
+				// base-palette index for each --headerN (header1 ... header15)
+				const headerBases = [7, 0, 8, 5, 9, 3, 1, 4, 6, 12, 14, 10, 11, 12, 2];
+
+				// color indices used by the custom font color palettes
+				const fontIdx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15];
+
+				// read --theme-text-rgb of every theme from the inline <style> above (html.theme-<id> rules)
+				// result: { 1: '#000000', 5: '#dca54c', ... }
+				const themeTextColors = {};
+				for (const sheet of document.styleSheets) {
+					// cross-origin or not-yet-readable stylesheets throw, skip them
+					let cssRules;
+					try {
+						cssRules = sheet.cssRules;
+					} catch {
+						continue;
+					}
+
+					for (const cssRule of cssRules) {
+						// only the "html.theme-<id>" rules
+						const match = cssRule.selectorText?.match(/^html\.theme-(\d+)$/);
+						if (!match) continue;
+
+						// "220 165 76" -> "#dca54c"
+						const rgb = cssRule.style.getPropertyValue('--theme-text-rgb').trim().split(' ');
+						if (rgb.length === 3) themeTextColors[match[1]] = `#${rgb.map((n) => (+n).toString(16).padStart(2, '0')).join('')}`;
+					}
+				}
+
+				// custom config by theme id
+				// palette kinds -> --theme-<id>-<kind>
+				//   font: { base } -> uses the theme text color automatically, add fill: [hex, indices] to override
+				//   ayah-icon: { base, colors: { index: hex } }
+				// bismillah (optional) -> .theme-<id> .colored-bismillah { color }
+				//   true = theme text color (or the font fill override) | '#hex' = explicit color
+				//   omit it to leave the bismillah color untouched
+				const customPalettes = {
+					// Golden Glint
+					1: { 'ayah-icon': { base: 0, colors: { 10: '#008000', 11: '#b1901f', 12: '#f8efd3', 13: '#000000' } }, font: { base: 3 }, bismillah: true },
+
+					// Classic Light
+					2: { font: { base: 3 }, bismillah: true },
+
+					// Silver Lining
+					3: { font: { base: 4 }, bismillah: true },
+
+					// Vintage Sepia
+					4: { font: { base: 5 }, bismillah: true },
+
+					// Mocha Night
+					5: { font: { base: 4 }, bismillah: true },
+
+					// Midnight Blue
+					6: { font: { base: 4 }, bismillah: true },
+
+					// Forest Green
+					7: { font: { base: 4 }, bismillah: true },
+
+					// Oled Black
+					8: { font: { base: 4 }, bismillah: true },
+
+					// Dark Luxury
+					9: { font: { base: 4 }, bismillah: true },
+
+					// Ash Noir
+					10: { font: { base: 4 }, bismillah: true },
+
+					// Teal Ember
+					11: { font: { base: 4 }, bismillah: true },
+
+					// Linen Clay
+					12: { font: { base: 5 }, bismillah: true },
+
+					// Olive Mist
+					13: { font: { base: 5 }, bismillah: true },
+
+					// Frost Slate
+					14: { font: { base: 3 }, bismillah: true }
+				};
+
+				// builds one @font-palette-values rule
+				const rule = (name, fonts, base, overrides) => `@font-palette-values ${name} { font-family: ${fonts}; base-palette: ${base};${overrides ? ` override-colors: ${overrides};` : ''} }`;
+
+				// all generated CSS rules are collected here
+				const rules = [];
+
+				// --palette0 ... --palette9
+				for (let n = 0; n < 10; n++) rules.push(rule(`--palette${n}`, families.base, n));
+
+				// --header1 ... --header15
+				headerBases.forEach((base, i) => rules.push(rule(`--header${i + 1}`, '"chapter-headers"', base)));
+
+				// --theme-<id>-<kind>
+				for (const [id, kinds] of Object.entries(customPalettes)) {
+					for (const [kind, def] of Object.entries(kinds)) {
+						// bismillah is not a palette, handled below
+						if (kind === 'bismillah') continue;
+
+						const { base, colors = {} } = def;
+
+						// font palettes default to the theme text color on all font color indices
+						let fill = def.fill;
+						if (!fill && kind === 'font' && themeTextColors[id]) fill = [themeTextColors[id], fontIdx];
+
+						// merge explicit colors with the fill shorthand (one color for many indices)
+						const map = { ...colors };
+						if (fill) fill[1].forEach((i) => (map[i] = fill[0]));
+
+						// "index hex, index hex, ..."
+						const overrides = Object.entries(map)
+							.map(([i, hex]) => `${i} ${hex}`)
+							.join(', ');
+
+						rules.push(rule(`--theme-${id}-${kind}`, families[kind], base, overrides));
+					}
+				}
+
+				// .theme-<id> .colored-bismillah, only for themes that define a bismillah child
+				for (const [id, kinds] of Object.entries(customPalettes)) {
+					if (!kinds.bismillah) continue;
+
+					// true = font fill override if set, otherwise the theme text color; else the explicit hex
+					const hex = kinds.bismillah === true ? (kinds.font?.fill?.[0] ?? themeTextColors[id]) : kinds.bismillah;
+					if (hex) rules.push(`.theme-${id} .colored-bismillah { color: ${hex} !important; }`);
+				}
+
+				// inject everything as a single <style> tag
+				const style = document.createElement('style');
+				style.textContent = rules.join('\n');
+				document.head.appendChild(style);
+			})();
+		</script>
+
 		<!-- Rybbit -->
 		<script defer src="https://rybbit.quranwbw.com/api/script.js?siteId=42d6767e561a"></script>
 		%sveltekit.head%

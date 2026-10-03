@@ -111,41 +111,42 @@
 		${$__fontType === 10 && 'custom-majidi-font-color'}
 	`;
 
-	// Classes for v4 Hafs words:
+	// Mushaf (v4 Hafs) word styling:
 	//
-	// Visibility:
-	//   - Words start invisible and become visible once the page font is loaded,
-	//     controlled via the `pageVisible` flag (set by loadFont's promise).
-	//     This prevents a flash of unstyled/missing glyphs before the font is ready.
-	//
-	// Palette (color) logic:
-	//   1. Firefox + dark theme overrides:
-	//      - Font type 3 (Tajweed) → "hafs-palette-firefox-dark" (Firefox-specific fix)
-	//      - Font type 2 (Non-Tajweed) → no palette class applied
-	//
-	//   2. All other browsers/themes:
-	//      - Font type 3 → "theme-palette-tajweed"
-	//      - All others → "theme-palette-normal"
-	//      - Font type 2 + Mocha Night (theme 5) → also adds "mocha-night-custom-font-color"
-	//      - Font type 2 + theme 9 or theme 11 → also adds "dark-luxury-custom-font-color"
+	// Every Mushaf word/end icon gets:
+	//   1. a base class ("v4-words") plus its page class (p1 ... p604)
+	//   2. an "invisible" class until its page font has loaded (see `pageVisible`)
+	//   3. exactly one palette class, which decides the glyph colors
+
+	// Page class used as a hook for this word's page, e.g. "p254"
 	const pageClass = `p${value.meta.page}`;
 
+	// Firefox needs special palette handling in dark themes.
+	// The helpers read the theme internally, so $__websiteTheme and $__fontType are listed
+	// here to make sure these flags are re-evaluated whenever either one changes.
+	$: firefoxDarkTajweed = ($__websiteTheme, $__fontType, isFirefoxDarkTajweed());
+	$: firefoxDarkNonTajweed = ($__websiteTheme, $__fontType, isFirefoxDarkNonTajweed());
+
+	// Picks the palette class for the current font type and browser:
+	//   - Firefox + dark + tajweed (font type 3) → dedicated Firefox fix class
+	//   - Firefox + dark + non-tajweed (font type 2) → no palette class at all
+	//   - everything else → tajweed palette for font type 3, normal palette otherwise
+	$: paletteClass = firefoxDarkTajweed ? 'hafs-palette-firefox-dark' : firefoxDarkNonTajweed ? '' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal';
+
+	// Name of the custom font color palette for the current theme, or null when not needed.
+	// Only applies to font type 2 and when the Firefox dark fix is not active.
+	$: customFontPalette = $__fontType === 2 && !firefoxDarkTajweed && !firefoxDarkNonTajweed ? `--theme-${$__websiteTheme}-font` : null;
+
+	// Final class list for Mushaf words and end icons:
+	//   - v4-words → base styling for Mushaf glyphs
+	//   - pageClass → this word's page (p1 ... p604)
+	//   - invisible → hidden until the page font has loaded, prevents a flash of missing glyphs
+	//   - paletteClass → glyph colors, see paletteClass above
 	$: v4hafsClasses = `
-		v4-words 
+		v4-words
 		${pageClass}
 		${pageVisible ? '' : 'invisible'}
-		${
-			isFirefoxDarkTajweed()
-				? 'hafs-palette-firefox-dark'
-				: isFirefoxDarkNonTajweed()
-					? ''
-					: `
-						${$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal'}
-						${$__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-custom-font-color' : ''}
-						${$__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-custom-font-color' : ''}
-						${$__fontType === 2 && $__websiteTheme === 11 ? 'teal-ember-custom-font-color' : ''}
-					`
-		}
+		${paletteClass}
 	`;
 
 	// Classes for end icons
@@ -197,7 +198,7 @@
 			<span class={wordSpanClasses} data-fontSize={fontSizes.arabicText}>
 				<!-- Mushaf fonts -->
 				{#if mushafFontTypes.includes($__fontType)}
-					<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" class={v4hafsClasses}>
+					<span id="word-{wordKey.split(':')[1]}-{wordKey.split(':')[2]}" style="font-family: p{value.meta.page}" style:font-palette={customFontPalette} class={v4hafsClasses}>
 						<!-- word fix, see fixedMushafWords -->
 						{#if Object.prototype.hasOwnProperty.call(fixedMushafWords, wordKey)}
 							{fixedMushafWords[wordKey]}
