@@ -2,6 +2,7 @@
 	export let wordKeys = [];
 	export let tableType;
 	export let wordData;
+	export let showTableTitle = true;
 
 	import { selectableWordTranslations } from '$data/options';
 	import { __wordTranslation } from '$utils/stores';
@@ -35,7 +36,9 @@
 {#if totalAvailableWords > 0}
 	<div class="flex flex-col">
 		<div class="relative space-y-6 sm:rounded-3xl">
-			<h1 class="text-md md:text-2xl text-center">{totalAvailableWords} {totalAvailableWords > 1 ? 'words' : 'word'} {tableTitles[tableType].title}</h1>
+			{#if showTableTitle}
+				<h1 class="text-md md:text-2xl text-center">{totalAvailableWords} {totalAvailableWords > 1 ? 'words' : 'word'} {tableTitles[tableType].title}</h1>
+			{/if}
 			<div class="max-h-[32em] overflow-auto">
 				<table class="w-full text-sm text-left rtl:text-right rounded-md">
 					<thead class="text-xs uppercase top-0 bg-theme-accent/5">
