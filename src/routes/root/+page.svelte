@@ -10,7 +10,7 @@
 	import { onMount } from 'svelte';
 
 	// the arabic root, taken straight from the url (e.g. /root/سمو -> "سمو")
-	$: root = 'سمو';
+	$: root = 'اله';
 
 	// maps each arabic letter to its transliteration - used for the split-letter header only.
 	// add any missing letters here if a root ever uses one that's not listed
@@ -63,10 +63,15 @@
 	// fetch everything this page needs, in parallel
 	$: allDataPromise = (async () => {
 		// detailed root info, from our own root-details endpoint
-		const rootInfoPromise = fetch(`./root-details.json`).then((res) => {
+		const rootInfoPromise = fetch(`http://localhost:7500/v2/root-details?root=${root}`).then((res) => {
 			if (!res.ok) throw new Error(`Root details API returned ${res.status}`);
 			return res.json();
 		});
+
+		// additional root meanings, keyed by space-separated letters (e.g. "س م و")
+		const rootMeaningsDataPromise = fetch('https://raw.githubusercontent.com/sayeeed777/lughatulquran/refs/heads/main/app/data/root-meanings.qj.json')
+			.then((res) => res.json())
+			.catch(() => ({}));
 
 		// map of root -> word keys, used for the "words with same root" table
 		const wordsWithSameRootDataPromise = fetchAndCacheJson(morphologyDataUrls.wordsWithSameRootKeys, 'morphology').catch(() => ({}));
@@ -74,9 +79,9 @@
 		// arabic / translation / transliteration data needed by <Table />
 		const wordDataPromise = fetchWordData(1, $__wordTranslation, $__wordTransliteration).catch(() => ({}));
 
-		const [rootInfo, wordsWithSameRootData, wordData] = await Promise.all([rootInfoPromise, wordsWithSameRootDataPromise, wordDataPromise]);
+		const [rootInfo, wordsWithSameRootData, wordData, rootMeaningsData] = await Promise.all([rootInfoPromise, wordsWithSameRootDataPromise, wordDataPromise, rootMeaningsDataPromise]);
 
-		return { rootInfo, wordsWithSameRootData, wordData };
+		return { rootInfo, wordsWithSameRootData, wordData, rootMeaningsData };
 	})();
 
 	__currentPage.set('root');
@@ -93,6 +98,7 @@
 				{ label: 'Derivative Count', value: info.stats?.derivativeCount },
 				{ label: 'Lemma Count', value: info.lemmas?.length }
 			].filter((item) => typeof item.value === 'number')}
+			{@const additionalMeaning = allData.rootMeaningsData?.[rootLetters.join(' ')]}
 			<div class="my-4" in:fade={{ duration: 300 }}>
 				<div id="root-header" class="text-center pb-8 border-b border-theme-accent/20">
 					<p class="text-4xl md:text-5xl arabic-font-1 leading-loose">{info.rootArabic || root}</p>
@@ -196,6 +202,17 @@
 							<div class="text-sm md:text-base leading-relaxed">
 								{@html info.lexSnapshot.rootDefinitionHtml}
 							</div>
+						</div>
+					{/if}
+
+					<!-- additional root meaning, sourced from lughatulquran's root-meanings data -->
+					{#if additionalMeaning}
+						<div class="py-6 border-b border-theme-accent/20">
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Additional Root Meaning</h3>
+
+							<p class="text-sm md:text-base">
+								{additionalMeaning}
+							</p>
 						</div>
 					{/if}
 
