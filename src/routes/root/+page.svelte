@@ -12,7 +12,7 @@
 	import { onMount } from 'svelte';
 
 	// the arabic root, taken straight from the url (e.g. /root/سمو -> "سمو")
-	$: root = data?.root || 'اله';
+	$: root = data?.root || 'سمو';
 
 	// maps each arabic letter to its transliteration - used for the split-letter header only.
 	// add any missing letters here if a root ever uses one that's not listed
