@@ -26,6 +26,9 @@ export const morphologyDataUrls = {
 	// Word summaries for each chapter (1-114)
 	getWordSummary: (chapter) => `${staticEndpoint}/lexicon/word-summaries/${chapter}.json?version=2`,
 
+	// Details for each root
+	getRootInformation: (root) => `${staticEndpoint}/lexicon/root-details/${root}.json?version=1`,
+
 	// Static morphology data files
 	wordVerbs: `${staticEndpoint}/morphology-data/word-verbs.json?version=1`,
 	wordsWithSameRootKeys: `${staticEndpoint}/morphology-data/words-with-same-root-keys.json?version=3`,

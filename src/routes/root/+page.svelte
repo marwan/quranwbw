@@ -60,18 +60,25 @@
 		networkCheckPerformed = true;
 	});
 
+	// null-safety helpers - any field in the root json can be null/missing
+
+	// returns the value if it is an array, otherwise an empty array
+	function asArray(value) {
+		return Array.isArray(value) ? value : [];
+	}
+
+	// returns the value if it is a non-empty string, otherwise null
+	function asText(value) {
+		return typeof value === 'string' && value.trim() !== '' ? value : null;
+	}
+
 	// fetch everything this page needs, in parallel
 	$: allDataPromise = (async () => {
-		// detailed root info, from our own root-details endpoint
-		const rootInfoPromise = fetch(`http://localhost:7500/v2/root-details?root=${root}`).then((res) => {
-			if (!res.ok) throw new Error(`Root details API returned ${res.status}`);
+		// detailed root info, from our static root-details json
+		const rootInfoPromise = fetch(morphologyDataUrls.getRootInformation(encodeURIComponent(root))).then((res) => {
+			if (!res.ok) throw new Error(`Root details returned ${res.status}`);
 			return res.json();
 		});
-
-		// additional root meanings, keyed by space-separated letters (e.g. "س م و")
-		const rootMeaningsDataPromise = fetch('https://raw.githubusercontent.com/sayeeed777/lughatulquran/refs/heads/main/app/data/root-meanings.qj.json')
-			.then((res) => res.json())
-			.catch(() => ({}));
 
 		// map of root -> word keys, used for the "words with same root" table
 		const wordsWithSameRootDataPromise = fetchAndCacheJson(morphologyDataUrls.wordsWithSameRootKeys, 'morphology').catch(() => ({}));
@@ -79,9 +86,9 @@
 		// arabic / translation / transliteration data needed by <Table />
 		const wordDataPromise = fetchWordData(1, $__wordTranslation, $__wordTransliteration).catch(() => ({}));
 
-		const [rootInfo, wordsWithSameRootData, wordData, rootMeaningsData] = await Promise.all([rootInfoPromise, wordsWithSameRootDataPromise, wordDataPromise, rootMeaningsDataPromise]);
+		const [rootInfo, wordsWithSameRootData, wordData] = await Promise.all([rootInfoPromise, wordsWithSameRootDataPromise, wordDataPromise]);
 
-		return { rootInfo, wordsWithSameRootData, wordData, rootMeaningsData };
+		return { rootInfo, wordsWithSameRootData, wordData };
 	})();
 
 	__currentPage.set('root');
@@ -92,16 +99,29 @@
 		{#await allDataPromise}
 			<Spinner />
 		{:then allData}
-			{@const info = allData.rootInfo}
+			<!-- everything below is derived from the json and guarded against null/missing values -->
+			{@const info = allData.rootInfo ?? {}}
+			{@const lexicon = info.lexicon ?? {}}
+			{@const rootMeaning = asText(info.root_meaning)}
+			{@const alternateMeaning = asText(info.alternate_root_meaning)}
+			{@const definitions = asArray(info.definitions).filter((d) => asText(d))}
+			{@const lemmas = asArray(info.lemmas).filter((l) => asText(l))}
+			{@const derivatives = asArray(info.derivatives).filter((d) => d && asText(d.form))}
+			{@const entries = asArray(lexicon.entries).filter((e) => e && asText(e.html))}
+			{@const grammar = asText(lexicon.grammar)}
+			{@const note = asText(lexicon.note)}
+			{@const rootHtml = asText(lexicon.rootHtml)}
+			{@const mainHtml = asText(lexicon.mainHtml)}
 			{@const statItems = [
 				{ label: 'Total Occurrences', value: allData.wordsWithSameRootData?.data?.[root]?.length },
-				{ label: 'Derivative Count', value: info.stats?.derivativeCount },
-				{ label: 'Lemma Count', value: info.lemmas?.length }
+				{ label: 'Derivative Count', value: Array.isArray(info.derivatives) ? derivatives.length : undefined },
+				{ label: 'Lemma Count', value: Array.isArray(info.lemmas) ? lemmas.length : undefined }
 			].filter((item) => typeof item.value === 'number')}
-			{@const additionalMeaning = allData.rootMeaningsData?.[rootLetters.join(' ')]}
+
 			<div class="my-4" in:fade={{ duration: 300 }}>
+				<!-- root header - the only centered part of the page -->
 				<div id="root-header" class="text-center pb-8 border-b border-theme-accent/20">
-					<p class="text-4xl md:text-5xl arabic-font-1 leading-loose">{info.rootArabic || root}</p>
+					<p class="text-4xl md:text-5xl arabic-font-1 leading-loose">{asText(info.root) || root}</p>
 
 					<div class="flex justify-center gap-6 md:gap-8 mt-2">
 						{#each rootLetters as letter}
@@ -112,23 +132,12 @@
 						{/each}
 					</div>
 
-					{#if info.rootMeaning}
-						<p class="mt-3 text-sm md:text-base capitalize">{info.rootMeaning}</p>
+					{#if rootMeaning}
+						<p class="mt-3 text-sm md:text-base capitalize">{rootMeaning}</p>
 					{/if}
 				</div>
 
 				<div id="root-details">
-					<!-- core meanings -->
-					{#if info.coreMeanings?.length}
-						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Core Meanings</h3>
-
-							<p class="text-sm md:text-base">
-								{info.coreMeanings.join(' · ')}
-							</p>
-						</div>
-					{/if}
-
 					<!-- stats: total occurrences (words sharing this root), derivative count, lemma count -->
 					{#if statItems.length}
 						<div class="py-6 border-b border-theme-accent/20">
@@ -142,37 +151,38 @@
 						</div>
 					{/if}
 
-					<!-- derivatives - flat inline form/count list, same style as stats -->
-					{#if info.derivatives?.length}
+					<!-- derivatives - flat inline form/count list -->
+					{#if derivatives.length}
 						<div class="py-6 border-b border-theme-accent/20">
 							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Derivatives</h3>
 
 							<p class="text-sm md:text-base">
-								{#each info.derivatives as derivative, i}
-									<span class="arabic-font-1 text-base md:text-lg">{derivative.form}</span> <span>({derivative.count})</span>{i < info.derivatives.length - 1 ? ' · ' : ''}
+								{#each derivatives as derivative, i}
+									<span class="arabic-font-1 text-base md:text-lg">{derivative.form}</span>
+									{#if typeof derivative.count === 'number'}<span>({derivative.count})</span>{/if}{i < derivatives.length - 1 ? ' · ' : ''}
 								{/each}
 							</p>
 						</div>
 					{/if}
 
-					<!-- lemmas - flat inline list, same style as core meanings -->
-					{#if info.lemmas?.length}
+					<!-- lemmas - flat inline list -->
+					{#if lemmas.length}
 						<div class="py-6 border-b border-theme-accent/20">
 							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Lemmas</h3>
 
 							<p class="arabic-font-1 text-base md:text-lg">
-								{info.lemmas.join('  ·  ')}
+								{lemmas.join('  ·  ')}
 							</p>
 						</div>
 					{/if}
 
 					<!-- lane's lexicon definitions - long-form english text with embedded arabic terms -->
-					{#if info.definitions?.length}
+					{#if definitions.length}
 						<div class="py-6 border-b border-theme-accent/20">
 							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Lexicon Definition</h3>
 
 							<div class="text-sm md:text-base leading-relaxed space-y-4">
-								{#each info.definitions as definition}
+								{#each definitions as definition}
 									<p>{definition}</p>
 								{/each}
 							</div>
@@ -180,63 +190,65 @@
 					{/if}
 
 					<!-- grammar + derivative note -->
-					{#if info.lexSnapshot?.wordGrammar || info.lexSnapshot?.derivativeNote}
+					{#if grammar || note}
 						<div class="py-6 border-b border-theme-accent/20">
 							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Grammar</h3>
 
-							{#if info.lexSnapshot.wordGrammar}
-								<p class="text-sm md:text-base capitalize">{info.lexSnapshot.wordGrammar}</p>
+							{#if grammar}
+								<p class="text-sm md:text-base capitalize">{grammar}</p>
 							{/if}
 
-							{#if info.lexSnapshot.derivativeNote}
-								<p class="text-sm md:text-base mt-1">{@html info.lexSnapshot.derivativeNote}</p>
+							{#if note}
+								<p class="text-sm md:text-base mt-1">{@html note}</p>
 							{/if}
 						</div>
 					{/if}
 
 					<!-- root definition (html, contains the root breakdown + form counts) -->
-					{#if info.lexSnapshot?.rootDefinitionHtml}
+					{#if rootHtml}
 						<div class="py-6 border-b border-theme-accent/20">
 							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Root Definition</h3>
 
 							<div class="text-sm md:text-base leading-relaxed">
-								{@html info.lexSnapshot.rootDefinitionHtml}
+								{@html rootHtml}
 							</div>
 						</div>
 					{/if}
 
-					<!-- additional root meaning, sourced from lughatulquran's root-meanings data -->
-					{#if additionalMeaning}
+					<!-- alternate root meaning -->
+					{#if alternateMeaning}
 						<div class="py-6 border-b border-theme-accent/20">
-							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Additional Root Meaning</h3>
+							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Alternate Root Meaning</h3>
 
 							<p class="text-sm md:text-base">
-								{additionalMeaning}
+								{alternateMeaning}
 							</p>
 						</div>
 					{/if}
 
 					<!-- main definition (html, contains numbered senses + example ayahs) -->
-					{#if info.lexSnapshot?.mainDefinitionHtml}
+					{#if mainHtml}
 						<div class="py-6 border-b border-theme-accent/20">
 							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">Main Definition</h3>
 
 							<div class="text-sm md:text-base leading-relaxed">
-								{@html info.lexSnapshot.mainDefinitionHtml}
+								{@html mainHtml}
 							</div>
 						</div>
 					{/if}
 
 					<!-- every entry (root itself + each derived form) - no cards, just a divided stack -->
-					{#if info.lexSnapshot?.entries?.length}
+					{#if entries.length}
 						<div class="py-6 border-b border-theme-accent/20">
 							<h3 class="text-sm uppercase tracking-wide font-medium mb-3">All Entries</h3>
 
 							<div class="divide-y divide-theme-accent/20">
-								{#each info.lexSnapshot.entries as entry (entry.id)}
+								{#each entries as entry}
 									<div class="py-3">
-										<p class="arabic-font-1 text-base md:text-lg mb-1">{entry.label}</p>
-										<div class="text-sm md:text-base leading-relaxed">{@html entry.definitionHtml}</div>
+										{#if asText(entry.label)}
+											<p class="arabic-font-1 text-base md:text-lg mb-1">{entry.label}</p>
+										{/if}
+										<div class="text-sm md:text-base leading-relaxed">{@html entry.html}</div>
 									</div>
 								{/each}
 							</div>
