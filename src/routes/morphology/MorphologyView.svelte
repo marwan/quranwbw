@@ -168,12 +168,15 @@
 						<div class="pt-4 flex flex-row justify-center space-x-2 text-xs">
 							<button class={buttonClasses} on:click={() => wordAudioController({ key: $__morphologyKey })}>Play Word</button>
 
-							<!-- Show the "goto verse" button if the user in on morphology page -->
+							<!-- Show the "Goto Verse" button if the user in on morphology page -->
 							{#if isMorphologyPage}
 								<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
 							{/if}
 
-							<a href="/root?root={wordRoot}" class={buttonClasses}>Root Details</a>
+							<!-- Show the "Root Details" button if the word has a root -->
+							{#if wordRoot}
+								<a href="/root?root={wordRoot}" class={buttonClasses}>Root Details</a>
+							{/if}
 						</div>
 					</div>
 				{/if}
