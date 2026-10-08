@@ -1,4 +1,6 @@
 <script>
+	export let data;
+
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import Table from '../morphology/Table.svelte';
@@ -10,7 +12,7 @@
 	import { onMount } from 'svelte';
 
 	// the arabic root, taken straight from the url (e.g. /root/سمو -> "سمو")
-	$: root = 'اله';
+	$: root = data?.root || 'اله';
 
 	// maps each arabic letter to its transliteration - used for the split-letter header only.
 	// add any missing letters here if a root ever uses one that's not listed
