@@ -100,7 +100,6 @@ export async function isUserOnline(timeout = 1000) {
 	} catch (error) {
 		clearTimeout(id);
 		console.warn(error);
-		window.rybbit?.error(error);
 		return false;
 	}
 }

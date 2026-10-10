@@ -11,7 +11,7 @@
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
 	import { onDestroy } from 'svelte';
-	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
+	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
@@ -216,9 +216,6 @@
 			if (swipedRightHandler) pageBlock.removeEventListener('swiped-right', swipedRightHandler);
 		}
 	});
-
-	// Only allow continuous normal mode, without saving the setting
-	$__displayType = 4;
 
 	__currentPage.set('mushaf');
 </script>

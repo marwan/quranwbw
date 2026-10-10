@@ -402,6 +402,10 @@ async function wordHighlighter() {
 		// cachedTimestampData is pre-populated in playVerseAudio before this
 		// listener is attached, so no async fetch is needed here
 		const verseTimestamp = cachedTimestampData.data[chapter][verse][reciterId];
+
+		// No timestamps for this reciter/verse (e.g. reciter changed mid-playback), skip highlighting
+		if (!verseTimestamp) return;
+
 		const timestamps = verseTimestamp.split('|');
 
 		// Walk through each word and update playingWordKey to the latest word
@@ -520,10 +524,11 @@ function getWordsInVerse(key) {
 
 	if (isMushafPage) {
 		const pageData = JSON.parse(localStorage.getItem('pageData'));
-		return Number(pageData[key].meta.words);
+		return Number(pageData?.[key]?.meta?.words) || 0;
 	} else {
-		const wordData = document.querySelector(`.verse-${chapter}-${verse}`).dataset.words;
-		return Number(wordData);
+		// verse element may not exist (games page, navigated away mid-playback)
+		const wordData = document.querySelector(`.verse-${chapter}-${verse}`)?.dataset.words;
+		return Number(wordData) || 0;
 	}
 }
 
@@ -613,8 +618,16 @@ async function getAudioUrl(url, returnBlob = true, suppressOfflineAlert = false)
 			console.log('[AudioCache] Fetching:', url);
 			response = await fetch(url);
 
+			// Retry once after a short delay for transient server errors (5xx)
+			if (response.status >= 500) {
+				await new Promise((resolve) => setTimeout(resolve, 500));
+				response = await fetch(url);
+			}
+
 			if (!response.ok) {
-				throw new Error(`Failed to fetch audio: ${response.status}`);
+				const error = new Error(`Failed to fetch audio: ${response.status} ${url}`);
+				error.status = response.status;
+				throw error;
 			}
 
 			// Clone before caching since response body can only be consumed once
@@ -630,9 +643,16 @@ async function getAudioUrl(url, returnBlob = true, suppressOfflineAlert = false)
 		const blob = await response.blob();
 		return URL.createObjectURL(blob);
 	} catch (error) {
-		// Fall back to the raw URL if anything goes wrong
 		console.warn('[AudioCache] Error:', error);
+
+		// Make sure every reported error includes the URL (HTTP errors already do)
+		if (!error.message.includes(url)) error.message += ` ${url}`;
 		window.rybbit?.error(error);
+
+		// No point falling back to the raw URL for a missing file
+		if (error.status === 404) return;
+
+		// Fall back to the raw URL for anything else (e.g. 5xx after retry, network errors)
 		return url;
 	}
 }
