@@ -20,7 +20,7 @@
 	import { fetchChapterData } from '$utils/fetchData';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import { fade } from 'svelte/transition';
-	import '$utils/swiped-events.min.js';
+	import '$utils/swipeEventHandler.js';
 
 	let pageData;
 	let startingLine;

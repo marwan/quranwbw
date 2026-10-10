@@ -2,7 +2,7 @@
 	export let size = 3;
 </script>
 
-<svg class="w-{size} h-{size}" aria-hidden="true" fill="none" viewBox="0 0 48 48">
+<svg class="w-{size} h-{size}" fill="none" viewBox="0 0 48 48">
 	<g transform="matrix(3.4285714285714284,0,0,3.4285714285714284,0,0)">
 		<g>
 			<circle cx="3.25" cy="3.25" r="2.75" class="stroke-theme-accent fill-theme-accent" stroke-linecap="round" stroke-linejoin="round" />
