@@ -713,6 +713,9 @@
 			This page lets you backup and restore your settings in two ways: cloud backup and local file backup. Cloud backup securely saves your settings online using a private backup key, allowing you to restore them on any device without an account. Local backup lets you export your settings to a file and restore them manually at any time. Your backup key and files are the only way to recover your
 			settings, so keep them safe.
 		</p>
+		<p>
+			To learn what is stored, why, and how to request deletion, please read our <a href="/privacy">Privacy Policy</a>.
+		</p>
 	</div>
 
 	<!-- Security check status banner — shown while Turnstile is verifying in the background. -->
