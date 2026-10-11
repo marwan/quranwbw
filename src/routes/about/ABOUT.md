@@ -30,7 +30,7 @@ QuranWBW.com owes its existence to the contributions of the following remarkable
 - [SoundVision.com](https://www.soundvision.com/article/a-thematic-introduction-to-the-surahs-of-the-qur-an) for their thematic introduction to the surahs of the Quran.
 - [TamililQuran.com](http://www.tamililquran.com/) for their Tamil word by word database originally by [Darul Huda](https://www.darulhuda.net/).
 - [Al Quran Cloud](https://alquran.cloud/) and [Fawaz Ahmed](https://github.com/fawazahmed0) for their Quran translations API.
-- [Dr. Usama Nonnenmacher](https://drusaman.github.io/) for his excellent work on the French word by word data and for sharing the Ayah-by-Ayah format of Shaikh Bandar Baleelah’s Quran recitation.
+- [Dr. Usama Nonnenmacher](https://drusaman.github.io/) for his excellent work on the French word by word data and for sharing the Ayah-by-Ayah format of Shaikh Bandar Baleelah's Quran recitation.
 - [Spark (spa5k)](https://github.com/spa5k/tafsir_api) for his Tafsir API.
 - [Quran Pro](https://quran-pro.com/) for their pictures of different reciters.
 - [Flaticon](https://www.flaticon.com/uicons/) for their great range of interface icons.

@@ -31,11 +31,11 @@ const cacheNames = {
 	tafsirData: 'quranwbw-tafsir-data' // Tafsir data files
 };
 
-// Files we should never cache (the service worker itself and its settings)
-const stuffNotToCache = ['/service-worker.js', '/service-worker-settings.json'];
+// Files we should never cache
+const stuffNotToCache = ['/service-worker.js'];
 
 // URLs that should never be intercepted or cached
-const externalUrlsNotToCache = ['gstatic.com', 'rybbit.quranwbw.com'];
+const externalUrlsNotToCache = ['gstatic.com', 'rybbit.quranwbw.com', 'cloud-backup-api.quranwbw.com'];
 
 // Static files built by SvelteKit (CSS, JS, images from /static folder)
 const precacheFiles = [
@@ -44,7 +44,7 @@ const precacheFiles = [
 ];
 
 // Important pages we want to cache
-const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics', '/juz', '/hizb', '/page'];
+const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/games/guess-the-word', '/morphology', '/offline', '/supplications', '/topics', '/juz', '/hizb', '/page', '/backup'];
 
 // This flag tracks whether the user has enabled offline mode
 // CRITICAL: This must be loaded from cache on startup!
