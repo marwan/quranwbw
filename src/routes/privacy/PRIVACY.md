@@ -124,4 +124,4 @@ We may update this page as the website grows. The date at the top shows when it 
 
 ### Contact
 
-Questions, concerns, or deletion requests? Email us at [quranwbw@gmail.com](mailto:quranwbw@gmail.com).
+Questions, concerns, or deletion requests? Email us at [quranwbw@gmail.com](mailto:quranwbw@gmail.com) or join our [Discord server](https://discord.gg/VSGJKsarxW).
