@@ -83,10 +83,11 @@ This lets us spend our limited time improving what helps you most, instead of gu
 
 ### Third-Party Content & Services
 
-Most of the content on QuranWBW, including Quran text, translations, word by word data, fonts, and audio, is served from our own content delivery network hosted on [Cloudflare](https://www.cloudflare.com/). Like any hosting provider, Cloudflare processes technical details such as your IP address to deliver these files. See their [Privacy Policy](https://www.cloudflare.com/privacypolicy/).
+Most of the content on QuranWBW, including Quran text, translations, word by word data, fonts, and word by word audio, is served from our own content delivery network hosted on [Cloudflare](https://www.cloudflare.com/). Like any hosting provider, Cloudflare processes technical details such as your IP address to deliver these files. See their [Privacy Policy](https://www.cloudflare.com/privacypolicy/).
 
 A few features rely on external providers (see the [About](/about) page for the full list):
 
+- **Ayah by ayah audio:** your browser connects directly to the audio provider to stream the recitation.
 - **Tafsir:** your browser may connect directly to the tafsir provider to load the content.
 - **Search:** search queries are sent to the search provider to return results.
 
