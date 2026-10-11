@@ -11,6 +11,7 @@
 	import Puzzle from '$svgs/Puzzle.svelte';
 	import About from '$svgs/About.svelte';
 	import Changelog from '$svgs/Changelog.svelte';
+	import PrivacyPolicy from '$svgs/PrivacyPolicy.svelte';
 	import Offline from '$svgs/Offline.svelte';
 	import BackupRestore from '$svgs/BackupRestore.svelte';
 	import LeftArrow from '$svgs/LeftArrow.svelte';
@@ -152,6 +153,12 @@
 			<a href="/about" class={linkClasses}>
 				<span><About /></span>
 				<span class={linkTextClasses}>About</span>
+			</a>
+
+			<!-- Privacy Policy -->
+			<a href="/privacy" class={linkClasses}>
+				<span><PrivacyPolicy /></span>
+				<span class={linkTextClasses}>Privacy Policy</span>
 			</a>
 
 			<!-- Old Website -->

@@ -56,7 +56,7 @@ Once we receive it, we will delete the backup and the key. Please delete the ema
 
 ### Security Check (Cloudflare Turnstile)
 
-To protect Backup & Restore from bots and abuse, we use [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/). It runs a quick check in the background when you open that page. Cloudflare may process technical signals such as your IP address and browser information to do this. Their handling of that data is described in the [Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/).
+To protect certain pages and features from bots and abuse, we use [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/). It runs a quick check in the background when you use those features. Cloudflare may process technical signals such as your IP address and browser information to do this. Their handling of that data is described in the [Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/).
 
 ---
 
@@ -83,7 +83,14 @@ This lets us spend our limited time improving what helps you most, instead of gu
 
 ### Third-Party Content & Services
 
-QuranWBW pulls Quran text, translations, tafsir, audio, and search results from outside providers (see the [About](/about) page for the full list). When you use these features, your browser may connect to those services directly. They can see technical details such as your IP address, and search queries may be sent to the search provider to return results. We do not control how they handle that data, so please see their own privacy policies.
+Most of the content on QuranWBW, including Quran text, translations, word by word data, fonts, and audio, is served from our own content delivery network hosted on [Cloudflare](https://www.cloudflare.com/). Like any hosting provider, Cloudflare processes technical details such as your IP address to deliver these files. See their [Privacy Policy](https://www.cloudflare.com/privacypolicy/).
+
+A few features rely on external providers (see the [About](/about) page for the full list):
+
+- **Tafsir:** your browser may connect directly to the tafsir provider to load the content.
+- **Search:** search queries are sent to the search provider to return results.
+
+These providers can see technical details such as your IP address. We do not control how they handle that data, so please see their own privacy policies.
 
 ---
 
@@ -111,7 +118,7 @@ QuranWBW is open to everyone. We do not knowingly collect personal information s
 
 ### Changes To This Policy
 
-We may update this page as the website grows. The date at the top shows when it was last changed. Continuing to use cloud backup after an update means you accept the revised policy.
+We may update this page as the website grows. The date at the top shows when it was last changed. Continuing to use the website and its features means you accept the policy.
 
 ---
 
