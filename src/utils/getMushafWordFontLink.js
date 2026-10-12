@@ -8,6 +8,7 @@ export function getMushafWordFontLink(page) {
 	const paddedPage = String(page).padStart(3, '0');
 	const isAppleLightThemeWithoutCOLRv1Support = [1, 2, 3].includes(get(__websiteTheme));
 	const isTajweedFontType = get(__fontType) === 3;
+	const isNonTajweedFontType = get(__fontType) === 2;
 	let basePath, fileName, fontVersion;
 
 	// Use OT-SVG fonts on iOS/macOS for specific light themes (Golden Glint, Classic Light, Silver Lining) when using Mushaf Tajweed fonts
@@ -26,9 +27,9 @@ export function getMushafWordFontLink(page) {
 		fontVersion = 13;
 	}
 
-	// The default COLRv1 font is based on a light Tajweed palette, which causing visibility problems for non-Tajweed words in certain themes
-	// A separate non-colored font variant is used as a workaround
-	else if (isFirefoxDarkNonTajweed()) {
+	// Firefox versions below 158 do not render the COLRv1 fonts correctly for non-Tajweed fonts
+	// The non-colored font variant is used as a workaround
+	else if (isOldFirefox() && isNonTajweedFontType) {
 		basePath = 'COLRv1-Dark-FF-Non-Colored';
 		fileName = `QCF4${paddedPage}_X-Regular.woff2`;
 		fontVersion = 10;
@@ -55,6 +56,19 @@ function isDarkFirefox() {
 
 function isMushafFirefoxDark(fontType) {
 	return isDarkFirefox() && get(__fontType) === fontType;
+}
+
+// Returns the Firefox major version number, or null if not Firefox
+function getFirefoxVersion() {
+	if (!isFirefox()) return null;
+	const match = navigator.userAgent.match(/Firefox\/(\d+)/i);
+	return match ? parseInt(match[1], 10) : null;
+}
+
+// Returns true if the browser is Firefox and its version is below 158
+export function isOldFirefox() {
+	const version = getFirefoxVersion();
+	return version !== null && version < 158;
 }
 
 export function isFirefoxDarkNonTajweed() {

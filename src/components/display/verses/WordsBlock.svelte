@@ -13,7 +13,7 @@
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { getMushafWordFontLink, isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
+	import { getMushafWordFontLink, isOldFirefox, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 
 	const mushafFontTypes = [2, 3];
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
@@ -122,20 +122,23 @@
 	const pageClass = `p${value.meta.page}`;
 
 	// Firefox needs special palette handling in dark themes.
-	// The helpers read the theme internally, so $__websiteTheme and $__fontType are listed
-	// here to make sure these flags are re-evaluated whenever either one changes.
+	// The helper reads the theme internally, so $__websiteTheme and $__fontType are listed
+	// here to make sure this flag is re-evaluated whenever either one changes.
 	$: firefoxDarkTajweed = ($__websiteTheme, $__fontType, isFirefoxDarkTajweed());
-	$: firefoxDarkNonTajweed = ($__websiteTheme, $__fontType, isFirefoxDarkNonTajweed());
+
+	// Old Firefox (below 158) with the non-Tajweed font uses the non-colored font, see getMushafWordFontLink()
+	// The Firefox version doesn't change at runtime, so only $__fontType needs to trigger a re-evaluation
+	$: firefoxOldNonTajweed = isOldFirefox() && $__fontType === 2;
 
 	// Picks the palette class for the current font type and browser:
 	//   - Firefox + dark + tajweed (font type 3) → dedicated Firefox fix class
-	//   - Firefox + dark + non-tajweed (font type 2) → no palette class at all
+	//   - Old Firefox (below 158) + non-tajweed (font type 2) → no palette class at all
 	//   - everything else → tajweed palette for font type 3, normal palette otherwise
-	$: paletteClass = firefoxDarkTajweed ? 'hafs-palette-firefox-dark' : firefoxDarkNonTajweed ? '' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal';
+	$: paletteClass = firefoxDarkTajweed ? 'hafs-palette-firefox-dark' : firefoxOldNonTajweed ? '' : $__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal';
 
 	// Name of the custom font color palette for the current theme, or null when not needed.
-	// Only applies to font type 2 and when the Firefox dark fix is not active.
-	$: customFontPalette = $__fontType === 2 && !firefoxDarkTajweed && !firefoxDarkNonTajweed ? `--theme-${$__websiteTheme}-font` : null;
+	// Only applies to font type 2 and when neither the Firefox dark tajweed fix nor the old Firefox non-colored font is active.
+	$: customFontPalette = $__fontType === 2 && !firefoxDarkTajweed && !firefoxOldNonTajweed ? `--theme-${$__websiteTheme}-font` : null;
 
 	// Final class list for Mushaf words and end icons:
 	//   - v4-words → base styling for Mushaf glyphs
