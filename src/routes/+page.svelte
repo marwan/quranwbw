@@ -25,6 +25,7 @@
 	import { term } from '$utils/terminologies';
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
+	import { fade } from 'svelte/transition';
 
 	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5';
@@ -247,30 +248,36 @@
 
 		<div id="extras-panel" class="mb-4 pt-2 {homepageLayoutPreferences.extrasPanelVisible ? 'block' : 'hidden'}">
 			<!-- bookmarks tab -->
-			<div class="bookmarks-tab-panels space-y-12 {extrasActiveTab === bookmarksTab ? 'block' : 'hidden'}" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab">
-				<UserBookmarks {cardGridClasses} {cardInnerClasses} />
-			</div>
+			{#if extrasActiveTab === bookmarksTab}
+				<div class="bookmarks-tab-panels space-y-12" id="bookmarks-tab-panel" role="tabpanel" aria-labelledby="bookmarks-tab" in:fade={{ duration: 300 }}>
+					<UserBookmarks {cardGridClasses} {cardInnerClasses} />
+				</div>
+			{/if}
 
 			<!-- notes tab -->
-			<div class="notes-tab-panels space-y-12 {extrasActiveTab === notesTab ? 'block' : 'hidden'}" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab">
-				<UserNotes {cardGridClasses} {cardInnerClasses} />
-			</div>
+			{#if extrasActiveTab === notesTab}
+				<div class="notes-tab-panels space-y-12" id="notes-tab-panel" role="tabpanel" aria-labelledby="notes-tab" in:fade={{ duration: 300 }}>
+					<UserNotes {cardGridClasses} {cardInnerClasses} />
+				</div>
+			{/if}
 
 			<!-- suggestions tab -->
-			<div class="space-y-12 {extrasActiveTab === suggestionsTab ? 'block' : 'hidden'}" id="suggestions-tab-panel" role="tabpanel" aria-labelledby="suggestions-tab">
-				<div id="suggestions-chapters" class="flex flex-col space-y-4">
-					<div class="{cardGridClasses} grid-cols-1">
-						{#each Object.entries(mostRead) as [_, item]}
-							<a href={item.url} class="!justify-start {cardInnerClasses} flex-col">
-								<span class="text-sm">{quranMetaData[item.chapter].transliteration} ({item.verses})</span>
-								<div class="block text-xs opacity-70">{item.title}</div>
-							</a>
-						{/each}
-					</div>
+			{#if extrasActiveTab === suggestionsTab}
+				<div class="space-y-12" id="suggestions-tab-panel" role="tabpanel" aria-labelledby="suggestions-tab" in:fade={{ duration: 300 }}>
+					<div id="suggestions-chapters" class="flex flex-col space-y-4">
+						<div class="{cardGridClasses} grid-cols-1">
+							{#each Object.entries(mostRead) as [_, item]}
+								<a href={item.url} class="!justify-start {cardInnerClasses} flex-col">
+									<span class="text-sm">{quranMetaData[item.chapter].transliteration} ({item.verses})</span>
+									<div class="block text-xs opacity-70">{item.title}</div>
+								</a>
+							{/each}
+						</div>
 
-					<div class="px-2 text-xs opacity-70">Suggestions listed here are based on the most frequently read chapters and verses by muslim audience, as well as virtues derived from Hadiths. While some Hadiths highlighting these virtues may be considered weak by some scholars, using them for beneficial knowledge is also a widely accepted opinion.</div>
+						<div class="px-2 text-xs opacity-70">Suggestions listed here are based on the most frequently read chapters and verses by muslim audience, as well as virtues derived from Hadiths. While some Hadiths highlighting these virtues may be considered weak by some scholars, using them for beneficial knowledge is also a widely accepted opinion.</div>
+					</div>
 				</div>
-			</div>
+			{/if}
 		</div>
 
 		<div class="border-b border-theme-accent/20"></div>
@@ -306,7 +313,7 @@
 		<div id="quran-divisions-panel" class="mb-6 pt-2">
 			<!-- chapters tab -->
 			{#if divisionsActiveTab === chaptersTab}
-				<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
+				<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab" in:fade={{ duration: 300 }}>
 					<!-- continue readin button -->
 					{#if lastReadExists}
 						{@const lastReadChapter = $__lastRead.chapter}
@@ -333,7 +340,7 @@
 
 			<!-- juz tab -->
 			{#if divisionsActiveTab === juzTab}
-				<div id="juz-tab-panel" role="tabpanel" aria-labelledby="juz-tab">
+				<div id="juz-tab-panel" role="tabpanel" aria-labelledby="juz-tab" in:fade={{ duration: 300 }}>
 					{#if lastReadExists}
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
@@ -357,7 +364,7 @@
 
 			<!-- favorites tab -->
 			{#if divisionsActiveTab === favoriteChaptersTab}
-				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab">
+				<div id="favorites-tab-panel" role="tabpanel" aria-labelledby="favorite-chapters-tab" in:fade={{ duration: 300 }}>
 					<div class="flex flex-row space-x-2 text-sm mb-2">
 						<!-- Edit Favorites button  -->
 						<button class="{topButtonClasses} truncate w-full min-h-[54px] md:min-h-[58px]" on:click={() => __favoriteChaptersModalVisible.set(true)}>
@@ -376,7 +383,7 @@
 
 			<!-- hizb tab -->
 			{#if divisionsActiveTab === hizbTab}
-				<div id="hizb-tab-panel" role="tabpanel" aria-labelledby="hizb-tab">
+				<div id="hizb-tab-panel" role="tabpanel" aria-labelledby="hizb-tab" in:fade={{ duration: 300 }}>
 					{#if lastReadExists && $__lastRead.hizb}
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = $__lastRead.verse}
