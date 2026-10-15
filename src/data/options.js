@@ -597,7 +597,7 @@ export const selectableWordTranslations = {
 		language: 'Urdu',
 		font: 'font-Urdu',
 		customClasses: 'direction-rtl font-Urdu text-xl',
-		version: 1
+		version: 2
 	},
 	3: {
 		id: 3,
