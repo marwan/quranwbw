@@ -17,6 +17,10 @@
 	// Holds any extra CSS palette class needed for the current font (e.g. Tajweed color palette)
 	let customFontPalette = '';
 
+	// Remember which font file is currently registered so we don't reload it on every page change
+	let loadedBismillahUrl = null;
+	let bismillahFace = null;
+
 	// Resolves the correct font file for the active font type, handles the
 	// Firefox dark-mode Tajweed special case, then loads the font via loadFont().
 	// All .bismillah elements are hidden until the font is ready to avoid FOUT.
@@ -51,17 +55,20 @@
 		// Build the CDN URL with cache-busting version query param
 		const url = `${staticEndpoint}/fonts/Extras/bismillah/${fileName}.woff2?version=${fontVersion}`;
 
-		// Remove ALL existing FontFace entries under the "bismillah" family —
-		// this forces the browser to load the correct file for the current font type
-		// rather than reusing a stale entry from a previous font type or page visit.
-		[...document.fonts].filter((f) => f.family === 'bismillah').forEach((f) => document.fonts.delete(f));
+		// Already loaded this exact file: just make sure the elements are visible
+		if (loadedBismillahUrl === url && bismillahFace?.status === 'loaded') {
+			elements.forEach((el) => el.classList.remove('invisible'));
+			return;
+		}
 
-		// Manage the FontFace directly so we have full control over when the font is registered and revealed.
-		const fontFace = new FontFace('bismillah', `url(${url})`);
+		// Different file (font type changed): swap out the old face
+		if (bismillahFace) document.fonts.delete(bismillahFace);
 
-		document.fonts.add(fontFace);
+		bismillahFace = new FontFace('bismillah', `url(${url})`);
+		loadedBismillahUrl = url;
+		document.fonts.add(bismillahFace);
 
-		fontFace.load().then(() => {
+		bismillahFace.load().then(() => {
 			elements.forEach((el) => el.classList.remove('invisible'));
 		});
 	}

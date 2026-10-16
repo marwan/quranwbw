@@ -71,7 +71,9 @@
 			// Capture the current load ID; discard result if a newer load has started
 			const thisLoadId = ++currentLoadId;
 
-			const data = await fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation);
+			// fetch verses and the font in parallel
+			const [data] = await Promise.all([fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation), [2, 3].includes($__fontType) ? loadMushafFont(page) : Promise.resolve()]);
+
 			const verseData = data.verses;
 
 			// Stale check — if a newer navigation happened, discard this result
@@ -194,6 +196,20 @@
 			console.warn(error);
 			window.rybbit?.error(error);
 			return { verses: {} };
+		}
+	}
+
+	// Load the mushaf font for a page and register it, so text only renders once it's ready
+	async function loadMushafFont(pageNumber) {
+		const family = `p${pageNumber}`; // must match the font-family name used for this page's words
+		if ([...document.fonts].some((f) => f.family === family && f.status === 'loaded')) return;
+
+		try {
+			const face = new FontFace(family, `url(${getMushafWordFontLink(pageNumber)})`);
+			await face.load();
+			document.fonts.add(face);
+		} catch (error) {
+			console.warn(error); // don't block the page if the font fails
 		}
 	}
 
