@@ -27,9 +27,9 @@ export function getMushafWordFontLink(page) {
 		fontVersion = 13;
 	}
 
-	// Firefox versions below 158 do not render the COLRv1 fonts correctly for non-Tajweed fonts
+	// Firefox does not render the COLRv1 fonts correctly for non-Tajweed fonts
 	// The non-colored font variant is used as a workaround
-	else if (isOldFirefox() && isNonTajweedFontType) {
+	else if (isNonTajweedFontType) {
 		basePath = 'COLRv1-Dark-FF-Non-Colored';
 		fileName = `QCF4${paddedPage}_X-Regular.woff2`;
 		fontVersion = 10;
@@ -56,19 +56,6 @@ function isDarkFirefox() {
 
 function isMushafFirefoxDark(fontType) {
 	return isDarkFirefox() && get(__fontType) === fontType;
-}
-
-// Returns the Firefox major version number, or null if not Firefox
-function getFirefoxVersion() {
-	if (!isFirefox()) return null;
-	const match = navigator.userAgent.match(/Firefox\/(\d+)/i);
-	return match ? parseInt(match[1], 10) : null;
-}
-
-// Returns true if the browser is Firefox and its version is below 158
-export function isOldFirefox() {
-	const version = getFirefoxVersion();
-	return version !== null && version < 158;
 }
 
 export function isFirefoxDarkNonTajweed() {
