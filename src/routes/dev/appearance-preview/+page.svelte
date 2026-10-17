@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import { selectableThemes, selectableFontTypes, selectableDisplays } from '$data/options';
-	import { __fontType, __displayType } from '$utils/stores';
+	import { selectableThemes, selectableFontTypes } from '$data/options';
+	import { __fontType } from '$utils/stores';
 	import { isValidVerseKey } from '$utils/validateKey';
 
 	// ---------------------------------------------------------------------------
@@ -23,7 +23,12 @@
 	// every theme, font type and display type defined in the options file, so new ones appear automatically
 	const themeOptions = Object.entries(selectableThemes).filter(([, entry]) => entry);
 	const fontTypeOptions = Object.entries(selectableFontTypes).filter(([, entry]) => entry);
-	const displayTypeOptions = Object.entries(selectableDisplays).filter(([, entry]) => entry);
+
+	// the only two display types the preview needs
+	const displayTypeOptions = [
+		{ id: 1, label: 'Word By Word' },
+		{ id: 2, label: 'Normal' }
+	];
 
 	// ---------------------------------------------------------------------------
 	// State
@@ -31,15 +36,12 @@
 
 	// start with whatever the user currently has selected in the real app
 	let fontType = Number($__fontType);
-	let displayType = Number($__displayType);
+	let displayType = 1;
 
 	// verse shown in every block, chapter 2 is the default because the real site skips the bismillah on chapter 1 and 9
 	let verseKey = '2:1';
 	let verseKeyInput = verseKey;
 	let isVerseKeyInvalid = false;
-
-	// show / hide the word translation and transliteration
-	let showWordTranslations = false;
 
 	// height of each iframe, reported by the iframe itself
 	let frameHeights = {};
@@ -55,7 +57,7 @@
 			fontType,
 			displayType,
 			verseKey,
-			showWordTranslations: showWordTranslations ? '1' : '0'
+			showWordTranslations: 1
 		})}`;
 
 	// applies the typed verse key when it is valid
@@ -80,19 +82,26 @@
 </script>
 
 <div class="p-4 space-y-4">
+	<!-- back to homepage -->
+	<a href="/" class="inline-block text-sm underline">← Back to homepage</a>
+
 	<!-- controls -->
-	<div class="flex flex-wrap items-center gap-2 text-sm">
+	<div class="flex-col space-y-2 flex-wrap items-center gap-2 text-sm">
 		<span class="font-semibold">Font type:</span>
-		{#each fontTypeOptions as [fontTypeId, fontTypeEntry]}
-			<button class="px-3 py-1 rounded-lg border {fontType === Number(fontTypeId) ? 'bg-black text-white' : ''}" on:click={() => (fontType = Number(fontTypeId))}>{fontTypeId} · {getLabel(fontTypeEntry, fontTypeId)}</button>
-		{/each}
+		<div>
+			{#each fontTypeOptions as [fontTypeId, fontTypeEntry]}
+				<button class="px-3 py-1 m-1 rounded-lg border {fontType === Number(fontTypeId) ? 'bg-black text-white' : ''}" on:click={() => (fontType = Number(fontTypeId))}>{fontTypeId} · {getLabel(fontTypeEntry, fontTypeId)}</button>
+			{/each}
+		</div>
 	</div>
 
-	<div class="flex flex-wrap items-center gap-2 text-sm">
+	<div class="flex-col space-y-2 flex-wrap items-center gap-2 text-sm">
 		<span class="font-semibold">Display:</span>
-		{#each displayTypeOptions as [displayTypeId, displayTypeEntry]}
-			<button class="px-3 py-1 rounded-lg border {displayType === Number(displayTypeId) ? 'bg-black text-white' : ''}" on:click={() => (displayType = Number(displayTypeId))}>{displayTypeId} · {getLabel(displayTypeEntry, displayTypeId)}</button>
-		{/each}
+		<div>
+			{#each displayTypeOptions as displayTypeOption}
+				<button class="px-3 py-1 m-1 rounded-lg border {displayType === displayTypeOption.id ? 'bg-black text-white' : ''}" on:click={() => (displayType = displayTypeOption.id)}>{displayTypeOption.id} · {displayTypeOption.label}</button>
+			{/each}
+		</div>
 	</div>
 
 	<div class="flex flex-wrap items-center gap-4 text-sm">
@@ -100,16 +109,11 @@
 			<span class="font-semibold">Verse:</span>
 			<input type="text" class="border rounded-lg px-2 py-1 w-24 {isVerseKeyInvalid ? 'border-red-500' : ''}" bind:value={verseKeyInput} on:change={applyVerseKey} />
 		</label>
-
-		<label class="flex items-center gap-2">
-			<input type="checkbox" bind:checked={showWordTranslations} />
-			<span>Word translation / transliteration</span>
-		</label>
 	</div>
 
 	<!-- one iframe per theme -->
 	<div class="grid gap-4" style="grid-template-columns: repeat({columnCount}, minmax(0, 1fr))">
-		{#each themeOptions as [themeId, themeEntry] (themeId)}
+		{#each themeOptions.slice(0, 1) as [themeId, themeEntry] (themeId)}
 			<div class="rounded-2xl border overflow-hidden">
 				<div class="text-xs px-3 py-1 opacity-70">theme-{themeId} · {getLabel(themeEntry, themeId)}</div>
 
