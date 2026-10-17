@@ -72,7 +72,7 @@
 			<!-- same component the real chapter / juz pages use -->
 			<svelte:component this={FullVersesDisplay} keys={verseKey} startIndex={0} endIndex={0} />
 		{:else}
-			<div class="text-red-600">FullVersesDisplay.svelte was not found in src</div>
+			<div>FullVersesDisplay.svelte was not found in src</div>
 		{/if}
 	</div>
 </div>
