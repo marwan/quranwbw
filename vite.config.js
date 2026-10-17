@@ -2,12 +2,22 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { execSync } from 'node:child_process';
 import { config } from 'dotenv';
-import { excludeDevRoutes } from './exclude-dev-routes.vite-plugin.js';
 
 config();
 
-// set to true to remove the /dev routes (appearance preview, icon, etc.) from production builds
-const excludeDevRoutesFromBuild = false;
+// when EXCLUDE_DEV_ROUTES=true is set at build time, the /dev routes are stripped from the bundle
+const excludeDevRoutesFromBuild = process.env.EXCLUDE_DEV_ROUTES === 'true';
+
+// during `vite build` every +page.svelte under src/routes/dev/ is replaced with an empty file,
+// so the page code and everything only it imports never reaches the bundle
+const excludeDevRoutes = () => ({
+	name: 'exclude-dev-routes',
+	enforce: 'pre',
+	apply: 'build',
+	load(id) {
+		if (/[\\/]src[\\/]routes[\\/]dev[\\/].*\+page\.svelte$/.test(id.split('?')[0])) return '';
+	}
+});
 
 function getVersion() {
 	try {
