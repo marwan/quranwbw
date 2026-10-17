@@ -2,8 +2,12 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { execSync } from 'node:child_process';
 import { config } from 'dotenv';
+import { excludeDevRoutes } from './exclude-dev-routes.vite-plugin.js';
 
 config();
+
+// set to true to remove the /dev routes (appearance preview, icon, etc.) from production builds
+const excludeDevRoutesFromBuild = false;
 
 function getVersion() {
 	try {
@@ -34,7 +38,8 @@ function getVersion() {
 }
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	// the exclusion plugin must come before sveltekit()
+	plugins: [...(excludeDevRoutesFromBuild ? [excludeDevRoutes()] : []), sveltekit()],
 	define: {
 		__APP_VERSION__: JSON.stringify(getVersion())
 	},
