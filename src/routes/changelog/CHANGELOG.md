@@ -1,6 +1,6 @@
-### Oct 2, 2026
+### Oct 17, 2026
 
-- **New Themes:** Added six new themes — **Ash Noir**, **Teal Ember**, **Linen Clay**, **Olive Mist**, **Frost Slate** and **Desert Dune** — providing additional dark, warm, and light color options for the reading experience.
+- **New Themes:** Added six new themes — **Ash Noir**, **Teal Ember**, **Linen Clay**, **Olive Mist** and **Frost Slate** — providing additional dark, warm, and light color options for the reading experience.
 
 ---
 
