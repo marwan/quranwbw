@@ -107,7 +107,7 @@
 	<div class="flex flex-wrap items-center gap-4 text-sm">
 		<label class="flex items-center gap-2">
 			<span class="font-semibold">Verse:</span>
-			<input type="text" class="border rounded-lg px-2 py-1 w-24 {isVerseKeyInvalid ? 'border-red-500' : ''}" bind:value={verseKeyInput} on:change={applyVerseKey} />
+			<input type="text" class="border rounded-lg px-2 py-1 w-24" bind:value={verseKeyInput} on:change={applyVerseKey} />
 		</label>
 	</div>
 
