@@ -113,7 +113,7 @@
 
 	<!-- one iframe per theme -->
 	<div class="grid gap-4" style="grid-template-columns: repeat({columnCount}, minmax(0, 1fr))">
-		{#each themeOptions.slice(0, 1) as [themeId, themeEntry] (themeId)}
+		{#each themeOptions as [themeId, themeEntry] (themeId)}
 			<div class="rounded-2xl border overflow-hidden">
 				<div class="text-xs px-3 py-1 opacity-70">theme-{themeId} · {getLabel(themeEntry, themeId)}</div>
 
