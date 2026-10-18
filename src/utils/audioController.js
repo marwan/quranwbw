@@ -196,6 +196,9 @@ export async function playVerseAudio(props) {
 			scrollElementIntoView(audioSettings.playingKey);
 		}
 
+		// Guard so handleVerseEnd only runs once per verse
+		let verseEnded = false;
+
 		// Monitor when the verse ends (not the entire chapter)
 		audio.ontimeupdate = function () {
 			const currentTimeMs = audio.currentTime * 1000;
@@ -207,7 +210,17 @@ export async function playVerseAudio(props) {
 			}
 		};
 
+		// last verse can end before timestamp_to is reached, so also catch the real end of the file
+		audio.onended = function () {
+			audio.removeEventListener('timeupdate', wordHighlighter);
+			handleVerseEnd();
+		};
+
 		async function handleVerseEnd() {
+			// ignore repeated calls (timeupdate keeps firing during the delay, and ended can follow it)
+			if (verseEnded) return;
+			verseEnded = true;
+
 			const previousLanguage = props.language;
 
 			// Determine the delay based on audioDelay settings
@@ -436,7 +449,7 @@ export function resetAudioSettings(props) {
 		audio.removeEventListener('timeupdate', trackAudioProgress);
 
 		document.querySelectorAll('.word').forEach((element) => {
-			element.classList.remove('bg-black/5');
+			element.classList.remove('bg-theme-accent/15');
 		});
 	} catch (error) {
 		console.warn(error);
