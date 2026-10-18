@@ -441,6 +441,7 @@ export function resetAudioSettings(props) {
 		});
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 }
 
@@ -485,8 +486,55 @@ export async function wordAudioController(props) {
 		return;
 	}
 
-	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key });
+	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key, suppressOfflineAlert: props.suppressOfflineAlert });
 }
+
+// Replay the verse that just finished with the audio muted
+// So word highlight plays at the delay's speed
+// async function playAssistedHighlights(speed, requestId) {
+// 	const originalPlaybackRate = audio.playbackRate;
+
+// 	try {
+// 		const audioSettings = get(__audioSettings);
+// 		audioSettings.playingWordKey = null;
+// 		__audioSettings.set(audioSettings);
+
+// 		audio.muted = true;
+// 		audio.currentTime = 0;
+// 		audio.playbackRate = speed;
+// 		audio.addEventListener('timeupdate', wordHighlighter);
+// 		await audio.play();
+
+// 		// Resolve on pause as well as ended, otherwise stopping mid-replay would leave
+// 		// this promise hanging and the player muted
+// 		await new Promise((resolve) => {
+// 			if (audio.paused || audio.ended) return resolve();
+
+// 			const onDone = () => {
+// 				audio.removeEventListener('ended', onDone);
+// 				audio.removeEventListener('pause', onDone);
+// 				resolve();
+// 			};
+
+// 			audio.addEventListener('ended', onDone);
+// 			audio.addEventListener('pause', onDone);
+// 		});
+// 	} catch (error) {
+// 		console.warn(error);
+// 		window.rybbit?.error(error);
+// 	} finally {
+// 		audio.removeEventListener('timeupdate', wordHighlighter);
+// 		audio.muted = false;
+// 		audio.playbackRate = originalPlaybackRate;
+
+// 		// Leave no word highlighted going into the next verse
+// 		if (requestId === activeAudioRequestId) {
+// 			const settings = get(__audioSettings);
+// 			settings.playingWordKey = null;
+// 			__audioSettings.set(settings);
+// 		}
+// 	}
+// }
 
 // Highlight words during audio playback based on timestamps
 async function wordHighlighter() {
@@ -632,10 +680,11 @@ function getWordsInVerse(key) {
 
 	if (isMushafPage) {
 		const pageData = JSON.parse(localStorage.getItem('pageData'));
-		return Number(pageData[key].meta.words);
+		return Number(pageData?.[key]?.meta?.words) || 0;
 	} else {
-		const wordData = document.querySelector(`.verse-${chapter}-${verse}`).dataset.words;
-		return Number(wordData);
+		// verse element may not exist (games page, navigated away mid-playback)
+		const wordData = document.querySelector(`.verse-${chapter}-${verse}`)?.dataset.words;
+		return Number(wordData) || 0;
 	}
 }
 
@@ -715,5 +764,6 @@ function scrollElementIntoView(id) {
 		});
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 }

@@ -54,7 +54,7 @@
 
 		showConfirm(`Are you sure you want to delete this bookmark (${bookmark})?`, null, () => {
 			updateSettings({ type: 'userBookmarks', key: bookmark });
-			window.umami?.track('Delete Bookmark Menu');
+			window.rybbit?.event('Delete Bookmark Menu');
 		});
 	}
 </script>

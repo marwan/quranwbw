@@ -213,10 +213,10 @@ export function updateSettings(props) {
 				// Toggle: remove the chapter if already favorited, add it if not
 				if (userFavoriteChapters.includes(chapterKey)) {
 					userFavoriteChapters = userFavoriteChapters.filter((x) => x !== chapterKey);
-					window.umami?.track('Remove Chapter From Favorites');
+					window.rybbit?.event('Remove Chapter From Favorites');
 				} else {
 					userFavoriteChapters.push(chapterKey);
-					window.umami?.track('Add Chapter To Favorites');
+					window.rybbit?.event('Add Chapter To Favorites');
 				}
 				userSettings.userFavoriteChapters = userFavoriteChapters;
 			}
@@ -354,7 +354,7 @@ export function updateSettings(props) {
 
 	// Track event change
 	if (trackEvent) {
-		// window.umami.track('Setting Change', { type: props.type, value: props.value });
+		// window.rybbit?.event('Setting Change', { type: props.type, value: props.value });
 	}
 
 	// update the settings back into localStorage and global store

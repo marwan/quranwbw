@@ -49,6 +49,7 @@ export async function registerServiceWorker() {
 		return { success: true, registration };
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 		return { success: false, error: error.message };
 	}
 }
@@ -68,6 +69,7 @@ export async function unregisterServiceWorkerAndClearCache() {
 		console.log('All service workers unregistered and caches cleared.');
 	} catch (error) {
 		console.warn(error);
+		window.rybbit?.error(error);
 	}
 }
 
@@ -109,10 +111,10 @@ export function showOfflineAlert() {
 
 // Checks internet connectivity and shows the offline alert if unavailable.
 // Returns true if online, false if offline.
-export async function checkOnlineAndAlert() {
+export async function checkOnlineAndAlert({ suppressAlert = false } = {}) {
 	const online = await isUserOnline();
 	if (online) return true;
 
-	showOfflineAlert();
+	if (!suppressAlert) showOfflineAlert();
 	return false;
 }

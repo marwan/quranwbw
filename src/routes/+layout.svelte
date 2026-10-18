@@ -67,6 +67,7 @@
 					wakeLock = await navigator.wakeLock.request('screen');
 				} catch (error) {
 					console.warn(error);
+					window.rybbit?.error(error);
 				}
 			}
 		} else {
@@ -150,7 +151,7 @@
 		}
 	})();
 
-	// Function to track the website Git version in Umami analytics
+	// Function to track the website Git version in Rybbit analytics
 	(function trackWebsiteVersion() {
 		try {
 			const currentVersion = __APP_VERSION__.split(' ')[0];
@@ -167,8 +168,8 @@
 
 			// Check if this version was already sent
 			if (data.sentVersion !== currentVersion) {
-				if (window.umami && typeof window.umami.track === 'function') {
-					window.umami.track('Website Version', { version: currentVersion });
+				if (window.rybbit && typeof window.rybbit?.event === 'function') {
+					window.rybbit?.event('Website Version', { version: currentVersion });
 				}
 				// Mark as sent
 				data.sentVersion = currentVersion;
@@ -178,6 +179,7 @@
 			localStorage.setItem(storageKey, JSON.stringify(data));
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	})();
 </script>

@@ -41,7 +41,7 @@
 
 <!-- play/pause button -->
 <div class="flex items-center justify-center">
-	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => handlePlayPause()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group" data-umami-event="Toolbar Play Button">
+	<button type="button" title={$__audioSettings.isPlaying ? 'Pause' : 'Play'} on:click={() => handlePlayPause()} class="inline-flex flex-col items-center justify-center w-12 h-12 rounded-full group" data-rybbit-event="Toolbar Play Button">
 		<span><svelte:component this={$__audioSettings.isPlaying ? PauseSolid : PlaySolid} size={5} /></span>
 		<span class="sr-only">{$__audioSettings.isPlaying ? 'Pause' : 'Play'}</span>
 
