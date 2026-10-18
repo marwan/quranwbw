@@ -42,7 +42,7 @@ export function pauseOrResumeAudio() {
 		// Clear word highlighting when paused
 		audioSettings.playingWordKey = null;
 		document.querySelectorAll('.word').forEach((element) => {
-			element.classList.remove('bg-black/5');
+			element.classList.remove('bg-theme-accent/15');
 		});
 	} else {
 		audio.play();
