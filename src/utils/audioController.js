@@ -261,8 +261,10 @@ export async function playVerseAudio(props) {
 			// Reset settings after playback ends
 			resetAudioSettings({ location: 'end' });
 		}
-	} else {
-		// Translation audio remains verse-by-verse
+	}
+
+	// Translation audio remains verse-by-verse
+	else {
 		const reciterAudioUrl = selectableTranslationReciters[get(__translationReciter)].url;
 		const currentVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse).padStart(3, '0')}.mp3`;
 		const nextVerseFileName = `${String(playChapter).padStart(3, '0')}${String(playVerse + 1).padStart(3, '0')}.mp3`;
