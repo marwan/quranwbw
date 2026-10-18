@@ -105,6 +105,13 @@ export function playNextVerse() {
 	});
 }
 
+// clears the loading flag once audio is ready (or errored)
+function clearLoading() {
+	const audioSettings = get(__audioSettings);
+	audioSettings.isLoading = false;
+	__audioSettings.set(audioSettings);
+}
+
 // Function to play verse audio, either one time or multiple times
 export async function playVerseAudio(props) {
 	console.log('playVerseAudio called with:', props.key);
@@ -135,6 +142,10 @@ export async function playVerseAudio(props) {
 
 	// For Arabic audio, use chapter-based audio file
 	if (props.language === 'arabic') {
+		// show loading while timestamp data is fetched
+		audioSettings.isLoading = true;
+		__audioSettings.set(audioSettings);
+
 		// Fetch timestamp data for the chapter
 		const timestampData = await fetchChapterTimestampData(playChapter);
 
@@ -161,6 +172,13 @@ export async function playVerseAudio(props) {
 			audio.src = chapterAudioUrl;
 			audio.load();
 			audio.currentTime = verseTiming.timestamp_from / 1000;
+
+			// keep loading true until the mp3 is ready (or fails)
+			audio.addEventListener('canplay', clearLoading, { once: true });
+			audio.addEventListener('error', clearLoading, { once: true });
+		} else {
+			// same chapter file already loaded, nothing to wait for
+			audioSettings.isLoading = false;
 		}
 
 		// Seek to verse timestamp if:
@@ -275,7 +293,14 @@ export async function playVerseAudio(props) {
 		audio.src = `${reciterAudioUrl}/${currentVerseFileName}`;
 		audio.currentTime = 0;
 		audio.load();
+
+		// show loading until the translation mp3 is ready (or fails)
+		audioSettings.isLoading = true;
+		__audioSettings.set(audioSettings);
+		audio.addEventListener('canplay', clearLoading, { once: true });
+		audio.addEventListener('error', clearLoading, { once: true });
 		audio.playbackRate = selectablePlaybackSpeeds[get(__playbackSpeed)].speed;
+
 		audio.play();
 
 		audioSettings.isPlaying = true;
@@ -435,6 +460,7 @@ export function resetAudioSettings(props) {
 		audio.currentTime = 0;
 		audioSettings.isPlaying = false;
 		audioSettings.playingWordKey = null;
+		audioSettings.isLoading = false;
 
 		// Reset paused state and tracking
 		audioSettings.audioIsPaused = false;
@@ -449,6 +475,8 @@ export function resetAudioSettings(props) {
 		__audioSettings.set(audioSettings);
 		audio.removeEventListener('timeupdate', wordHighlighter);
 		audio.removeEventListener('timeupdate', trackAudioProgress);
+		audio.removeEventListener('canplay', clearLoading); // drop stale loading listeners
+		audio.removeEventListener('error', clearLoading);
 
 		document.querySelectorAll('.word').forEach((element) => {
 			element.classList.remove('bg-theme-accent/15');

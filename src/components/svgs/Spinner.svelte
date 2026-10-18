@@ -7,6 +7,7 @@
 	export let inline = false;
 	export let delay = 200;
 	export let hideMessages = false;
+	export let strokeWidth = 1;
 
 	let message = '';
 	let visible = false;
@@ -43,6 +44,9 @@
 		}
 	}
 
+	// keeps the stroke inside the 32x32 viewBox
+	$: radius = 8 - strokeWidth / 2;
+
 	$: ($page.url.pathname, resetMessages());
 
 	onDestroy(() => {
@@ -53,7 +57,7 @@
 {#if visible}
 	<div class={`flex flex-col items-center justify-center text-center ${inline ? '' : 'fixed inset-0'} ${margin}`}>
 		<svg class="animate-spin w-{size} h-{size}" fill="none" viewBox="0 0 32 32">
-			<path clip-rule="evenodd" d="M15.165 8.53a.5.5 0 01-.404.58A7 7 0 1023 16a.5.5 0 011 0 8 8 0 11-9.416-7.874.5.5 0 01.58.404z" class="fill-theme-accent" fill-rule="evenodd" />
+			<path d="M16 {16 - radius} A {radius} {radius} 0 1 0 {16 + radius} 16" stroke-width={strokeWidth} stroke-linecap="round" class="stroke-theme-accent" />
 		</svg>
 
 		{#if !hideMessages && message}
