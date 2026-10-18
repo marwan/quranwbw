@@ -519,9 +519,8 @@ svg {
 }
 
 /* Markdown Colors */
-.markdown hr { border-color: rgb(var(--theme-accent-rgb) / 0.2); }
-.markdown a  { color: rgb(var(--theme-accent-rgb)); }
-.markdown h3 { color: rgb(var(--theme-accent-rgb)); }
+.markdown hr, .markdown code { border-color: rgb(var(--theme-accent-rgb) / 0.2); }
+.markdown a, .markdown h3, .markdown h4  { color: rgb(var(--theme-accent-rgb)); }
 
 /* Firefox-only glyph rendering fix: add a transparent text-shadow with blur equal to font-size.
   This mitigates occasional glyph edge artifacts when drawing Arabic glyphs in Firefox.
