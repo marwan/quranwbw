@@ -61,20 +61,22 @@ export function playPreviousVerse() {
 
 	if (!window.versesToPlayArray || window.versesToPlayArray.length === 0) return;
 
-	const currentIndex = window.versesToPlayArray.indexOf(audioSettings.playingKey);
+	const history = window.versesPlayedArray || []; // verses already played
 
-	if (currentIndex <= 0) {
+	// nothing in history means we're at the first verse
+	if (history.length === 0) {
 		console.log('Already at the first verse');
 		return;
 	}
 
-	const previousKey = window.versesToPlayArray[currentIndex - 1];
+	// put the previous verse back at the front of the queue
+	window.versesToPlayArray.unshift(history.pop());
 
 	playVerseAudio({
-		key: previousKey,
+		key: window.versesToPlayArray[0], // array[0] is always the current verse
 		timesToRepeat: audioSettings.timesToRepeat || 1,
 		language: audioSettings.language || 'arabic',
-		manualSeek: true // ← NEW: indicates user clicked prev/next
+		manualSeek: true
 	});
 }
 
@@ -86,20 +88,20 @@ export function playNextVerse() {
 
 	if (!window.versesToPlayArray || window.versesToPlayArray.length === 0) return;
 
-	const currentIndex = window.versesToPlayArray.indexOf(audioSettings.playingKey);
-
-	if (currentIndex === -1 || currentIndex >= window.versesToPlayArray.length - 1) {
+	// current verse is array[0], so we need at least 2 items to go next
+	if (window.versesToPlayArray.length <= 1) {
 		console.log('Already at the last verse');
 		return;
 	}
 
-	const nextKey = window.versesToPlayArray[currentIndex + 1];
+	// move current verse to history, next verse becomes array[0]
+	(window.versesPlayedArray ||= []).push(window.versesToPlayArray.shift());
 
 	playVerseAudio({
-		key: nextKey,
+		key: window.versesToPlayArray[0], // array[0] is always the current verse
 		timesToRepeat: audioSettings.timesToRepeat || 1,
 		language: audioSettings.language || 'arabic',
-		manualSeek: true // ← NEW: indicates user clicked prev/next
+		manualSeek: true
 	});
 }
 
@@ -231,10 +233,8 @@ export async function playVerseAudio(props) {
 
 			// If there are more verses to play, continue
 			if (window.versesToPlayArray?.length > 0) {
-				const index = window.versesToPlayArray.indexOf(audioSettings.playingKey);
-				if (index > -1) {
-					window.versesToPlayArray.splice(index, 1);
-				}
+				// move finished verse to history instead of deleting it
+				(window.versesPlayedArray ||= []).push(window.versesToPlayArray.shift());
 
 				if (window.versesToPlayArray.length > 0) {
 					return playVerseAudio({
@@ -293,10 +293,8 @@ export async function playVerseAudio(props) {
 
 			// If there are more verses to play, continue
 			if (window.versesToPlayArray?.length > 0) {
-				const index = window.versesToPlayArray.indexOf(audioSettings.playingKey);
-				if (index > -1) {
-					window.versesToPlayArray.splice(index, 1);
-				}
+				// move finished verse to history instead of deleting it
+				(window.versesPlayedArray ||= []).push(window.versesToPlayArray.shift());
 
 				if (window.versesToPlayArray.length > 0) {
 					return playVerseAudio({
@@ -430,6 +428,7 @@ export function resetAudioSettings(props) {
 
 		if (props?.location === 'end') {
 			window.versesToPlayArray = [];
+			window.versesPlayedArray = [];
 		}
 
 		__audioSettings.set(audioSettings);
@@ -538,6 +537,9 @@ export async function wordAudioController(props) {
 
 // Highlight words during audio playback based on timestamps
 async function wordHighlighter() {
+	// Ignore the timeupdate that fires right after pause()
+	if (audio.paused) return;
+
 	const audioSettings = get(__audioSettings);
 
 	try {
@@ -593,6 +595,7 @@ export function setVersesToPlay(props) {
 	const audioSettings = get(__audioSettings);
 
 	window.versesToPlayArray = [];
+	window.versesPlayedArray = [];
 
 	// If the verses were provided in an array, just use those
 	if (props?.verses) {
