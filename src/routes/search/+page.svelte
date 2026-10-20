@@ -23,7 +23,8 @@
 	let resultsFound = false;
 	let badRequest = false;
 	let navigationResults = [];
-	let resultKeys;
+	let topKeys = null;
+	let literalKeys = null;
 	let totalResults = 0;
 
 	// Cache object to store search results (keyed by query, stores combined results)
@@ -105,11 +106,14 @@
 		// Extract verse keys from Kalimat results
 		const { verseKeys: kalimatVerseKeys, navigationItems } = processKalimatResults(kalimatData);
 
-		// Merge keys from both APIs into a Set to automatically remove duplicates
-		const mergedKeySet = new Set([...kalimatVerseKeys, ...quranCloudKeys]);
-		const combinedVerseKeys = Array.from(mergedKeySet);
+		// Top matches keep Kalimat's ranked order (deduplicated, not sorted)
+		const topKeys = Array.from(new Set(kalimatVerseKeys));
 
-		return { navigationItems, combinedVerseKeys };
+		// Literal matches exclude anything already in top matches, sorted canonically
+		const topKeySet = new Set(topKeys);
+		const literalKeys = sortVerseKeys(quranCloudKeys.filter((key) => !topKeySet.has(key)));
+
+		return { navigationItems, topKeys, literalKeys };
 	}
 
 	// Get results from cache or fetch from both APIs
@@ -179,16 +183,15 @@
 		const result = await getSearchResults(searchQuery);
 
 		if (result) {
-			const { navigationItems, combinedVerseKeys } = result;
+			const { navigationItems, topKeys: top, literalKeys: literal } = result;
 
 			navigationResults = navigationItems;
+			topKeys = top.length > 0 ? top : null;
+			literalKeys = literal.length > 0 ? literal : null;
 
 			// Total results = unique verse keys + navigation items
-			totalResults = combinedVerseKeys.length + navigationItems.length;
-			resultsFound = combinedVerseKeys.length > 0 || navigationItems.length > 0;
-
-			// Sort the final merged verse keys before passing to the display component
-			resultKeys = combinedVerseKeys.length > 0 ? sortVerseKeys(combinedVerseKeys) : null;
+			totalResults = top.length + literal.length + navigationItems.length;
+			resultsFound = totalResults > 0;
 		}
 
 		// Both APIs returned no usable data
@@ -197,7 +200,8 @@
 			navigationResults = [];
 			totalResults = 0;
 			resultsFound = false;
-			resultKeys = null;
+			topKeys = null;
+			literalKeys = null;
 		}
 
 		fetchingNewData = false;
@@ -282,11 +286,23 @@
 				{/if}
 
 				<div id="individual-verses-block" in:fade={{ duration: 300 }}>
-					{#key resultKeys}
-						{#if resultKeys}
-							<FullVersesDisplay keys={resultKeys.toString()} />
-						{/if}
-					{/key}
+					{#if topKeys}
+						<div id="top-matches" class="mt-6">
+							<div class="text-center text-sm font-semibold">Top Matches</div>
+							{#key topKeys}
+								<FullVersesDisplay keys={topKeys.toString()} />
+							{/key}
+						</div>
+					{/if}
+
+					{#if literalKeys}
+						<div id="literal-matches" class="mt-6">
+							<div class="text-center text-sm font-semibold">Literal Matches</div>
+							{#key literalKeys}
+								<FullVersesDisplay keys={literalKeys.toString()} />
+							{/key}
+						</div>
+					{/if}
 				</div>
 			</div>
 		{/if}
