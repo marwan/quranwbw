@@ -26,7 +26,6 @@
 	let navigationResults = [];
 	let topKeys = null;
 	let literalKeys = null;
-	let totalResults = 0;
 
 	// Cache object to store search results (keyed by query, stores combined results)
 	let searchCache = {};
@@ -96,7 +95,7 @@
 	}
 
 	// Fetch both APIs in parallel and return combined, deduplicated results
-	// Returns null if both APIs fail, otherwise { navigationItems, combinedVerseKeys }
+	// Returns null if both APIs fail, otherwise { navigationItems, topKeys, literalKeys }
 	async function fetchAllResults(query) {
 		// Fire both requests at the same time — neither waits for the other
 		const [kalimatData, quranCloudKeys] = await Promise.all([fetchKalimatResults(query), fetchQuranCloudKeys(query)]);
@@ -190,16 +189,14 @@
 			topKeys = top.length > 0 ? top : null;
 			literalKeys = literal.length > 0 ? literal : null;
 
-			// Total results = unique verse keys + navigation items
-			totalResults = top.length + literal.length + navigationItems.length;
-			resultsFound = totalResults > 0;
+			// Anything to show at all (verses or navigation cards)
+			resultsFound = top.length > 0 || literal.length > 0 || navigationItems.length > 0;
 		}
 
 		// Both APIs returned no usable data
 		else {
 			badRequest = true;
 			navigationResults = [];
-			totalResults = 0;
 			resultsFound = false;
 			topKeys = null;
 			literalKeys = null;
@@ -268,9 +265,7 @@
 		{:else}
 			<div id="search-block">
 				<div id="search-results-information" class="text-center text-xs">
-					{#if resultsFound}
-						<span>Showing {totalResults} {totalResults === 1 ? 'result' : 'results'} related to "{searchQuery}".</span>
-					{:else if !resultsFound && navigationResults.length === 0}
+					{#if !resultsFound}
 						<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results. Please try using a different keyword.</div>
 					{/if}
 				</div>
@@ -289,7 +284,7 @@
 				<div id="individual-verses-block" in:fade={{ duration: 300 }}>
 					{#if topKeys}
 						<div id="top-matches" class="mt-6">
-							<SectionDivider text="Best Matches" />
+							<SectionDivider text="Best Matches ({topKeys.length})" />
 							{#key topKeys}
 								<FullVersesDisplay keys={topKeys.toString()} />
 							{/key}
@@ -298,7 +293,7 @@
 
 					{#if literalKeys}
 						<div id="literal-matches" class="mt-6">
-							<SectionDivider text="Found in Translations" />
+							<SectionDivider text="Found in Translations ({literalKeys.length})" />
 							{#key literalKeys}
 								<FullVersesDisplay keys={literalKeys.toString()} />
 							{/key}
