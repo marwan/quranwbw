@@ -4,6 +4,7 @@
 	import Search2 from '$svgs/Search2.svelte';
 	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
+	import SectionDivider from '$display/SectionDivider.svelte';
 	import { goto } from '$app/navigation';
 	import { __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
@@ -278,7 +279,7 @@
 					<div id="navigation-results" class="flex flex-wrap space-x-4 justify-center mt-6">
 						{#each navigationResults as item}
 							{@const [itemTitle, itemLink] = getNavigationLink(item)}
-							<a href={itemLink} target="_blank" class="{linkClasses} my-1">
+							<a href={itemLink} target="_blank" class="{linkClasses} my-1" data-rybbit-event="Search Navigation Chapter Card Click">
 								<span class={linkTextClasses}>{itemTitle} {@html '&#8599;'}</span>
 							</a>
 						{/each}
@@ -288,7 +289,7 @@
 				<div id="individual-verses-block" in:fade={{ duration: 300 }}>
 					{#if topKeys}
 						<div id="top-matches" class="mt-6">
-							<div class="text-center text-sm font-semibold">Top Matches</div>
+							<SectionDivider text="Closest in Meaning" />
 							{#key topKeys}
 								<FullVersesDisplay keys={topKeys.toString()} />
 							{/key}
@@ -297,7 +298,7 @@
 
 					{#if literalKeys}
 						<div id="literal-matches" class="mt-6">
-							<div class="text-center text-sm font-semibold">Literal Matches</div>
+							<SectionDivider text="Found in Translations" />
 							{#key literalKeys}
 								<FullVersesDisplay keys={literalKeys.toString()} />
 							{/key}
