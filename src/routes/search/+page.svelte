@@ -289,7 +289,7 @@
 				<div id="individual-verses-block" in:fade={{ duration: 300 }}>
 					{#if topKeys}
 						<div id="top-matches" class="mt-6">
-							<SectionDivider text="Closest in Meaning" />
+							<SectionDivider text="Best Matches" />
 							{#key topKeys}
 								<FullVersesDisplay keys={topKeys.toString()} />
 							{/key}
