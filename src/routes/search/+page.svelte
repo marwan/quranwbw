@@ -271,7 +271,7 @@
 				</div>
 
 				{#if navigationResults.length > 0}
-					<div id="navigation-results" class="flex flex-wrap space-x-4 justify-center mt-6">
+					<div id="navigation-results" class="flex flex-wrap space-x-4 justify-center mt-6 -mb-2.5">
 						{#each navigationResults as item}
 							{@const [itemTitle, itemLink] = getNavigationLink(item)}
 							<a href={itemLink} target="_blank" class="{linkClasses} my-1" data-rybbit-event="Search Navigation Chapter Card Click">
