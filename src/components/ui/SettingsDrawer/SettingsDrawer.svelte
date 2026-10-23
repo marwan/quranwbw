@@ -114,6 +114,9 @@
 	// Hide settings drawer and go back to main settings on certain conditions
 	$: if ($__currentPage || $__settingsDrawerHidden) goBackToMainSettings();
 
+	// Hide the settings drawer whenever the page changes
+	$: if ($__currentPage) $__settingsDrawerHidden = true;
+
 	// Build a Set of all transliteration resource IDs (language_id === 11115)
 	const transliterationIdSet = new Set(
 		Object.values(selectableVerseTranslations)
@@ -576,7 +579,7 @@
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Help improve this website by sharing basic, anonymous usage stats. The page reloads when this is changed.</p>
+						<p class={settingsDescriptionClasses}>Help improve this website by sharing basic, anonymous usage stats. The page reloads when this is changed. See our <a href="/privacy" class={linkClasses}>Privacy Policy</a> for more info.</p>
 					</div>
 
 					<div class="border-b border-theme-accent/20"></div>
