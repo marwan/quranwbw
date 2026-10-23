@@ -214,7 +214,7 @@
 
 <Modal bind:open={$__settingsModalVisible} id="settings-modal" transitionParams={getModalTransition('bottom')} size="xl" class="!rounded-b-none md:!rounded-3xl h-[90vh] md:h-[600px] max-h-[90vh] flex flex-col" bodyClass="p-0 flex flex-col flex-1 min-h-0 overflow-hidden" position="bottom" center outsideclose>
 	<!-- header -->
-	<div class="flex flex-row items-center justify-between flex-shrink-0 px-6 border-b-2 border-theme-accent/20">
+	<div class="flex flex-row items-center justify-between flex-shrink-0 px-6 border-theme-accent/20">
 		<div class="flex flex-row items-center space-x-2">
 			<!-- back to section list, small screens only -->
 			{#if mobileView === 'content'}
@@ -230,7 +230,7 @@
 
 	<div class="flex flex-row flex-1 min-h-0">
 		<!-- section nav (left) -->
-		<nav class="{mobileView === 'content' ? 'hidden' : 'flex'} md:flex flex-col w-full md:w-64 flex-shrink-0 md:border-r-2 border-theme-accent/20 overflow-y-auto p-4" aria-label="Settings sections">
+		<nav class="{mobileView === 'content' ? 'hidden' : 'flex'} md:flex flex-col w-full md:w-64 flex-shrink-0 border-theme-accent/20 overflow-y-auto p-4" aria-label="Settings sections">
 			<div class="space-y-1">
 				{#each sections as section}
 					<button class="flex flex-row items-center justify-between w-full text-left text-base px-4 py-3 rounded-3xl border border-transparent hover:bg-theme-accent/5 {activeSectionId === section.id ? 'md:bg-theme-accent/15 md:font-medium' : ''}" aria-current={activeSectionId === section.id ? 'page' : undefined} on:click={() => selectSection(section.id)}>
@@ -260,7 +260,7 @@
 				</div>
 			{:else}
 				<div id="{activeSection.id}-settings-block" class="py-5">
-					<h3 class="hidden md:block mb-2 font-medium text-xl">{activeSection.title}</h3>
+					<!-- <h3 class="hidden md:block mb-2 font-medium text-xl">{activeSection.title}</h3> -->
 
 					<div class="flex flex-col flex-wrap text-base">
 						<!-- display settings -->
