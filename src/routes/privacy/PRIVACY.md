@@ -37,7 +37,7 @@ This lets us spend our limited time improving what helps you most, instead of gu
 
 #### Turning analytics off
 
-You can turn this off at any time under "Share Anonymous Stats" in the website settings. When you turn it off, the analytics script is no longer loaded at all, so nothing is sent to Rybbit from your browser. The page reloads when you change this setting.
+You can turn this off at any time under "Usage Insights" in the website settings. When you turn it off, the analytics script is no longer loaded at all, so nothing is sent to Rybbit from your browser. The page reloads when you change this setting.
 
 Your choice is remembered only in your own browser (see Cookies & Local Storage below). If you clear your browser data or use a different browser or device, you will need to turn it off again.
 
@@ -86,7 +86,7 @@ Depending on where you live, you may have the right to ask what data we hold abo
 
 QuranWBW.com does not collect names, emails, or any identifier that links usage data to a specific person. This means we cannot tell which analytics data came from you, so we are unable to locate, correct, or delete it on request. Your settings, bookmarks, and reading history are stored only on your own device, and you can remove them at any time by clearing your browser data.
 
-What you can do is stop future collection by turning off "Share Anonymous Stats" in the website settings. You are also welcome to get in touch with any questions.
+What you can do is stop future collection by turning off "Usage Insights" in the website settings. You are also welcome to get in touch with any questions.
 
 ---
 
