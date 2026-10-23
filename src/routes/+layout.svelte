@@ -18,6 +18,7 @@
 	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
 	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
 	import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
+	import SettingsModal from '$ui/Modals/SettingsModal.svelte';
 
 	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
@@ -185,6 +186,7 @@
 </script>
 
 <div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
+	<SettingsModal />
 	<QuranNavigationModal />
 	<AudioModal />
 	<TajweedRulesModal />
