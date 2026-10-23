@@ -330,7 +330,11 @@ export function updateSettings(props) {
 		// for toggling analytics (opt-out)
 		case 'analyticsDisabled':
 			// when on, set the flag that Rybbit and app.html both check
-			if (props.value) localStorage.setItem('disable-rybbit', 'true');
+			if (props.value) {
+				window.rybbit?.event('Disable Analytics');
+				localStorage.setItem('disable-rybbit', 'true');
+			}
+
 			// when off, remove the flag so analytics loads again
 			else localStorage.removeItem('disable-rybbit');
 
