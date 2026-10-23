@@ -77,7 +77,7 @@
 	const dialogTargetId = 'settings-modal';
 
 	// CSS classes
-	const settingsBlockClasses = 'space-y-2 py-6';
+	const settingsBlockClasses = 'space-y-2';
 	const selectorClasses = 'w-32 border border-theme-accent/20 text-left rounded-3xl focus:border-theme-accent focus:ring-theme-accent focus-within:ring-2 block p-2.5 truncate text-sm';
 	const settingsDescriptionClasses = 'mb-6 text-xs opacity-70';
 	const toggleBtnClasses = 'relative w-14 h-7 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:content-[""] after:absolute after:top-0.5 after:start-[4px] after:border after:rounded-full after:h-6 after:w-6 after:transition-all bg-theme-accent/15 after:bg-theme-bg after:border-theme-bg peer-checked:bg-theme-accent';
@@ -233,7 +233,7 @@
 		<nav class="{mobileView === 'content' ? 'hidden' : 'flex'} md:flex flex-col w-full md:w-64 flex-shrink-0 border-theme-accent/20 overflow-y-auto p-4" aria-label="Settings sections">
 			<div class="space-y-1">
 				{#each sections as section}
-					<button class="flex flex-row items-center justify-between w-full text-left text-base px-4 py-3 rounded-3xl border border-transparent hover:bg-theme-accent/5 {activeSectionId === section.id ? 'md:bg-theme-accent/15 md:font-medium' : ''}" aria-current={activeSectionId === section.id ? 'page' : undefined} on:click={() => selectSection(section.id)}>
+					<button class="flex flex-row items-center justify-between w-full text-left text-base px-4 py-3 rounded-3xl border border-transparent hover:bg-theme-accent/5 {activeSectionId === section.id ? 'md:bg-theme-accent/15' : ''}" aria-current={activeSectionId === section.id ? 'page' : undefined} on:click={() => selectSection(section.id)}>
 						<span>{section.name}</span>
 						<span class="md:hidden opacity-70" aria-hidden="true">›</span>
 					</button>
@@ -274,7 +274,7 @@
 								<p class={settingsDescriptionClasses}>An assortment of website themes to please your vision.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- display-type-setting -->
 							<div id="display-type-setting" class={settingsBlockClasses}>
@@ -285,7 +285,7 @@
 								<p class={settingsDescriptionClasses}>Different {term('verse')} layouts that you can choose from.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- word-tooltip-setting -->
 							<div id="word-tooltip-setting" class={settingsBlockClasses}>
@@ -296,7 +296,7 @@
 								<p class={settingsDescriptionClasses}>Choose what is displayed when you hover a word.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- word-translation-toggle-setting -->
 							<div id="word-translation-toggle-setting" class={settingsBlockClasses}>
@@ -311,7 +311,7 @@
 								<p class={settingsDescriptionClasses}>Toggle the word translation which is shown below the Arabic word.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- word-transliteration-toggle-setting -->
 							<div id="word-transliteration-toggle-setting" class="{settingsBlockClasses} {$__signLanguageModeEnabled && disabledClasses}">
@@ -327,7 +327,7 @@
 
 							<!-- prevent sleep toggle, only show if the browser supports it  -->
 							{#if 'wakeLock' in navigator}
-								<div class="border-b border-theme-accent/20"></div>
+								<div class="border-b border-theme-accent/20 my-6"></div>
 
 								<!-- prevent-sleep-toggle-setting -->
 								<div id="prevent-sleep-toggle-setting" class={settingsBlockClasses}>
@@ -342,7 +342,7 @@
 								</div>
 							{/if}
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- wide-website-layout-setting -->
 							<div id="wide-website-layout-setting" class={settingsBlockClasses}>
@@ -356,7 +356,7 @@
 								<p class={settingsDescriptionClasses}>Enable this to use a wider layout (extra large width). Best for larger screens.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- arabic-sign-language-setting -->
 							<div id="arabic-sign-language-setting" class={settingsBlockClasses}>
@@ -381,7 +381,7 @@
 								<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- arabic-word-size-setting -->
 							<div id="arabic-word-size-setting" class="{settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
@@ -393,7 +393,7 @@
 								</div>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- word-translation-size-setting -->
 							<div id="word-translation-size-setting" class="{settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
@@ -408,7 +408,7 @@
 								</div>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- verse-translation-size-setting -->
 							<div id="verse-translation-size-setting" class="{settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
@@ -431,7 +431,7 @@
 								<p class={settingsDescriptionClasses}>Word translation which will be displaced under the Arabic word text.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- word-transliteration-setting -->
 							<div id="word-transliteration-setting" class={settingsBlockClasses}>
@@ -442,7 +442,7 @@
 								<p class={settingsDescriptionClasses}>Word transliteration of various types.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- verse-translation-setting -->
 							<div id="verse-translation-setting" class={settingsBlockClasses}>
@@ -453,7 +453,7 @@
 								<p class={settingsDescriptionClasses}>{term('verse')} translations from multiple authors and languages.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- verse-transliteration-setting -->
 							<div id="verse-transliteration-setting" class={settingsBlockClasses}>
@@ -464,7 +464,7 @@
 								<p class={settingsDescriptionClasses}>{term('verse')} transliteration of various types.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- tafsir-setting -->
 							<div id="tafsir-setting" class={settingsBlockClasses}>
@@ -486,7 +486,7 @@
 								<p class={settingsDescriptionClasses}>The reciter's voice that will play when you choose to listen to a {term('verse')}.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- playback-speed-setting -->
 							<div id="playback-speed-setting" class={settingsBlockClasses}>
@@ -498,7 +498,7 @@
 								</div>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- verse-play-button-setting -->
 							<div id="verse-play-button-setting" class={settingsBlockClasses}>
@@ -509,7 +509,7 @@
 								<p class={settingsDescriptionClasses}>Select what happens when you click on the play button for a {term('verse')}.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- wbw-autoscroll-setting -->
 							<div id="wbw-autoscroll-setting" class={settingsBlockClasses}>
@@ -537,7 +537,7 @@
 								<p class={settingsDescriptionClasses}>Switch between the English and Arabic terminologies used on the website.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- non-dua-part-toggle -->
 							<div id="non-dua-part-toggle" class={settingsBlockClasses}>
@@ -551,7 +551,7 @@
 								<p class={settingsDescriptionClasses}>Show/hide the non-{term('supplications')} words in the {term('supplications')} page.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- show-morphology-on-word-click-toggle -->
 							<div id="show-morphology-on-word-click" class={settingsBlockClasses}>
@@ -565,7 +565,7 @@
 								<p class={settingsDescriptionClasses}>Show morphology on word click, instead of playing audio.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- import-export-settings -->
 							<div id="import-export-settings" class={settingsBlockClasses}>
@@ -590,7 +590,7 @@
 								<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- copy-settings -->
 							<div id="copy-settings" class={settingsBlockClasses}>
@@ -606,7 +606,7 @@
 								<p class={settingsDescriptionClasses}>Copy your settings as JSON to the clipboard.</p>
 							</div>
 
-							<div class="border-b border-theme-accent/20"></div>
+							<div class="border-b border-theme-accent/20 my-6"></div>
 
 							<!-- reset-setting-button -->
 							<div id="reset-setting-button" class={settingsBlockClasses}>
