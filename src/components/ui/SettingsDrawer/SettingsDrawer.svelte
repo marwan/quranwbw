@@ -10,6 +10,7 @@
 	import VerseTafsirSelector from '$ui/SettingsDrawer/VerseTafsirSelector.svelte';
 	import VerseReciterSelector from '$ui/SettingsDrawer/VerseReciterSelector.svelte';
 	import VersePlayButtonSelector from '$ui/SettingsDrawer/VersePlayButtonSelector.svelte';
+	import TajweedCompatibilityModeSelector from '$ui/SettingsDrawer/TajweedCompatibilityModeSelector.svelte';
 	import Drawer from '$ui/FlowbiteSvelte/drawer/Drawer.svelte';
 	import Range from '$ui/FlowbiteSvelte/forms/Range.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
@@ -41,10 +42,11 @@
 		__wordMorphologyOnClick,
 		__wideWesbiteLayoutEnabled,
 		__signLanguageModeEnabled,
-		__audioSettings
+		__audioSettings,
+		__tajweedCompatibilityMode
 	} from '$utils/stores';
 
-	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
+	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions, selectableTajweedCompatibilityModes } from '$data/options';
 
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
@@ -57,6 +59,7 @@
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+	import { isIOSorMac } from '$utils/getMushafWordFontLink';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {
@@ -64,6 +67,7 @@
 		'display-type': [DisplayTypeSelector, false],
 		'word-tooltip': [WordTooltipSelector, false],
 		'quran-font': [QuranFontSelector, false],
+		'tajweed-compatibility-mode': [TajweedCompatibilityModeSelector, false],
 		'word-translation': [WordTranslationSelector, false],
 		'word-transliteration': [WordTransliterationSelector, false],
 		'verse-translation': [VerseTranslationSelector, false],
@@ -364,6 +368,20 @@
 						</div>
 						<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
 					</div>
+
+					<!-- tajweed compatibility mode, only shown on Apple devices where the Tajweed color fonts may not render correctly -->
+					{#if isIOSorMac()}
+						<div class="border-b border-theme-accent/20 {settingsDrawerOpacity}"></div>
+
+						<!-- tajweed-compatibility-mode-setting -->
+						<div id="tajweed-compatibility-mode-setting" class="{settingsBlockClasses} {settingsDrawerOpacity}">
+							<div class="flex flex-row justify-between items-center">
+								<div class="block">iOS Tajweed Compatibility Mode</div>
+								<button class={selectorClasses} on:click={() => gotoIndividualSetting('tajweed-compatibility-mode')}>{selectableTajweedCompatibilityModes[$__tajweedCompatibilityMode]?.name}</button>
+							</div>
+							<p class={settingsDescriptionClasses}>Choose which color font format is used for Tajweed fonts. Auto detect checks what your device displays correctly.</p>
+						</div>
+					{/if}
 
 					<div class="border-b border-theme-accent/20 {settingsDrawerOpacity}"></div>
 

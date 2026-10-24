@@ -915,6 +915,12 @@ export const selectableVersePlayButtonOptions = {
 	3: { id: 3, name: 'Show Advanced Options' }
 };
 
+export const selectableTajweedCompatibilityModes = {
+	auto: { id: 'auto', name: 'Auto detect' },
+	colrv1: { id: 'colrv1', name: 'COLRv1' },
+	otsvg: { id: 'otsvg', name: 'OT-SVG' }
+};
+
 export const selectableAudioDelays = {
 	1: { id: 1, name: 'None', milliseconds: 0 },
 	2: { id: 2, name: '1 second', milliseconds: 1000 },
