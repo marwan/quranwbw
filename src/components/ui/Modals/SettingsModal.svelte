@@ -241,18 +241,18 @@
 			</div>
 
 			<!-- website build version & timestamp -->
-			<div class="mt-auto pt-6 text-center">
+			<div class="mt-auto pt-6 text-center md:text-left md:px-4">
 				<!-- svelte-ignore missing-declaration -->
 				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
 			</div>
 		</nav>
 
 		<!-- settings (right) -->
-		<div bind:this={contentElement} class="{mobileView === 'nav' ? 'hidden' : 'flex'} md:flex flex-col flex-1 min-w-0 overflow-y-auto px-6 pb-6">
+		<div bind:this={contentElement} class="{mobileView === 'nav' ? 'hidden' : 'flex'} md:flex flex-col flex-1 min-w-0 overflow-y-auto pl-6 pr-4 mt-2 mb-4 mr-2 pb-6">
 			{#if individualSettingsComponent}
 				<!-- individual-setting (selector stays open until Back is clicked) -->
 				<div id="individual-setting" in:fly={{ duration: 150, x: 0, easing: sineIn }}>
-					<div class="flex z-30 top-0 sticky bg-theme-bg border-b-2 border-theme-accent/20 mb-4">
+					<div class="flex z-30 top-0 sticky bg-theme-bg mb-4">
 						<button class="inline-flex items-center my-4 text-xl font-semibold" on:click={goBackToMainSettings}>⟵ Back</button>
 					</div>
 
@@ -262,7 +262,7 @@
 				<div id="{activeSection.id}-settings-block" class="py-5">
 					<!-- <h3 class="hidden md:block mb-2 font-medium text-xl">{activeSection.title}</h3> -->
 
-					<div class="flex flex-col flex-wrap text-base">
+					<div class="flex flex-col flex-wrap text-base [&>div>.flex-row]:min-h-[42px]">
 						<!-- display settings -->
 						{#if activeSectionId === 'display'}
 							<!-- website-theme-setting -->
