@@ -18,6 +18,7 @@
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { loadFont } from '$utils/loadFont';
+	import { ensureTajweedFontSupport } from '$utils/tajweedFontSupport';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import '$utils/swiped-events.min.js';
@@ -54,7 +55,9 @@
 	// registered ahead of time, and a page is ready to show as soon as it is navigated to. The neighbours only
 	// start once the current font is ready, so they never compete with it for bandwidth on slow connections.
 	// Failures are ignored here, loadFont drops the failed entry so WordsBlock retries when the page opens.
+	// The font URLs depend on the Tajweed color font format the device can display, so wait for that check first.
 	async function prefetchPageFonts(currentPage) {
+		await ensureTajweedFontSupport();
 		const load = (thisPage) => {
 			prefetchedPages.add(thisPage);
 			return loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)).catch(() => {});

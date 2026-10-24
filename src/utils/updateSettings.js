@@ -31,7 +31,8 @@ import {
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__offlineModeSettings,
-	__homepageLayoutPreferences
+	__homepageLayoutPreferences,
+	__tajweedCompatibilityMode
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 
@@ -313,6 +314,13 @@ export function updateSettings(props) {
 		case 'signLanguageModeEnabled':
 			__signLanguageModeEnabled.set(props.value);
 			userSettings.displaySettings.signLanguageModeEnabled = props.value;
+			break;
+
+		// for the iOS Tajweed compatibility mode
+		case 'tajweedCompatibilityMode':
+			__tajweedCompatibilityMode.set(props.value);
+			userSettings.displaySettings.tajweedCompatibilityMode = props.value;
+			trackEvent = true;
 			break;
 
 		// for offline mode settings
