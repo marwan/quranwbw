@@ -37,4 +37,15 @@ describe('loadFont', () => {
 		await loadFont('p20', 'https://cdn/OT-SVG-LIGHT/p20.woff2');
 		expect([...fontSet].map((font) => [font.family, font.source])).toEqual([['p20', 'url(https://cdn/OT-SVG-LIGHT/p20.woff2)']]);
 	});
+
+	test('keeps the previous face when the replacement fails to load', async () => {
+		await loadFont('p30', 'https://cdn/COLRv1/p30.woff2');
+		const failing = vi.spyOn(FakeFontFace.prototype, 'load').mockImplementationOnce(() => Promise.reject(new Error('network')));
+		await expect(loadFont('p30', 'https://cdn/OT-SVG-LIGHT/p30.woff2')).rejects.toBeUndefined();
+		failing.mockRestore();
+		expect([...fontSet].map((font) => font.source)).toEqual(['url(https://cdn/COLRv1/p30.woff2)']);
+		// the previous URL is still served from the cache (no reload)
+		expect(loadFont('p30', 'https://cdn/COLRv1/p30.woff2')).toBeInstanceOf(Promise);
+		expect(fontSet.size).toBe(1);
+	});
 });
