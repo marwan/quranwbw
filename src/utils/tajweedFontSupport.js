@@ -30,22 +30,52 @@ function log(...args) {
 	console.log(LOG_PREFIX, ...args);
 }
 
-function readCache() {
+// Cached entry for this exact user agent: { support, detectedAt (ms timestamp), method: 'check' | 'webkit27' }, or null
+function readCacheEntry() {
 	try {
 		const cached = JSON.parse(localStorage.getItem(STORAGE_KEY));
-		if (cached && cached.version === CACHE_VERSION && cached.userAgent === navigator.userAgent) return cached.support;
+		if (cached && cached.version === CACHE_VERSION && cached.userAgent === navigator.userAgent) return cached;
 	} catch {
 		// unreadable cache: run the check again
 	}
 	return null;
 }
 
-function writeCache(support) {
+function readCache() {
+	const cached = readCacheEntry();
+	return cached ? cached.support : null;
+}
+
+function writeCache(support, method) {
 	try {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: CACHE_VERSION, userAgent: navigator.userAgent, support }));
+		localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: CACHE_VERSION, userAgent: navigator.userAgent, support, detectedAt: Date.now(), method }));
 	} catch {
 		// storage full or unavailable: the check simply runs again next time
 	}
+}
+
+function clearCache() {
+	try {
+		localStorage.removeItem(STORAGE_KEY);
+	} catch {
+		// storage unavailable: nothing cached anyway
+	}
+}
+
+// "iOS 26.3" / "Safari 26.3" from the user agent: Safari's "Version/" token is the OS release (its "iPhone OS" token is frozen),
+// other iOS browsers (Chrome, Firefox, Edge) report the real "iPhone OS 26_3" token
+export function getAppleOSVersionLabel(userAgent = navigator.userAgent) {
+	const safariVersion = (userAgent.match(/Version\/([0-9.]+)/) || [])[1];
+	const iosVersion = ((userAgent.match(/(?:iPhone|CPU) OS ([0-9_]+)/) || [])[1] || '').replace(/_/g, '.');
+	if (/iPhone|iPad|iPod/.test(userAgent)) return `iOS ${safariVersion || iosVersion || '?'}`;
+	return safariVersion ? `Safari ${safariVersion}` : null;
+}
+
+// What auto detection found for this device, for the settings: { support, detectedAt, method, osVersion } or null when not checked yet
+export function getTajweedFontSupportDetails() {
+	const cached = readCacheEntry();
+	if (!cached) return null;
+	return { support: cached.support, detectedAt: cached.detectedAt || null, method: cached.method || 'check', osVersion: getAppleOSVersionLabel() };
 }
 
 async function detectSupport() {
@@ -54,6 +84,8 @@ async function detectSupport() {
 
 	if ((webKitVersion ?? 0) >= 27) {
 		log('WebKit 27+ → colrv1 (no check needed)');
+		// cached only so the settings can show when and how the format was chosen
+		if (!readCacheEntry()) writeCache('colrv1', 'webkit27');
 		return 'colrv1';
 	}
 
@@ -75,7 +107,7 @@ async function detectSupport() {
 			support = otsvg.state === 'ok' ? 'otsvg' : 'none';
 		}
 
-		writeCache(support);
+		writeCache(support, 'check');
 		log('result →', support, `(total ${Math.round(performance.now() - start)} ms)`);
 		return support;
 	} catch (error) {
@@ -124,6 +156,16 @@ export function ensureTajweedFontSupport() {
 			});
 	}
 	return pendingCheck;
+}
+
+// Forgets the cached result and checks again (when the user switches the iOS Tajweed compatibility mode back to auto).
+// The check itself only runs if the Tajweed Mushaf font is in use; otherwise it runs the next time it is selected.
+export function rerunTajweedFontCheck() {
+	log('auto mode selected → forgetting the cached result and checking again');
+	clearCache();
+	pendingCheck = null;
+	__tajweedFontSupport.set(null);
+	return ensureTajweedFontSupport();
 }
 
 // Called when the user selects the Tajweed Mushaf font in the settings: runs the check right away instead of waiting for

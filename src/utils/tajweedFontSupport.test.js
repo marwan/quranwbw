@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { ensureTajweedFontSupport, onTajweedFontTypeSelected } from './tajweedFontSupport';
+import { ensureTajweedFontSupport, getAppleOSVersionLabel, getTajweedFontSupportDetails, onTajweedFontTypeSelected, rerunTajweedFontCheck } from './tajweedFontSupport';
 import { probeCOLRv1, probeOTSVG } from '$utils/tajweedFontProbe';
 import { updateSettings } from '$utils/updateSettings';
 import { showAlert } from '$utils/confirmationAlertHandler';
@@ -189,5 +189,53 @@ describe('onTajweedFontTypeSelected', () => {
 		await onTajweedFontTypeSelected();
 		expect(probeCOLRv1).not.toHaveBeenCalled();
 		expect(showAlert).not.toHaveBeenCalled();
+	});
+});
+
+describe('auto detection details and re-check', () => {
+	test('labels the OS version from the user agent', () => {
+		expect(getAppleOSVersionLabel(UA.safariIOS26)).toBe('iOS 26.2');
+		expect(getAppleOSVersionLabel('Mozilla/5.0 (iPhone; CPU iPhone OS 27_0_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/149.0 Mobile/15E148 Safari/604.1')).toBe('iOS 27.0.0');
+		expect(getAppleOSVersionLabel(UA.chromeWindows)).toBeNull();
+	});
+
+	test('keeps when and how the format was chosen, for the settings', async () => {
+		expect(getTajweedFontSupportDetails()).toBeNull();
+		vi.mocked(probeCOLRv1).mockResolvedValue(probe('bleed'));
+		vi.mocked(probeOTSVG).mockResolvedValue(probe('ok'));
+		const before = Date.now();
+		await ensureTajweedFontSupport();
+		const details = getTajweedFontSupportDetails();
+		expect(details).toMatchObject({ support: 'otsvg', method: 'check', osVersion: 'iOS 26.2' });
+		expect(details.detectedAt).toBeGreaterThanOrEqual(before);
+
+		// WebKit 27+: no check, but the choice is still recorded with its date
+		localStorage.clear();
+		__tajweedFontSupport.set(null);
+		mockDevice(UA.safariIOS27, 'iPhone');
+		await ensureTajweedFontSupport();
+		expect(getTajweedFontSupportDetails()).toMatchObject({ support: 'colrv1', method: 'webkit27', osVersion: 'iOS 27.0' });
+	});
+
+	test('switching back to auto forgets the cached result and checks again', async () => {
+		vi.mocked(probeCOLRv1).mockResolvedValue(probe('bleed'));
+		vi.mocked(probeOTSVG).mockResolvedValue(probe('ok'));
+		expect(await ensureTajweedFontSupport()).toBe('otsvg');
+		expect(probeCOLRv1).toHaveBeenCalledTimes(1);
+
+		vi.mocked(probeCOLRv1).mockResolvedValue(probe('ok'));
+		expect(await rerunTajweedFontCheck()).toBe('colrv1');
+		expect(probeCOLRv1).toHaveBeenCalledTimes(2);
+		expect(get(__tajweedFontSupport)).toBe('colrv1');
+		expect(getTajweedFontSupportDetails().support).toBe('colrv1');
+	});
+
+	test('re-check is deferred when the Tajweed font is not in use', async () => {
+		vi.mocked(probeCOLRv1).mockResolvedValue(probe('ok'));
+		await ensureTajweedFontSupport();
+		__fontType.set(2);
+		expect(await rerunTajweedFontCheck()).toBeNull();
+		expect(probeCOLRv1).toHaveBeenCalledTimes(1);
+		expect(getTajweedFontSupportDetails()).toBeNull();
 	});
 });

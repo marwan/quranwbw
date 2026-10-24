@@ -113,6 +113,10 @@ function getOS() {
 	return null;
 }
 
+export function isIOS() {
+	return getOS() === 'iOS';
+}
+
 export function isIOSorMac() {
 	const os = getOS();
 	return os === 'iOS' || os === 'macOS';
