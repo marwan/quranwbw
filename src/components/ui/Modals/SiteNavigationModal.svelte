@@ -14,7 +14,7 @@
 	import Offline from '$svgs/Offline.svelte';
 	import LegacySite from '$svgs/LegacySite.svelte';
 	import { disabledClasses } from '$data/commonClasses';
-	import { __siteNavigationModalVisible, __settingsDrawerHidden, __settingsModalVisible, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
+	import { __siteNavigationModalVisible, __settingsModalVisible, __tajweedRulesModalVisible, __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { isUserOnline } from '$utils/offlineModeHandler';

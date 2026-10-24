@@ -17,6 +17,11 @@
 	import Import from '$svgs/Import.svelte';
 	import Export from '$svgs/Export.svelte';
 	import Copy from '$svgs/Copy.svelte';
+	import SettingsAppearanceAndLayout from '$svgs/SettingsAppearanceAndLayout.svelte';
+	import SettingsTextAndTypography from '$svgs/SettingsTextAndTypography.svelte';
+	import SettingsTranslationAndTafsir from '$svgs/SettingsTranslationAndTafsir.svelte';
+	import SettingsRecitationAndAudio from '$svgs/SettingsRecitationAndAudio.svelte';
+	import SettingsBehaviorAndPreferences from '$svgs/SettingsBehaviorAndPreferences.svelte';
 
 	import {
 		__settingsModalVisible,
@@ -86,11 +91,11 @@
 	// Sections (name = nav/mobile header label, title = heading in the right pane)
 	function getSections() {
 		return [
-			{ id: 'display', name: 'Display', title: 'Display' },
-			{ id: 'font', name: 'Font', title: 'Font' },
-			{ id: 'translation', name: `Translation & ${term('tafsir')}`, title: `Translation, Transliteration & ${term('tafsir')}` },
-			{ id: 'audio', name: 'Audio', title: 'Audio' },
-			{ id: 'misc', name: 'Miscellaneous', title: 'Miscellaneous' }
+			{ id: 'display', name: 'Appearance & Layout', icon: SettingsAppearanceAndLayout },
+			{ id: 'font', name: 'Text & Typography', icon: SettingsTextAndTypography },
+			{ id: 'translation', name: `Translation & ${term('tafsir')}`, icon: SettingsTranslationAndTafsir },
+			{ id: 'audio', name: 'Recitation & Audio', icon: SettingsRecitationAndAudio },
+			{ id: 'misc', name: 'Behavior & Preferences', icon: SettingsBehaviorAndPreferences }
 		];
 	}
 
@@ -230,11 +235,14 @@
 
 	<div class="flex flex-row flex-1 min-h-0">
 		<!-- section nav (left) -->
-		<nav class="{mobileView === 'content' ? 'hidden' : 'flex'} md:flex flex-col w-full md:w-64 flex-shrink-0 border-theme-accent/20 overflow-y-auto p-4" aria-label="Settings sections">
+		<nav class="{mobileView === 'content' ? 'hidden' : 'flex'} md:flex flex-col w-full md:w-72 flex-shrink-0 border-theme-accent/20 overflow-y-auto p-4" aria-label="Settings sections">
 			<div class="space-y-1">
 				{#each sections as section}
 					<button class="flex flex-row items-center justify-between w-full text-left text-base px-4 py-3 rounded-3xl border border-transparent hover:bg-theme-accent/5 {activeSectionId === section.id ? 'md:bg-theme-accent/15' : ''}" aria-current={activeSectionId === section.id ? 'page' : undefined} on:click={() => selectSection(section.id)}>
-						<span>{section.name}</span>
+						<span class="flex flex-row items-center space-x-3">
+							<svelte:component this={section.icon} />
+							<span>{section.name}</span>
+						</span>
 						<span class="md:hidden opacity-70" aria-hidden="true">›</span>
 					</button>
 				{/each}
