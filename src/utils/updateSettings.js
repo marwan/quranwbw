@@ -35,7 +35,7 @@ import {
 	__readingHistory
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
-import { updateReadingHistory } from '$utils/readingHistoryHandler';
+import { queueReadingHistoryUpdate, isReaderPage } from '$utils/readingHistoryHandler';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -258,27 +258,27 @@ export function updateSettings(props) {
 
 		// Update last read position and reading history when on a reader page
 		case 'lastRead':
-			if (['chapter', 'mushaf', 'juz', 'hizb'].includes(get(__currentPage))) {
+			if (isReaderPage(get(__currentPage))) {
 				const data = props.value;
 				data['currentPage'] = get(__currentPage);
 
-				// Update the last read store and persist to settings
+				// lastRead updates immediately
 				__lastRead.set(data);
 				userSettings.lastRead = props.value;
 
-				// Append or update the reading history
-				userSettings.readingHistory = updateReadingHistory({ history: userSettings.readingHistory, data });
-
-				// Dedup by chapter+verse, keeping the first (most recent) occurrence of each
-				const seen = new Set();
-				userSettings.readingHistory = userSettings.readingHistory.filter((entry) => {
-					const key = `${entry.chapter}:${entry.verse}`;
-					if (seen.has(key)) return false;
-					seen.add(key);
-					return true;
+				// History is debounced and saved after the position is stable
+				queueReadingHistoryUpdate({
+					data,
+					getHistory: () => get(__readingHistory),
+					onCommit: (history) => {
+						// Re-read settings, since they may have changed during the delay
+						const settings = JSON.parse(localStorage.getItem('userSettings'));
+						settings.readingHistory = history;
+						localStorage.setItem('userSettings', JSON.stringify(settings));
+						__userSettings.set(JSON.stringify(settings));
+						__readingHistory.set(history);
+					}
 				});
-
-				__readingHistory.set(userSettings.readingHistory);
 			}
 			break;
 
