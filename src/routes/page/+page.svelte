@@ -11,7 +11,7 @@
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
 	import { onDestroy } from 'svelte';
-	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __displayType, __mushafMinimalModeEnabled } from '$utils/stores';
+	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
@@ -169,6 +169,7 @@
 					});
 				} catch (error) {
 					console.warn(error);
+					window.rybbit?.error(error);
 				}
 			});
 
@@ -189,6 +190,7 @@
 			return { verses: sortedVerses };
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			return { verses: {} };
 		}
 	}
@@ -214,9 +216,6 @@
 			if (swipedRightHandler) pageBlock.removeEventListener('swiped-right', swipedRightHandler);
 		}
 	});
-
-	// Only allow continuous normal mode, without saving the setting
-	$__displayType = 4;
 
 	__currentPage.set('mushaf');
 </script>
@@ -264,7 +263,7 @@
 <!-- only show the minimize minimal mode button when it is enabled -->
 {#if $__mushafMinimalModeEnabled}
 	<div class="flex justify-center -mt-12 pb-16">
-		<button class="w-fit flex flex-row space-x-2 py-3 px-3 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={toggleMushafMinimalMode} data-umami-event="Mushaf Minimal Mode Button">
+		<button class="w-fit flex flex-row space-x-2 py-3 px-3 rounded-xl items-center cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={toggleMushafMinimalMode} data-rybbit-event="Mushaf Minimal Mode Button">
 			<Minimize size={3} />
 		</button>
 		<Tooltip arrow={false} type="light" class="z-30 hidden md:block font-normal">Minimal Mode</Tooltip>

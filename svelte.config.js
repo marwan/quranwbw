@@ -1,16 +1,26 @@
-import adapterAuto from '@sveltejs/adapter-auto';
-import adapterNode from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
-const useNodeAdapter = process.env.USE_NODE_ADAPTER === 'true';
+// ADAPTER: 'auto' | 'vercel' | 'node' (VPS / Docker)
+const platform = process.env.ADAPTER || 'auto';
+
+const adapterPackages = {
+	auto: '@sveltejs/adapter-auto',
+	vercel: '@sveltejs/adapter-vercel',
+	node: '@sveltejs/adapter-node'
+};
+
+if (!adapterPackages[platform]) {
+	throw new Error(`Unknown ADAPTER "${platform}". Use: ${Object.keys(adapterPackages).join(', ')}`);
+}
+
+// only the selected adapter gets loaded
+const { default: adapter } = await import(adapterPackages[platform]);
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
-		// Use Node adapter when explicitly enabled (VPS / Docker / Dokploy / any Node server).
-		// Defaults to adapter-auto for platforms like Cloudflare Pages, Vercel, etc.
-		adapter: useNodeAdapter ? adapterNode() : adapterAuto(),
+		adapter: adapter(),
 		alias: {
 			$src: path.resolve('./src'),
 			$utils: path.resolve('./src/utils'),

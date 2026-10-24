@@ -184,7 +184,7 @@
 			});
 		}
 
-		window.umami?.track(`Delete Specific Cache (${cacheName})`);
+		window.rybbit?.event(`Delete Specific Cache (${cacheName})`);
 	}
 
 	// Helper function to add downloaded data settings
@@ -268,6 +268,7 @@
 			});
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -292,6 +293,7 @@
 			};
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			return { fontType: false, wordTranslation: false, wordTransliteration: false, verseTafsir: false, verseTranslations: false };
 		}
 	}
@@ -368,6 +370,7 @@
 			});
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		}
 	}
@@ -393,6 +396,7 @@
 			updateSettings({ type: 'offlineModeSettings', value: {} });
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	}
 
@@ -420,13 +424,12 @@
 					await handleDownloadTafsirData();
 					break;
 			}
-
-			window.umami?.track(`Data Re-download: ${dataType}`);
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
-			window.umami?.track(`Data Re-download: ${dataType}`);
+			window.rybbit?.event(`Data Re-download: ${dataType}`);
 		}
 	}
 
@@ -469,9 +472,10 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			window.umami?.track('Chapter Data Download');
+			window.rybbit?.event('Chapter Data Download');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingChapter = false;
@@ -518,9 +522,10 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			window.umami?.track('Mushaf Data Download');
+			window.rybbit?.event('Mushaf Data Download');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMushaf = false;
@@ -582,9 +587,10 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			window.umami?.track('Morphology Data Download');
+			window.rybbit?.event('Morphology Data Download');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingMorphology = false;
@@ -634,9 +640,10 @@
 				downloadedAt: new Date().toISOString()
 			});
 
-			window.umami?.track('Tafsir Data Download');
+			window.rybbit?.event('Tafsir Data Download');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			showAlert(errorAlertMessage, '');
 		} finally {
 			isDownloadingTafsir = false;
@@ -655,6 +662,7 @@
 			console.log('All CDN static data cached successfully');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -671,6 +679,7 @@
 			console.log('All bismillah fonts cached successfully');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}
@@ -682,6 +691,7 @@
 			console.log('Chapter header font cached successfully');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 			throw error;
 		}
 	}

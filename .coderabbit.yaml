@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# https://docs.coderabbit.ai/reference/configuration
+
+reviews:
+  in_progress_fortune: false
+
+  auto_review:
+    base_branches:
+      - '.*'
+
+  path_filters:
+    - '!**/package-lock.json'
+    - '!**/pnpm-lock.yaml'
+    - '!**/yarn.lock'
+    - '!static/**'
+    - '!**/*.min.js'
+    - '!**/*.min.css'
+    - '!src/app.css'
+
+  finishing_touches:
+    unit_tests:
+      enabled: false
+
+  tools:
+    biome:
+      enabled: false
+    oxc:
+      enabled: false
+    languagetool:
+      enabled: false
+
+    ruff:
+      enabled: false
+    pylint:
+      enabled: false
+    flake8:
+      enabled: false
+    rubocop:
+      enabled: false
+    brakeman:
+      enabled: false
+    phpstan:
+      enabled: false
+    phpmd:
+      enabled: false
+    phpcs:
+      enabled: false
+    golangci-lint:
+      enabled: false
+    clippy:
+      enabled: false
+    detekt:
+      enabled: false
+    swiftlint:
+      enabled: false
+    pmd:
+      enabled: false
+    clang:
+      enabled: false
+    cppcheck:
+      enabled: false
+    hadolint:
+      enabled: false
+    checkov:
+      enabled: false
+    tflint:
+      enabled: false
+    sqlfluff:
+      enabled: false
+    prismaLint:
+      enabled: false
+    shopifyThemeCheck:
+      enabled: false
+    luacheck:
+      enabled: false
+
+chat:
+  art: false

@@ -1,6 +1,6 @@
 import { cacheTableMap } from '$utils/dexie';
 import { get } from 'svelte/store';
-import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
+import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __verseKeyData } from '$utils/stores';
 import { staticEndpoint, cdnStaticDataUrls } from '$data/websiteSettings';
 import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
 
@@ -16,7 +16,14 @@ export async function fetchChapterData(props) {
 	const wordTranslation = props.wordTranslation || get(__wordTranslation);
 	const wordTransliteration = props.wordTransliteration || get(__wordTransliteration);
 
-	const { arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(fontType, wordTranslation, wordTransliteration);
+	let arabicWordData, translationWordData, transliterationWordData, metaVerseData;
+	try {
+		// Network fetch (via fetchWordData) wrapped for manual error logging
+		({ arabicWordData, translationWordData, transliterationWordData, metaVerseData } = await fetchWordData(fontType, wordTranslation, wordTransliteration));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
 
 	const result = {};
 	const arabicVerses = arabicWordData[chapter] || {};
@@ -58,7 +65,12 @@ export async function fetchChapterData(props) {
 	}
 
 	// Update store
-	if (!props.preventStoreUpdate) __chapterData.set(result);
+	if (!props.preventStoreUpdate) {
+		__chapterData.set(result);
+
+		// Verse metadata so reading progress bar can use word count
+		__verseKeyData.set(metaVerseData);
+	}
 
 	return result;
 }
@@ -78,7 +90,15 @@ export async function fetchVerseTranslationData(props) {
 
 	for (const id of translations) {
 		const version = selectableVerseTranslations[id].version;
-		const cached = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+
+		let cached;
+		try {
+			// Network fetch wrapped for manual error logging
+			cached = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+		} catch (error) {
+			console.error(error);
+			cached = null;
+		}
 
 		if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
 			updatedData[id] = cached;
@@ -98,11 +118,17 @@ export async function fetchVerseTranslationData(props) {
 	// Fetch missing translations
 	const fetchPromises = idsToFetch.map(async (id) => {
 		const version = selectableVerseTranslations[id].version;
-		try {
-			const res = await fetchAndCacheJson(`${staticEndpoint}/verse-translations/${id}.json?version=${version}`, 'translation');
+		const url = `${staticEndpoint}/verse-translations/${id}.json?version=${version}`;
 
-			if (!res.ok) throw new Error(`Failed to fetch translation ID ${id}`);
-			const data = await res.json();
+		try {
+			// fetchAndCacheJson already returns parsed data (or throws), not a raw Response
+			const data = await fetchAndCacheJson(url, 'translation');
+
+			// Valid JSON can still be falsy (null, false, 0), which fetchAndCacheJson doesn't report
+			if (!data) {
+				reportFetchError(new Error(`Failed to fetch translation ID ${id}`), url);
+				return { id, data: null };
+			}
 
 			return { id, data };
 		} catch (error) {
@@ -148,14 +174,26 @@ export async function fetchAndCacheJson(url, type = 'other') {
 				cacheKey,
 				(async () => {
 					try {
+						// Network fetch wrapped for manual error logging
 						const response = await fetch(url);
-						if (!response.ok) throw new Error('CDN response not ok');
-						const freshData = await response.json();
+						if (!response.ok) throw new Error(`CDN response not ok: ${response.status}`);
+
+						// Read as text first so a non-JSON body (e.g. "hello") can be logged instead of throwing a bare SyntaxError
+						const rawText = await response.text();
+						let freshData;
+						try {
+							freshData = JSON.parse(rawText);
+						} catch (error) {
+							console.error(error);
+							throw error;
+						}
+
 						await manageCache(cacheKey, type, freshData);
 						console.log(`[cache] background update done for ${cacheKey}`);
 						return freshData;
 					} catch (error) {
 						console.warn(error);
+						reportFetchError(error, url);
 					} finally {
 						inFlightRequests.delete(cacheKey);
 					}
@@ -175,11 +213,26 @@ export async function fetchAndCacheJson(url, type = 'other') {
 	// 3. Otherwise start a new fetch and store the Promise
 	const fetchPromise = (async () => {
 		try {
+			// Network fetch wrapped for manual error logging
 			const response = await fetch(url);
-			if (!response.ok) throw new Error('Failed to fetch data from the CDN');
-			const data = await response.json();
+			if (!response.ok) throw new Error(`Failed to fetch data from the CDN: ${response.status}`);
+
+			// Read as text first so a non-JSON body (e.g. "hello") can be logged instead of throwing a bare SyntaxError
+			const rawText = await response.text();
+			let data;
+			try {
+				data = JSON.parse(rawText);
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+
 			await manageCache(cacheKey, type, data);
 			return data;
+		} catch (error) {
+			console.error(error);
+			reportFetchError(error, url);
+			throw error;
 		} finally {
 			inFlightRequests.delete(cacheKey);
 		}
@@ -213,6 +266,7 @@ async function manageCache(key, type, dataToSet = undefined) {
 	} catch (error) {
 		// Log any unexpected errors and return appropriate fallback
 		console.warn(error);
+		reportFetchError(error, key);
 		return dataToSet !== undefined ? false : null;
 	}
 }
@@ -230,7 +284,14 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		{ url: cdnStaticDataUrls.verseKeyData, type: 'other' }
 	];
 
-	const [arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
+	let arabicWordData, translationWordData, transliterationWordData, metaVerseData;
+	try {
+		// Network fetch wrapped for manual error logging
+		[arabicWordData, translationWordData, transliterationWordData, metaVerseData] = await Promise.all(urls.map(({ url, type }) => fetchAndCacheJson(url, type)));
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
 
 	return {
 		arabicWordData,
@@ -238,4 +299,14 @@ export async function fetchWordData(fontType, wordTranslation, wordTransliterati
 		transliterationWordData,
 		metaVerseData
 	};
+}
+
+// Attach the URL to an error (if missing) and report it to rybbit
+function reportFetchError(error, url) {
+	try {
+		if (!error.message.includes(url)) error.message += ` ${url}`;
+	} catch {
+		// message is read-only on some errors (e.g. DOMException), report as-is
+	}
+	window.rybbit?.error(error);
 }

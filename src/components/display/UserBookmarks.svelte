@@ -26,6 +26,7 @@
 			fullQuranTextData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, 'other');
 		} catch (error) {
 			console.warn(error);
+			window.rybbit?.error(error);
 		}
 	}
 

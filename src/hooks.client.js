@@ -47,6 +47,7 @@ export const defaultSettings = {
 		timesToRepeat: 1,
 		repeatType: 'repeatVerse',
 		audioDelay: 1, // none
+		assistedHighlightsDuringDelay: true,
 		savedPlaySettings: {},
 		wbwAutoScrollEnabled: false
 	},

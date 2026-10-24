@@ -17,6 +17,7 @@
 	import ResetSettings from '$svgs/ResetSettings.svelte';
 	import Import from '$svgs/Import.svelte';
 	import Export from '$svgs/Export.svelte';
+	import Copy from '$svgs/Copy.svelte';
 
 	import {
 		__currentPage,
@@ -54,7 +55,7 @@
 	import { term } from '$utils/terminologies';
 	import { getTailwindBreakpoint } from '$utils/getTailwindBreakpoint';
 	import { importSettings, exportSettings } from '$utils/settingsManager';
-	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
@@ -155,6 +156,7 @@
 				document.getElementById('individual-setting').scrollIntoView();
 			} catch (error) {
 				console.warn(error);
+				window.rybbit?.error(error);
 			}
 		}, 0);
 	}
@@ -209,6 +211,20 @@
 				importSettings(file);
 				event.target.value = ''; // reset so the same file can be chosen again
 			});
+		}
+	}
+
+	// copies userSettings localStorage value to clipboard
+	async function copySettings() {
+		const settings = localStorage.getItem('userSettings');
+		try {
+			await navigator.clipboard.writeText(settings);
+			showAlert('Settings copied to clipboard.', 'settings-drawer');
+			window.rybbit?.event('Copy Settings Button');
+		} catch (error) {
+			showAlert('Failed to copy settings. Please try again.', 'settings-drawer');
+			console.error('Failed to copy settings:', error);
+			window.rybbit?.error(error);
 		}
 	}
 </script>
@@ -297,7 +313,7 @@
 							<div class="flex flex-row justify-between items-center">
 								<span class="block">Prevent Sleep</span>
 								<label class="inline-flex items-center cursor-pointer">
-									<input type="checkbox" value="" class="sr-only peer" checked={$__wakeLockEnabled} on:click={(event) => __wakeLockEnabled.set(event.target.checked)} data-umami-event="Toggle Prevent Sleep" />
+									<input type="checkbox" value="" class="sr-only peer" checked={$__wakeLockEnabled} on:click={(event) => __wakeLockEnabled.set(event.target.checked)} data-rybbit-event="Toggle Prevent Sleep" />
 									<div class={toggleBtnClasses}></div>
 								</label>
 							</div>
@@ -494,7 +510,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Auto-Scroll to Highlighted Words</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" class="sr-only peer" bind:checked={$__audioSettings.wbwAutoScrollEnabled} on:change={() => updateSettings({ type: 'audioSettings', value: $__audioSettings })} data-umami-event="Toggle WBW Auto Scroll" />
+								<input type="checkbox" class="sr-only peer" bind:checked={$__audioSettings.wbwAutoScrollEnabled} on:change={() => updateSettings({ type: 'audioSettings', value: $__audioSettings })} data-rybbit-event="Toggle WBW Auto Scroll" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -513,7 +529,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">English Terminologies</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__englishTerminology} on:click={(event) => updateSettings({ type: 'englishTerminology', value: event.target.checked })} data-umami-event="Toggle English Terminology" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__englishTerminology} on:click={(event) => updateSettings({ type: 'englishTerminology', value: event.target.checked })} data-rybbit-event="Toggle English Terminology" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -527,7 +543,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Hide Non-{term('supplications')} Words</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__hideNonDuaPart} on:click={(event) => updateSettings({ type: 'hideNonDuaPart', value: event.target.checked })} data-umami-event="Toggle Non-Dua Words" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__hideNonDuaPart} on:click={(event) => updateSettings({ type: 'hideNonDuaPart', value: event.target.checked })} data-rybbit-event="Toggle Non-Dua Words" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -541,7 +557,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Word Morphology On Click</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__wordMorphologyOnClick} on:click={(event) => updateSettings({ type: 'wordMorphologyOnClick', value: event.target.checked })} data-umami-event="Toggle Morphology On Click" />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wordMorphologyOnClick} on:click={(event) => updateSettings({ type: 'wordMorphologyOnClick', value: event.target.checked })} data-rybbit-event="Toggle Morphology On Click" />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -567,10 +583,26 @@
 									<span>Restore</span>
 								</button>
 								<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Restore</Tooltip>
-								<input type="file" accept=".qwbw,.txt" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
+								<input type="file" bind:this={fileInput} on:change={handleFileChange} style="display: none;" />
 							</div>
 						</div>
 						<p class={settingsDescriptionClasses}>Keep your settings safe. Export a copy now or import one to restore your preferences.</p>
+					</div>
+
+					<div class="border-b border-theme-accent/20"></div>
+
+					<!-- copy-settings -->
+					<div id="copy-settings" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Copy Settings</span>
+
+							<button class="text-sm space-x-2 {buttonClasses}" on:click={copySettings}>
+								<Copy />
+								<span>Copy</span>
+							</button>
+							<Tooltip arrow={false} type="light" placement="top" class="z-30 hidden md:block font-normal">Copy</Tooltip>
+						</div>
+						<p class={settingsDescriptionClasses}>Copy your settings as JSON to the clipboard.</p>
 					</div>
 
 					<div class="border-b border-theme-accent/20"></div>
