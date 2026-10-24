@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { getAppleWebKitMajorVersion, getMushafWordFontLink, getMushafWordFontVariant } from './getMushafWordFontLink';
+import { getAppleWebKitMajorVersion, getMushafOfflineFontVariants, getMushafWordFontLink, getMushafWordFontVariant } from './getMushafWordFontLink';
 import { __fontType, __tajweedCompatibilityMode, __tajweedFontSupport, __websiteTheme } from '$utils/stores';
 
 vi.mock('$utils/stores', () => ({
@@ -102,5 +102,32 @@ describe('getMushafWordFontLink with the Tajweed font', () => {
 		__fontType.set(3);
 		mockDevice(UA.chromeWindows, 'Win32');
 		expect(getMushafWordFontLink(2)).toContain('/COLRv1/');
+	});
+});
+
+describe('getMushafOfflineFontVariants', () => {
+	const firefoxWindows = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0';
+
+	test('one shared COLRv1 file when both Mushaf fonts use it', () => {
+		mockDevice(UA.chromeWindows, 'Win32');
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1']);
+		mockDevice(UA.safariIOS26, 'iPhone');
+		__tajweedFontSupport.set('colrv1');
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1']);
+	});
+
+	test('the non-Tajweed COLRv1 and the Tajweed OT-SVG files when OT-SVG is used, whatever font is selected now', () => {
+		mockDevice(UA.safariIOS26, 'iPhone');
+		__tajweedFontSupport.set('otsvg');
+		__fontType.set(2);
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1', 'otsvgLight']);
+		__websiteTheme.set(6);
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1', 'otsvgDark']);
+	});
+
+	test('the Firefox dark-theme variants', () => {
+		mockDevice(firefoxWindows, 'Win32');
+		__websiteTheme.set(6);
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1DarkFirefoxNonColored', 'colrv1DarkFirefox']);
 	});
 });
