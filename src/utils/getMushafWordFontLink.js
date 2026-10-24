@@ -27,9 +27,9 @@ export function getTajweedFontFormat() {
 	return ['colrv1', 'otsvg'].includes(mode) ? mode : get(__tajweedFontSupport);
 }
 
-// Returns which Mushaf word font variant to use for the current device, theme and font type
-export function getMushafWordFontVariant() {
-	const isTajweedFontType = get(__fontType) === 3;
+// Returns which Mushaf word font variant to use for the current device and theme, for the current font type (or the one given)
+export function getMushafWordFontVariant(fontType = get(__fontType)) {
+	const isTajweedFontType = fontType === 3;
 
 	// COLRv1 is the default everywhere. On iOS/macOS some versions render its Tajweed colors wrongly (bleeding, e.g. iOS 18.0–18.3, 26.2–26.3)
 	// or not at all (iOS 17.0–17.1); ensureTajweedFontSupport() checks this once (or the user picks a format in the iOS Tajweed compatibility mode setting)
@@ -40,18 +40,24 @@ export function getMushafWordFontVariant() {
 
 	// Firefox cannot correctly handle multiple COLRv1 palettes in dark themes, resulting in missing or incorrect colors
 	// A dark-base COLRv1 font is used to ensure proper rendering
-	if (isFirefoxDarkTajweed()) {
+	if (isDarkFirefox() && isTajweedFontType) {
 		return 'colrv1DarkFirefox';
 	}
 
 	// The default COLRv1 font is based on a light Tajweed palette, which causing visibility problems for non-Tajweed words in certain themes
 	// A separate non-colored font variant is used as a workaround
-	if (isFirefoxDarkNonTajweed()) {
+	if (isDarkFirefox() && fontType === 2) {
 		return 'colrv1DarkFirefoxNonColored';
 	}
 
 	// Use standard COLRv1 fonts for all platforms, themes, and font types when no platform-specific or browser-specific rendering issues apply
 	return 'colrv1';
+}
+
+// Every Mushaf font variant the Mushaf view can use on this device and theme: the non-Tajweed (2) and Tajweed (3) fonts may use
+// different files (e.g. COLRv1 and OT-SVG). Used by the offline download so both Mushaf fonts work offline.
+export function getMushafOfflineFontVariants() {
+	return [...new Set([2, 3].map((fontType) => getMushafWordFontVariant(fontType)))];
 }
 
 // Returns the Mushaf word font URL for a given page number
