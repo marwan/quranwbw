@@ -62,6 +62,7 @@
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+	import { onDestroy } from 'svelte';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {
@@ -129,6 +130,9 @@
 
 	// Close the modal whenever the page changes
 	$: if ($__currentPage) $__settingsModalVisible = false;
+
+	// Lock background page scroll while the modal is open
+	$: if (typeof document !== 'undefined') document.body.style.overflow = $__settingsModalVisible ? 'hidden' : '';
 
 	// Reset to the section list when the modal is closed
 	$: if (!$__settingsModalVisible) {
@@ -215,6 +219,11 @@
 			window.rybbit?.error(error);
 		}
 	}
+
+	// Restore page scroll if the component unmounts while the modal is still open
+	onDestroy(() => {
+		if (typeof document !== 'undefined') document.body.style.overflow = '';
+	});
 </script>
 
 <Modal bind:open={$__settingsModalVisible} id="settings-modal" transitionParams={getModalTransition('bottom')} size="xl" class="!rounded-b-none md:!rounded-3xl h-[90vh] md:h-[600px] max-h-[90vh] flex flex-col" bodyClass="p-0 flex flex-col flex-1 min-h-0 overflow-hidden" position="bottom" center outsideclose>
@@ -235,7 +244,7 @@
 
 	<div class="flex flex-row flex-1 min-h-0">
 		<!-- section nav (left) -->
-		<nav class="{mobileView === 'content' ? 'hidden' : 'flex'} md:flex flex-col w-full md:w-72 flex-shrink-0 border-theme-accent/20 overflow-y-auto p-4" aria-label="Settings sections">
+		<nav class="{mobileView === 'content' ? 'hidden' : 'flex'} md:flex flex-col w-full md:w-72 flex-shrink-0 border-theme-accent/20 overflow-y-auto overscroll-contain p-4" aria-label="Settings sections">
 			<div class="space-y-1">
 				{#each sections as section}
 					<button class="flex flex-row items-center justify-between w-full text-left text-base px-4 py-3 rounded-3xl border border-transparent hover:bg-theme-accent/5 {activeSectionId === section.id ? 'md:bg-theme-accent/15' : ''}" aria-current={activeSectionId === section.id ? 'page' : undefined} on:click={() => selectSection(section.id)}>
@@ -256,7 +265,7 @@
 		</nav>
 
 		<!-- settings (right) -->
-		<div bind:this={contentElement} class="{mobileView === 'nav' ? 'hidden' : 'flex'} md:flex flex-col flex-1 min-w-0 overflow-y-auto pl-6 pr-4 mt-2 mb-4 mr-2 pb-6">
+		<div bind:this={contentElement} class="{mobileView === 'nav' ? 'hidden' : 'flex'} md:flex flex-col flex-1 min-w-0 overflow-y-auto overscroll-contain pl-6 pr-4 mt-2 mb-4 mr-2 pb-6">
 			{#if individualSettingsComponent}
 				<!-- individual-setting (selector stays open until Back is clicked) -->
 				<div id="individual-setting" in:fly={{ duration: 150, x: 0, easing: sineIn }}>
