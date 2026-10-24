@@ -17,25 +17,28 @@ export function loadFont(name, url) {
 		return cached.promise;
 	}
 
-	// Same name from another URL — drop the previous face so it doesn't take precedence over the new one
-	if (cached) {
-		document.fonts.delete(cached.fontFace);
-	}
-
-	// First time loading this font (or this URL) — create and cache the promise
+	// First time loading this font (or this URL) — create and cache the promise.
+	// A previous face of the same name stays in use until the new one has loaded, so a failed replacement keeps it.
 	const myFont = new FontFace(name, `url(${url})`);
 	const promise = new Promise((resolve, reject) => {
 		myFont
 			.load()
 			.then(() => {
 				// Skip a face that was replaced while it was still loading
-				if (fontCache.get(name)?.fontFace === myFont) document.fonts.add(myFont);
+				if (fontCache.get(name)?.fontFace === myFont) {
+					if (cached) document.fonts.delete(cached.fontFace);
+					document.fonts.add(myFont);
+				}
 				const el = document.createElement('DIV');
 				el.style.fontFamily = name;
 				resolve();
 			})
 			.catch(() => {
-				if (fontCache.get(name)?.fontFace === myFont) fontCache.delete(name); // remove on failure so it can be retried
+				// remove on failure so it can be retried, or fall back to the face it was replacing
+				if (fontCache.get(name)?.fontFace === myFont) {
+					if (cached) fontCache.set(name, cached);
+					else fontCache.delete(name);
+				}
 				reject();
 			});
 	});

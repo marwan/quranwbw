@@ -23,7 +23,12 @@ const TAJWEED_FONT_TYPE = 3;
 const NON_TAJWEED_FONT_TYPE = 2;
 const INFO_SHOWN_STORAGE_KEY = 'tajweedCompatibilityInfoShown';
 
+// A check that has not settled after this long is abandoned: the page keeps the COLRv1 default (and retries next load)
+const PROBE_TIMEOUT_MS = 10000;
+
 let pendingCheck = null;
+// Incremented when a check is restarted (back to auto), so an older check still running cannot overwrite the newer result
+let checkGeneration = 0;
 let loggedManualMode = null;
 
 function log(...args) {
@@ -78,14 +83,22 @@ export function getTajweedFontSupportDetails() {
 	return { support: cached.support, detectedAt: cached.detectedAt || null, method: cached.method || 'check', osVersion: getAppleOSVersionLabel() };
 }
 
-async function detectSupport() {
+function withTimeout(promise, ms) {
+	let timer;
+	const timeout = new Promise((_, reject) => {
+		timer = setTimeout(() => reject(new Error(`Tajweed font check timed out after ${ms} ms`)), ms);
+	});
+	return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+async function detectSupport(generation) {
 	const webKitVersion = getAppleWebKitMajorVersion();
 	log('user agent:', navigator.userAgent, '| WebKit major:', webKitVersion);
 
 	if ((webKitVersion ?? 0) >= 27) {
 		log('WebKit 27+ → colrv1 (no check needed)');
 		// cached only so the settings can show when and how the format was chosen
-		if (!readCacheEntry()) writeCache('colrv1', 'webkit27');
+		if (!readCacheEntry() && generation === checkGeneration) writeCache('colrv1', 'webkit27');
 		return 'colrv1';
 	}
 
@@ -97,32 +110,36 @@ async function detectSupport() {
 
 	const start = performance.now();
 	try {
-		const colrv1 = await probeCOLRv1(getMushafFontVariantLink('colrv1', PROBE_PAGE));
+		const colrv1 = await withTimeout(probeCOLRv1(getMushafFontVariantLink('colrv1', PROBE_PAGE)), PROBE_TIMEOUT_MS);
 		log('COLRv1 check:', colrv1.state, '| canvas', colrv1.canvas, '| foreignObject', colrv1.foreignObject, '| foreignObject÷canvas colored share', colrv1.ratio === null ? 'n/a' : colrv1.ratio.toFixed(2), '| ms', colrv1.timings);
 
 		let support = 'colrv1';
 		if (colrv1.state !== 'ok') {
-			const otsvg = await probeOTSVG(getMushafFontVariantLink('otsvgLight', PROBE_PAGE));
+			const otsvg = await withTimeout(probeOTSVG(getMushafFontVariantLink('otsvgLight', PROBE_PAGE)), PROBE_TIMEOUT_MS);
 			log('OT-SVG check:', otsvg.state, '| foreignObject', otsvg.foreignObject, '| ms', otsvg.timings);
 			support = otsvg.state === 'ok' ? 'otsvg' : 'none';
 		}
 
+		// a newer check was started meanwhile (back to auto): its result wins, don't cache this one
+		if (generation !== checkGeneration) return support;
 		writeCache(support, 'check');
 		log('result →', support, `(total ${Math.round(performance.now() - start)} ms)`);
 		return support;
 	} catch (error) {
-		// network or decoding failure: keep the COLRv1 default and retry on the next page load (not cached)
+		// network or decoding failure, or timeout: keep the COLRv1 default and retry on the next page load (not cached)
 		console.warn(LOG_PREFIX, 'check failed, using colrv1', error);
 		window.rybbit?.error(error);
 		return 'colrv1';
 	}
 }
 
-// Stores the result; with 'none', moves a Tajweed user to the non-Tajweed Mushaf font and explains why
+// Stores the result; with 'none', moves a Tajweed user to the non-Tajweed Mushaf font and explains why.
+// Not when a format was picked manually in the meantime: a manual choice is used as is, with no 'none' fallback.
 function applySupport(support) {
 	__tajweedFontSupport.set(support);
 
-	if (support === 'none' && get(__fontType) === TAJWEED_FONT_TYPE) {
+	const manualMode = ['colrv1', 'otsvg'].includes(get(__tajweedCompatibilityMode));
+	if (support === 'none' && get(__fontType) === TAJWEED_FONT_TYPE && !manualMode) {
 		log('Tajweed colors cannot be displayed → switching to the non-Tajweed Mushaf font');
 		updateSettings({ type: 'fontType', value: NON_TAJWEED_FONT_TYPE });
 		showAlert('Tajweed fonts are not supported on your browser. Please try updating iOS.', get(__settingsDrawerHidden) ? '' : 'settings-drawer');
@@ -149,11 +166,14 @@ export function ensureTajweedFontSupport() {
 	if (known !== null) return Promise.resolve(applySupport(known));
 
 	if (!pendingCheck) {
-		pendingCheck = detectSupport()
-			.then(applySupport)
+		const generation = checkGeneration;
+		const check = detectSupport(generation)
+			// a result from a check that was restarted meanwhile is ignored: the newer check applies its own
+			.then((support) => (generation === checkGeneration ? applySupport(support) : get(__tajweedFontSupport)))
 			.finally(() => {
-				pendingCheck = null;
+				if (pendingCheck === check) pendingCheck = null;
 			});
+		pendingCheck = check;
 	}
 	return pendingCheck;
 }
@@ -162,6 +182,7 @@ export function ensureTajweedFontSupport() {
 // The check itself only runs if the Tajweed Mushaf font is in use; otherwise it runs the next time it is selected.
 export function rerunTajweedFontCheck() {
 	log('auto mode selected → forgetting the cached result and checking again');
+	checkGeneration++;
 	clearCache();
 	pendingCheck = null;
 	__tajweedFontSupport.set(null);

@@ -239,3 +239,44 @@ describe('auto detection details and re-check', () => {
 		expect(getTajweedFontSupportDetails()).toBeNull();
 	});
 });
+
+describe('review fixes', () => {
+	test('a check that never settles falls back to COLRv1 after the timeout, without caching', async () => {
+		vi.useFakeTimers();
+		vi.spyOn(console, 'warn').mockImplementation(() => {});
+		vi.mocked(probeCOLRv1).mockReturnValue(new Promise(() => {}));
+		const result = ensureTajweedFontSupport();
+		await vi.advanceTimersByTimeAsync(10000);
+		expect(await result).toBe('colrv1');
+		expect(localStorage.getItem('tajweedFontSupport')).toBeNull();
+		vi.useRealTimers();
+	});
+
+	test("a late 'none' result does not override a manual mode picked meanwhile", async () => {
+		let finishCheck;
+		vi.mocked(probeCOLRv1).mockReturnValue(new Promise((resolve) => (finishCheck = () => resolve(probe('bleed')))));
+		vi.mocked(probeOTSVG).mockResolvedValue(probe('blank'));
+		const result = ensureTajweedFontSupport();
+		__tajweedCompatibilityMode.set('otsvg');
+		finishCheck();
+		expect(await result).toBe('none');
+		expect(updateSettings).not.toHaveBeenCalled();
+		expect(showAlert).not.toHaveBeenCalled();
+	});
+
+	test('an older check still running when auto is selected again cannot overwrite the newer result', async () => {
+		let finishOldCheck;
+		vi.mocked(probeCOLRv1).mockReturnValueOnce(new Promise((resolve) => (finishOldCheck = () => resolve(probe('bleed')))));
+		vi.mocked(probeOTSVG).mockResolvedValue(probe('blank'));
+		const oldCheck = ensureTajweedFontSupport();
+
+		vi.mocked(probeCOLRv1).mockResolvedValueOnce(probe('ok'));
+		expect(await rerunTajweedFontCheck()).toBe('colrv1');
+
+		finishOldCheck();
+		await oldCheck;
+		expect(get(__tajweedFontSupport)).toBe('colrv1');
+		expect(getTajweedFontSupportDetails().support).toBe('colrv1');
+		expect(updateSettings).not.toHaveBeenCalled();
+	});
+});

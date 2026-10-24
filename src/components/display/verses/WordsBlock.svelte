@@ -38,7 +38,8 @@
 	// without fighting Svelte's DOM patching via classList.remove().
 	let pageVisible = false;
 	let lastWordInteractionWasTouch = false;
-	let requestedFontLink = null;
+	let fontLoadId = 0;
+	let shownFontLink = null;
 
 	// Load the Mushaf font and reveal words whenever the font type switches to 2 or 3.
 	// The font URL depends on which Tajweed color font format the device can display, so wait for that check first.
@@ -47,16 +48,24 @@
 	$: if (mushafFontTypes.includes($__fontType)) loadMushafFont($__tajweedCompatibilityMode, $__tajweedFontSupport);
 
 	function loadMushafFont() {
+		// Only the latest request may swap the font and reveal the words, in case the format changed again while loading
+		const thisLoadId = ++fontLoadId;
 		ensureTajweedFontSupport().then(() => {
+			if (thisLoadId !== fontLoadId) return;
 			const fontLink = getMushafWordFontLink(value.meta.page);
-			// this file is already shown or loading: nothing to swap, keep the words visible
-			if (fontLink === requestedFontLink) return;
-			requestedFontLink = fontLink;
+			// this file is already shown: nothing to swap, keep the words visible
+			if (fontLink === shownFontLink && pageVisible) return;
 			pageVisible = false;
-			return loadFont(`p${value.meta.page}`, fontLink).then(() => {
-				// only the latest requested file reveals the words, in case the format changed again while it was loading
-				if (fontLink === requestedFontLink) pageVisible = true;
-			});
+			return loadFont(`p${value.meta.page}`, fontLink)
+				.then(() => {
+					if (thisLoadId !== fontLoadId) return;
+					shownFontLink = fontLink;
+					pageVisible = true;
+				})
+				.catch(() => {
+					// the new file failed: loadFont() kept the previous face, so show the words with it (if there was one)
+					if (thisLoadId === fontLoadId && shownFontLink) pageVisible = true;
+				});
 		});
 	}
 
