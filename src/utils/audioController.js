@@ -252,21 +252,15 @@ export function initializeAudioSettings(key) {
 
 	audioSettings.playingKey = key;
 	[audioSettings.playingChapter, audioSettings.playingVerse] = key.split(':').map(Number);
-	__audioSettings.set(audioSettings);
 
 	const chapterTotalVerses = quranMetaData[audioSettings.playingChapter].verses;
 
 	audioSettings.startVerse = audioSettings.playingVerse;
-
-	if (audioSettings.endVerse > chapterTotalVerses) {
-		audioSettings.endVerse = chapterTotalVerses;
-	}
-	if (audioSettings.endVerse < audioSettings.startVerse) {
-		audioSettings.endVerse = audioSettings.startVerse;
-	}
+	audioSettings.endVerse = chapterTotalVerses;
 
 	audioSettings.audioType = audioSettings.audioType ?? 'verse';
 	audioSettings.audioRange = audioSettings.audioRange ?? 'playThisVerse';
+	__audioSettings.set(audioSettings);
 }
 
 // Reset audio settings
