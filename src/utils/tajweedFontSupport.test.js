@@ -37,6 +37,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+	vi.useRealTimers();
 	vi.restoreAllMocks();
 	vi.mocked(probeCOLRv1).mockReset();
 	vi.mocked(probeOTSVG).mockReset();
@@ -99,6 +100,7 @@ describe('ensureTajweedFontSupport', () => {
 	});
 
 	test('a failed check keeps COLRv1 and is not cached', async () => {
+		vi.useFakeTimers({ now: 0 });
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 		vi.mocked(probeCOLRv1).mockRejectedValue(new Error('offline'));
 		expect(await ensureTajweedFontSupport()).toBe('colrv1');
@@ -242,7 +244,7 @@ describe('auto detection details and re-check', () => {
 
 describe('review fixes', () => {
 	test('a check that never settles falls back to COLRv1 after the timeout, without caching', async () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers({ now: 0 });
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 		vi.mocked(probeCOLRv1).mockReturnValue(new Promise(() => {}));
 		const result = ensureTajweedFontSupport();
@@ -278,5 +280,28 @@ describe('review fixes', () => {
 		expect(get(__tajweedFontSupport)).toBe('colrv1');
 		expect(getTajweedFontSupportDetails().support).toBe('colrv1');
 		expect(updateSettings).not.toHaveBeenCalled();
+	});
+});
+
+describe('after a failed check', () => {
+	test('COLRv1 is used without storing it, then the check is retried after a minute', async () => {
+		vi.useFakeTimers({ now: 0 });
+		vi.spyOn(console, 'warn').mockImplementation(() => {});
+		vi.mocked(probeCOLRv1).mockRejectedValueOnce(new Error('offline'));
+		expect(await ensureTajweedFontSupport()).toBe('colrv1');
+		expect(get(__tajweedFontSupport)).toBeNull();
+
+		// other verses rendered right after: no new check
+		expect(await ensureTajweedFontSupport()).toBe('colrv1');
+		expect(probeCOLRv1).toHaveBeenCalledTimes(1);
+
+		// a minute later the check runs again and its result is kept
+		vi.advanceTimersByTime(60000);
+		vi.mocked(probeCOLRv1).mockResolvedValueOnce(probe('bleed'));
+		vi.mocked(probeOTSVG).mockResolvedValueOnce(probe('ok'));
+		expect(await ensureTajweedFontSupport()).toBe('otsvg');
+		expect(probeCOLRv1).toHaveBeenCalledTimes(2);
+		expect(get(__tajweedFontSupport)).toBe('otsvg');
+		vi.useRealTimers();
 	});
 });

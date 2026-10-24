@@ -23,12 +23,15 @@ const TAJWEED_FONT_TYPE = 3;
 const NON_TAJWEED_FONT_TYPE = 2;
 const INFO_SHOWN_STORAGE_KEY = 'tajweedCompatibilityInfoShown';
 
-// A check that has not settled after this long is abandoned: the page keeps the COLRv1 default (and retries next load)
+// A check that has not settled after this long is abandoned: the page keeps the COLRv1 default for now
 const PROBE_TIMEOUT_MS = 10000;
+// After a failed or timed-out check, COLRv1 is used without checking again for this long (instead of on every rendered verse)
+const RETRY_AFTER_FAILURE_MS = 60000;
 
 let pendingCheck = null;
 // Incremented when a check is restarted (back to auto), so an older check still running cannot overwrite the newer result
 let checkGeneration = 0;
+let lastFailedCheckAt = null;
 let loggedManualMode = null;
 
 function log(...args) {
@@ -126,10 +129,12 @@ async function detectSupport(generation) {
 		log('result →', support, `(total ${Math.round(performance.now() - start)} ms)`);
 		return support;
 	} catch (error) {
-		// network or decoding failure, or timeout: keep the COLRv1 default and retry on the next page load (not cached)
-		console.warn(LOG_PREFIX, 'check failed, using colrv1', error);
+		// network or decoding failure, or timeout: no result (nothing cached or stored), the caller falls back to COLRv1
+		// and the check is retried later
+		console.warn(LOG_PREFIX, 'check failed, using colrv1 for now', error);
 		window.rybbit?.error(error);
-		return 'colrv1';
+		lastFailedCheckAt = Date.now();
+		return null;
 	}
 }
 
@@ -165,11 +170,18 @@ export function ensureTajweedFontSupport() {
 	const known = get(__tajweedFontSupport);
 	if (known !== null) return Promise.resolve(applySupport(known));
 
+	// a check failed a moment ago: keep the COLRv1 default for now rather than checking again for every rendered verse
+	if (!pendingCheck && lastFailedCheckAt !== null && Date.now() - lastFailedCheckAt < RETRY_AFTER_FAILURE_MS) return Promise.resolve('colrv1');
+
 	if (!pendingCheck) {
 		const generation = checkGeneration;
 		const check = detectSupport(generation)
-			// a result from a check that was restarted meanwhile is ignored: the newer check applies its own
-			.then((support) => (generation === checkGeneration ? applySupport(support) : get(__tajweedFontSupport)))
+			.then((support) => {
+				// failed check: COLRv1 for this caller only, so a later call can check again
+				if (support === null) return 'colrv1';
+				// a result from a check that was restarted meanwhile is ignored: the newer check applies its own
+				return generation === checkGeneration ? applySupport(support) : get(__tajweedFontSupport);
+			})
 			.finally(() => {
 				if (pendingCheck === check) pendingCheck = null;
 			});
@@ -183,6 +195,7 @@ export function ensureTajweedFontSupport() {
 export function rerunTajweedFontCheck() {
 	log('auto mode selected → forgetting the cached result and checking again');
 	checkGeneration++;
+	lastFailedCheckAt = null;
 	clearCache();
 	pendingCheck = null;
 	__tajweedFontSupport.set(null);

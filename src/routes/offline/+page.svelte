@@ -73,8 +73,9 @@
 	$: usesOTSVGFonts = mushafFontVariants.some((variant) => variant.startsWith('otsvg'));
 
 	// The downloaded Mushaf fonts no longer match (e.g. the Tajweed format changed from COLRv1 to OT-SVG): offer a re-download
-	$: downloadedMushafFontVariants = offlineModeSettings?.mushafData?.fontVariants;
-	$: hasMushafFontMismatch = Array.isArray(downloadedMushafFontVariants) && mushafFontVariants.some((variant) => !downloadedMushafFontVariants.includes(variant));
+	// Downloads made before the variants were recorded hold the COLRv1 files: the section was disabled on Apple devices then
+	$: downloadedMushafFontVariants = offlineModeSettings?.mushafData?.fontVariants ?? ['colrv1'];
+	$: hasMushafFontMismatch = mushafFontVariants.some((variant) => !downloadedMushafFontVariants.includes(variant));
 
 	function readMushafFontVariants() {
 		return getMushafOfflineFontVariants();
