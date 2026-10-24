@@ -313,7 +313,7 @@
 						{@const lastReadChapter = $__lastRead.chapter}
 						{@const lastReadVerse = Math.max(1, $__lastRead.verse - 1)}
 						<div class="flex flex-row space-x-2 mb-2">
-							<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} truncate w-full" on:click={() => window.rybbit?.track('Continue Chapter Button')}>
+							<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} truncate w-full" on:click={() => window.rybbit?.event('Continue Chapter Button')}>
 								<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 								<span class="truncate">
 									<span class="md:hidden">Continue: {lastReadChapter}:{lastReadVerse}</span>
