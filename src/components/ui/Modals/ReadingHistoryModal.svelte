@@ -8,6 +8,7 @@
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
+	import { resumeReadingSession } from '$utils/readingHistoryHandler';
 
 	let fullQuranTextData = null;
 
@@ -35,7 +36,14 @@
 			{#each $__readingHistory as item, index (item.id)}
 				{@const [chapter, verse] = [item.chapter, item.verse]}
 
-				<a href={`/${chapter}?startVerse=${verse}`} class="{individualCheckboxClasses} flex items-center gap-3 w-full min-w-0 overflow-hidden" on:click={() => (open = false)}>
+				<a
+					href={`/${chapter}?startVerse=${verse}`}
+					class="{individualCheckboxClasses} flex items-center gap-3 w-full min-w-0 overflow-hidden"
+					on:click={() => {
+						open = false;
+						resumeReadingSession(item.id, `/${chapter}?startVerse=${verse}`);
+					}}
+				>
 					<div class="flex-1 min-w-0 overflow-hidden">
 						<div class="line-clamp-1">
 							{index + 1}. {quranMetaData[chapter].transliteration} ({chapter}:{verse})

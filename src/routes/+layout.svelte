@@ -25,7 +25,7 @@
 	import { toggleNavbarToolbarOnScroll } from '$utils/toggleNavbarToolbarOnScroll';
 	import { resetAudioSettings } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
-	import { isReaderPage, resetReadingHistorySession } from '$utils/readingHistoryHandler';
+	import { handleReadingNavigation } from '$utils/readingHistoryHandler';
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
@@ -49,10 +49,8 @@
 		resetAudioSettings({ location: 'end' });
 	}
 
-	// Reset the reading session whenever the user navigates away from a reader page
-	$: if ($__currentPage && !isReaderPage($__currentPage)) {
-		resetReadingHistorySession();
-	}
+	// Start a fresh reading session on every navigation (or resume a pending history entry)
+	$: handleReadingNavigation($page.url.pathname + $page.url.search);
 
 	// Toggle distraction-free mushaf mode
 	$: if ($__mushafMinimalModeEnabled && $__currentPage === 'mushaf') {

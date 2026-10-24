@@ -31,6 +31,29 @@ export function resetReadingHistorySession() {
 	startReadingSession(null);
 }
 
+// Entry ID waiting to be resumed once the upcoming navigation completes
+let pendingResumeId = null;
+
+// Called by the history modal when an entry is clicked.
+// The layout's navigation hook runs after the route changes, so the ID is stored until then.
+export function resumeReadingSession(entryId, targetUrl) {
+	// Same URL means no navigation will happen, so resume immediately
+	if (targetUrl === location.pathname + location.search) {
+		startReadingSession(entryId);
+		return;
+	}
+
+	pendingResumeId = entryId;
+}
+
+// Called by the layout on every navigation.
+// Resumes the pending history entry if there is one, otherwise starts a fresh session.
+export function handleReadingNavigation() {
+	const entryId = pendingResumeId;
+	pendingResumeId = null;
+	startReadingSession(entryId);
+}
+
 // Pure function: applies a reading position to the history and returns the new array.
 // Updates the active entry in place (and moves it to the front), or creates a new one.
 export function updateReadingHistory({ history, data }) {
