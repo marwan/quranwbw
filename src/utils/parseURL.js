@@ -35,7 +35,7 @@ export function parseURL() {
 	} else if (pathParts.length >= 2) {
 		const secondPart = pathParts[1];
 
-		let range = secondPart.split(/[-:.#]/);
+		let range = secondPart.split(/[#.:-]/);
 		startVerse = parseInt(range[0], 10) || 1;
 		endVerse = parseInt(range[1], 10);
 
