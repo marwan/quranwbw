@@ -1,3 +1,9 @@
+### May 16, 2026
+
+- **Reading History:** Recently visited reading locations are now automatically recorded, making it easy to revisit Chapters, Mushaf, Juz, and Hizb pages you've been reading.
+
+---
+
 ### Jun 15, 2026
 
 - **Improved Search Results**: Search now pulls from an additional source ([Al Quran Cloud](https://alquran.cloud/)) alongside the existing Kalimat API, resulting in broader and more comprehensive verse matches for any given query.

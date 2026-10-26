@@ -24,6 +24,7 @@ let __currentPage,
 	__displayType,
 	__websiteTheme,
 	__lastRead,
+	__readingHistory,
 	__pageURL,
 	__settingsDrawerHidden,
 	__topNavbarVisible,
@@ -44,6 +45,7 @@ let __currentPage,
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
 	__favoriteChaptersModalVisible,
+	__readingHistoryModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
@@ -132,6 +134,9 @@ if (browser) {
 	// to store the last read key
 	__lastRead = writable(userSettings.lastRead);
 
+	// to store the user's reading history
+	__readingHistory = writable(userSettings.readingHistory);
+
 	// to store a random number (for now) when changing verses due to some issues while re-rendering the component (probably because I'm still learning Svelte)
 	__pageURL = writable(null);
 
@@ -173,6 +178,7 @@ if (browser) {
 	__morphologyModalVisible = writable(false);
 	__copyShareVerseModalVisible = writable(false);
 	__favoriteChaptersModalVisible = writable(false);
+	__readingHistoryModalVisible = writable(false);
 	__confirmationAlertModal = writable({
 		visible: false,
 		type: null,
@@ -255,6 +261,7 @@ export {
 	__displayType,
 	__websiteTheme,
 	__lastRead,
+	__readingHistory,
 	__pageURL,
 	__settingsDrawerHidden,
 	__topNavbarVisible,
@@ -275,6 +282,7 @@ export {
 	__morphologyModalVisible,
 	__copyShareVerseModalVisible,
 	__favoriteChaptersModalVisible,
+	__readingHistoryModalVisible,
 	__confirmationAlertModal,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,

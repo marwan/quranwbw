@@ -116,7 +116,7 @@
 						<!-- Last Read -->
 						{#if Object.prototype.hasOwnProperty.call($__lastRead, 'chapter')}
 							{@const lastReadChapter = $__lastRead.chapter}
-							{@const lastReadVerse = $__lastRead.verse}
+							{@const lastReadVerse = Math.max(1, $__lastRead.verse - 1)}
 							<div id="last-read-links" class="py-2 space-y-2">
 								<span class="text-xs font-semibold pt-2">Last Read</span>
 								<div class={linkClasses}>

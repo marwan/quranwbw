@@ -56,6 +56,7 @@ export const defaultSettings = {
 		wrongAnswers: 0
 	},
 	lastRead: {},
+	readingHistory: [],
 	userBookmarks: [],
 	userFavoriteChapters: [],
 	userNotes: {},

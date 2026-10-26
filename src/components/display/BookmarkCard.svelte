@@ -68,12 +68,12 @@
 		{#if fullQuranTextData}
 			<div class="text-sm truncate text-right direction-rtl arabic-font-1 opacity-70 mt-2">
 				{#await fullQuranTextData then data}
-					{@const verseText = data.data[`${bookmarkChapter}:${bookmarkVerse}`]}
-					<div class="truncate {maxTextLength}" lang="ar">
-						{verseText}
-					</div>
-				{:catch _error}
-					<span class="text-xs opacity-50" role="alert">Failed to load verse</span>
+					{#if data}
+						{@const verseText = data.data[`${bookmarkChapter}:${bookmarkVerse}`]}
+						<div class="truncate {maxTextLength}" lang="ar">
+							{verseText}
+						</div>
+					{/if}
 				{/await}
 			</div>
 		{/if}
