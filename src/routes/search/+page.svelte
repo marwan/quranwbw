@@ -274,7 +274,7 @@
 					<div id="navigation-results" class="flex flex-wrap space-x-4 justify-center mt-6 -mb-2.5">
 						{#each navigationResults as item}
 							{@const [itemTitle, itemLink] = getNavigationLink(item)}
-							<a href={itemLink} target="_blank" class="{linkClasses} my-1" data-rybbit-event="Search Navigation Chapter Card Click">
+							<a href={itemLink} target="_blank" class="{linkClasses} my-1" data-rybbit-event="Search Page Navigation Card Click">
 								<span class={linkTextClasses}>{itemTitle} {@html '&#8599;'}</span>
 							</a>
 						{/each}

@@ -37,11 +37,9 @@
 	}
 </script>
 
-<!-- Custom text mode: show only the passed text (e.g. "Top Matches") -->
+<!-- Custom text mode: rendered as a heading so screen readers can navigate to each section -->
 {#if text !== null}
-	<div class={dividerClasses}>
-		<span>{text}</span>
-	</div>
+	<h2 class={dividerClasses}>{text}</h2>
 	<!-- Key mode: the key starts a page, juz, or hizb, so show those labels separated by bullets -->
 {:else if dividerItems.length > 0}
 	<div class={dividerClasses}>
