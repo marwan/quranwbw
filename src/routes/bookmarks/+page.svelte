@@ -15,8 +15,8 @@
 
 <div id="individual-verses-block">
 	{#if $__userBookmarks.length === 0}
-		<div class="fixed inset-0 flex flex-row items-center justify-center text-center px-4 text-xs md:text-sm opacity-70 pointer-events-none">
-			<span class="leading-relaxed pointer-events-auto">You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px] mx-1" /> icon for a {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you.</span>
+		<div class="fixed inset-0 flex flex-row items-center justify-center text-center px-4 text-xs md:text-sm opacity-70 leading-relaxed">
+			You haven't bookmarked any {term('verse')} yet! Start by clicking on the <Bookmark classes="inline mt-[-4px] mx-1" /> icon for a {term('verse')}. It's a perfect way to return to the {term('verses')} that resonate with you.
 		</div>
 	{:else}
 		<FullVersesDisplay keys={$__userBookmarks.toString()} />
