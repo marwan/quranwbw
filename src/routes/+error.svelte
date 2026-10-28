@@ -32,6 +32,11 @@
 
 <PageHead title={is404 ? 'Page not found' : 'Something went wrong'} />
 
+<!-- keep error pages out of search results since the response status is 200 -->
+<svelte:head>
+	<meta name="robots" content="noindex" />
+</svelte:head>
+
 <div class="fixed inset-0 flex flex-col space-y-6 items-center justify-center text-center px-4 pointer-events-none">
 	<span><NotFound size={12} /></span>
 
