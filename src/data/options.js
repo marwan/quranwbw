@@ -154,7 +154,7 @@ export const selectableFontTypes = {
 	11: {
 		id: 3,
 		type: 'Indopak / Nastaleeq',
-		name: 'Qalam Digital Bangla (Madinah Edition)',
+		name: 'Bangla Qalam Digital (Madinah Edition)',
 		order: 7,
 		disallowedInPages: ['mushaf'],
 		version: 7
@@ -162,7 +162,7 @@ export const selectableFontTypes = {
 	12: {
 		id: 6,
 		type: 'Indopak / Nastaleeq',
-		name: 'Qalam Digital Bangla (Hanafi Edition)',
+		name: 'Bangla Qalam Digital (Hanafi Edition)',
 		order: 8,
 		disallowedInPages: ['mushaf'],
 		version: 7
