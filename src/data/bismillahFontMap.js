@@ -119,7 +119,7 @@ export const bismillahFontMap = {
 	// 11: Qalam Digital Bangla Font (Madinah Edition)
 	11: {
 		file: 'IndopakBasmalaBD-Arabic',
-		version: 13,
+		version: 1,
 		bismillah: {
 			default: '﷽'
 		}
@@ -128,7 +128,7 @@ export const bismillahFontMap = {
 	// 12: Qalam Digital Bangla Font (Hanafi Edition) — same font file as type 11
 	12: {
 		file: 'IndopakBasmalaBD-Arabic',
-		version: 13,
+		version: 1,
 		bismillah: {
 			default: '﷽'
 		}
