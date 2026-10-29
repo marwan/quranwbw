@@ -1,6 +1,6 @@
 ### Oct 29, 2026
 
-- **Bangla Qalam Digital Fonts (Madinah and Hanafi Editions)**: Added two new Qur'anic fonts featuring Bangla-style Arabic glyphs, including a pointed sukoon instead of the traditional jazm-style sukoon and a caret-shaped (^) symbol style for relevant characters.
+- **Bangla Qalam Digital Fonts (Madinah and Hanafi Editions)**: Added two new Indopak Qur'anic fonts featuring Bangla-style pointed sukoon instead of the traditional jazm-style sukoon.
 
 ---
 
