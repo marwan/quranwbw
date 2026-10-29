@@ -74,7 +74,7 @@ export const selectableFontTypes = {
 	1: {
 		id: 1,
 		type: 'Uthmanic',
-		name: 'Digital Font',
+		name: 'Digital',
 		order: 1,
 		disallowedInPages: ['mushaf'],
 		version: 5
@@ -98,7 +98,7 @@ export const selectableFontTypes = {
 	4: {
 		id: 3,
 		type: 'Indopak / Nastaleeq',
-		name: 'Qalam Digital Font (Madinah Edition)',
+		name: 'Qalam Digital (Madinah Edition)',
 		order: 5,
 		disallowedInPages: ['mushaf'],
 		version: 7
@@ -106,15 +106,15 @@ export const selectableFontTypes = {
 	5: {
 		id: 5,
 		type: 'Indopak / Nastaleeq',
-		name: 'Uthman Taha Digital Font',
-		order: 7,
+		name: 'Uthman Taha Digital',
+		order: 9,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	6: {
 		id: 6,
 		type: 'Indopak / Nastaleeq',
-		name: 'Qalam Digital Font (Hanafi Edition)',
+		name: 'Qalam Digital (Hanafi Edition)',
 		order: 6,
 		disallowedInPages: ['mushaf'],
 		version: 7
@@ -122,7 +122,7 @@ export const selectableFontTypes = {
 	7: {
 		id: 1,
 		type: 'Uthmanic',
-		name: 'Digital Bold Font',
+		name: 'Digital Bold',
 		order: 2,
 		disallowedInPages: ['mushaf'],
 		version: 5
@@ -130,26 +130,42 @@ export const selectableFontTypes = {
 	8: {
 		id: 5,
 		type: 'Indopak / Nastaleeq',
-		name: 'Uthman Taha Digital Bold Font',
-		order: 8,
+		name: 'Uthman Taha Digital Bold',
+		order: 10,
 		disallowedInPages: ['mushaf'],
 		version: 5
 	},
 	9: {
 		id: 9,
 		type: 'Indopak / Nastaleeq',
-		name: 'Indonesian Isep Misbah Digital Font',
-		order: 9,
+		name: 'Indonesian Isep Misbah Digital',
+		order: 11,
 		disallowedInPages: ['mushaf'],
 		version: 3
 	},
 	10: {
 		id: 13,
 		type: 'Indopak / Nastaleeq',
-		name: 'Majidi Nastaleeq Digital Font',
-		order: 10,
+		name: 'Majidi Nastaleeq Digital',
+		order: 12,
 		disallowedInPages: ['mushaf'],
 		version: 1
+	},
+	11: {
+		id: 3,
+		type: 'Indopak / Nastaleeq',
+		name: 'Qalam Digital Bangla (Madinah Edition)',
+		order: 7,
+		disallowedInPages: ['mushaf'],
+		version: 7
+	},
+	12: {
+		id: 6,
+		type: 'Indopak / Nastaleeq',
+		name: 'Qalam Digital Bangla (Hanafi Edition)',
+		order: 8,
+		disallowedInPages: ['mushaf'],
+		version: 7
 	}
 };
 

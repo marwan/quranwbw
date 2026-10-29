@@ -116,6 +116,24 @@ export const bismillahFontMap = {
 		}
 	},
 
+	// 11: Qalam Digital Bangla Font (Madinah Edition)
+	11: {
+		file: 'IndopakBismillah-Arabic',
+		version: 13,
+		bismillah: {
+			default: '﷽'
+		}
+	},
+
+	// 12: Qalam Digital Bangla Font (Hanafi Edition) — same font file as type 11
+	12: {
+		file: 'IndopakBismillah-Arabic',
+		version: 13,
+		bismillah: {
+			default: '﷽'
+		}
+	},
+
 	// Special override — not a selectable font type.
 	// Used automatically when font type 3 (Tajweed COLOR) is active in Firefox dark mode.
 	firefoxDarkTajweed: {
