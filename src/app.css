@@ -27,6 +27,14 @@
 }
 
 @font-face {
+  font-family: "IndoPak-Bangla";
+  src: url("/fonts/AlQuranNeo5BD-Arabic.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Nastaleeq-Hafs";
   src: url("/fonts/Nastaleeq_COLOR-Regular.woff2") format("woff2");
   font-weight: normal;
@@ -239,6 +247,10 @@ svg {
 
 .arabic-font-10 {
   font-family: "Majidi-Nastaleeq";
+}
+
+.arabic-font-11, .arabic-font-12 {
+  font-family: "IndoPak-Bangla";
 }
 
 .chapter-icons {
