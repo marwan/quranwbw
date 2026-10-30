@@ -1,5 +1,6 @@
 <script>
 	import NotFound from '$svgs/NotFound.svelte';
+	import PageError from '$svgs/PageError.svelte';
 	import PageHead from '$misc/PageHead.svelte';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
@@ -38,13 +39,13 @@
 </svelte:head>
 
 <div class="fixed inset-0 flex flex-col space-y-6 items-center justify-center text-center px-4 pointer-events-none">
-	<span><NotFound size={12} /></span>
+	<span><svelte:component this={is404 ? NotFound : PageError} size={12} /></span>
 
 	<p class="text-sm opacity-70">
 		{#if is404}
 			The content you were looking for was not found.
 		{:else}
-			There was an error while loading the content. Please try again later.
+			There was an error while loading the content.
 		{/if}
 	</p>
 
