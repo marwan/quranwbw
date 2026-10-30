@@ -4,14 +4,15 @@
 	import Trash from '$svgs/Trash.svelte';
 	import Refresh from '$svgs/Refresh.svelte';
 	import Info from '$svgs/Info.svelte';
-	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
+	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __websiteTheme, __tajweedFontSupport, __tajweedCompatibilityMode } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, checkOnlineAndAlert } from '$utils/offlineModeHandler';
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
 	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
-	import { getMushafWordFontLink, isIOSorMac } from '$utils/getMushafWordFontLink';
+	import { getMushafFontVariantLink, getMushafOfflineFontVariants } from '$utils/getMushafWordFontLink';
+	import { ensureTajweedFontSupport } from '$utils/tajweedFontSupport';
 	import { term } from '$utils/terminologies';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { bismillahFontMap } from '$data/bismillahFontMap';
@@ -66,6 +67,20 @@
 	// Check if tafsir data has mismatch
 	$: hasTafsirMismatch = mismatchStatus.verseTafsir;
 
+	// Mushaf font variants the Mushaf view uses on this device right now (depends on the theme and, on Apple devices, on the
+	// Tajweed color font format). The stores are passed only so Svelte re-evaluates when they change.
+	$: mushafFontVariants = readMushafFontVariants($__fontType, $__websiteTheme, $__tajweedFontSupport, $__tajweedCompatibilityMode);
+	$: usesOTSVGFonts = mushafFontVariants.some((variant) => variant.startsWith('otsvg'));
+
+	// The downloaded Mushaf fonts no longer match (e.g. the Tajweed format changed from COLRv1 to OT-SVG): offer a re-download
+	// Downloads made before the variants were recorded hold the COLRv1 files: the section was disabled on Apple devices then
+	$: downloadedMushafFontVariants = offlineModeSettings?.mushafData?.fontVariants ?? ['colrv1'];
+	$: hasMushafFontMismatch = mushafFontVariants.some((variant) => !downloadedMushafFontVariants.includes(variant));
+
+	function readMushafFontVariants() {
+		return getMushafOfflineFontVariants();
+	}
+
 	// Define data sections configuration
 	$: dataSections = [
 		{
@@ -83,17 +98,15 @@
 		{
 			id: 'mushafData',
 			title: 'Mushaf Data',
-			dataSizeInMB: 60,
-			description: 'These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.',
+			// The OT-SVG Tajweed fonts used on some Apple devices are about 4 times larger than the COLRv1 ones (~170 MB vs ~45 MB for 604 pages)
+			dataSizeInMB: usesOTSVGFonts ? 190 : 60,
+			description: `These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.${usesOTSVGFonts ? ' Your device uses the larger OT-SVG Tajweed fonts.' : ''}`,
 			isDataDownloaded: isMushafDataDownloaded,
 			isDownloading: isDownloadingMushaf,
-			showMismatchBanner: false,
+			showMismatchBanner: hasMushafFontMismatch,
 			onDownload: handleDownloadMushafData,
 			onDelete: () => handleDeleteSpecificData('quranwbw-mushaf-data', 'mushafData'),
-			onRedownload: () => handleRedownloadData('mushafData'),
-
-			// Disabled on iOS/macOS because the current OT-SVG fallback fonts are significantly large (~190 MB), making downloads impractical.
-			isSectionDisabled: () => isIOSorMac()
+			onRedownload: () => handleRedownloadData('mushafData')
 		},
 		{
 			id: 'morphologyData',
@@ -496,8 +509,12 @@
 		});
 
 		try {
+			// The font files depend on the Tajweed color font format on Apple devices: wait for it when the Tajweed font is in use
+			await ensureTajweedFontSupport();
+			const fontVariants = getMushafOfflineFontVariants();
+
 			const coreSteps = isServiceWorkerRegistered ? 0 : 4;
-			const totalStepsInDownloadProgress = coreSteps + totalPages + 1 + 1;
+			const totalStepsInDownloadProgress = coreSteps + totalPages * fontVariants.length + 1 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Ensure core is downloaded first
@@ -506,11 +523,13 @@
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			});
 
-			// Download all fonts
+			// Download the fonts of every page, for both Mushaf font types (their files can differ)
 			for (let page = 1; page <= totalPages; page++) {
-				await cacheUrlToCache(getMushafWordFontLink(page), 'quranwbw-mushaf-data');
-				completedStepsInDownloadProgress++;
-				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+				for (const variant of fontVariants) {
+					await cacheUrlToCache(getMushafFontVariantLink(variant, page), 'quranwbw-mushaf-data');
+					completedStepsInDownloadProgress++;
+					updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+				}
 			}
 
 			await downloadChapterAndVerseTranslationData({ fontType: [2, 3] });
@@ -519,7 +538,8 @@
 
 			updateOfflineSettingsStructure('mushafData', {
 				downloaded: true,
-				downloadedAt: new Date().toISOString()
+				downloadedAt: new Date().toISOString(),
+				fontVariants
 			});
 
 			window.rybbit?.event('Mushaf Data Download');

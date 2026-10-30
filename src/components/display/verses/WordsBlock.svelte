@@ -9,11 +9,12 @@
 	import { goto } from '$app/navigation';
 	import { selectableDisplays, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
 	import { supplicationsFromQuran } from '$data/quranMeta';
-	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick, __wordTranslation, __wordTransliteration, __wordTranslationEnabled, __wordTransliterationEnabled, __wordTooltip, __hideNonDuaPart, __signLanguageModeEnabled } from '$utils/stores';
+	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick, __wordTranslation, __wordTransliteration, __wordTranslationEnabled, __wordTransliterationEnabled, __wordTooltip, __hideNonDuaPart, __signLanguageModeEnabled, __tajweedCompatibilityMode, __tajweedFontSupport } from '$utils/stores';
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	import { getMushafWordFontLink, isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
+	import { ensureTajweedFontSupport } from '$utils/tajweedFontSupport';
 
 	const mushafFontTypes = [2, 3];
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
@@ -37,11 +38,34 @@
 	// without fighting Svelte's DOM patching via classList.remove().
 	let pageVisible = false;
 	let lastWordInteractionWasTouch = false;
+	let fontLoadId = 0;
+	let shownFontLink = null;
 
 	// Load the Mushaf font and reveal words whenever the font type switches to 2 or 3.
-	if (mushafFontTypes.includes($__fontType)) {
-		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
-			pageVisible = true;
+	// The font URL depends on which Tajweed color font format the device can display, so wait for that check first.
+	// Also re-runs when the iOS Tajweed compatibility mode or the detected format changes (passed only so Svelte tracks them):
+	// loadFont() then swaps the page font for the new format's file, and the words stay hidden until it is ready.
+	$: if (mushafFontTypes.includes($__fontType)) loadMushafFont($__tajweedCompatibilityMode, $__tajweedFontSupport);
+
+	function loadMushafFont() {
+		// Only the latest request may swap the font and reveal the words, in case the format changed again while loading
+		const thisLoadId = ++fontLoadId;
+		ensureTajweedFontSupport().then(() => {
+			if (thisLoadId !== fontLoadId) return;
+			const fontLink = getMushafWordFontLink(value.meta.page);
+			// this file is already shown: nothing to swap, keep the words visible
+			if (fontLink === shownFontLink && pageVisible) return;
+			pageVisible = false;
+			return loadFont(`p${value.meta.page}`, fontLink)
+				.then(() => {
+					if (thisLoadId !== fontLoadId) return;
+					shownFontLink = fontLink;
+					pageVisible = true;
+				})
+				.catch(() => {
+					// the new file failed: loadFont() kept the previous face, so show the words with it (if there was one)
+					if (thisLoadId === fontLoadId && shownFontLink) pageVisible = true;
+				});
 		});
 	}
 

@@ -17,6 +17,7 @@
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
+	import { ensureTajweedFontSupport } from '$utils/tajweedFontSupport';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import { fade } from 'svelte/transition';
@@ -54,7 +55,7 @@
 		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
 			if (thisPage > 0 && thisPage <= 604 && !prefetchedPages.has(thisPage)) {
 				prefetchedPages.add(thisPage);
-				fetch(getMushafWordFontLink(thisPage));
+				ensureTajweedFontSupport().then(() => fetch(getMushafWordFontLink(thisPage)));
 			}
 		}
 	}
