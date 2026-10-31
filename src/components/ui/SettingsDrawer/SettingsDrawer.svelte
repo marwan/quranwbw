@@ -360,7 +360,7 @@
 					<div id="quran-font-setting" class="{settingsBlockClasses} {settingsDrawerOpacity} {$__signLanguageModeEnabled && disabledClasses}">
 						<div class="flex flex-row justify-between items-center">
 							<div class="block">Quran Font</div>
-							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].font}</button>
+							<button class={selectorClasses} on:click={() => gotoIndividualSetting('quran-font')}>{selectableFontTypes[$__fontType].type} - {selectableFontTypes[$__fontType].name}</button>
 						</div>
 						<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
 					</div>
@@ -624,7 +624,6 @@
 
 			<!-- website build version & timestamp -->
 			<div class="flex flex-col justify-center border-t border-theme-accent/20 py-6 space-y-4 text-center {settingsDrawerOpacity}">
-				<!-- svelte-ignore missing-declaration -->
 				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
 			</div>
 		</div>
