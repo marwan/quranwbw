@@ -8,22 +8,21 @@
 		custom: ''
 	};
 	let toolTipClass;
+	let popperProps;
 	$: {
+		// a custom color switches to the custom type
 		if ($$restProps.color) type = 'custom';
-		else $$restProps.color = 'none';
-		if (['light', 'auto'].includes(type)) $$restProps.border = true;
 		toolTipClass = twMerge('tooltip', defaultClass, types[type], $$props.class);
+
+		// build props for Popper (assigning into $$restProps no longer works in Svelte 5)
+		popperProps = {
+			...$$restProps,
+			color: $$restProps.color || 'none',
+			...(['light', 'auto'].includes(type) && { border: true })
+		};
 	}
 </script>
 
-<Popper rounded {...$$restProps} class={toolTipClass} on:show>
+<Popper rounded {...popperProps} class={toolTipClass} on:show>
 	<slot />
 </Popper>
-
-<!--
-@component
-[Go to docs](https://flowbite-svelte.com/)
-## Props
-@prop export let type: 'dark' | 'light' | 'auto' | 'custom' = 'dark';
-@prop export let defaultClass: string = 'py-2 px-3 text-sm font-medium';
--->

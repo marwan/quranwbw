@@ -3,7 +3,7 @@
 	export let divClass = 'my-1 h-px';
 </script>
 
-<div {...$$restProps} class={twMerge(divClass, $$props.class)} />
+<div {...$$restProps} class={twMerge(divClass, $$props.class)}></div>
 
 <!--
 @component
