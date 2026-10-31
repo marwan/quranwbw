@@ -40,8 +40,6 @@ describe('parseURL', () => {
 			['/', [1, 5]],
 			// Short chapter (3 verses) is under the cap, so the whole chapter is returned
 			['/108', [1, 3]]
-			// Out-of-range chapter falls back to the store chapter's verse count, then the cap
-			// ['/200', [1, 5]]
 		]);
 	});
 
@@ -113,13 +111,21 @@ describe('parseURL', () => {
 		]);
 	});
 
-	describe('chapter separators (not handled by parseURL)', () => {
-		// The header comment lists these, but parseURL splits the path on "/" only, so it sees
-		// "2-255" etc. as a chapter-only path. The site handles these elsewhere (route/redirect)
+	describe('chapter separators in the first path part', () => {
 		runCases([
-			['/2-255', [1, 5]],
-			['/2:255', [1, 5]],
-			['/2.255', [1, 5]]
+			// Each separator between chapter and verse
+			['/2-255', [255, 255]],
+			['/2:255', [255, 255]],
+			['/2.255', [255, 255]],
+			// Separator forms with an end verse
+			['/2-255-260', [255, 260]],
+			['/2:255-260', [255, 260]],
+			// Trailing separator has no verse, falls back to verse 1
+			['/2-', [1, 1]],
+			// Verse beyond the chapter end is clamped
+			['/2:999', [286, 286]],
+			// Chapter metadata comes from the URL (chapter 1 = 7 verses)
+			['/1:10', [7, 7]]
 		]);
 	});
 });
