@@ -57,6 +57,7 @@
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+	import { APP_VERSION } from '$lib/version.js';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
 	const individualSettingsComponents = {
@@ -624,7 +625,7 @@
 
 			<!-- website build version & timestamp -->
 			<div class="flex flex-col justify-center border-t border-theme-accent/20 py-6 space-y-4 text-center {settingsDrawerOpacity}">
-				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{__APP_VERSION__.split(' ')[0]}">Build {__APP_VERSION__}</a>
+				<a class="{linkClasses} text-xs" target="_blank" href="https://github.com/marwan/quranwbw/commit/{APP_VERSION.split(' ')[0]}">Build {APP_VERSION}</a>
 			</div>
 		</div>
 	{/if}
