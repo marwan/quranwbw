@@ -7,20 +7,12 @@
 	import { __currentPage } from '$utils/stores';
 	import { linkClasses } from '$data/commonClasses';
 
+	// true when the error is a 404, otherwise a generic error
 	$: is404 = $page.status === 404;
-
-	// safe wrapper in case the rybbit script is blocked or not loaded
-	function track(name, props = {}) {
-		try {
-			window.rybbit?.event(name, props);
-		} catch (error) {
-			console.warn(error);
-		}
-	}
 
 	// track the error once on load
 	onMount(() => {
-		track(is404 ? '404' : 'error', {
+		window.rybbit?.event(is404 ? '404' : 'error', {
 			status: $page.status,
 			path: $page.url.pathname,
 			message: $page.error?.message || '',
@@ -38,8 +30,8 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<div class="fixed inset-0 flex flex-col space-y-6 items-center justify-center text-center px-4 pointer-events-none">
-	<span><svelte:component this={is404 ? NotFound : PageError} size={12} /></span>
+<div class="fixed inset-0 flex flex-col space-y-6 items-center justify-center text-center px-4">
+	<span class="pointer-events-none"><svelte:component this={is404 ? NotFound : PageError} size={12} /></span>
 
 	<p class="text-sm opacity-70">
 		{#if is404}
@@ -49,7 +41,8 @@
 		{/if}
 	</p>
 
-	<p class="text-sm opacity-70 pointer-events-auto">
-		If you think this error shouldn't occur, please let us know via <a class={linkClasses} href="mailto:quranwbw@gmail.com" on:click={() => track('Error Page Email Clicked')}>email</a> or join our <a class={linkClasses} href="https://discord.gg/VSGJKsarxW" target="_blank" rel="noopener noreferrer" on:click={() => track('Error Page Discord Clicked')}>Discord server</a>.
+	<p class="text-sm opacity-70">
+		If you think this error shouldn't occur, please let us know via <a class={linkClasses} href="mailto:quranwbw@gmail.com" on:click={() => window.rybbit?.event('Error Page Email Clicked')}>email</a> or join our
+		<a class={linkClasses} href="https://discord.gg/VSGJKsarxW" target="_blank" rel="noopener noreferrer" on:click={() => window.rybbit?.event('Error Page Discord Clicked')}>Discord server</a>.
 	</p>
 </div>
