@@ -1,3 +1,9 @@
+### Oct 29, 2026
+
+- **Bangla Qalam Digital Fonts (Madinah and Hanafi Editions)**: Added two new Indopak Qur'anic fonts featuring Bangla-style pointed sukoon instead of the traditional jazm-style sukoon.
+
+---
+
 ### Jun 15, 2026
 
 - **Improved Search Results**: Search now pulls from an additional source ([Al Quran Cloud](https://alquran.cloud/)) alongside the existing Kalimat API, resulting in broader and more comprehensive verse matches for any given query.

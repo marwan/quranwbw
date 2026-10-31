@@ -324,12 +324,14 @@ export async function wordAudioController(props) {
 	const chapter = +props.key.split(':')[0];
 	const verse = +props.key.split(':')[1];
 
-	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && reciter.wbw) {
+	if (audioSettings.isPlaying && audioSettings.audioType === 'verse' && reciter.wbw && props.type !== 'end') {
 		const timestampData = await fetchTimestampData();
 		const verseTimestamp = timestampData.data[chapter][verse][reciter.id];
-		const wordTimestamp = verseTimestamp.split('|')[props.key.split(':')[2]];
 
-		return (audio.currentTime = wordTimestamp);
+		// Word numbers are 1-based while timestamps are 0-based
+		const wordTimestamp = verseTimestamp?.split('|')[+props.key.split(':')[2] - 1];
+
+		if (wordTimestamp !== undefined) return (audio.currentTime = wordTimestamp);
 	}
 
 	props.type === 'end' ? showAudioModal(`${chapter}:${verse}`) : playWordAudio({ key: props.key, suppressOfflineAlert: props.suppressOfflineAlert });

@@ -1,0 +1,48 @@
+<script>
+	import NotFound from '$svgs/NotFound.svelte';
+	import PageError from '$svgs/PageError.svelte';
+	import PageHead from '$misc/PageHead.svelte';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { __currentPage } from '$utils/stores';
+	import { linkClasses } from '$data/commonClasses';
+
+	// true when the error is a 404, otherwise a generic error
+	$: is404 = $page.status === 404;
+
+	// track the error once on load
+	onMount(() => {
+		window.rybbit?.event(is404 ? '404' : 'error', {
+			status: $page.status,
+			path: $page.url.pathname,
+			message: $page.error?.message || '',
+			referrer: document.referrer || 'direct'
+		});
+	});
+
+	__currentPage.set('error');
+</script>
+
+<PageHead title={is404 ? 'Page not found' : 'Something went wrong'} />
+
+<!-- keep error pages out of search results since the response status is 200 -->
+<svelte:head>
+	<meta name="robots" content="noindex" />
+</svelte:head>
+
+<div class="fixed inset-0 flex flex-col space-y-6 items-center justify-center text-center px-4">
+	<span class="pointer-events-none"><svelte:component this={is404 ? NotFound : PageError} size={12} /></span>
+
+	<p class="text-sm opacity-70">
+		{#if is404}
+			The content you were looking for was not found.
+		{:else}
+			There was an error while loading the content.
+		{/if}
+	</p>
+
+	<p class="text-sm opacity-70">
+		If you think this error shouldn't occur, please let us know via <a class={linkClasses} href="mailto:quranwbw@gmail.com" on:click={() => window.rybbit?.event('Error Page Email Clicked')}>email</a> or join our
+		<a class={linkClasses} href="https://discord.gg/VSGJKsarxW" target="_blank" rel="noopener noreferrer" on:click={() => window.rybbit?.event('Error Page Discord Clicked')}>Discord server</a>.
+	</p>
+</div>
