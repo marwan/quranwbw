@@ -11,7 +11,7 @@
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';
-	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled } from '$utils/stores';
+	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled, __anyModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
@@ -212,6 +212,9 @@
 	// Navigate between pages with the arrow keys (right-to-left, like the toolbar buttons)
 	function handleKeyDown(event) {
 		if (event.defaultPrevented || event.repeat || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+
+		// Do not navigate while a modal or the settings drawer is open
+		if ($__anyModalVisible) return;
 
 		const target = event.target;
 		if (target instanceof HTMLElement && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) return;
