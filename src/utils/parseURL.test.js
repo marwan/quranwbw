@@ -13,7 +13,7 @@ vi.mock('$data/quranMeta', () => ({
 }));
 
 // Import after the mocks so parseURL picks up the stubbed modules
-import { parseURL } from './parseURL';
+import { parseURL } from '$utils/parseURL';
 
 // Change the jsdom URL without a reload (path, query and hash all work)
 function setUrl(path) {
