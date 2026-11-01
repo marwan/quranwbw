@@ -10,7 +10,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { goto } from '$app/navigation';
-	import { onDestroy } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
@@ -208,6 +208,28 @@
 		pageBlock.addEventListener('swiped-left', swipedLeftHandler);
 		pageBlock.addEventListener('swiped-right', swipedRightHandler);
 	}
+
+	// Navigate between pages with the arrow keys (right-to-left, like the toolbar buttons)
+	function handleKeyDown(event) {
+		if (event.defaultPrevented || event.repeat || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+
+		const target = event.target;
+		if (target instanceof HTMLElement && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) return;
+
+		if (event.key === 'ArrowLeft' && page < 604) {
+			event.preventDefault();
+			goto(`/page?id=${page + 1}`, { replaceState: false });
+		} else if (event.key === 'ArrowRight' && page > 1) {
+			event.preventDefault();
+			goto(`/page?id=${page - 1}`, { replaceState: false });
+		}
+	}
+
+	onMount(() => {
+		window.addEventListener('keydown', handleKeyDown);
+
+		return () => window.removeEventListener('keydown', handleKeyDown);
+	});
 
 	// Cleanup when the component is destroyed
 	onDestroy(() => {

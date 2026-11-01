@@ -367,6 +367,9 @@
 
 		<div class="w-full px-2">
 			<button class="w-full {buttonClasses}" on:click={() => __quranNavigationModalVisible.set(false)}>Close</button>
+		<div class="mx-auto w-fit">
+			<div class="text-[10px] pt-3 text-gray-500">You can also use Ctrl+K to quickly open this modal</div>
+		</div>
 		</div>
 	</div>
 </Modal>
