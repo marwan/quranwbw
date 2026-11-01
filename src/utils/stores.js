@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 
 let __currentPage,
 	__chapterNumber,
@@ -60,7 +60,8 @@ let __currentPage,
 	__offlineModeSettings,
 	__homepageLayoutPreferences,
 	__fullVersesDisplayKeys,
-	__verseKeyData;
+	__verseKeyData,
+	__anyModalVisible;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -181,6 +182,12 @@ if (browser) {
 		onConfirm: null
 	});
 
+	__anyModalVisible = derived(
+		[__audioModalVisible, __notesModalVisible, __tajweedRulesModalVisible, __tafsirModalVisible, __quranNavigationModalVisible, __siteNavigationModalVisible, __settingsSelectorModal, __verseTranslationModalVisible, __morphologyModalVisible, __copyShareVerseModalVisible, __favoriteChaptersModalVisible, __confirmationAlertModal, __settingsDrawerHidden],
+		([audio, notes, tajweed, tafsir, quranNav, siteNav, settingsSelector, verseTranslation, morphology, copyShare, favoriteChapters, confirmationAlert, settingsDrawerHidden]) =>
+			[audio, notes, tajweed, tafsir, quranNav, siteNav, verseTranslation, morphology, copyShare, favoriteChapters].some(Boolean) || settingsSelector.visible || confirmationAlert.visible || !settingsDrawerHidden
+	);
+
 	// wake lock settings
 	__wakeLockEnabled = writable(userSettings.displaySettings.wakeLockEnabled);
 
@@ -291,5 +298,6 @@ export {
 	__offlineModeSettings,
 	__homepageLayoutPreferences,
 	__fullVersesDisplayKeys,
-	__verseKeyData
+	__verseKeyData,
+	__anyModalVisible
 };
