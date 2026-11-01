@@ -1,6 +1,6 @@
-### Nov 01, 2026
+### Nov 02, 2026
 
-- **Mushaf view shortcuts**: You can now use left and right arrow on keyboard in mushaf view to quickly go to next and previous page
+- **Mushaf view shortcuts**: You can now use the left and right arrow keys on keyboard in mushaf view to quickly go to next and previous page
 
 ---
 
