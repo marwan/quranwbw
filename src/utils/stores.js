@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import { writable, derived } from 'svelte/store';
+import { readTajweedFontCache } from '$utils/tajweedFontCache';
 
 let __currentPage,
 	__chapterNumber,
@@ -240,9 +241,10 @@ if (browser) {
 	__verseKeyData = writable(null);
 
 	// result of the Tajweed color font check on Apple devices: null (unknown) | "colrv1" | "otsvg" | "none"
-	__tajweedFontSupport = writable(null);
+	// seeded from the cache so the format is known before any check runs (e.g. for the offline download with another font selected)
+	__tajweedFontSupport = writable(readTajweedFontCache());
 
-	// to store the iOS Tajweed compatibility mode: "auto" (use the check above) | "colrv1" | "otsvg"
+	// to store the Tajweed compatibility mode: "auto" (use the check above) | "colrv1" | "otsvg"
 	__tajweedCompatibilityMode = writable(userSettings.displaySettings.tajweedCompatibilityMode);
 }
 

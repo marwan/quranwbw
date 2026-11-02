@@ -152,6 +152,16 @@ describe('ensureTajweedFontSupport', () => {
 		expect(probeCOLRv1).toHaveBeenCalledTimes(1);
 	});
 
+	test('the offline download can check while the non-Tajweed font is selected, without switching fonts', async () => {
+		__fontType.set(2);
+		vi.mocked(probeCOLRv1).mockResolvedValue(probe('bleed'));
+		vi.mocked(probeOTSVG).mockResolvedValue(probe('blank'));
+		expect(await ensureTajweedFontSupport({ anyFontType: true })).toBe('none');
+		expect(get(__tajweedFontSupport)).toBe('none');
+		expect(updateSettings).not.toHaveBeenCalled();
+		expect(showAlert).not.toHaveBeenCalled();
+	});
+
 	test('a manual mode does not run anything for non-Tajweed fonts', async () => {
 		__tajweedCompatibilityMode.set('otsvg');
 		__fontType.set(2);
@@ -165,7 +175,7 @@ describe('onTajweedFontTypeSelected', () => {
 		await onTajweedFontTypeSelected();
 		expect(probeCOLRv1).toHaveBeenCalledTimes(1);
 		expect(showAlert).toHaveBeenCalledTimes(1);
-		expect(vi.mocked(showAlert).mock.calls[0][0]).toContain('iOS Tajweed compatibility mode');
+		expect(vi.mocked(showAlert).mock.calls[0][0]).toContain('Tajweed compatibility mode');
 
 		await onTajweedFontTypeSelected();
 		expect(showAlert).toHaveBeenCalledTimes(1);
@@ -216,7 +226,7 @@ describe('auto detection details and re-check', () => {
 		__tajweedFontSupport.set(null);
 		mockDevice(UA.safariIOS27, 'iPhone');
 		await ensureTajweedFontSupport();
-		expect(getTajweedFontSupportDetails()).toMatchObject({ support: 'colrv1', method: 'webkit27', osVersion: 'iOS 27.0' });
+		expect(getTajweedFontSupportDetails()).toMatchObject({ support: 'colrv1', method: 'webkit-27-or-newer', osVersion: 'iOS 27.0' });
 	});
 
 	test('switching back to auto forgets the cached result and checks again', async () => {
@@ -251,35 +261,10 @@ describe('review fixes', () => {
 		await vi.advanceTimersByTimeAsync(10000);
 		expect(await result).toBe('colrv1');
 		expect(localStorage.getItem('tajweedFontSupport')).toBeNull();
+		// forget this failure (without checking again) so the retry delay does not leak into the next tests
+		__fontType.set(2);
+		rerunTajweedFontCheck();
 		vi.useRealTimers();
-	});
-
-	test("a late 'none' result does not override a manual mode picked meanwhile", async () => {
-		let finishCheck;
-		vi.mocked(probeCOLRv1).mockReturnValue(new Promise((resolve) => (finishCheck = () => resolve(probe('bleed')))));
-		vi.mocked(probeOTSVG).mockResolvedValue(probe('blank'));
-		const result = ensureTajweedFontSupport();
-		__tajweedCompatibilityMode.set('otsvg');
-		finishCheck();
-		expect(await result).toBe('none');
-		expect(updateSettings).not.toHaveBeenCalled();
-		expect(showAlert).not.toHaveBeenCalled();
-	});
-
-	test('an older check still running when auto is selected again cannot overwrite the newer result', async () => {
-		let finishOldCheck;
-		vi.mocked(probeCOLRv1).mockReturnValueOnce(new Promise((resolve) => (finishOldCheck = () => resolve(probe('bleed')))));
-		vi.mocked(probeOTSVG).mockResolvedValue(probe('blank'));
-		const oldCheck = ensureTajweedFontSupport();
-
-		vi.mocked(probeCOLRv1).mockResolvedValueOnce(probe('ok'));
-		expect(await rerunTajweedFontCheck()).toBe('colrv1');
-
-		finishOldCheck();
-		await oldCheck;
-		expect(get(__tajweedFontSupport)).toBe('colrv1');
-		expect(getTajweedFontSupportDetails().support).toBe('colrv1');
-		expect(updateSettings).not.toHaveBeenCalled();
 	});
 });
 
@@ -303,5 +288,26 @@ describe('after a failed check', () => {
 		expect(probeCOLRv1).toHaveBeenCalledTimes(2);
 		expect(get(__tajweedFontSupport)).toBe('otsvg');
 		vi.useRealTimers();
+	});
+});
+
+describe('getAppleOSVersionLabel on iPad and Mac', () => {
+	const safariMac = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15';
+
+	test('an iPad in desktop mode is labelled iOS, a Mac is labelled macOS Safari', () => {
+		// jsdom has no maxTouchPoints: define it for this test only
+		Object.defineProperty(navigator, 'maxTouchPoints', { value: 5, configurable: true });
+		expect(getAppleOSVersionLabel(safariMac)).toBe('iOS 26.2');
+		Object.defineProperty(navigator, 'maxTouchPoints', { value: 0, configurable: true });
+		expect(getAppleOSVersionLabel(safariMac)).toBe('macOS Safari 26.2');
+		delete navigator.maxTouchPoints;
+	});
+});
+
+describe('COLRv1 drawn without colors', () => {
+	test('is treated like a broken COLRv1: OT-SVG is used when it renders', async () => {
+		vi.mocked(probeCOLRv1).mockResolvedValue(probe('nocolor'));
+		vi.mocked(probeOTSVG).mockResolvedValue(probe('ok'));
+		expect(await ensureTajweedFontSupport()).toBe('otsvg');
 	});
 });

@@ -1,4 +1,4 @@
-// Pixel checks for the Mushaf Tajweed color fonts (framework free, also used by debug/font-matrix).
+// Pixel checks for the Mushaf Tajweed color fonts (framework free).
 //
 // Measured on real iPhones (BrowserStack, Safari iOS 14 → 27):
 // - COLRv1 is BLANK on iOS 17.0–17.1: canvas fillText() draws nothing either, so a canvas check sees it.
@@ -134,7 +134,7 @@ function foreignObjectProbe(buffer) {
 	});
 }
 
-// Returns { state: 'ok' | 'blank' | 'bleed', ... } for a COLRv1 font file, with per-size measurements and timings (ms).
+// Returns { state: 'ok' | 'blank' | 'nocolor' | 'bleed', ... } for a COLRv1 font file, with per-size measurements and timings (ms).
 // Bleeding = in any band, the foreignObject colored share is > BLEED_RATIO × the canvas one, or any band (canvas or
 // foreignObject) is > BLEED_RATIO × the normal colored share (median of the canvas bands).
 export async function probeCOLRv1(url) {
@@ -148,6 +148,8 @@ export async function probeCOLRv1(url) {
 	timings.canvas = Math.round(performance.now() - start);
 	const canvas = total(canvasBands);
 	if (canvas.ink === 0) return { state: 'blank', canvas, foreignObject: null, ratio: null, bands: null, timings };
+	// glyphs drawn but without any of their Tajweed colors: as unusable as a blank font for the Tajweed Mushaf
+	if (canvas.colored === 0) return { state: 'nocolor', canvas, foreignObject: null, ratio: null, bands: null, timings };
 
 	start = performance.now();
 	const foBands = await foreignObjectProbe(buffer);

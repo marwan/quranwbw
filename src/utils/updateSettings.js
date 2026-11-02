@@ -316,7 +316,7 @@ export function updateSettings(props) {
 			userSettings.displaySettings.signLanguageModeEnabled = props.value;
 			break;
 
-		// for the iOS Tajweed compatibility mode
+		// for the Tajweed compatibility mode
 		case 'tajweedCompatibilityMode':
 			__tajweedCompatibilityMode.set(props.value);
 			userSettings.displaySettings.tajweedCompatibilityMode = props.value;

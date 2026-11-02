@@ -18,7 +18,7 @@ export const defaultSettings = {
 		},
 		wideWesbiteLayoutEnabled: false,
 		signLanguageModeEnabled: false,
-		tajweedCompatibilityMode: 'auto', // iOS Tajweed color font format: 'auto' | 'colrv1' | 'otsvg'
+		tajweedCompatibilityMode: 'auto', // Tajweed color font format on Apple devices: 'auto' | 'colrv1' | 'otsvg'
 		homepageLayoutPreferences: {
 			extrasPanelVisible: true,
 			divisionsActiveTab: 1, // chapters tab

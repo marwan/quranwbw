@@ -60,7 +60,7 @@
 	import { importSettings, exportSettings } from '$utils/settingsManager';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
-	import { isIOS } from '$utils/getMushafWordFontLink';
+	import { isAppleWebKit } from '$utils/getMushafWordFontLink';
 	import { getTajweedFontSupportDetails } from '$utils/tajweedFontSupport';
 
 	// Components mapping for individual settings ([component, check internet first (true/false)])
@@ -120,13 +120,13 @@
 	// Hide settings drawer and go back to main settings on certain conditions
 	$: if ($__currentPage || $__settingsDrawerHidden) goBackToMainSettings();
 
-	// What the iOS Tajweed auto detection found for this device, shown under the compatibility mode setting.
+	// What the Tajweed auto detection found for this device, shown under the compatibility mode setting.
 	// Re-read when the detection result changes or the drawer opens (both passed only so Svelte tracks them).
 	const tajweedFormatNames = { colrv1: 'COLRv1', otsvg: 'OT-SVG', none: 'not supported (non-Tajweed font used)' };
 	$: tajweedDetection = readTajweedDetection($__tajweedFontSupport, $__settingsDrawerHidden);
 
 	function readTajweedDetection() {
-		return isIOS() ? getTajweedFontSupportDetails() : null;
+		return isAppleWebKit() ? getTajweedFontSupportDetails() : null;
 	}
 
 	// Build a Set of all transliteration resource IDs (language_id === 11115)
@@ -380,14 +380,14 @@
 						<p class={settingsDescriptionClasses}>Multiple Quranic fonts to choose from depending on your mushaf or region preference.</p>
 					</div>
 
-					<!-- tajweed compatibility mode, only shown on iOS where the Tajweed color fonts may not render correctly -->
-					{#if isIOS()}
+					<!-- tajweed compatibility mode, only shown on Apple devices (iOS, iPadOS, Safari on macOS) where the Tajweed color fonts may not render correctly -->
+					{#if isAppleWebKit()}
 						<div class="border-b border-theme-accent/20 {settingsDrawerOpacity}"></div>
 
 						<!-- tajweed-compatibility-mode-setting -->
 						<div id="tajweed-compatibility-mode-setting" class="{settingsBlockClasses} {settingsDrawerOpacity}">
 							<div class="flex flex-row justify-between items-center">
-								<div class="block">iOS Tajweed Compatibility Mode</div>
+								<div class="block">Tajweed Compatibility Mode</div>
 								<button class={selectorClasses} on:click={() => gotoIndividualSetting('tajweed-compatibility-mode')}>{selectableTajweedCompatibilityModes[$__tajweedCompatibilityMode]?.name}</button>
 							</div>
 							<p class={settingsDescriptionClasses}>

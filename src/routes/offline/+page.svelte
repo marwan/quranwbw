@@ -72,10 +72,14 @@
 	$: mushafFontVariants = readMushafFontVariants($__fontType, $__websiteTheme, $__tajweedFontSupport, $__tajweedCompatibilityMode);
 	$: usesOTSVGFonts = mushafFontVariants.some((variant) => variant.startsWith('otsvg'));
 
+	// Download size: ~15 MB of Mushaf text and pages, plus ~45 MB per set of 604 COLRv1 fonts or ~170 MB per set of OT-SVG fonts
+	// (both Mushaf font types may need their own set, e.g. COLRv1 + OT-SVG on some Apple devices, or the two Firefox dark-theme sets)
+	$: mushafDataSizeInMB = 15 + mushafFontVariants.reduce((size, variant) => size + (variant.startsWith('otsvg') ? 170 : 45), 0);
+
 	// The downloaded Mushaf fonts no longer match (e.g. the Tajweed format changed from COLRv1 to OT-SVG): offer a re-download
-	// Downloads made before the variants were recorded hold the COLRv1 files: the section was disabled on Apple devices then
-	$: downloadedMushafFontVariants = offlineModeSettings?.mushafData?.fontVariants ?? ['colrv1'];
-	$: hasMushafFontMismatch = mushafFontVariants.some((variant) => !downloadedMushafFontVariants.includes(variant));
+	// Downloads made before the variants were recorded are not checked: which files they hold depended on the settings at the time
+	$: downloadedMushafFontVariants = offlineModeSettings?.mushafData?.fontVariants ?? null;
+	$: hasMushafFontMismatch = downloadedMushafFontVariants !== null && mushafFontVariants.some((variant) => !downloadedMushafFontVariants.includes(variant));
 
 	function readMushafFontVariants() {
 		return getMushafOfflineFontVariants();
@@ -98,8 +102,7 @@
 		{
 			id: 'mushafData',
 			title: 'Mushaf Data',
-			// The OT-SVG Tajweed fonts used on some Apple devices are about 4 times larger than the COLRv1 ones (~170 MB vs ~45 MB for 604 pages)
-			dataSizeInMB: usesOTSVGFonts ? 190 : 60,
+			dataSizeInMB: mushafDataSizeInMB,
 			description: `These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.${usesOTSVGFonts ? ' Your device uses the larger OT-SVG Tajweed fonts.' : ''}`,
 			isDataDownloaded: isMushafDataDownloaded,
 			isDownloading: isDownloadingMushaf,
@@ -509,8 +512,8 @@
 		});
 
 		try {
-			// The font files depend on the Tajweed color font format on Apple devices: wait for it when the Tajweed font is in use
-			await ensureTajweedFontSupport();
+			// The Tajweed font files depend on the Tajweed color font format on Apple devices: check it even if another font is selected now
+			await ensureTajweedFontSupport({ anyFontType: true });
 			const fontVariants = getMushafOfflineFontVariants();
 
 			const coreSteps = isServiceWorkerRegistered ? 0 : 4;

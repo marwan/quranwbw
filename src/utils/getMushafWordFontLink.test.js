@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { getAppleWebKitMajorVersion, getMushafOfflineFontVariants, getMushafWordFontLink, getMushafWordFontVariant } from './getMushafWordFontLink';
+import { getAppleWebKitMajorVersion, getMushafOfflineFontVariants, getMushafWordFontLink, getMushafWordFontVariant, isAppleWebKit } from './getMushafWordFontLink';
 import { __fontType, __tajweedCompatibilityMode, __tajweedFontSupport, __websiteTheme } from '$utils/stores';
 
 vi.mock('$utils/stores', () => ({
@@ -65,20 +65,28 @@ describe('getMushafWordFontLink with the Tajweed font', () => {
 		expect(getMushafWordFontLink(2)).toContain('/OT-SVG-LIGHT/QCF4002_COLOR-Regular.woff2?version=2');
 	});
 
-	test('OT-SVG uses the light variant on light themes and the dark variant on dark themes', () => {
-		mockDevice(UA.safariIOS26, 'iPhone');
-		__tajweedFontSupport.set('otsvg');
-		for (const theme of [1, 2, 3, 4]) {
-			__websiteTheme.set(theme);
-			expect(getMushafWordFontVariant()).toBe('otsvgLight');
-		}
-		for (const theme of [5, 6, 7, 8, 9]) {
-			__websiteTheme.set(theme);
-			expect(getMushafWordFontVariant()).toBe('otsvgDark');
-		}
-		// the dark OT-SVG fonts are not on the CDN yet: same files as the light ones for now
-		expect(getMushafWordFontLink(2)).toContain('/OT-SVG-LIGHT/QCF4002_COLOR-Regular.woff2?version=2');
-	});
+	test('OT-SVG uses the correct variant on light and dark themes', () => {
+    mockDevice(UA.safariIOS26, 'iPhone');
+    __tajweedFontSupport.set('otsvg');
+
+    // Light themes (Vintage Sepia uses the light OT-SVG fonts too)
+    for (const theme of [1, 2, 3, 4]) {
+        __websiteTheme.set(theme);
+        expect(getMushafWordFontVariant()).toBe('otsvgLight');
+        expect(getMushafWordFontLink(2)).toContain(
+            '/OT-SVG-LIGHT/QCF4002_COLOR-Regular.woff2?version=2'
+        );
+    }
+
+    // Dark themes
+    for (const theme of [5, 6, 7, 8, 9]) {
+        __websiteTheme.set(theme);
+        expect(getMushafWordFontVariant()).toBe('otsvgDark');
+        expect(getMushafWordFontLink(2)).toContain(
+            '/OT-SVG-DARK/QCF4002_COLOR-Regular.woff2?version=2'
+        );
+    }
+});
 
 	test('a manual compatibility mode overrides the check result', () => {
 		mockDevice(UA.safariIOS26, 'iPhone');
@@ -130,4 +138,38 @@ describe('getMushafOfflineFontVariants', () => {
 		__websiteTheme.set(6);
 		expect(getMushafOfflineFontVariants()).toEqual(['colrv1DarkFirefoxNonColored', 'colrv1DarkFirefox']);
 	});
+});
+
+describe('isAppleWebKit', () => {
+    const safariMac = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15';
+    const firefoxMac = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:131.0) Gecko/20100101 Firefox/131.0';
+    const edgeMac = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0';
+
+    test('every iOS browser and Safari on macOS', () => {
+        mockDevice(UA.safariIOS26, 'iPhone');
+        expect(isAppleWebKit()).toBe(true);
+        mockDevice(UA.chromeIOS27, 'iPhone');
+        expect(isAppleWebKit()).toBe(true);
+        mockDevice(safariMac, 'MacIntel');
+        expect(isAppleWebKit()).toBe(true);
+    });
+
+    test('an iPad in desktop mode (Mac user agent, touch screen)', () => {
+        mockDevice(safariMac, 'MacIntel');
+        // jsdom has no maxTouchPoints: define it for this test only
+        Object.defineProperty(navigator, 'maxTouchPoints', { value: 5, configurable: true });
+        expect(isAppleWebKit()).toBe(true);
+        delete navigator.maxTouchPoints;
+    });
+
+    test('not Chrome, Edge or Firefox on macOS, nor other systems', () => {
+        mockDevice(UA.chromeMac, 'MacIntel');
+        expect(isAppleWebKit()).toBe(false);
+        mockDevice(edgeMac, 'MacIntel');
+        expect(isAppleWebKit()).toBe(false);
+        mockDevice(firefoxMac, 'MacIntel');
+        expect(isAppleWebKit()).toBe(false);
+        mockDevice(UA.chromeWindows, 'Win32');
+        expect(isAppleWebKit()).toBe(false);
+    });
 });

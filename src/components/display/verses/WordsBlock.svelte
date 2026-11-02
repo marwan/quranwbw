@@ -38,35 +38,20 @@
 	// without fighting Svelte's DOM patching via classList.remove().
 	let pageVisible = false;
 	let lastWordInteractionWasTouch = false;
-	let fontLoadId = 0;
-	let shownFontLink = null;
 
 	// Load the Mushaf font and reveal words whenever the font type switches to 2 or 3.
 	// The font URL depends on which Tajweed color font format the device can display, so wait for that check first.
-	// Also re-runs when the iOS Tajweed compatibility mode or the detected format changes (passed only so Svelte tracks them):
-	// loadFont() then swaps the page font for the new format's file, and the words stay hidden until it is ready.
+	// Also re-runs when the Tajweed compatibility mode or the detected format changes (passed only so Svelte tracks them):
+	// loadFont() then swaps the page font for the new format's file once it has loaded.
 	$: if (mushafFontTypes.includes($__fontType)) loadMushafFont($__tajweedCompatibilityMode, $__tajweedFontSupport);
 
 	function loadMushafFont() {
-		// Only the latest request may swap the font and reveal the words, in case the format changed again while loading
-		const thisLoadId = ++fontLoadId;
-		ensureTajweedFontSupport().then(() => {
-			if (thisLoadId !== fontLoadId) return;
-			const fontLink = getMushafWordFontLink(value.meta.page);
-			// this file is already shown: nothing to swap, keep the words visible
-			if (fontLink === shownFontLink && pageVisible) return;
-			pageVisible = false;
-			return loadFont(`p${value.meta.page}`, fontLink)
-				.then(() => {
-					if (thisLoadId !== fontLoadId) return;
-					shownFontLink = fontLink;
-					pageVisible = true;
-				})
-				.catch(() => {
-					// the new file failed: loadFont() kept the previous face, so show the words with it (if there was one)
-					if (thisLoadId === fontLoadId && shownFontLink) pageVisible = true;
-				});
-		});
+		ensureTajweedFontSupport()
+			.then(() => loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)))
+			.then(() => {
+				pageVisible = true;
+			})
+			.catch(() => {}); // font request failed: the words stay hidden, as before
 	}
 
 	// True when the active display type renders verses as a continuous flow

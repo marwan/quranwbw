@@ -3,12 +3,10 @@ import { mushafWordFontLink } from '$data/websiteSettings';
 import { selectableThemes } from '$data/options';
 import { __websiteTheme, __fontType, __tajweedFontSupport, __tajweedCompatibilityMode } from '$utils/stores';
 
-// Every Mushaf word font variant served from the CDN
 const mushafFontVariants = {
 	colrv1: { basePath: 'COLRv1', fileSuffix: 'COLOR', version: 14 },
 	otsvgLight: { basePath: 'OT-SVG-LIGHT', fileSuffix: 'COLOR', version: 3 },
-	// (using light path for now waiting for fonts to be uploaded on CDN)
-	otsvgDark: { basePath: 'OT-SVG-LIGHT', fileSuffix: 'COLOR', version: 3 },
+	otsvgDark: { basePath: 'OT-SVG-DARK', fileSuffix: 'COLOR', version: 3 },
 	colrv1DarkFirefox: { basePath: 'COLRv1-Dark-FF', fileSuffix: 'COLOR', version: 14 },
 	colrv1DarkFirefoxNonColored: { basePath: 'COLRv1-Dark-FF-Non-Colored', fileSuffix: 'X', version: 10 }
 };
@@ -20,21 +18,22 @@ export function getMushafFontVariantLink(variant, page) {
 	return `${mushafWordFontLink}/${basePath}/QCF4${paddedPage}_${fileSuffix}-Regular.woff2?version=${version}`;
 }
 
-// Returns the Tajweed color font format used on Apple devices: the one picked in the iOS Tajweed compatibility mode setting,
+// Returns the Tajweed color font format used on Apple devices: the one picked in the Tajweed compatibility mode setting,
 // or in "auto" mode the result of ensureTajweedFontSupport() (null while unknown)
-export function getTajweedFontFormat() {
+function getTajweedFontFormat() {
 	const mode = get(__tajweedCompatibilityMode);
 	return ['colrv1', 'otsvg'].includes(mode) ? mode : get(__tajweedFontSupport);
 }
 
-// Returns which Mushaf word font variant to use for the current device and theme, for the current font type (or the one given)
+// Returns which Mushaf word font variant to use on this device and theme. By default for the selected font type;
+// the offline download passes 2 and 3 explicitly to get the files of both Mushaf fonts, whichever is selected.
 export function getMushafWordFontVariant(fontType = get(__fontType)) {
 	const isTajweedFontType = fontType === 3;
 
 	// COLRv1 is the default everywhere. On iOS/macOS some versions render its Tajweed colors wrongly (bleeding, e.g. iOS 18.0–18.3, 26.2–26.3)
-	// or not at all (iOS 17.0–17.1); ensureTajweedFontSupport() checks this once (or the user picks a format in the iOS Tajweed compatibility mode setting)
-	// and only then switches to the OT-SVG fonts matching the theme's light or dark base. OT-SVG is not the default because it is blank on iOS 17.5 and 27.
-	if (isIOSorMac() && isTajweedFontType && getTajweedFontFormat() === 'otsvg') {
+	// or not at all (iOS 17.0–17.1); ensureTajweedFontSupport() checks this once (or the user picks a format in the Tajweed compatibility mode setting)
+	// and only then switches to the OT-SVG fonts matching the theme's light or dark base (Vintage Sepia uses the light ones). OT-SVG is not the default because it is blank on iOS 17.5 and 27.
+	if (isAppleWebKit() && isTajweedFontType && getTajweedFontFormat() === 'otsvg') {
 		return isDarkTheme() ? 'otsvgDark' : 'otsvgLight';
 	}
 
@@ -123,9 +122,13 @@ export function isIOS() {
 	return getOS() === 'iOS';
 }
 
-export function isIOSorMac() {
+// Apple's WebKit engine, where the Tajweed color font issues happen: every iOS/iPadOS browser (they all use WebKit)
+// and Safari on macOS. Chrome, Edge and Firefox on macOS use their own engines and are not affected.
+export function isAppleWebKit() {
 	const os = getOS();
-	return os === 'iOS' || os === 'macOS';
+	if (os === 'iOS') return true;
+	const userAgent = navigator.userAgent;
+	return os === 'macOS' && /Version\/[0-9.]+.*Safari\//.test(userAgent) && !/Chrome|Chromium|Edg|OPR|Firefox/.test(userAgent);
 }
 
 // Returns the major version of Apple's WebKit from the user agent, or null when it cannot be read.
