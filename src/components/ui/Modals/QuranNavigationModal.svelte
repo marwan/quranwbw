@@ -15,6 +15,7 @@
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+	import { isIOSorMac } from '$utils/getMushafWordFontLink';
 
 	// CSS classes
 	const linkClasses = 'flex flex-row space-x-2 items-center';
@@ -30,6 +31,10 @@
 	let verseKeyData;
 	let searchResults;
 	let morphologyKey = '1:1';
+
+	// keyboard shortcut hint shown inside the search bar
+	const shortcutKeys = isIOSorMac() ? ['⌘', 'K'] : ['Ctrl', 'K'];
+	const shortcutKeyClasses = 'px-1.5 py-0.5 rounded-md border border-theme-accent/20 font-sans text-xs leading-none text-theme-accent/50';
 
 	// Hide the navigation modal when page URL or chapter/page number changes
 	$: if ($page.url.href || $__pageURL || $__chapterNumber || $__pageNumber) {
@@ -100,7 +105,15 @@
 					<form on:submit|preventDefault={() => (searchedKey = document.getElementById('searchKey').value)} class="flex flex-row w-full">
 						<Input id="searchKey" type="text" bind:value={searchedKey} autocomplete="off" {placeholder} size="md" class="bg-transparent rounded-3xl !text-center pl-10 px-8 placeholder:text-theme-accent/50">
 							<Search slot="left" size={7} classes="pl-2 pt-1 {searchedKey.length > 0 && 'hidden'}" />
-							<CloseButton slot="right" on:click={() => (searchedKey = '')} class="pr-2 {searchedKey.length === 0 && 'hidden'}" />
+							<svelte:fragment slot="right">
+								<!-- shortcut hint (only on devices with a mouse/trackpad, never on touch) while the input is empty -->
+								<div class="hidden [@media(hover:hover)_and_(pointer:fine)]:flex flex-row items-center space-x-1 pointer-events-none {searchedKey.length > 0 && '!hidden'}">
+									{#each shortcutKeys as key}
+										<kbd class={shortcutKeyClasses}>{key}</kbd>
+									{/each}
+								</div>
+								<CloseButton on:click={() => (searchedKey = '')} class="pr-2 {searchedKey.length === 0 && 'hidden'}" />
+							</svelte:fragment>
 						</Input>
 					</form>
 				</div>
@@ -367,9 +380,6 @@
 
 		<div class="w-full px-2">
 			<button class="w-full {buttonClasses}" on:click={() => __quranNavigationModalVisible.set(false)}>Close</button>
-		<div class="mx-auto w-fit">
-			<div class="text-[10px] pt-3 text-gray-500">You can also use Ctrl+K to quickly open this modal</div>
-		</div>
 		</div>
 	</div>
 </Modal>
