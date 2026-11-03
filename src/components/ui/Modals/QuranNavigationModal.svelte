@@ -34,7 +34,7 @@
 
 	// keyboard shortcut hint shown inside the search bar
 	const shortcutKeys = isIOSorMac() ? ['⌘', 'K'] : ['Ctrl', 'K'];
-	const shortcutKeyClasses = 'px-1.5 py-0.5 rounded-md border border-theme-accent/20 font-sans text-xs leading-none text-theme-accent/50';
+	const shortcutKeyClasses = 'px-1.5 py-1 rounded-md border border-theme-accent/20 font-sans text-xs leading-none text-theme-accent/50';
 
 	// Hide the navigation modal when page URL or chapter/page number changes
 	$: if ($page.url.href || $__pageURL || $__chapterNumber || $__pageNumber) {

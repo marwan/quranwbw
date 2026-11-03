@@ -1,15 +1,19 @@
-name: Check hardcoded Tailwind colors
+name: Lint Hardcoded Colors
 
 on:
   push:
-  pull_request:
 
 jobs:
-  check-colors:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: node scripts/checkColors.js
+          node-version: '20'
+
+      - name: Check hardcoded Tailwind colors
+        run: node scripts/checkColors.js

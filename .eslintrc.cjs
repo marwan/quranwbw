@@ -20,6 +20,9 @@ module.exports = {
 		'no-unused-vars': 'off',
 		'svelte/no-at-html-tags': 'off',
 
+		// flag any non-camelCase identifier
+		camelcase: ['error', { properties: 'always' }],
+
 		// Enable better unused import/var detection
 		'unused-imports/no-unused-imports': 'error',
 		'unused-imports/no-unused-vars': [
