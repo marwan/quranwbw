@@ -11,7 +11,7 @@
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
 	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
-	import { getMushafFontVariantLink, getMushafOfflineFontVariants } from '$utils/getMushafWordFontLink';
+	import { getMushafFontVariantLink, getMushafOfflineFontVariants, isAppleWebKit } from '$utils/getMushafWordFontLink';
 	import { ensureTajweedFontSupport } from '$utils/tajweedFontSupport';
 	import { term } from '$utils/terminologies';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
@@ -74,7 +74,10 @@
 
 	// Download size: ~15 MB of Mushaf text and pages, plus ~45 MB per set of 604 COLRv1 fonts or ~170 MB per set of OT-SVG fonts
 	// (both Mushaf font types may need their own set, e.g. COLRv1 + OT-SVG on some Apple devices, or the two Firefox dark-theme sets)
-	$: mushafDataSizeInMB = 15 + mushafFontVariants.reduce((size, variant) => size + (variant.startsWith('otsvg') ? 170 : 45), 0);
+	$: currentMushafDataSizeInMB = 15 + mushafFontVariants.reduce((size, variant) => size + (variant.startsWith('otsvg') ? 170 : 45), 0);
+	// On Apple devices the Tajweed font format is only checked when the download starts: show both possible sizes until it is known
+	$: isTajweedFontFormatUnknown = isAppleWebKit() && $__tajweedCompatibilityMode === 'auto' && $__tajweedFontSupport === null;
+	$: mushafDataSizeInMB = isTajweedFontFormatUnknown ? `${currentMushafDataSizeInMB}-${currentMushafDataSizeInMB + 170}` : currentMushafDataSizeInMB;
 
 	// The downloaded Mushaf fonts no longer match (e.g. the Tajweed format changed from COLRv1 to OT-SVG): offer a re-download
 	// Downloads made before the variants were recorded are not checked: which files they hold depended on the settings at the time
