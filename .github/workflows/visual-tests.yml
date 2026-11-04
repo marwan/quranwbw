@@ -62,14 +62,17 @@ jobs:
       - name: Run visual tests
         run: npx playwright test
 
-      - name: Upload test report
-        if: failure()
+      # Always uploaded (pass or fail): playwright-report/ is the HTML report with the rendered
+      # screenshots attached (plus expected/actual/diff images on failure); test-results/ has the raw PNGs
+      - name: Upload visual snapshots and report
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
-          name: visual-test-report
+          name: visual-snapshots
           path: |
             playwright-report/
             test-results/
+          if-no-files-found: ignore
           retention-days: 7
 
   update-snapshots:

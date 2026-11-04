@@ -1,4 +1,8 @@
+import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
+
+// Same CSS as the toHaveScreenshot stylePath (hides navbar/toolbar), reused for the attached screenshots
+const SCREENSHOT_CSS = readFileSync(new URL('./screenshot.css', import.meta.url), 'utf8');
 
 // A spread of pages covering the main layout cases:
 // 1, 2: Al-Fatiha and the start of Al-Baqarah (centered lines, special spacing)
@@ -48,6 +52,13 @@ for (const pageNumber of MUSHAF_PAGES) {
 		// Let the browser paint with the freshly loaded fonts
 		await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 
-		await expect(mushafPage).toHaveScreenshot(`page-${String(pageNumber).padStart(3, '0')}.png`);
+		const snapshotName = `page-${String(pageNumber).padStart(3, '0')}.png`;
+		await expect(mushafPage).toHaveScreenshot(snapshotName);
+
+		// On failure Playwright already attaches expected/actual/diff images. On success, also keep
+		// the rendered page so every CI run produces screenshots that can be inspected in the artifact.
+		const renderedPath = test.info().outputPath(snapshotName);
+		await mushafPage.screenshot({ path: renderedPath, animations: 'disabled', caret: 'hide', scale: 'css', style: SCREENSHOT_CSS });
+		await test.info().attach(`rendered-${snapshotName}`, { path: renderedPath, contentType: 'image/png' });
 	});
 }
