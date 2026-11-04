@@ -1,0 +1,159 @@
+# Visual regression tests for the Mushaf pages (Playwright).
+#
+# Tests run inside the official Playwright Docker image so browsers and system fonts are
+# identical on every run. Screenshot baselines (tests/e2e/__screenshots__) are Linux-only
+# and are generated here in CI, never locally:
+#   - on a pull request, add the `update-snapshots` label: the `update-snapshots` job
+#     regenerates the baselines, commits them to the PR branch and removes the label;
+#   - or run this workflow manually (workflow_dispatch) with `update_snapshots` checked.
+# Commits pushed with GITHUB_TOKEN do not trigger new workflow runs, so re-run the checks
+# (or push another commit) afterwards to get a green `visual` check.
+#
+# Keep the image tag in sync with the exact @playwright/test version in package.json.
+
+name: Visual Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: 'Regenerate the screenshot baselines and commit them to the selected branch'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  # Label events get their own group so adding an unrelated label never cancels a running test job
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.event.action == 'labeled' && github.event.label.name || (inputs.update_snapshots && 'update-snapshots') || 'run' }}
+  cancel-in-progress: true
+
+jobs:
+  visual:
+    if: github.event.action != 'labeled' && !inputs.update_snapshots
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Cache npm
+        uses: actions/cache@v6
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run visual tests
+        run: npx playwright test
+
+      # Always uploaded (pass or fail): playwright-report/ is the HTML report with the rendered
+      # screenshots attached (plus expected/actual/diff images on failure); test-results/ has the raw PNGs
+      - name: Upload visual snapshots and report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-snapshots
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  update-snapshots:
+    if: >-
+      (github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'update-snapshots' && github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'workflow_dispatch' && inputs.update_snapshots)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref || github.ref }}
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Cache npm
+        uses: actions/cache@v6
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update screenshot baselines
+        run: npx playwright test --update-snapshots
+
+      - name: Commit and push updated baselines
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/e2e/__screenshots__
+          if git diff --cached --quiet; then
+            echo 'Screenshot baselines are already up to date.'
+            exit 0
+          fi
+          git commit -m 'test(e2e): update mushaf screenshot baselines'
+          git push origin "HEAD:$BRANCH"
+
+      - name: Upload updated baselines
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: updated-screenshots
+          path: tests/e2e/__screenshots__/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload test report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: update-snapshots-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+      - name: Remove update-snapshots label
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: 'update-snapshots'
+              });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }

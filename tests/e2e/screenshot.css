@@ -1,0 +1,6 @@
+/* Injected by Playwright before taking visual snapshots: hide UI chrome that can overlap the Mushaf page */
+#navbar,
+#bottom-toolbar,
+#progress-bar {
+	visibility: hidden !important;
+}
