@@ -1,209 +1,214 @@
 <script>
-	import '../app.css';
-	import '$utils/checkURLParameters';
-	import '$utils/keyDownHandler';
-	import '$utils/devTools';
-	import Navbar from '$ui/Navbar.svelte';
-	import SettingsDrawer from '$ui/SettingsDrawer/SettingsDrawer.svelte';
-	import BottomToolbar from '$ui/BottomToolbar/BottomToolbar.svelte';
-	import AudioModal from '$ui/Modals/AudioModal.svelte';
-	import TajweedRulesModal from '$ui/Modals/TajweedRulesModal.svelte';
-	import NotesModal from '$ui/Modals/NotesModal.svelte';
-	import TafsirModal from '$ui/Modals/TafsirModal.svelte';
-	import QuranNavigationModal from '$ui/Modals/QuranNavigationModal.svelte';
-	import SiteNavigationModal from '$ui/Modals/SiteNavigationModal.svelte';
-	import SettingsSelectorModal from '$ui/Modals/SettingsSelectorModal.svelte';
-	import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
-	import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
-	import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
-	import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
-	import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
+        import '../app.css';
+        import '$utils/checkURLParameters';
+        import '$utils/keyDownHandler';
+        import '$utils/devTools';
+        import Navbar from '$ui/Navbar.svelte';
+        import SettingsDrawer from '$ui/SettingsDrawer/SettingsDrawer.svelte';
+        import BottomToolbar from '$ui/BottomToolbar/BottomToolbar.svelte';
+        import AudioModal from '$ui/Modals/AudioModal.svelte';
+        import TajweedRulesModal from '$ui/Modals/TajweedRulesModal.svelte';
+        import NotesModal from '$ui/Modals/NotesModal.svelte';
+        import TafsirModal from '$ui/Modals/TafsirModal.svelte';
+        import QuranNavigationModal from '$ui/Modals/QuranNavigationModal.svelte';
+        import SiteNavigationModal from '$ui/Modals/SiteNavigationModal.svelte';
+        import SettingsSelectorModal from '$ui/Modals/SettingsSelectorModal.svelte';
+        import VerseTranslationModal from '$ui/Modals/VerseTranslationModal.svelte';
+        import MorphologyModal from '$ui/Modals/MorphologyModal.svelte';
+        import CopyShareVerseModal from '$ui/Modals/CopyShareVerseModal.svelte';
+        import ConfirmationAlertModal from '$ui/Modals/ConfirmationAlertModal.svelte';
+        import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
 
-	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
-	import { debounce } from '$utils/debounce';
-	import { toggleNavbarToolbarOnScroll } from '$utils/toggleNavbarToolbarOnScroll';
-	import { resetAudioSettings } from '$utils/audioController';
-	import { updateSettings } from '$utils/updateSettings';
-	import { fade } from 'svelte/transition';
-	import { page } from '$app/stores';
-	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+        import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
+        import { debounce } from '$utils/debounce';
+        import { toggleNavbarToolbarOnScroll } from '$utils/toggleNavbarToolbarOnScroll';
+        import { resetAudioSettings } from '$utils/audioController';
+        import { updateSettings } from '$utils/updateSettings';
+        import { fade } from 'svelte/transition';
+        import { page } from '$app/stores';
+        import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+        import { loadFont } from '$utils/loadFont'; // NEW
+        import { chapterHeaderFontLink } from '$data/websiteSettings'; // NEW
 
-	const defaultPaddingTop = 'pt-16';
-	const defaultPaddingBottom = 'pb-8';
-	let wakeLock = null;
+        const defaultPaddingTop = 'pt-16';
+        const defaultPaddingBottom = 'pb-8';
+        let wakeLock = null;
 
-	// Variables for custom padding depending on page
-	let paddingTop = 0;
-	let paddingBottom = 0;
-	let paddingX = 0;
+        // NEW: Preload chapter header font at app start so ChapterHeader doesn't wait for it
+        loadFont('chapter-headers', chapterHeaderFontLink).catch(() => {});
 
-	setDefaultPaddings();
+        // Variables for custom padding depending on page
+        let paddingTop = 0;
+        let paddingBottom = 0;
+        let paddingX = 0;
 
-	// Update body scroll based on settings drawer visibility
-	$: document.body.classList.toggle('overflow-y-hidden', !$__settingsDrawerHidden);
+        setDefaultPaddings();
 
-	// Stop all audio when the page or chapter changes
-	$: if ($__currentPage || $__chapterNumber) {
-		resetAudioSettings({ location: 'end' });
-	}
+        // Update body scroll based on settings drawer visibility
+        $: document.body.classList.toggle('overflow-y-hidden', !$__settingsDrawerHidden);
 
-	// Toggle distraction-free mushaf mode
-	$: if ($__mushafMinimalModeEnabled && $__currentPage === 'mushaf') {
-		paddingTop = 'pt-0';
-		paddingBottom = 'pb-0';
-		__topNavbarVisible.set(false);
-		__bottomToolbarVisible.set(false);
-	} else {
-		setDefaultPaddings();
-		__topNavbarVisible.set(true);
-		__bottomToolbarVisible.set(true);
-	}
+        // Stop all audio when the page or chapter changes
+        $: if ($__currentPage || $__chapterNumber) {
+                resetAudioSettings({ location: 'end' });
+        }
 
-	// Enable or disable wakeLock based on setting
-	$: (async function () {
-		if ($__wakeLockEnabled) {
-			if (!wakeLock) {
-				try {
-					wakeLock = await navigator.wakeLock.request('screen');
-				} catch (error) {
-					console.warn(error);
-					window.rybbit?.error(error);
-				}
-			}
-		} else {
-			if (wakeLock) {
-				await wakeLock.release();
-				wakeLock = null;
-			}
-		}
-	})();
+        // Toggle distraction-free mushaf mode
+        $: if ($__mushafMinimalModeEnabled && $__currentPage === 'mushaf') {
+                paddingTop = 'pt-0';
+                paddingBottom = 'pb-0';
+                __topNavbarVisible.set(false);
+                __bottomToolbarVisible.set(false);
+        } else {
+                setDefaultPaddings();
+                __topNavbarVisible.set(true);
+                __bottomToolbarVisible.set(true);
+        }
 
-	// If wbw language was set to Russian or Ingush, switch back to English
-	$: if ([9, 10].includes($__wordTranslation)) {
-		updateSettings({ type: 'wordTranslation', value: 1 });
-	}
+        // Enable or disable wakeLock based on setting
+        $: (async function () {
+                if ($__wakeLockEnabled) {
+                        if (!wakeLock) {
+                                try {
+                                        wakeLock = await navigator.wakeLock.request('screen');
+                                } catch (error) {
+                                        console.warn(error);
+                                        window.rybbit?.error(error);
+                                }
+                        }
+                } else {
+                        if (wakeLock) {
+                                await wakeLock.release();
+                                wakeLock = null;
+                        }
+                }
+        })();
 
-	// Set default paddings based on current page
-	function setDefaultPaddings() {
-		// paddingTop = $__currentPage === 'home' ? 'pt-16' : defaultPaddingTop;
-		paddingTop = $__currentPage === 'home' ? 'pt-0' : defaultPaddingTop;
-		paddingBottom = ['chapter', 'juz', 'hizb'].includes($__currentPage) ? 'pb-24' : defaultPaddingBottom;
-		paddingX = $__currentPage === 'mushaf' ? 'px-0 md:px-4' : $__currentPage === 'home' ? 'px-0' : 'px-4';
-	}
+        // If wbw language was set to Russian or Ingush, switch back to English
+        $: if ([9, 10].includes($__wordTranslation)) {
+                updateSettings({ type: 'wordTranslation', value: 1 });
+        }
 
-	// Update navbar and bottom toolbar visibility based on scroll
-	document.body.onscroll = () => {
-		debounce(toggleNavbarToolbarOnScroll, 0);
-	};
+        // Set default paddings based on current page
+        function setDefaultPaddings() {
+                // paddingTop = $__currentPage === 'home' ? 'pt-16' : defaultPaddingTop;
+                paddingTop = $__currentPage === 'home' ? 'pt-0' : defaultPaddingTop;
+                paddingBottom = ['chapter', 'juz', 'hizb'].includes($__currentPage) ? 'pb-24' : defaultPaddingBottom;
+                paddingX = $__currentPage === 'mushaf' ? 'px-0 md:px-4' : $__currentPage === 'home' ? 'px-0' : 'px-4';
+        }
 
-	// Mushaf Page Handling
-	$: if ($__currentPage === 'mushaf') {
-		// Mushaf page always uses display type 6
-		$__displayType = 6;
+        // Update navbar and bottom toolbar visibility based on scroll
+        document.body.onscroll = () => {
+                debounce(toggleNavbarToolbarOnScroll, 0);
+        };
 
-		// Mushaf page only supports font type 2
-		if (![2, 3].includes($__fontType)) {
-			__fontType.set(2);
-		}
-	}
+        // Mushaf Page Handling
+        $: if ($__currentPage === 'mushaf') {
+                // Mushaf page always uses display type 6
+                $__displayType = 6;
 
-	// Non-Mushaf Page Base Handling
-	$: if ($__currentPage && $__currentPage !== 'mushaf') {
-		const userSettings = JSON.parse(localStorage.getItem('userSettings'));
-		const parsedUserSettings = JSON.parse($__userSettings);
+                // Mushaf page only supports font type 2
+                if (![2, 3].includes($__fontType)) {
+                        __fontType.set(2);
+                }
+        }
 
-		// Only restore user settings if sign language mode is OFF
-		if (!$__signLanguageModeEnabled) {
-			if (userSettings.displaySettings && parsedUserSettings.displaySettings) {
-				$__displayType = userSettings.displaySettings.displayType;
-				$__fontType = parsedUserSettings.displaySettings.fontType;
-				$__wordTranslation = parsedUserSettings.translations?.word;
-				$__wordTransliterationEnabled = parsedUserSettings.displaySettings.wordTransliterationEnabled;
-			}
-		}
-	}
+        // Non-Mushaf Page Base Handling
+        $: if ($__currentPage && $__currentPage !== 'mushaf') {
+                const userSettings = JSON.parse(localStorage.getItem('userSettings'));
+                const parsedUserSettings = JSON.parse($__userSettings);
 
-	// Sign Language Mode Handling (Non-Mushaf only)
-	$: if ($__currentPage && $__currentPage !== 'mushaf' && $__signLanguageModeEnabled) {
-		$__wordTranslation = 22;
-		$__fontType = 9;
-		$__wordTransliterationEnabled = false;
+                // Only restore user settings if sign language mode is OFF
+                if (!$__signLanguageModeEnabled) {
+                        if (userSettings.displaySettings && parsedUserSettings.displaySettings) {
+                                $__displayType = userSettings.displaySettings.displayType;
+                                $__fontType = parsedUserSettings.displaySettings.fontType;
+                                $__wordTranslation = parsedUserSettings.translations?.word;
+                                $__wordTransliterationEnabled = parsedUserSettings.displaySettings.wordTransliterationEnabled;
+                        }
+                }
+        }
 
-		// Restrict to display type 1 or 3
-		if (![1, 3].includes($__displayType)) {
-			$__displayType = 1;
-		}
-	}
+        // Sign Language Mode Handling (Non-Mushaf only)
+        $: if ($__currentPage && $__currentPage !== 'mushaf' && $__signLanguageModeEnabled) {
+                $__wordTranslation = 22;
+                $__fontType = 9;
+                $__wordTransliterationEnabled = false;
 
-	// Function to check old bookmarks for v3 update
-	(function checkOldBookmarks() {
-		const oldBookmarks = localStorage.getItem('bookmarks');
+                // Restrict to display type 1 or 3
+                if (![1, 3].includes($__displayType)) {
+                        $__displayType = 1;
+                }
+        }
 
-		if (oldBookmarks) {
-			const bookmarkList = oldBookmarks.slice(0, -1).split('|');
+        // Function to check old bookmarks for v3 update
+        (function checkOldBookmarks() {
+                const oldBookmarks = localStorage.getItem('bookmarks');
 
-			bookmarkList.forEach((bookmark) => {
-				updateSettings({ type: 'userBookmarks', key: bookmark, oldCheck: true, set: true });
-			});
+                if (oldBookmarks) {
+                        const bookmarkList = oldBookmarks.slice(0, -1).split('|');
 
-			// remove the old bookmarks from localStorage as they're no longer needed
-			localStorage.removeItem('bookmarks');
-		}
-	})();
+                        bookmarkList.forEach((bookmark) => {
+                                updateSettings({ type: 'userBookmarks', key: bookmark, oldCheck: true, set: true });
+                        });
 
-	// Function to track the website Git version in Rybbit analytics
-	(function trackWebsiteVersion() {
-		try {
-			const currentVersion = __APP_VERSION__.split(' ')[0];
-			const storageKey = 'websiteVersionData';
+                        // remove the old bookmarks from localStorage as they're no longer needed
+                        localStorage.removeItem('bookmarks');
+                }
+        })();
 
-			// Get existing data or initialize
-			const data = JSON.parse(localStorage.getItem(storageKey)) || {
-				latestVersion: null,
-				sentVersion: null
-			};
+        // Function to track the website Git version in Rybbit analytics
+        (function trackWebsiteVersion() {
+                try {
+                        const currentVersion = __APP_VERSION__.split(' ')[0];
+                        const storageKey = 'websiteVersionData';
 
-			// Always update the latest version
-			data.latestVersion = currentVersion;
+                        // Get existing data or initialize
+                        const data = JSON.parse(localStorage.getItem(storageKey)) || {
+                                latestVersion: null,
+                                sentVersion: null
+                        };
 
-			// Check if this version was already sent
-			if (data.sentVersion !== currentVersion) {
-				if (window.rybbit && typeof window.rybbit?.event === 'function') {
-					window.rybbit?.event('Website Version', { version: currentVersion });
-				}
-				// Mark as sent
-				data.sentVersion = currentVersion;
-			}
+                        // Always update the latest version
+                        data.latestVersion = currentVersion;
 
-			// Save back to localStorage
-			localStorage.setItem(storageKey, JSON.stringify(data));
-		} catch (error) {
-			console.warn(error);
-			window.rybbit?.error(error);
-		}
-	})();
+                        // Check if this version was already sent
+                        if (data.sentVersion !== currentVersion) {
+                                if (window.rybbit && typeof window.rybbit?.event === 'function') {
+                                        window.rybbit?.event('Website Version', { version: currentVersion });
+                                }
+                                // Mark as sent
+                                data.sentVersion = currentVersion;
+                        }
+
+                        // Save back to localStorage
+                        localStorage.setItem(storageKey, JSON.stringify(data));
+                } catch (error) {
+                        console.warn(error);
+                        window.rybbit?.error(error);
+                }
+        })();
 </script>
 
 <div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
-	<QuranNavigationModal />
-	<AudioModal />
-	<TajweedRulesModal />
-	<NotesModal />
-	<TafsirModal />
-	<SiteNavigationModal />
-	<SettingsSelectorModal />
-	<VerseTranslationModal />
-	<MorphologyModal />
-	<CopyShareVerseModal />
-	<FavoriteChaptersModal />
-	<ConfirmationAlertModal />
+        <QuranNavigationModal />
+        <AudioModal />
+        <TajweedRulesModal />
+        <NotesModal />
+        <TafsirModal />
+        <SiteNavigationModal />
+        <SettingsSelectorModal />
+        <VerseTranslationModal />
+        <MorphologyModal />
+        <CopyShareVerseModal />
+        <FavoriteChaptersModal />
+        <ConfirmationAlertModal />
 
-	{#key $page.url.pathname}
-		<div in:fade={{ duration: 300 }}>
-			<Navbar />
-			<SettingsDrawer />
-			<BottomToolbar />
-			<slot />
-		</div>
-	{/key}
+        {#key $page.url.pathname}
+                <div in:fade={{ duration: 300 }}>
+                        <Navbar />
+                        <SettingsDrawer />
+                        <BottomToolbar />
+                        <slot />
+                </div>
+        {/key}
 </div>
