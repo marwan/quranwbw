@@ -7,7 +7,7 @@
 	import { __currentPage } from '$utils/stores';
 
 	// Dynamically load header font
-	let fontReady = false;
+	let fontReady = true;
 	const reveal = () => (fontReady = true);
 	loadFont('chapter-headers', chapterHeaderFontLink).then(reveal).catch(reveal);
 </script>
