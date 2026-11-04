@@ -17,6 +17,7 @@
 	import { selectableFontTypes } from '$data/options';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
+	import { loadFont } from '$utils/loadFont';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import { fade } from 'svelte/transition';
@@ -49,12 +50,15 @@
 	// Set the page number
 	$: page = +data.id;
 
-	// Guarded font prefetching — skip already-fetched pages and out-of-range pages
+	// Guarded font prefetching — skip already-fetched pages and out-of-range pages.
+	// Uses loadFont (not a plain fetch) so the neighbouring pages' fonts are downloaded, decoded and
+	// registered ahead of time, and the page is ready to show as soon as it is navigated to.
+	// Failures are ignored here, loadFont drops the failed entry so WordsBlock retries when the page opens.
 	$: if ([2, 3].includes($__fontType)) {
 		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
 			if (thisPage > 0 && thisPage <= 604 && !prefetchedPages.has(thisPage)) {
 				prefetchedPages.add(thisPage);
-				fetch(getMushafWordFontLink(thisPage));
+				loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)).catch(() => {});
 			}
 		}
 	}
