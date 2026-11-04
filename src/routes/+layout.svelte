@@ -27,10 +27,15 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+	import { loadFont } from '$utils/loadFont';
+	import { chapterHeaderFontLink } from '$data/websiteSettings';
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
 	let wakeLock = null;
+
+	// Preload chapter header font at app start
+	loadFont('chapter-headers', chapterHeaderFontLink).catch(() => {});
 
 	// Variables for custom padding depending on page
 	let paddingTop = 0;
