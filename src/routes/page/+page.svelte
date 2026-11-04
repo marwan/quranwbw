@@ -20,7 +20,6 @@
 	import { loadFont } from '$utils/loadFont';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
-	import { fade } from 'svelte/transition';
 	import '$utils/swiped-events.min.js';
 
 	let pageData;
@@ -50,18 +49,29 @@
 	// Set the page number
 	$: page = +data.id;
 
-	// Guarded font prefetching — skip already-fetched pages and out-of-range pages.
-	// Uses loadFont (not a plain fetch) so the neighbouring pages' fonts are downloaded, decoded and
-	// registered ahead of time, and the page is ready to show as soon as it is navigated to.
+	// Loads the current page's font first, then prefetches the neighbouring pages (next page first, as it is the
+	// most likely one to be read). Uses loadFont (not a plain fetch) so the fonts are downloaded, decoded and
+	// registered ahead of time, and a page is ready to show as soon as it is navigated to. The neighbours only
+	// start once the current font is ready, so they never compete with it for bandwidth on slow connections.
 	// Failures are ignored here, loadFont drops the failed entry so WordsBlock retries when the page opens.
-	$: if ([2, 3].includes($__fontType)) {
-		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
-			if (thisPage > 0 && thisPage <= 604 && !prefetchedPages.has(thisPage)) {
-				prefetchedPages.add(thisPage);
-				loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)).catch(() => {});
-			}
-		}
+	async function prefetchPageFonts(currentPage) {
+		const load = (thisPage) => {
+			prefetchedPages.add(thisPage);
+			return loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)).catch(() => {});
+		};
+
+		await load(currentPage);
+
+		// The user already moved on, the newer navigation handles its own neighbours
+		if (currentPage !== page) return;
+
+		[1, -1, 2, -2]
+			.map((offset) => currentPage + offset)
+			.filter((thisPage) => thisPage > 0 && thisPage <= 604 && !prefetchedPages.has(thisPage))
+			.forEach(load);
 	}
+
+	$: if ([2, 3].includes($__fontType)) prefetchPageFonts(page);
 
 	$: {
 		chapters = [];
@@ -254,7 +264,7 @@
 {#await pageData}
 	<Spinner />
 {:then}
-	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" in:fade={{ duration: 300 }} bind:this={pageBlock}>
+	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" bind:this={pageBlock}>
 		<div class="space-y-2 mt-2.5">
 			<!-- single page -->
 			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
@@ -268,7 +278,8 @@
 					{/if}
 
 					<div class="line {line} flex px-2 arabic-font-{$__fontType} {centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : 'justify-between'}">
-						{#each Object.entries(pageDataStore) as [key, value]}
+						<!-- only the verses that have words on this line -->
+						{#each Object.entries(pageDataStore).filter(([, value]) => value.words.line.some((wordLine) => +wordLine === line)) as [key, value]}
 							<WordsBlock {key} {value} {line} />
 						{/each}
 					</div>
