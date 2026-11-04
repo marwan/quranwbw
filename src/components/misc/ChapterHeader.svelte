@@ -6,9 +6,8 @@
         import { loadFont } from '$utils/loadFont';
         import { __currentPage } from '$utils/stores';
 
-        // Header stays invisible until its font is loaded (reactive, no manual DOM manipulation)
+        // Dynamically load header font
         let fontReady = false;
-
         const reveal = () => (fontReady = true);
         loadFont('chapter-headers', chapterHeaderFontLink).then(reveal).catch(reveal);
 </script>
