@@ -8,13 +8,16 @@
 		"test": "vitest run",
 		"preview": "vite build && vite preview",
 		"start": "node build",
-		"lint:unused": "eslint . --ext .js,.svelte --max-warnings=0"
+		"lint:unused": "eslint . --ext .js,.svelte --max-warnings=0",
+		"test:e2e": "playwright test",
+		"test:e2e:update": "playwright test --update-snapshots"
 	},
 	"overrides": {
 		"cookie": "^0.7.0",
 		"esbuild": "^0.25.1"
 	},
 	"devDependencies": {
+		"@playwright/test": "1.64.1",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-node": "^5.4.0",
 		"@sveltejs/adapter-vercel": "^5.10.3",
