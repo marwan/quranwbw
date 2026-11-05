@@ -508,24 +508,8 @@ svg {
   @apply font-mono text-sm px-1 py-0.5 border rounded;
 }
 
-.markdown pre {
-  @apply bg-gray-100 p-4 rounded-md overflow-x-auto text-sm;
-}
-
 .markdown img {
   @apply max-w-full rounded-md;
-}
-
-.markdown table {
-  @apply table-auto border-collapse border border-gray-300 w-full text-left;
-}
-
-.markdown th {
-  @apply px-4 py-2 border border-gray-300 font-semibold;
-}
-
-.markdown td {
-  @apply px-4 py-2 border border-gray-300;
 }
 
 .markdown strong {
