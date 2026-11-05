@@ -1,8 +1,9 @@
-import { fireEvent, render, screen, within } from '@testing-library/svelte';
+import { render, screen, within } from '@testing-library/svelte';
 import { get, writable } from 'svelte/store';
 import { beforeEach, expect, test, vi } from 'vitest';
 import AudioModal from './AudioModal.svelte';
 import { __audioModalVisible, __audioSettings, __chapterNumber, __currentPage } from '$utils/stores';
+import userEvent from '@testing-library/user-event';
 
 vi.mock('$utils/stores', () => ({
 	__audioModalVisible: writable(false),
@@ -56,8 +57,9 @@ test('selecting Till updates the button and the verses to play', async () => {
 	render(AudioModal);
 	const range = within(document.querySelector('#audio-range-options'));
 
-	await fireEvent.click(range.getByRole('button', { name: 'Ayah 7' }));
-	await fireEvent.click(await screen.findByRole('button', { name: 'Ayah 5' }));
+	const user = userEvent.setup();
+	await user.click(range.getByRole('button', { name: 'Ayah 7' }));
+	await user.click(await screen.findByRole('button', { name: 'Ayah 5' }));
 
 	expect(range.getByRole('button', { name: 'Ayah 5' })).toBeTruthy();
 	expect(get(__audioSettings).endVerse).toBe(5);

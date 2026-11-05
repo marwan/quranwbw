@@ -1,4 +1,4 @@
-<script>
+﻿<script>
 	import '../app.css';
 	import '$utils/checkURLParameters';
 	import '$utils/keyDownHandler';
@@ -27,6 +27,7 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
+	import { APP_VERSION_SHORT } from '$lib/version.js';
 
 	const defaultPaddingTop = 'pt-16';
 	const defaultPaddingBottom = 'pb-8';
@@ -154,7 +155,7 @@
 	// Function to track the website Git version in Rybbit analytics
 	(function trackWebsiteVersion() {
 		try {
-			const currentVersion = __APP_VERSION__.split(' ')[0];
+			const currentVersion = APP_VERSION_SHORT;
 			const storageKey = 'websiteVersionData';
 
 			// Get existing data or initialize

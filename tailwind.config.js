@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-import colors from 'tailwindcss/colors';
 import flowbitePlugin from 'flowbite/plugin';
 import tailwindScrollbar from 'tailwind-scrollbar';
 
@@ -9,8 +8,6 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				...colors,
-
 				// These three entries cover ALL themes
 				theme: {
 					bg: 'rgb(var(--theme-bg-rgb) / <alpha-value>)',
