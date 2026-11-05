@@ -101,7 +101,7 @@ export const selectableFontTypes = {
 		name: 'Qalam Digital (Madinah Edition)',
 		order: 5,
 		disallowedInPages: ['mushaf'],
-		version: 7
+		version: 8
 	},
 	5: {
 		id: 5,
@@ -117,7 +117,7 @@ export const selectableFontTypes = {
 		name: 'Qalam Digital (Hanafi Edition)',
 		order: 6,
 		disallowedInPages: ['mushaf'],
-		version: 7
+		version: 8
 	},
 	7: {
 		id: 1,
@@ -157,7 +157,7 @@ export const selectableFontTypes = {
 		name: 'Bangla Qalam Digital (Madinah Edition)',
 		order: 7,
 		disallowedInPages: ['mushaf'],
-		version: 7
+		version: 8
 	},
 	12: {
 		id: 6,
@@ -165,7 +165,7 @@ export const selectableFontTypes = {
 		name: 'Bangla Qalam Digital (Hanafi Edition)',
 		order: 8,
 		disallowedInPages: ['mushaf'],
-		version: 7
+		version: 8
 	}
 };
 
