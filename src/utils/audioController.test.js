@@ -32,7 +32,7 @@ beforeAll(async () => {
 	player.load = vi.fn();
 	document.body.appendChild(player);
 
-	({ wordAudioController } = await import('./audioController'));
+	({ wordAudioController } = await import('$utils/audioController'));
 });
 
 beforeEach(() => {
