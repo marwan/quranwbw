@@ -5,6 +5,7 @@ reviews:
   in_progress_fortune: false
 
   auto_review:
+    enabled: false
     base_branches:
       - '.*'
 
