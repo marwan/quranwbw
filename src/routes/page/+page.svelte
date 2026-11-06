@@ -15,6 +15,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
+	import { chapterHeaderFontLink } from '$data/websiteSettings';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { loadFont } from '$utils/loadFont';
@@ -43,12 +44,31 @@
 	// Stale request guard — only the latest request's result is applied
 	let currentLoadId = 0;
 
+	// Maximum time to wait for the fonts before showing the error state
+	const FONT_TIMEOUT_MS = 8000;
+
 	// Pages for which we need to center align rather than justify (format: page:line)
 	const centeredPageLines = ['1:9', '1:10', '1:11', '1:12', '1:13', '1:14', '1:15', '2:10', '2:11', '2:12', '2:13', '2:14', '2:15', '255:2', '528:9', '534:6', '545:6', '586:1', '593:2', '594:5', '600:10', '602:5', '602:11', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
 	// Set the page number
 	$: page = +data.id;
 
+	// Resolves when the page font and the chapter header font are both ready, so the words and the chapter
+	// header are revealed together. Rejects on failure or timeout, so the page never stays blank and never
+	// shows the raw fallback glyphs (the Mushaf fonts use private use area codes).
+	function loadPageFonts(thisPage) {
+		let timer;
+
+		const timeout = new Promise((_, reject) => {
+			timer = setTimeout(() => reject(new Error('Font loading timed out')), FONT_TIMEOUT_MS);
+		});
+
+		const fonts = Promise.all([loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)), loadFont('chapter-headers', chapterHeaderFontLink)]);
+
+		return Promise.race([fonts, timeout]).finally(() => clearTimeout(timer));
+	}
+
+	// Guarded font prefetching — skip already-fetched pages and out-of-range pages.
 	// Loads the current page's font first, then prefetches the neighbouring pages (next page first, as it is the
 	// most likely one to be read). Uses loadFont (not a plain fetch) so the fonts are downloaded, decoded and
 	// registered ahead of time, and a page is ready to show as soon as it is navigated to. The neighbours only
@@ -83,7 +103,9 @@
 			// Capture the current load ID; discard result if a newer load has started
 			const thisLoadId = ++currentLoadId;
 
-			const data = await fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation);
+			// Start the fonts and the data together, the spinner stays until both are ready
+			const fontsReady = [2, 3].includes($__fontType) ? loadPageFonts(page) : Promise.resolve();
+			const [data] = await Promise.all([fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation), fontsReady]);
 			const verseData = data.verses;
 
 			// Stale check — if a newer navigation happened, discard this result
