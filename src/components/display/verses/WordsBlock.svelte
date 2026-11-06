@@ -38,17 +38,22 @@
 	let pageVisible = false;
 	let lastWordInteractionWasTouch = false;
 
-	// Load the Mushaf font and reveal words whenever the font type switches to 2 or 3.
-	if (mushafFontTypes.includes($__fontType)) {
-		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)).then(() => {
-			pageVisible = true;
-		});
-	}
+	// Load the Mushaf font and reveal words only once it is ready, whenever the font type is (or
+	// switches to) 2 or 3. Reveal must happen only inside the promise: a reactive statement that
+	// sets `pageVisible = true` directly would run on component init and show the raw fallback
+	// glyphs while the font is still downloading.
+	// A failed download is retried once (loadFont drops failed entries, so the second call starts
+	// a fresh download). If it fails again the words stay invisible instead of showing raw glyphs.
+	$: if (mushafFontTypes.includes($__fontType)) {
+		const fontName = `p${value.meta.page}`;
+		const fontLink = getMushafWordFontLink(value.meta.page);
 
-	// Re-run on theme change when already using font type 2 or 3 — switching themes
-	// resets words back to invisible (via v4hafsClasses) and we need to restore their visibility.
-	$: if ($__websiteTheme && mushafFontTypes.includes($__fontType)) {
-		pageVisible = true;
+		loadFont(fontName, fontLink)
+			.catch(() => loadFont(fontName, fontLink))
+			.then(() => {
+				pageVisible = true;
+			})
+			.catch(() => {});
 	}
 
 	// True when the active display type renders verses as a continuous flow

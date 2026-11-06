@@ -15,11 +15,12 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableFontTypes } from '$data/options';
+	import { chapterHeaderFontLink } from '$data/websiteSettings';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
+	import { loadFont } from '$utils/loadFont';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
-	import { fade } from 'svelte/transition';
 	import '$utils/swiped-events.min.js';
 
 	let pageData;
@@ -43,21 +44,54 @@
 	// Stale request guard — only the latest request's result is applied
 	let currentLoadId = 0;
 
+	// Maximum time to wait for the fonts before showing the error state
+	const FONT_TIMEOUT_MS = 8000;
+
 	// Pages for which we need to center align rather than justify (format: page:line)
 	const centeredPageLines = ['1:9', '1:10', '1:11', '1:12', '1:13', '1:14', '1:15', '2:10', '2:11', '2:12', '2:13', '2:14', '2:15', '255:2', '528:9', '534:6', '545:6', '586:1', '593:2', '594:5', '600:10', '602:5', '602:11', '602:15', '603:10', '603:15', '604:4', '604:9', '604:14', '604:15'];
 
 	// Set the page number
 	$: page = +data.id;
 
-	// Guarded font prefetching — skip already-fetched pages and out-of-range pages
-	$: if ([2, 3].includes($__fontType)) {
-		for (let thisPage = +page - 2; thisPage <= +page + 2; thisPage++) {
-			if (thisPage > 0 && thisPage <= 604 && !prefetchedPages.has(thisPage)) {
-				prefetchedPages.add(thisPage);
-				fetch(getMushafWordFontLink(thisPage));
-			}
-		}
+	// Resolves when the page font and the chapter header font are both ready, so the words and the chapter
+	// header are revealed together. Rejects on failure or timeout, so the page never stays blank and never
+	// shows the raw fallback glyphs (the Mushaf fonts use private use area codes).
+	function loadPageFonts(thisPage) {
+		let timer;
+
+		const timeout = new Promise((_, reject) => {
+			timer = setTimeout(() => reject(new Error('Font loading timed out')), FONT_TIMEOUT_MS);
+		});
+
+		const fonts = Promise.all([loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)), loadFont('chapter-headers', chapterHeaderFontLink)]);
+
+		return Promise.race([fonts, timeout]).finally(() => clearTimeout(timer));
 	}
+
+	// Guarded font prefetching — skip already-fetched pages and out-of-range pages.
+	// Loads the current page's font first, then prefetches the neighbouring pages (next page first, as it is the
+	// most likely one to be read). Uses loadFont (not a plain fetch) so the fonts are downloaded, decoded and
+	// registered ahead of time, and a page is ready to show as soon as it is navigated to. The neighbours only
+	// start once the current font is ready, so they never compete with it for bandwidth on slow connections.
+	// Failures are ignored here, loadFont drops the failed entry so WordsBlock retries when the page opens.
+	async function prefetchPageFonts(currentPage) {
+		const load = (thisPage) => {
+			prefetchedPages.add(thisPage);
+			return loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)).catch(() => {});
+		};
+
+		await load(currentPage);
+
+		// The user already moved on, the newer navigation handles its own neighbours
+		if (currentPage !== page) return;
+
+		[1, -1, 2, -2]
+			.map((offset) => currentPage + offset)
+			.filter((thisPage) => thisPage > 0 && thisPage <= 604 && !prefetchedPages.has(thisPage))
+			.forEach(load);
+	}
+
+	$: if ([2, 3].includes($__fontType)) prefetchPageFonts(page);
 
 	$: {
 		chapters = [];
@@ -69,7 +103,9 @@
 			// Capture the current load ID; discard result if a newer load has started
 			const thisLoadId = ++currentLoadId;
 
-			const data = await fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation);
+			// Start the fonts and the data together, the spinner stays until both are ready
+			const fontsReady = [2, 3].includes($__fontType) ? loadPageFonts(page) : Promise.resolve();
+			const [data] = await Promise.all([fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation), fontsReady]);
 			const verseData = data.verses;
 
 			// Stale check — if a newer navigation happened, discard this result
@@ -250,7 +286,7 @@
 {#await pageData}
 	<Spinner />
 {:then}
-	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" in:fade={{ duration: 300 }} bind:this={pageBlock}>
+	<div id="page-block" class="text-center text-xl mt-6 mb-14 overflow-x-hidden overflow-y-hidden" bind:this={pageBlock}>
 		<div class="space-y-2 mt-2.5">
 			<!-- single page -->
 			<div class="max-w-3xl md:max-w-[40rem] pb-2 mx-auto text-[5.4vw] md:text-[36px] lg:text-[36px] {+page === 1 ? 'space-y-1' : 'space-y-2'}">
@@ -264,7 +300,8 @@
 					{/if}
 
 					<div class="line {line} flex px-2 arabic-font-{$__fontType} {centeredPageLines.includes(`${+page}:${line}`) ? 'justify-center' : 'justify-between'}">
-						{#each Object.entries(pageDataStore) as [key, value]}
+						<!-- only the verses that have words on this line -->
+						{#each Object.entries(pageDataStore).filter(([, value]) => value.words.line.some((wordLine) => +wordLine === line)) as [key, value]}
 							<WordsBlock {key} {value} {line} />
 						{/each}
 					</div>
