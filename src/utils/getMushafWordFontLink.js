@@ -15,7 +15,7 @@ export function getMushafWordFontLink(page) {
 	if (isIOSorMac() && isAppleLightThemeWithoutCOLRv1Support && isTajweedFontType) {
 		basePath = 'OT-SVG-LIGHT';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-		fontVersion = 2;
+		fontVersion = 3;
 	}
 
 	// Firefox cannot correctly handle multiple COLRv1 palettes in dark themes, resulting in missing or incorrect colors
