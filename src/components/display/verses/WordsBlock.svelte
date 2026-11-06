@@ -42,8 +42,14 @@
 	// switches to) 2 or 3. Reveal must happen only inside the promise: a reactive statement that
 	// sets `pageVisible = true` directly would run on component init and show the raw fallback
 	// glyphs while the font is still downloading.
+	// A failed download is retried once (loadFont drops failed entries, so the second call starts
+	// a fresh download). If it fails again the words stay invisible instead of showing raw glyphs.
 	$: if (mushafFontTypes.includes($__fontType)) {
-		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page))
+		const fontName = `p${value.meta.page}`;
+		const fontLink = getMushafWordFontLink(value.meta.page);
+
+		loadFont(fontName, fontLink)
+			.catch(() => loadFont(fontName, fontLink))
 			.then(() => {
 				pageVisible = true;
 			})
