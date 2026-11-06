@@ -76,7 +76,7 @@ function getOS() {
 		return 'iOS';
 	}
 
-	if (['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'].indexOf(platform) !== -1) {
+	if (['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'].indexOf(platform) !== -1) {
 		return 'macOS';
 	}
 
