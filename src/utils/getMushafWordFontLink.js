@@ -23,7 +23,7 @@ export function getMushafWordFontLink(page) {
 	else if (isFirefoxDarkTajweed()) {
 		basePath = 'COLRv1-Dark-FF';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-		fontVersion = 13;
+		fontVersion = 14;
 	}
 
 	// The default COLRv1 font is based on a light Tajweed palette, which causing visibility problems for non-Tajweed words in certain themes
@@ -38,7 +38,7 @@ export function getMushafWordFontLink(page) {
 	else {
 		basePath = 'COLRv1';
 		fileName = `QCF4${paddedPage}_COLOR-Regular.woff2`;
-		fontVersion = 13;
+		fontVersion = 14;
 	}
 
 	return `${mushafWordFontLink}/${basePath}/${fileName}?version=${fontVersion}`;
