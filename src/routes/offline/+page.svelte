@@ -4,14 +4,15 @@
 	import Trash from '$svgs/Trash.svelte';
 	import Refresh from '$svgs/Refresh.svelte';
 	import Info from '$svgs/Info.svelte';
-	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations } from '$utils/stores';
+	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __websiteTheme, __tajweedFontSupport, __tajweedCompatibilityMode } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, checkOnlineAndAlert } from '$utils/offlineModeHandler';
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm, showAlert } from '$utils/confirmationAlertHandler';
 	import { fetchChapterData, fetchVerseTranslationData, fetchAndCacheJson } from '$utils/fetchData';
 	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
-	import { getMushafWordFontLink, isIOSorMac } from '$utils/getMushafWordFontLink';
+	import { getMushafFontVariantLink, getMushafOfflineFontVariants, isAppleWebKit } from '$utils/getMushafWordFontLink';
+	import { ensureTajweedFontSupport } from '$utils/tajweedFontSupport';
 	import { term } from '$utils/terminologies';
 	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { bismillahFontMap } from '$data/bismillahFontMap';
@@ -66,6 +67,27 @@
 	// Check if tafsir data has mismatch
 	$: hasTafsirMismatch = mismatchStatus.verseTafsir;
 
+	// Mushaf font variants the Mushaf view uses on this device right now (depends on the theme and, on Apple devices, on the
+	// Tajweed color font format). The stores are passed only so Svelte re-evaluates when they change.
+	$: mushafFontVariants = readMushafFontVariants($__fontType, $__websiteTheme, $__tajweedFontSupport, $__tajweedCompatibilityMode);
+	$: usesOTSVGFonts = mushafFontVariants.some((variant) => variant.startsWith('otsvg'));
+
+	// Download size: ~15 MB of Mushaf text and pages, plus ~45 MB per set of 604 COLRv1 fonts or ~170 MB per set of OT-SVG fonts
+	// (both Mushaf font types may need their own set, e.g. COLRv1 + OT-SVG on some Apple devices, or the two Firefox dark-theme sets)
+	$: currentMushafDataSizeInMB = 15 + mushafFontVariants.reduce((size, variant) => size + (variant.startsWith('otsvg') ? 170 : 45), 0);
+	// On Apple devices the Tajweed font format is only checked when the download starts: show both possible sizes until it is known
+	$: isTajweedFontFormatUnknown = isAppleWebKit() && $__tajweedCompatibilityMode === 'auto' && $__tajweedFontSupport === null;
+	$: mushafDataSizeInMB = isTajweedFontFormatUnknown ? `${currentMushafDataSizeInMB}-${currentMushafDataSizeInMB + 170}` : currentMushafDataSizeInMB;
+
+	// The downloaded Mushaf fonts no longer match (e.g. the Tajweed format changed from COLRv1 to OT-SVG): offer a re-download
+	// Downloads made before the variants were recorded are not checked: which files they hold depended on the settings at the time
+	$: downloadedMushafFontVariants = offlineModeSettings?.mushafData?.fontVariants ?? null;
+	$: hasMushafFontMismatch = downloadedMushafFontVariants !== null && mushafFontVariants.some((variant) => !downloadedMushafFontVariants.includes(variant));
+
+	function readMushafFontVariants() {
+		return getMushafOfflineFontVariants();
+	}
+
 	// Define data sections configuration
 	$: dataSections = [
 		{
@@ -83,17 +105,14 @@
 		{
 			id: 'mushafData',
 			title: 'Mushaf Data',
-			dataSizeInMB: 60,
-			description: 'These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.',
+			dataSizeInMB: mushafDataSizeInMB,
+			description: `These files let you open the Mushaf (page) view offline. All 604 pages, the required font files, and the Mushaf text content are included.${usesOTSVGFonts ? ' Your device uses the larger OT-SVG Tajweed fonts.' : ''}`,
 			isDataDownloaded: isMushafDataDownloaded,
 			isDownloading: isDownloadingMushaf,
-			showMismatchBanner: false,
+			showMismatchBanner: hasMushafFontMismatch,
 			onDownload: handleDownloadMushafData,
 			onDelete: () => handleDeleteSpecificData('quranwbw-mushaf-data', 'mushafData'),
-			onRedownload: () => handleRedownloadData('mushafData'),
-
-			// Disabled on iOS/macOS because the current OT-SVG fallback fonts are significantly large (~190 MB), making downloads impractical.
-			isSectionDisabled: () => isIOSorMac()
+			onRedownload: () => handleRedownloadData('mushafData')
 		},
 		{
 			id: 'morphologyData',
@@ -496,8 +515,12 @@
 		});
 
 		try {
+			// The Tajweed font files depend on the Tajweed color font format on Apple devices: check it even if another font is selected now
+			await ensureTajweedFontSupport({ anyFontType: true });
+			const fontVariants = getMushafOfflineFontVariants();
+
 			const coreSteps = isServiceWorkerRegistered ? 0 : 4;
-			const totalStepsInDownloadProgress = coreSteps + totalPages + 1 + 1;
+			const totalStepsInDownloadProgress = coreSteps + totalPages * fontVariants.length + 1 + 1;
 			let completedStepsInDownloadProgress = 0;
 
 			// Ensure core is downloaded first
@@ -506,11 +529,13 @@
 				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
 			});
 
-			// Download all fonts
+			// Download the fonts of every page, for both Mushaf font types (their files can differ)
 			for (let page = 1; page <= totalPages; page++) {
-				await cacheUrlToCache(getMushafWordFontLink(page), 'quranwbw-mushaf-data');
-				completedStepsInDownloadProgress++;
-				updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+				for (const variant of fontVariants) {
+					await cacheUrlToCache(getMushafFontVariantLink(variant, page), 'quranwbw-mushaf-data');
+					completedStepsInDownloadProgress++;
+					updateDownloadProgress(completedStepsInDownloadProgress, totalStepsInDownloadProgress);
+				}
 			}
 
 			await downloadChapterAndVerseTranslationData({ fontType: [2, 3] });
@@ -519,7 +544,8 @@
 
 			updateOfflineSettingsStructure('mushafData', {
 				downloaded: true,
-				downloadedAt: new Date().toISOString()
+				downloadedAt: new Date().toISOString(),
+				fontVariants
 			});
 
 			window.rybbit?.event('Mushaf Data Download');
