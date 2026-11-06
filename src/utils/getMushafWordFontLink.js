@@ -122,6 +122,11 @@ export function isIOS() {
 	return getOS() === 'iOS';
 }
 
+export function isIOSorMac() {
+	const os = getOS();
+	return os === 'iOS' || os === 'macOS';
+}
+
 // Apple's WebKit engine, where the Tajweed color font issues happen: every iOS/iPadOS browser (they all use WebKit)
 // and Safari on macOS. Chrome, Edge and Firefox on macOS use their own engines and are not affected.
 export function isAppleWebKit() {

@@ -54,15 +54,15 @@ describe('getAppleWebKitMajorVersion', () => {
 describe('getMushafWordFontLink with the Tajweed font', () => {
 	test('Apple devices get COLRv1 by default and while the check is pending', () => {
 		mockDevice(UA.safariIOS26, 'iPhone');
-		expect(getMushafWordFontLink(2)).toContain('/COLRv1/QCF4002_COLOR-Regular.woff2?version=13');
+		expect(getMushafWordFontLink(2)).toContain('/COLRv1/QCF4002_COLOR-Regular.woff2?version=14');
 		__tajweedFontSupport.set('colrv1');
-		expect(getMushafWordFontLink(2)).toContain('/COLRv1/QCF4002_COLOR-Regular.woff2?version=13');
+		expect(getMushafWordFontLink(2)).toContain('/COLRv1/QCF4002_COLOR-Regular.woff2?version=14');
 	});
 
 	test('Apple devices get OT-SVG only when the check chose it', () => {
 		mockDevice(UA.safariIOS26, 'iPhone');
 		__tajweedFontSupport.set('otsvg');
-		expect(getMushafWordFontLink(2)).toContain('/OT-SVG-LIGHT/QCF4002_COLOR-Regular.woff2?version=2');
+		expect(getMushafWordFontLink(2)).toContain('/OT-SVG-LIGHT/QCF4002_COLOR-Regular.woff2?version=3');
 	});
 
 	test('OT-SVG uses the correct variant on light and dark themes', () => {
@@ -74,7 +74,7 @@ describe('getMushafWordFontLink with the Tajweed font', () => {
         __websiteTheme.set(theme);
         expect(getMushafWordFontVariant()).toBe('otsvgLight');
         expect(getMushafWordFontLink(2)).toContain(
-            '/OT-SVG-LIGHT/QCF4002_COLOR-Regular.woff2?version=2'
+            '/OT-SVG-LIGHT/QCF4002_COLOR-Regular.woff2?version=3'
         );
     }
 
@@ -83,7 +83,7 @@ describe('getMushafWordFontLink with the Tajweed font', () => {
         __websiteTheme.set(theme);
         expect(getMushafWordFontVariant()).toBe('otsvgDark');
         expect(getMushafWordFontLink(2)).toContain(
-            '/OT-SVG-DARK/QCF4002_COLOR-Regular.woff2?version=2'
+            '/OT-SVG-DARK/QCF4002_COLOR-Regular.woff2?version=3'
         );
     }
 });
