@@ -44,7 +44,7 @@
 	// Stale request guard — only the latest request's result is applied
 	let currentLoadId = 0;
 
-	// Maximum time to wait for the fonts before showing the error state
+	// Maximum time to wait for the fonts before showing the page anyway
 	const FONT_TIMEOUT_MS = 8000;
 
 	// Pages for which we need to center align rather than justify (format: page:line)
@@ -54,8 +54,8 @@
 	$: page = +data.id;
 
 	// Resolves when the page font and the chapter header font are both ready, so the words and the chapter
-	// header are revealed together. Rejects on failure or timeout, so the page never stays blank and never
-	// shows the raw fallback glyphs (the Mushaf fonts use private use area codes).
+	// header are revealed together. Rejects on failure or timeout. The caller must not let this block the
+	// page: the words stay invisible (never raw glyphs) and are revealed by WordsBlock once the font is ready.
 	function loadPageFonts(thisPage) {
 		let timer;
 
@@ -93,6 +93,19 @@
 
 	$: if ([2, 3].includes($__fontType)) prefetchPageFonts(page);
 
+	// Fetches the verses of a page, and retries once when the result is empty.
+	// This covers the first load after a reset, when the service worker and the database are still settling.
+	async function fetchVersesByPageWithRetry(thisPage) {
+		let result = await fetchVersesByPage(thisPage);
+
+		if (Object.keys(result.verses).length === 0) {
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+			result = await fetchVersesByPage(thisPage);
+		}
+
+		return result;
+	}
+
 	$: {
 		chapters = [];
 		verses = [];
@@ -103,13 +116,19 @@
 			// Capture the current load ID; discard result if a newer load has started
 			const thisLoadId = ++currentLoadId;
 
-			// Start the fonts and the data together, the spinner stays until both are ready
-			const fontsReady = [2, 3].includes($__fontType) ? loadPageFonts(page) : Promise.resolve();
-			const [data] = await Promise.all([fetchVersesByPage(page, selectableFontTypes[$__fontType].id, $__wordTranslation), fontsReady]);
+			// Start the fonts and the data together, the spinner stays until both are ready.
+			// A font failure or timeout never blocks the page, the words are revealed later by WordsBlock.
+			const fontsReady = [2, 3].includes($__fontType) ? loadPageFonts(page).catch(() => {}) : Promise.resolve();
+			const [data] = await Promise.all([fetchVersesByPageWithRetry(page), fontsReady]);
 			const verseData = data.verses;
 
 			// Stale check — if a newer navigation happened, discard this result
 			if (thisLoadId !== currentLoadId) return;
+
+			// Still no data after the retry, show the error state instead of crashing below
+			if (Object.keys(verseData).length === 0) {
+				throw new Error(`Could not load data for page ${page}`);
+			}
 
 			// Store parsed data in memory and in localStorage
 			pageDataStore = verseData;
