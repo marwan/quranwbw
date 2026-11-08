@@ -19,13 +19,11 @@ export function loadFont(name, url) {
 			.load()
 			.then(() => {
 				document.fonts.add(myFont);
-				const el = document.createElement('DIV');
-				el.style.fontFamily = name;
 				resolve();
 			})
-			.catch(() => {
+			.catch((error) => {
 				fontCache.delete(name); // remove on failure so it can be retried
-				reject();
+				reject(error instanceof Error ? error : new Error(`Failed to load font: ${name}`));
 			});
 	});
 
