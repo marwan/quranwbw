@@ -17,12 +17,26 @@
 	// Holds any extra CSS palette class needed for the current font (e.g. Tajweed color palette)
 	let customFontPalette = '';
 
+	// The bismillah stays invisible until its font is ready. Driven by state (not by
+	// querying the DOM), so it also works when the component mounts after the load starts.
+	let fontReady = false;
+
+	// Stale load guard — only the latest font load is allowed to register and reveal
+	let currentFontLoadId = 0;
+
+	// Downloads the font, and retries once if the first attempt fails
+	function downloadFont(url) {
+		const attempt = () => new FontFace('bismillah', `url(${url})`).load();
+		return attempt().catch(attempt);
+	}
+
 	// Resolves the correct font file for the active font type, handles the
-	// Firefox dark-mode Tajweed special case, then loads the font via loadFont().
-	// All .bismillah elements are hidden until the font is ready to avoid FOUT.
+	// Firefox dark-mode Tajweed special case, then loads the font.
+	// The bismillah is hidden until the font is ready, so the raw fallback glyphs are never shown.
+	// If both attempts fail it stays invisible instead of showing raw glyphs.
 	function getBismillahFontName() {
-		const elements = document.querySelectorAll('.bismillah');
-		elements.forEach((el) => el.classList.add('invisible'));
+		const thisLoadId = ++currentFontLoadId;
+		fontReady = false;
 
 		// Fall back to the Tajweed COLOR font if the active type isn't in the map
 		const defaultBismillah = bismillahFontMap[3].file;
@@ -51,19 +65,20 @@
 		// Build the CDN URL with cache-busting version query param
 		const url = `${staticEndpoint}/fonts/Extras/bismillah/${fileName}.woff2?version=${fontVersion}`;
 
-		// Remove ALL existing FontFace entries under the "bismillah" family —
-		// this forces the browser to load the correct file for the current font type
-		// rather than reusing a stale entry from a previous font type or page visit.
-		[...document.fonts].filter((f) => f.family === 'bismillah').forEach((f) => document.fonts.delete(f));
+		downloadFont(url)
+			.then((loadedFont) => {
+				// A newer font type was selected meanwhile, let that load handle the reveal
+				if (thisLoadId !== currentFontLoadId) return;
 
-		// Manage the FontFace directly so we have full control over when the font is registered and revealed.
-		const fontFace = new FontFace('bismillah', `url(${url})`);
+				// Remove ALL existing FontFace entries under the "bismillah" family —
+				// this makes sure the browser uses the file of the current font type
+				// rather than a stale entry from a previous font type or page visit.
+				[...document.fonts].filter((f) => f.family === 'bismillah').forEach((f) => document.fonts.delete(f));
 
-		document.fonts.add(fontFace);
-
-		fontFace.load().then(() => {
-			elements.forEach((el) => el.classList.remove('invisible'));
-		});
+				document.fonts.add(loadedFont);
+				fontReady = true;
+			})
+			.catch(() => {});
 	}
 
 	// Re-run font loading whenever the font type changes
@@ -112,7 +127,7 @@
 <!-- Chapter / Juz / Hizb — skipped for Al-Fatiha (1) and At-Tawbah (9) unless starting mid-chapter -->
 {#if ['chapter', 'juz', 'hizb'].includes($__currentPage)}
 	{#if ![1, 9].includes(chapter) || (chapter === 1 && startVerse > 1)}
-		<div style="font-family: bismillah" class="bismillah {chapterBismillahClasses}">
+		<div style="font-family: bismillah" class="bismillah {fontReady ? '' : 'invisible'} {chapterBismillahClasses}">
 			<span>{getBismillahCode(chapter)}</span>
 		</div>
 	{/if}
@@ -122,7 +137,7 @@
 	{#if chapters && lines}
 		{@const currentChapter = chapters[lines.indexOf(line)]}
 		{#if ![1, 9].includes(currentChapter)}
-			<div style="font-family: bismillah" class="bismillah {mushafBismillahClasses}">
+			<div style="font-family: bismillah" class="bismillah {fontReady ? '' : 'invisible'} {mushafBismillahClasses}">
 				{getBismillahCode(currentChapter)}
 			</div>
 		{/if}
