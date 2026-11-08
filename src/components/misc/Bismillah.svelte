@@ -8,7 +8,7 @@
 
 	import { __currentPage, __chapterNumber, __fontType, __websiteTheme } from '$utils/stores';
 	import { isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
-	import { staticEndpoint } from '$data/websiteSettings';
+	import { loadBismillahFont } from '$utils/loadFont';
 	import { bismillahFontMap } from '$data/bismillahFontMap';
 
 	// True for font types that use the Uthmanic script (affects sizing and padding)
@@ -21,61 +21,29 @@
 	// querying the DOM), so it also works when the component mounts after the load starts.
 	let fontReady = false;
 
-	// Stale load guard — only the latest font load is allowed to register and reveal
+	// Stale load guard — only the latest font load is allowed to reveal
 	let currentFontLoadId = 0;
 
-	// Downloads the font, and retries once if the first attempt fails
-	function downloadFont(url) {
-		const attempt = () => new FontFace('bismillah', `url(${url})`).load();
-		return attempt().catch(attempt);
-	}
-
-	// Resolves the correct font file for the active font type, handles the
-	// Firefox dark-mode Tajweed special case, then loads the font.
-	// The bismillah is hidden until the font is ready, so the raw fallback glyphs are never shown.
-	// If both attempts fail it stays invisible instead of showing raw glyphs.
+	// Loads the font for the active font type and sets the matching colour palette.
+	// The font is shared with the mushaf page loader, so on the mushaf page it is usually
+	// already ready by the time this component mounts.
+	// If the download fails it stays invisible instead of showing raw glyphs.
 	function getBismillahFontName() {
 		const thisLoadId = ++currentFontLoadId;
 		fontReady = false;
 
-		// Fall back to the Tajweed COLOR font if the active type isn't in the map
-		const defaultBismillah = bismillahFontMap[3].file;
-
-		let { file: fileName, version: fontVersion } = {
-			file: defaultBismillah,
-			version: 13
-		};
-
-		// Override with the mapped values when available
-		if (bismillahFontMap[$__fontType]) {
-			({ file: fileName, version: fontVersion } = bismillahFontMap[$__fontType]);
-		}
-
-		// Special case: font type 3 (Tajweed COLOR) needs a different file in
-		// Firefox dark mode, and also switches to a different CSS colour palette.
+		// Font type 3 (Tajweed COLOR) switches to a different CSS colour palette
 		if ($__fontType === 3) {
-			fileName = isFirefoxDarkTajweed() ? bismillahFontMap.firefoxDarkTajweed.file : defaultBismillah;
 			customFontPalette = isFirefoxDarkTajweed() ? 'hafs-palette-firefox-dark' : 'theme-palette-tajweed';
-			fontVersion = 13;
 		} else {
 			// Reset palette when switching away from font type 3
 			customFontPalette = '';
 		}
 
-		// Build the CDN URL with cache-busting version query param
-		const url = `${staticEndpoint}/fonts/Extras/bismillah/${fileName}.woff2?version=${fontVersion}`;
-
-		downloadFont(url)
-			.then((loadedFont) => {
+		loadBismillahFont($__fontType)
+			.then(() => {
 				// A newer font type was selected meanwhile, let that load handle the reveal
 				if (thisLoadId !== currentFontLoadId) return;
-
-				// Remove ALL existing FontFace entries under the "bismillah" family —
-				// this makes sure the browser uses the file of the current font type
-				// rather than a stale entry from a previous font type or page visit.
-				[...document.fonts].filter((f) => f.family === 'bismillah').forEach((f) => document.fonts.delete(f));
-
-				document.fonts.add(loadedFont);
 				fontReady = true;
 			})
 			.catch(() => {});
