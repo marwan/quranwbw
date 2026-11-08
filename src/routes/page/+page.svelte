@@ -18,7 +18,7 @@
 	import { chapterHeaderFontLink } from '$data/websiteSettings';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
-	import { loadFont } from '$utils/loadFont';
+	import { loadFont, loadBismillahFont } from '$utils/loadFont';
 	import { fetchChapterData } from '$utils/fetchData';
 	import { getSegmentKeys } from '$utils/getSegmentKeys';
 	import '$utils/swiped-events.min.js';
@@ -53,9 +53,10 @@
 	// Set the page number
 	$: page = +data.id;
 
-	// Resolves when the page font and the chapter header font are both ready, so the words and the chapter
-	// header are revealed together. Rejects on failure or timeout. The caller must not let this block the
-	// page: the words stay invisible (never raw glyphs) and are revealed by WordsBlock once the font is ready.
+	// Resolves when the page font, the chapter header font and the bismillah font are all ready, so the words,
+	// the chapter header and the bismillah are revealed together. Rejects on failure or timeout. The caller must
+	// not let this block the page: each part stays invisible (never raw glyphs) and is revealed by its own
+	// component once its font is ready.
 	function loadPageFonts(thisPage) {
 		let timer;
 
@@ -63,7 +64,12 @@
 			timer = setTimeout(() => reject(new Error('Font loading timed out')), FONT_TIMEOUT_MS);
 		});
 
-		const fonts = Promise.all([loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)), loadFont('chapter-headers', chapterHeaderFontLink)]);
+		const fonts = Promise.all([
+			loadFont(`p${thisPage}`, getMushafWordFontLink(thisPage)),
+			loadFont('chapter-headers', chapterHeaderFontLink),
+			// The bismillah is not on every page, so its failure must not fail the page
+			loadBismillahFont($__fontType).catch(() => {})
+		]);
 
 		return Promise.race([fonts, timeout]).finally(() => clearTimeout(timer));
 	}
@@ -116,8 +122,8 @@
 			// Capture the current load ID; discard result if a newer load has started
 			const thisLoadId = ++currentLoadId;
 
-			// Start the fonts and the data together, the spinner stays until both are ready.
-			// A font failure or timeout never blocks the page, the words are revealed later by WordsBlock.
+			// Start the fonts and the data together, the spinner stays until all are ready.
+			// A font failure or timeout never blocks the page, the parts are revealed later by their components.
 			const fontsReady = [2, 3].includes($__fontType) ? loadPageFonts(page).catch(() => {}) : Promise.resolve();
 			const [data] = await Promise.all([fetchVersesByPageWithRetry(page), fontsReady]);
 			const verseData = data.verses;
