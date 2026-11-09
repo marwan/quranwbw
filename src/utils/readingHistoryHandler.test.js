@@ -4,9 +4,15 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 let handler;
 
 beforeEach(async () => {
+	sessionStorage.clear();
+	await reloadPage();
+});
+
+// Simulates a full page reload: module state is lost, sessionStorage is kept
+async function reloadPage() {
 	vi.resetModules();
 	handler = await import('$utils/readingHistoryHandler');
-});
+}
 
 // Simulates a SvelteKit navigation seen by the layout
 function navigate(path) {
@@ -123,6 +129,50 @@ describe('reading sessions', () => {
 		handler.resumeLatestReadingSession({ history, lastRead: { chapter: 3, verse: 1 }, targetUrl: '/3?startVerse=1' });
 		navigate('/3?startVerse=1');
 		history = read(history, { chapter: 3, verse: 2, currentPage: 'chapter' });
+		expect(history).toHaveLength(2);
+	});
+
+	test('a page reload keeps updating the same entry', async () => {
+		navigate('/juz?id=2&startKey=2:217');
+		navigate('/juz?id=2');
+		let history = read([], { chapter: 2, verse: 217, currentPage: 'juz', juz: 2 });
+
+		await reloadPage();
+		navigate('/juz?id=2');
+		history = read(history, { chapter: 2, verse: 221, currentPage: 'juz', juz: 2 });
+
+		expect(history).toHaveLength(1);
+		expect(history[0]).toMatchObject({ verse: 221 });
+	});
+
+	test('a resumed entry survives a page reload', async () => {
+		navigate('/2');
+		let history = read([], { chapter: 2, verse: 12, currentPage: 'chapter' });
+		navigate('/18');
+		history = read(history, { chapter: 18, verse: 6, currentPage: 'chapter' });
+		navigate('/');
+
+		const baqara = history[1];
+		handler.resumeReadingSession(baqara.id, '/2?startVerse=12');
+		navigate('/2?startVerse=12');
+
+		await reloadPage();
+		navigate('/2?startVerse=12');
+		history = read(history, { chapter: 2, verse: 20, currentPage: 'chapter' });
+
+		expect(history).toHaveLength(2);
+		expect(history[0]).toMatchObject({ id: baqara.id, verse: 20 });
+	});
+
+	test('a new tab without saved session starts a new entry', async () => {
+		navigate('/2');
+		let history = read([], { chapter: 2, verse: 12, currentPage: 'chapter' });
+
+		sessionStorage.clear();
+		await reloadPage();
+		navigate('/2');
+		history = read(history, { chapter: 2, verse: 15, currentPage: 'chapter' });
+
 		expect(history).toHaveLength(2);
 	});
 

@@ -12,8 +12,35 @@ const stabilityDelay = 2500;
 // null means no session yet, so the next stable position creates a new entry.
 let activeSessionId = null;
 
+// Last URL seen by the navigation hook
+let lastUrl = null;
+
 // Timer for the pending (debounced) history update
 let pendingTimer = null;
+
+// The session is kept in sessionStorage (per tab) so a full page reload, a service worker update
+// or the mobile browser discarding the tab keeps updating the same entry instead of creating a new one
+const sessionStorageKey = 'readingHistorySession';
+
+function saveSessionState() {
+	try {
+		sessionStorage.setItem(sessionStorageKey, JSON.stringify({ activeSessionId, lastUrl: lastUrl?.href ?? null }));
+	} catch {
+		// Storage unavailable (private mode, blocked site data), the session only lives in memory
+	}
+}
+
+function restoreSessionState() {
+	try {
+		const saved = JSON.parse(sessionStorage.getItem(sessionStorageKey));
+		activeSessionId = saved?.activeSessionId ?? null;
+		lastUrl = saved?.lastUrl ? new URL(saved.lastUrl) : null;
+	} catch {
+		// Nothing saved or storage unavailable, start without a session
+	}
+}
+
+restoreSessionState();
 
 // Starts a new reading session.
 // - No argument: fresh session, the next stable position creates a new entry.
@@ -24,6 +51,7 @@ function startReadingSession(entryId = null) {
 	pendingTimer = null;
 
 	activeSessionId = entryId;
+	saveSessionState();
 }
 
 // Entry ID waiting to be resumed once the upcoming navigation completes
@@ -56,9 +84,6 @@ const sequentialPathnames = ['/page', '/juz', '/hizb'];
 // Max "id" difference still treated as continuous reading (covers next/previous page, juz, hizb)
 const maxSequentialStep = 2;
 
-// Last URL seen by the navigation hook
-let lastUrl = null;
-
 // Returns true if moving from one URL to the next is a continuation of the same reading,
 // for example turning a mushaf page or loading previous verses, rather than going somewhere new
 function isSameReading(previous, next) {
@@ -80,8 +105,10 @@ export function handleReadingNavigation(url) {
 	const previous = lastUrl;
 	lastUrl = new URL(url, location.href);
 
-	// Page store updates without a URL change are not navigations
+	// Page store updates and page reloads without a URL change are not navigations
 	if (previous && previous.href === lastUrl.href) return;
+
+	saveSessionState();
 
 	const entryId = pendingResumeId;
 	pendingResumeId = null;
@@ -163,6 +190,7 @@ export function updateReadingHistory({ history, data }) {
 	};
 
 	activeSessionId = newEntry.id;
+	saveSessionState();
 	return [newEntry, ...list].slice(0, maxHistoryEntries);
 }
 
