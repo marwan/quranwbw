@@ -1,5 +1,6 @@
 <script>
 	import Modal from '$ui/FlowbiteSvelte/modal/Modal.svelte';
+	import Trash from '$svgs/Trash.svelte';
 	import { __currentPage, __readingHistoryModalVisible, __readingHistory } from '$utils/stores';
 	import { quranMetaData } from '$data/quranMeta';
 	import { individualCheckboxClasses } from '$data/commonClasses';
@@ -8,6 +9,7 @@
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { resumeReadingSession, getReadingHistoryEntryUrl } from '$utils/readingHistoryHandler';
 	import { term } from '$utils/terminologies';
+	import { updateSettings } from '$utils/updateSettings';
 
 	let fullQuranTextData = null;
 
@@ -25,6 +27,12 @@
 		return null;
 	}
 
+	// Remove a single entry from the reading history
+	function removeEntry(item) {
+		updateSettings({ type: 'removeReadingHistoryEntry', value: item.id });
+		window.rybbit?.event('Remove Reading History Entry');
+	}
+
 	// Load and cache the full Quran text data
 	async function loadQuranData() {
 		try {
@@ -35,7 +43,7 @@
 	}
 </script>
 
-<Modal id="readingHistoryModal" bind:open={$__readingHistoryModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+<Modal id="readingHistoryModal" bind:open={$__readingHistoryModalVisible} transitionParams={getModalTransition('bottom')} size="md" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
 	<h3 class="mb-6 text-xl font-medium flex-shrink-0">Reading History</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
@@ -45,8 +53,8 @@
 				{@const entryUrl = getReadingHistoryEntryUrl(item)}
 				{@const viewLabel = getViewLabel(item)}
 
-				<a href={entryUrl} class="{individualCheckboxClasses} flex items-center gap-3 w-full min-w-0 overflow-hidden" on:click={() => resumeReadingSession(item.id, entryUrl)}>
-					<div class="flex-1 min-w-0 overflow-hidden">
+				<div class="{individualCheckboxClasses} flex items-center gap-3 w-full min-w-0 overflow-hidden">
+					<a href={entryUrl} class="flex-1 min-w-0 overflow-hidden" on:click={() => resumeReadingSession(item.id, entryUrl)}>
 						<div class="line-clamp-1">
 							{index + 1}. {quranMetaData[chapter].transliteration} ({chapter}:{verse}){#if viewLabel}<span class="opacity-70 ml-1">· {viewLabel}</span>{/if}
 						</div>
@@ -64,8 +72,15 @@
 								{/await}
 							</div>
 						{/if}
-					</div>
-				</a>
+					</a>
+
+					<!-- Remove from history -->
+					<button class="flex-shrink-0 p-2 rounded-full hover:bg-theme-accent/5 opacity-70 hover:opacity-100 transition-opacity" aria-label="Remove {quranMetaData[chapter].transliteration} ({chapter}:{verse}) from reading history" title="Remove from history" on:click={() => removeEntry(item)}>
+						<Trash size={4} aria-hidden="true" />
+					</button>
+				</div>
+			{:else}
+				<p class="text-sm opacity-70">Your reading history is empty.</p>
 			{/each}
 		</div>
 	</div>

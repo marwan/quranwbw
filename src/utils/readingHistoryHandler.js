@@ -166,6 +166,12 @@ export function updateReadingHistory({ history, data }) {
 	return [newEntry, ...list].slice(0, maxHistoryEntries);
 }
 
+// Pure function: returns the history without the given entry
+export function removeReadingHistoryEntry({ history, entryId }) {
+	const list = Array.isArray(history) ? history : [];
+	return list.filter((entry) => entry.id !== entryId);
+}
+
 // Debounced history update. Only the latest position within the stability window is saved.
 // - getHistory: returns the current history array (read at commit time, so it is never stale)
 // - onCommit: receives the new history array and should persist it

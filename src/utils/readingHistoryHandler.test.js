@@ -140,6 +140,17 @@ describe('reading sessions', () => {
 	});
 });
 
+describe('removeReadingHistoryEntry', () => {
+	test('removes only the given entry', () => {
+		const history = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+		expect(handler.removeReadingHistoryEntry({ history, entryId: 'b' })).toEqual([{ id: 'a' }, { id: 'c' }]);
+	});
+
+	test('handles missing history', () => {
+		expect(handler.removeReadingHistoryEntry({ history: undefined, entryId: 'a' })).toEqual([]);
+	});
+});
+
 describe('getReadingHistoryEntryUrl', () => {
 	test('reopens each entry in the view it was read in', () => {
 		expect(handler.getReadingHistoryEntryUrl({ chapter: 2, verse: 12, currentPage: 'chapter' })).toBe('/2?startVerse=12');

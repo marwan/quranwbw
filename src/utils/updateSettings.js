@@ -35,7 +35,7 @@ import {
 	__readingHistory
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
-import { queueReadingHistoryUpdate, isReaderPage } from '$utils/readingHistoryHandler';
+import { queueReadingHistoryUpdate, isReaderPage, removeReadingHistoryEntry } from '$utils/readingHistoryHandler';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -281,6 +281,14 @@ export function updateSettings(props) {
 				});
 			}
 			break;
+
+		// Remove an entry from the reading history
+		case 'removeReadingHistoryEntry': {
+			const history = removeReadingHistoryEntry({ history: get(__readingHistory), entryId: props.value });
+			userSettings.readingHistory = history;
+			__readingHistory.set(history);
+			break;
+		}
 
 		// for toggling wakeLock
 		case 'wakeLockEnabled':
