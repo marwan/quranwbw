@@ -7,7 +7,7 @@
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
-	import { resumeReadingSession, getReadingHistoryEntryUrl } from '$utils/readingHistoryHandler';
+	import { resumeReadingSession, getReadingHistoryEntryUrl, formatReadingHistoryTime } from '$utils/readingHistoryHandler';
 	import { term } from '$utils/terminologies';
 	import { updateSettings } from '$utils/updateSettings';
 
@@ -18,6 +18,10 @@
 
 	// Load the full Quran text when the reading history modal is opened
 	$: if ($__readingHistoryModalVisible) loadQuranData();
+
+	// Reference time for the "x minutes ago" labels, refreshed every time the modal opens
+	let now = Date.now();
+	$: if ($__readingHistoryModalVisible) now = Date.now();
 
 	// Label of the view an entry was read in (chapter view has none)
 	function getViewLabel(item) {
@@ -52,11 +56,18 @@
 				{@const [chapter, verse] = [item.chapter, item.verse]}
 				{@const entryUrl = getReadingHistoryEntryUrl(item)}
 				{@const viewLabel = getViewLabel(item)}
+				{@const readTime = formatReadingHistoryTime(item.updatedAt, now)}
 
 				<div class="{individualCheckboxClasses} flex items-center gap-3 w-full min-w-0 overflow-hidden">
 					<a href={entryUrl} class="flex-1 min-w-0 overflow-hidden" on:click={() => resumeReadingSession(item.id, entryUrl)}>
-						<div class="line-clamp-1">
-							{index + 1}. {quranMetaData[chapter].transliteration} ({chapter}:{verse}){#if viewLabel}<span class="opacity-70 ml-1">· {viewLabel}</span>{/if}
+						<div class="flex flex-col md:flex-row md:items-baseline md:justify-between md:gap-3">
+							<div class="line-clamp-1">
+								{index + 1}. {quranMetaData[chapter].transliteration} ({chapter}:{verse}){#if viewLabel}<span class="opacity-70 ml-1">· {viewLabel}</span>{/if}
+							</div>
+
+							{#if readTime}
+								<span class="flex-shrink-0 text-xs opacity-70 whitespace-nowrap">{readTime}</span>
+							{/if}
 						</div>
 
 						<!-- Show the complete verse text -->
