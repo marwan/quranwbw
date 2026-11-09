@@ -14,17 +14,19 @@
 	import BookFilled from '$svgs/BookFilled.svelte';
 	import Search2Bold from '$svgs/Search2Bold.svelte';
 	import Edit2 from '$svgs/Edit2.svelte';
+	import Clock from '$svgs/Clock.svelte';
 	import UserBookmarks from '$display/UserBookmarks.svelte';
 	import UserNotes from '$display/UserNotes.svelte';
 	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __readingHistory, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible, __readingHistoryModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
+	import { resumeLatestReadingSession } from '$utils/readingHistoryHandler';
 
 	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5';
@@ -35,6 +37,12 @@
 	const tabActiveBorder = `${commontabClasses} border-theme-accent/20`;
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
 	const currentHour = new Date().getHours();
+
+	// Continue reading links resume the latest history entry instead of creating a duplicate one
+	function continueReading(event, analyticsEvent = null) {
+		resumeLatestReadingSession({ history: $__readingHistory, lastRead: $__lastRead, targetUrl: event.currentTarget.getAttribute('href') });
+		if (analyticsEvent) window.rybbit?.event(analyticsEvent);
+	}
 
 	// Tab Indexes
 	const bookmarksTab = 1;
@@ -55,7 +63,7 @@
 	$: showDivisionSort = [chaptersTab, juzTab, favoriteChaptersTab, hizbTab].includes(divisionsActiveTab);
 	$: isFriday = new Date().getDay() === 5 && currentHour < 18;
 	$: isNight = currentHour < 4 || currentHour > 18;
-	$: lastReadExists = Object.prototype.hasOwnProperty.call($__lastRead, 'chapter');
+	$: lastReadExists = Boolean($__lastRead?.chapter);
 	$: totalBookmarks = $__userBookmarks.length;
 	$: totalNotes = Object.keys($__userNotes).length;
 	$: hasFavorites = $__userFavoriteChapters.length > 0;
@@ -157,7 +165,7 @@
 				</button>
 				<a href="/topics" class="{topButtonClasses} !py-4 md:bg-transparent"><TopicsBold size={4} /><span class="hidden md:block">Topics</span></a>
 				<a href={`/${term('supplications').toLowerCase()}`} class="{topButtonClasses} !py-4 md:bg-transparent"><SupplicationBold size={4} /><span class="hidden md:block">{term('supplications')}</span></a>
-				<a href={Object.prototype.hasOwnProperty.call($__lastRead, 'page') ? `/page?id=${$__lastRead.page}` : '/page?id=1'} class="{topButtonClasses} !py-4 md:bg-transparent"><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
+				<a href="/page?id={$__lastRead?.page ?? 1}" class="{topButtonClasses} !py-4 md:bg-transparent" on:click={continueReading}><BookFilled size={4} /><span class="hidden md:block">Mushaf</span></a>
 				<a href="/morphology?word=1:1" class="{topButtonClasses} !py-4 md:bg-transparent"><MorphologyBold size={4} /><span class="hidden md:block">Morphology</span></a>
 			</div>
 			<button class="{topButtonClasses} !py-4 md:bg-transparent" on:click={() => __siteNavigationModalVisible.set(true)}><Menu size={4} /><span class="hidden md:block">Menu</span></button>
@@ -307,18 +315,27 @@
 			<!-- chapters tab -->
 			{#if divisionsActiveTab === chaptersTab}
 				<div id="chapters-tab-panel" role="tabpanel" aria-labelledby="chapters-tab">
-					<!-- continue readin button -->
+					<!-- continue reading button -->
 					{#if lastReadExists}
 						{@const lastReadChapter = $__lastRead.chapter}
-						{@const lastReadVerse = $__lastRead.verse}
-						<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.rybbit?.event('Continue Chapter Button')}>
-							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
-							<span class="truncate">
-								<span class="md:hidden">Continue:</span>
-								<span class="hidden md:inline-block">Continue Reading:</span>
-								{quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}
-							</span>
-						</a>
+						{@const lastReadVerse = Math.max(1, $__lastRead.verse - 1)}
+						<div class="flex flex-row space-x-2 mb-2">
+							<a href="/{lastReadChapter}?startVerse={lastReadVerse}" class="{continueReadingButtonClasses} truncate w-full" on:click={(event) => continueReading(event, 'Continue Chapter Button')}>
+								<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
+								<span class="truncate">
+									<span class="md:hidden">Continue: {lastReadChapter}:{lastReadVerse}</span>
+									<span class="hidden md:inline-block">Continue Reading: {quranMetaData[lastReadChapter].transliteration}, {lastReadChapter}:{lastReadVerse}</span>
+								</span>
+							</a>
+
+							{#if $__readingHistory.length > 1}
+								<button class="{continueReadingButtonClasses} w-full" on:click={() => __readingHistoryModalVisible.set(true)}>
+									<Clock size={5} />
+									<span class="md:hidden">History</span>
+									<span class="hidden md:inline-block">Reading History</span>
+								</button>
+							{/if}
+						</div>
 					{/if}
 
 					<div class="{cardGridClasses} grid-cols-1">
@@ -336,9 +353,9 @@
 				<div id="juz-tab-panel" role="tabpanel" aria-labelledby="juz-tab">
 					{#if lastReadExists}
 						{@const lastReadChapter = $__lastRead.chapter}
-						{@const lastReadVerse = $__lastRead.verse}
+						{@const lastReadVerse = Math.max(1, $__lastRead.verse - 1)}
 						{@const lastReadJuz = $__lastRead.juz}
-						<a href="/juz?id={lastReadJuz}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.rybbit?.event('Continue Juz Button')}>
+						<a href="/juz?id={lastReadJuz}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={(event) => continueReading(event, 'Continue Juz Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('juz')}
@@ -379,9 +396,9 @@
 				<div id="hizb-tab-panel" role="tabpanel" aria-labelledby="hizb-tab">
 					{#if lastReadExists && $__lastRead.hizb}
 						{@const lastReadChapter = $__lastRead.chapter}
-						{@const lastReadVerse = $__lastRead.verse}
+						{@const lastReadVerse = Math.max(1, $__lastRead.verse - 1)}
 						{@const lastReadHizb = $__lastRead.hizb}
-						<a href="/hizb?id={lastReadHizb}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={() => window.rybbit?.event('Continue Hizb Button')}>
+						<a href="/hizb?id={lastReadHizb}&startKey={lastReadChapter}:{lastReadVerse}" class="{continueReadingButtonClasses} mb-2 truncate w-full" on:click={(event) => continueReading(event, 'Continue Hizb Button')}>
 							<span class="chapter-icons mb-1 text-2xl md:text-3xl text-theme-accent">{@html `&#xE9${quranMetaData[lastReadChapter].icon};`}</span>
 							<span>
 								Continue Reading: {term('hizb')}

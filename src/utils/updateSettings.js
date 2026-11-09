@@ -31,9 +31,11 @@ import {
 	__wideWesbiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__offlineModeSettings,
-	__homepageLayoutPreferences
+	__homepageLayoutPreferences,
+	__readingHistory
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
+import { queueReadingHistoryUpdate, isReaderPage } from '$utils/readingHistoryHandler';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -254,13 +256,29 @@ export function updateSettings(props) {
 			__userNotes.set(userNotes);
 			break;
 
-		// for last read
+		// Update last read position and reading history when on a reader page
 		case 'lastRead':
-			if (['chapter', 'mushaf', 'juz', 'hizb'].includes(get(__currentPage))) {
+			if (isReaderPage(get(__currentPage))) {
 				const data = props.value;
 				data['currentPage'] = get(__currentPage);
+
+				// lastRead updates immediately
 				__lastRead.set(data);
 				userSettings.lastRead = props.value;
+
+				// History is debounced and saved after the position is stable
+				queueReadingHistoryUpdate({
+					data,
+					getHistory: () => get(__readingHistory),
+					onCommit: (history) => {
+						// Re-read settings, since they may have changed during the delay
+						const settings = JSON.parse(localStorage.getItem('userSettings'));
+						settings.readingHistory = history;
+						localStorage.setItem('userSettings', JSON.stringify(settings));
+						__userSettings.set(JSON.stringify(settings));
+						__readingHistory.set(history);
+					}
+				});
 			}
 			break;
 
