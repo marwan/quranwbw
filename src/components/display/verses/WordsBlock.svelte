@@ -9,11 +9,12 @@
 	import { goto } from '$app/navigation';
 	import { selectableDisplays, selectableWordTranslations, selectableWordTransliterations } from '$data/options';
 	import { supplicationsFromQuran } from '$data/quranMeta';
-	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick, __wordTranslation, __wordTransliteration, __wordTranslationEnabled, __wordTransliterationEnabled, __wordTooltip, __hideNonDuaPart, __signLanguageModeEnabled } from '$utils/stores';
+	import { __currentPage, __fontType, __displayType, __userSettings, __audioSettings, __morphologyKey, __verseKey, __websiteTheme, __morphologyModalVisible, __wordMorphologyOnClick, __wordTranslation, __wordTransliteration, __wordTranslationEnabled, __wordTransliterationEnabled, __wordTooltip, __hideNonDuaPart, __signLanguageModeEnabled, __tajweedCompatibilityMode, __tajweedFontSupport } from '$utils/stores';
 	import { loadFont } from '$utils/loadFont';
 	import { wordAudioController } from '$utils/audioController';
 	import { updateSettings } from '$utils/updateSettings';
 	import { getMushafWordFontLink, isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
+	import { ensureTajweedFontSupport } from '$utils/tajweedFontSupport';
 
 	const mushafFontTypes = [2, 3];
 	const fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
@@ -38,16 +39,19 @@
 	let pageVisible = false;
 	let lastWordInteractionWasTouch = false;
 
-	// Load the Mushaf font and reveal words only once it is ready, whenever the font type is (or
-	// switches to) 2 or 3. Reveal must happen only inside the promise: a reactive statement that
-	// sets `pageVisible = true` directly would run on component init and show the raw fallback
-	// glyphs while the font is still downloading.
-	$: if (mushafFontTypes.includes($__fontType)) {
-		loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page))
+	// Load the Mushaf font and reveal words whenever the font type switches to 2 or 3.
+	// The font URL depends on which Tajweed color font format the device can display, so wait for that check first.
+	// Also re-runs when the Tajweed compatibility mode or the detected format changes (passed only so Svelte tracks them):
+	// loadFont() then swaps the page font for the new format's file once it has loaded.
+	$: if (mushafFontTypes.includes($__fontType)) loadMushafFont($__tajweedCompatibilityMode, $__tajweedFontSupport);
+
+	function loadMushafFont() {
+		ensureTajweedFontSupport()
+			.then(() => loadFont(`p${value.meta.page}`, getMushafWordFontLink(value.meta.page)))
 			.then(() => {
 				pageVisible = true;
 			})
-			.catch(() => {});
+			.catch(() => {}); // font request failed: the words stay hidden, as before
 	}
 
 	// True when the active display type renders verses as a continuous flow

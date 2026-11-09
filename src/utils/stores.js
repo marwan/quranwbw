@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import { writable, derived } from 'svelte/store';
+import { readTajweedFontCache } from '$utils/tajweedFontCache';
 
 let __currentPage,
 	__chapterNumber,
@@ -61,7 +62,9 @@ let __currentPage,
 	__homepageLayoutPreferences,
 	__fullVersesDisplayKeys,
 	__verseKeyData,
-	__anyModalVisible;
+	__anyModalVisible,
+	__tajweedFontSupport,
+	__tajweedCompatibilityMode;
 
 if (browser) {
 	const userSettings = JSON.parse(localStorage.getItem('userSettings'));
@@ -236,6 +239,13 @@ if (browser) {
 
 	// to store the per verse metadata (page, juz, hizb, word count) for the whole Quran
 	__verseKeyData = writable(null);
+
+	// result of the Tajweed color font check on Apple devices: null (unknown) | "colrv1" | "otsvg" | "none"
+	// seeded from the cache so the format is known before any check runs (e.g. for the offline download with another font selected)
+	__tajweedFontSupport = writable(readTajweedFontCache());
+
+	// to store the Tajweed compatibility mode: "auto" (use the check above) | "colrv1" | "otsvg"
+	__tajweedCompatibilityMode = writable(userSettings.displaySettings.tajweedCompatibilityMode);
 }
 
 export {
@@ -299,5 +309,7 @@ export {
 	__homepageLayoutPreferences,
 	__fullVersesDisplayKeys,
 	__verseKeyData,
-	__anyModalVisible
+	__anyModalVisible,
+	__tajweedFontSupport,
+	__tajweedCompatibilityMode
 };

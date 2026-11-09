@@ -6,6 +6,7 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';
+	import { onTajweedFontTypeSelected } from '$utils/tajweedFontSupport';
 
 	// Get downloaded font types from offline settings
 	$: downloadedFontTypes = $__offlineModeSettings?.downloadedDataSettings?.fontTypes ?? [];
@@ -19,6 +20,12 @@
 		userOnline = await isUserOnline();
 		networkCheckPerformed = true;
 	});
+
+	// Save the selected font type; for the Tajweed Mushaf font, check right away which color font format the device can display
+	function selectFontType(fontType) {
+		updateSettings({ type: 'fontType', value: fontType });
+		if (fontType === 3) onTajweedFontTypeSelected();
+	}
 
 	// Helper function to check if a font type should be shown
 	function shouldShowFontType(fontType, fontKey) {
@@ -65,7 +72,7 @@
 					{#if getFontVisibilityStatus(type) === 'has-visible'}
 						{#each Object.entries(selectableFontTypes).sort((a, b) => a[1].order - b[1].order) as [fontKey, fontType]}
 							{#if fontType.type === type && shouldShowFontType(fontType, fontKey)}
-								<Radio name="fontType" bind:group={$__fontType} value={Number(fontKey)} on:change={(event) => updateSettings({ type: 'fontType', value: +event.target.value })} custom>
+								<Radio name="fontType" bind:group={$__fontType} value={Number(fontKey)} on:change={(event) => selectFontType(+event.target.value)} custom>
 									<div class="{individualRadioClasses} {$__fontType === Number(fontKey) && selectedRadioOrCheckboxClasses}">
 										<div class="w-full">{fontType.name}</div>
 									</div>
