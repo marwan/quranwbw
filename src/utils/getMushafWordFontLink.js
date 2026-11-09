@@ -25,27 +25,28 @@ function getTajweedFontFormat() {
 	return ['colrv1', 'otsvg'].includes(mode) ? mode : get(__tajweedFontSupport);
 }
 
-// Returns which Mushaf word font variant to use on this device and theme. By default for the selected font type;
-// the offline download passes 2 and 3 explicitly to get the files of both Mushaf fonts, whichever is selected.
-export function getMushafWordFontVariant(fontType = get(__fontType)) {
+// Returns which Mushaf word font variant to use on this device. By default for the selected font type and theme;
+// the offline download passes every font type and theme base explicitly to get all the files the device may need.
+export function getMushafWordFontVariant(fontType = get(__fontType), darkTheme = isDarkTheme()) {
 	const isTajweedFontType = fontType === 3;
+	const isFirefoxWithDarkTheme = isFirefox() && darkTheme;
 
 	// COLRv1 is the default everywhere. On iOS/macOS some versions render its Tajweed colors wrongly (bleeding, e.g. iOS 18.0–18.3, 26.2–26.3)
 	// or not at all (iOS 17.0–17.1); ensureTajweedFontSupport() checks this once (or the user picks a format in the Tajweed compatibility mode setting)
 	// and only then switches to the OT-SVG fonts matching the theme's light or dark base (Vintage Sepia uses the light ones). OT-SVG is not the default because it is blank on iOS 17.5 and 27.
 	if (isAppleWebKit() && isTajweedFontType && getTajweedFontFormat() === 'otsvg') {
-		return isDarkTheme() ? 'otsvgDark' : 'otsvgLight';
+		return darkTheme ? 'otsvgDark' : 'otsvgLight';
 	}
 
 	// Firefox cannot correctly handle multiple COLRv1 palettes in dark themes, resulting in missing or incorrect colors
 	// A dark-base COLRv1 font is used to ensure proper rendering
-	if (isDarkFirefox() && isTajweedFontType) {
+	if (isFirefoxWithDarkTheme && isTajweedFontType) {
 		return 'colrv1DarkFirefox';
 	}
 
 	// The default COLRv1 font is based on a light Tajweed palette, which causing visibility problems for non-Tajweed words in certain themes
 	// A separate non-colored font variant is used as a workaround
-	if (isDarkFirefox() && fontType === 2) {
+	if (isFirefoxWithDarkTheme && fontType === 2) {
 		return 'colrv1DarkFirefoxNonColored';
 	}
 
@@ -53,10 +54,11 @@ export function getMushafWordFontVariant(fontType = get(__fontType)) {
 	return 'colrv1';
 }
 
-// Every Mushaf font variant the Mushaf view can use on this device and theme: the non-Tajweed (2) and Tajweed (3) fonts may use
-// different files (e.g. COLRv1 and OT-SVG). Used by the offline download so both Mushaf fonts work offline.
+// Every Mushaf font variant the Mushaf view can use on this device, with any theme: the non-Tajweed (2) and Tajweed (3) fonts,
+// and light or dark themes, may use different files (e.g. COLRv1, OT-SVG light and OT-SVG dark). Used by the offline download
+// so both Mushaf fonts work offline, and the theme can be changed offline without downloading anything else.
 export function getMushafOfflineFontVariants() {
-	return [...new Set([2, 3].map((fontType) => getMushafWordFontVariant(fontType)))];
+	return [...new Set([false, true].flatMap((darkTheme) => [2, 3].map((fontType) => getMushafWordFontVariant(fontType, darkTheme))))];
 }
 
 // Returns the Mushaf word font URL for a given page number

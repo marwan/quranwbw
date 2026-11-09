@@ -4,7 +4,7 @@
 	import Trash from '$svgs/Trash.svelte';
 	import Refresh from '$svgs/Refresh.svelte';
 	import Info from '$svgs/Info.svelte';
-	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __websiteTheme, __tajweedFontSupport, __tajweedCompatibilityMode } from '$utils/stores';
+	import { __currentPage, __offlineModeSettings, __verseTafsir, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __tajweedFontSupport, __tajweedCompatibilityMode } from '$utils/stores';
 	import { buttonClasses, disabledClasses } from '$data/commonClasses';
 	import { registerServiceWorker, unregisterServiceWorkerAndClearCache, checkOnlineAndAlert } from '$utils/offlineModeHandler';
 	import { updateSettings } from '$utils/updateSettings';
@@ -67,17 +67,18 @@
 	// Check if tafsir data has mismatch
 	$: hasTafsirMismatch = mismatchStatus.verseTafsir;
 
-	// Mushaf font variants the Mushaf view uses on this device right now (depends on the theme and, on Apple devices, on the
+	// Mushaf font variants the Mushaf view can use on this device with any font type and theme (on Apple devices, they depend on the
 	// Tajweed color font format). The stores are passed only so Svelte re-evaluates when they change.
-	$: mushafFontVariants = readMushafFontVariants($__fontType, $__websiteTheme, $__tajweedFontSupport, $__tajweedCompatibilityMode);
+	$: mushafFontVariants = readMushafFontVariants($__tajweedFontSupport, $__tajweedCompatibilityMode);
 	$: usesOTSVGFonts = mushafFontVariants.some((variant) => variant.startsWith('otsvg'));
 
 	// Download size: ~15 MB of Mushaf text and pages, plus ~45 MB per set of 604 COLRv1 fonts or ~170 MB per set of OT-SVG fonts
-	// (both Mushaf font types may need their own set, e.g. COLRv1 + OT-SVG on some Apple devices, or the two Firefox dark-theme sets)
+	// (the Mushaf font types and the light and dark themes may need their own sets, e.g. COLRv1 + OT-SVG light + OT-SVG dark on some
+	// Apple devices, or COLRv1 + the two Firefox dark-theme sets)
 	$: currentMushafDataSizeInMB = 15 + mushafFontVariants.reduce((size, variant) => size + (variant.startsWith('otsvg') ? 170 : 45), 0);
 	// On Apple devices the Tajweed font format is only checked when the download starts: show both possible sizes until it is known
 	$: isTajweedFontFormatUnknown = isAppleWebKit() && $__tajweedCompatibilityMode === 'auto' && $__tajweedFontSupport === null;
-	$: mushafDataSizeInMB = isTajweedFontFormatUnknown ? `${currentMushafDataSizeInMB}-${currentMushafDataSizeInMB + 170}` : currentMushafDataSizeInMB;
+	$: mushafDataSizeInMB = isTajweedFontFormatUnknown ? `${currentMushafDataSizeInMB}-${currentMushafDataSizeInMB + 2 * 170}` : currentMushafDataSizeInMB;
 
 	// The downloaded Mushaf fonts no longer match (e.g. the Tajweed format changed from COLRv1 to OT-SVG): offer a re-download
 	// Downloads made before the variants were recorded are not checked: which files they hold depended on the settings at the time

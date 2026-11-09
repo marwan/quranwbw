@@ -124,19 +124,20 @@ describe('getMushafOfflineFontVariants', () => {
 		expect(getMushafOfflineFontVariants()).toEqual(['colrv1']);
 	});
 
-	test('the non-Tajweed COLRv1 and the Tajweed OT-SVG files when OT-SVG is used, whatever font is selected now', () => {
+	test('the non-Tajweed COLRv1 and both Tajweed OT-SVG files when OT-SVG is used, whatever font and theme are selected now', () => {
 		mockDevice(UA.safariIOS26, 'iPhone');
 		__tajweedFontSupport.set('otsvg');
 		__fontType.set(2);
-		expect(getMushafOfflineFontVariants()).toEqual(['colrv1', 'otsvgLight']);
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1', 'otsvgLight', 'otsvgDark']);
 		__websiteTheme.set(6);
-		expect(getMushafOfflineFontVariants()).toEqual(['colrv1', 'otsvgDark']);
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1', 'otsvgLight', 'otsvgDark']);
 	});
 
-	test('the Firefox dark-theme variants', () => {
+	test('the light and dark theme variants on Firefox, whatever theme is selected now', () => {
 		mockDevice(firefoxWindows, 'Win32');
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1', 'colrv1DarkFirefoxNonColored', 'colrv1DarkFirefox']);
 		__websiteTheme.set(6);
-		expect(getMushafOfflineFontVariants()).toEqual(['colrv1DarkFirefoxNonColored', 'colrv1DarkFirefox']);
+		expect(getMushafOfflineFontVariants()).toEqual(['colrv1', 'colrv1DarkFirefoxNonColored', 'colrv1DarkFirefox']);
 	});
 });
 
