@@ -2,6 +2,7 @@
 	"name": "quranwbw.com",
 	"version": "4",
 	"private": true,
+	"license": "UNLICENSED",
 	"scripts": {
 		"dev": "vite dev --host",
 		"build": "vite build",
