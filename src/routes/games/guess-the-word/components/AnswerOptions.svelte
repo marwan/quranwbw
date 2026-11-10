@@ -10,7 +10,11 @@
 	export let isAnswerCorrect = null;
 	export let isGeneratingWordSet = false;
 	export let correctAnswerIndex = 0;
+	// Font and direction of the chosen word-by-word language (e.g. right-to-left for Urdu).
+	export let translationClasses = '';
 	const dispatch = createEventDispatcher();
+	// Right-to-left languages (Urdu, Persian, Sindhi) read from the right edge of the button, with their own size.
+	$: rtl = translationClasses.includes('direction-rtl');
 </script>
 
 <div id="options" class="px-1 sm:px-3 md:px-4" role="group" aria-label="Answer choices">
@@ -19,18 +23,19 @@
 		{#each wordSet as word, index (word.word_key)}
 			<button
 				type="button"
+				dir={rtl ? 'rtl' : undefined}
 				disabled={answerChecked || isGeneratingWordSet}
 				aria-label={word.word_english + (answerChecked && index === correctAnswerIndex ? ', correct answer' : answerChecked && selection === index ? ', your answer, incorrect' : '')}
 				on:click={() => dispatch('answer', index)}
-				class="{individualRadioClasses} min-h-14 !p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-accent disabled:cursor-default
+				class="{individualRadioClasses} min-h-14 !p-4 text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-accent disabled:cursor-default
 					{selection === index && !answerChecked ? '!border-theme-accent' : ''}
 					{answerChecked && index === correctAnswerIndex ? '!border-theme-accent !bg-theme-accent/10' : ''}
 					{answerChecked && selection === index && !isAnswerCorrect ? 'opacity-60' : ''}
 					{answerChecked && index !== correctAnswerIndex && (selection !== index || isAnswerCorrect) ? 'opacity-30' : ''}"
 			>
-				<span class="mr-auto ml-2 text-sm md:text-base">{word.word_english}</span>
+				<span class="me-auto ms-2 {rtl ? translationClasses : 'text-sm md:text-base ' + translationClasses}">{word.word_english}</span>
 				{#if answerChecked}
-					<span class="ml-2 shrink-0" aria-hidden="true">
+					<span class="ms-2 shrink-0" aria-hidden="true">
 						{#if index === correctAnswerIndex}
 							<Check size={5} />
 						{:else if selection === index && !isAnswerCorrect}

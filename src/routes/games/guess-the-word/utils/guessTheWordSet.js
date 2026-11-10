@@ -9,7 +9,8 @@ export function isUsableWord(word) {
 			word.word_key &&
 			typeof word.word_arabic === 'string' &&
 			word.word_arabic.trim() &&
-			normalizeTranslation(word)
+			// Some translations use placeholders such as "*" for words they leave untranslated.
+			/[\p{L}\p{N}]/u.test(normalizeTranslation(word))
 	);
 }
 
@@ -35,6 +36,29 @@ export function translationCore(word) {
 		.replace(/\s+/g, ' ')
 		.trim();
 	return core || translation;
+}
+
+/** The translation with punctuation removed but bracketed words kept: "(do) not" → "do not". */
+export function translationPlain(word) {
+	const translation = normalizeTranslation(word);
+	const plain = translation
+		.replace(/[^\p{L}\p{N}\s]/gu, ' ')
+		.replace(/^\s*and\s+/, '')
+		.replace(/\s+/g, ' ')
+		.trim();
+	return plain || translation;
+}
+
+/**
+ * Both ways of reading a translation. Two options look alike when either reading is close:
+ * the core catches "(of) Allah" / "Allah", the plain form catches "(do) not" / "do not".
+ */
+function translationForms(word) {
+	return [translationCore(word), translationPlain(word)];
+}
+
+function looksAlike(formsA, formsB) {
+	return formsA.some((a, index) => translationDistance(a, formsB[index]) < MIN_TRANSLATION_DISTANCE);
 }
 
 export function levenshtein(a, b) {
@@ -68,7 +92,7 @@ export function buildWordQuestion(correctWord, allFetchedWords, excludedWordKeys
 	const usedKeys = new Set([correctWord.word_key]);
 	const usedTranslations = new Set([normalizeTranslation(correctWord)]);
 	const usedArabicWords = new Set([correctWord.word_arabic.trim()]);
-	const usedCores = [translationCore(correctWord)];
+	const usedForms = [translationForms(correctWord)];
 	const randomStart = Math.min(wordCount - 1, Math.floor(random() * wordCount));
 
 	// Greedy pick: prefer distractors that look unlike every chosen option and are new,
@@ -86,13 +110,13 @@ export function buildWordQuestion(correctWord, allFetchedWords, excludedWordKeys
 			const translation = normalizeTranslation(candidate);
 			const arabicWord = candidate.word_arabic.trim();
 			if (usedTranslations.has(translation) || usedArabicWords.has(arabicWord)) continue;
-			const core = translationCore(candidate);
-			if (requireDistinct && usedCores.some((usedCore) => translationDistance(core, usedCore) < MIN_TRANSLATION_DISTANCE)) continue;
+			const forms = translationForms(candidate);
+			if (requireDistinct && usedForms.some((used) => looksAlike(forms, used))) continue;
 			options.push(candidate);
 			usedKeys.add(candidate.word_key);
 			usedTranslations.add(translation);
 			usedArabicWords.add(arabicWord);
-			usedCores.push(core);
+			usedForms.push(forms);
 		}
 		if (options.length === 4) break;
 	}
@@ -109,7 +133,11 @@ export function buildWordQuestion(correctWord, allFetchedWords, excludedWordKeys
 	};
 }
 
-/** Keep complete ayahs intact; never silently remove a word from their sequence. */
+/**
+ * Keep ayahs intact; never silently remove a word from their sequence. Words without a real meaning in the
+ * chosen language (missing, or a placeholder such as "*" where the meaning is folded into a neighbour) stay in
+ * the ayah but are marked not askable, and play skips over them.
+ */
 export function buildQuizData({ arabicWordData, translationWordData, transliterationWordData }) {
 	if (!arabicWordData || !translationWordData) throw new Error('Word data is unavailable. Please try again.');
 	const ayahs = [];
@@ -127,8 +155,9 @@ export function buildQuizData({ arabicWordData, translationWordData, translitera
 				word_english: translations[index] || '',
 				word_transliteration: transliterations[index] || ''
 			}));
-			words.push(...ayahWords.filter(isUsableWord));
-			if (ayahWords.every(isUsableWord)) {
+			for (const word of ayahWords) word.askable = isUsableWord(word);
+			words.push(...ayahWords.filter(isAskable));
+			if (ayahWords.some(isAskable)) {
 				ayahs.push({ key: `${chapter}:${verse}`, chapter: +chapter, verse: +verse, words: ayahWords });
 			}
 		}
@@ -139,13 +168,45 @@ export function buildQuizData({ arabicWordData, translationWordData, translitera
 	return { ayahs, words };
 }
 
-export function createAyahSession(ayahs, random = Math.random) {
+/** Words the player is asked about. Words without the flag (built elsewhere) count as askable. */
+export function isAskable(word) {
+	return word.askable !== false;
+}
+
+export function askableIndexes(ayah) {
+	return ayah.words.flatMap((word, index) => (isAskable(word) ? [index] : []));
+}
+
+function nextAskableIndex(ayah, after) {
+	for (let index = after + 1; index < ayah.words.length; index++) if (isAskable(ayah.words[index])) return index;
+	return -1;
+}
+
+export function isLastAskableWord(session) {
+	return nextAskableIndex(session.deck[session.ayahIndex], session.wordIndex) === -1;
+}
+
+/**
+ * Shuffled by default, opening with a manageable ayah. With `ordered`, the ayahs are played in the given
+ * order (an ayah range) and the deck starts over from the first ayah after the last one.
+ */
+export function createAyahSession(ayahs, random = Math.random, { ordered = false } = {}) {
 	if (!ayahs.length) throw new Error('No ayahs are available for the quiz.');
-	const deck = shuffleArray(ayahs, random);
-	// Open with a manageable round. Every complete ayah remains in the deck.
-	const openingIndex = deck.findIndex((ayah) => ayah.words.length >= 3 && ayah.words.length <= 12);
-	if (openingIndex > 0) [deck[0], deck[openingIndex]] = [deck[openingIndex], deck[0]];
-	return { deck, ayahIndex: 0, wordIndex: 0, outcomes: [], isComplete: false };
+	const deck = ordered ? ayahs.slice() : shuffleArray(ayahs, random);
+	if (!ordered) {
+		// Open with a manageable round. Every complete ayah remains in the deck.
+		const openingIndex = deck.findIndex((ayah) => ayah.words.length >= 3 && ayah.words.length <= 12);
+		if (openingIndex > 0) [deck[0], deck[openingIndex]] = [deck[openingIndex], deck[0]];
+	}
+	return { deck, ordered, ayahIndex: 0, wordIndex: nextAskableIndex(deck[0], -1), outcomes: [], isComplete: false };
+}
+
+/** The ayah that comes after the current one, when it is already known. */
+export function upcomingAyah(session) {
+	if (!session) return null;
+	const next = session.deck[session.ayahIndex + 1];
+	if (next) return next;
+	return session.ordered && session.deck.length > 1 ? session.deck[0] : null;
 }
 
 export function recordWordOutcome(session, outcome) {
@@ -158,8 +219,8 @@ export function recordWordOutcome(session, outcome) {
 
 export function advanceWord(session) {
 	if (session.isComplete || !session.outcomes[session.wordIndex]) return session;
-	const lastWord = session.wordIndex === session.deck[session.ayahIndex].words.length - 1;
-	return lastWord ? { ...session, isComplete: true } : { ...session, wordIndex: session.wordIndex + 1 };
+	const next = nextAskableIndex(session.deck[session.ayahIndex], session.wordIndex);
+	return next === -1 ? { ...session, isComplete: true } : { ...session, wordIndex: next };
 }
 
 export function advanceQuestion(session, random = Math.random) {
@@ -169,14 +230,17 @@ export function advanceQuestion(session, random = Math.random) {
 
 export function startNextAyah(session, random = Math.random) {
 	if (!session.isComplete) return session;
+	const ordered = Boolean(session.ordered);
 	let deck = session.deck;
 	let ayahIndex = session.ayahIndex + 1;
 	if (ayahIndex === deck.length) {
-		deck = shuffleArray(deck, random);
-		if (deck.length > 1 && deck[0].key === session.deck[session.ayahIndex].key) {
-			[deck[0], deck[1]] = [deck[1], deck[0]];
+		if (!ordered) {
+			deck = shuffleArray(deck, random);
+			if (deck.length > 1 && deck[0].key === session.deck[session.ayahIndex].key) {
+				[deck[0], deck[1]] = [deck[1], deck[0]];
+			}
 		}
 		ayahIndex = 0;
 	}
-	return { deck, ayahIndex, wordIndex: 0, outcomes: [], isComplete: false };
+	return { deck, ordered, ayahIndex, wordIndex: nextAskableIndex(deck[ayahIndex], -1), outcomes: [], isComplete: false };
 }

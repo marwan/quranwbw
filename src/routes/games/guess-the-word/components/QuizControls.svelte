@@ -7,6 +7,8 @@
 	export let isGeneratingWordSet = false;
 	export let correctAnswer = '';
 	export let isLastWord = false;
+	// Font and direction of the chosen word-by-word language (e.g. right-to-left for Urdu).
+	export let translationClasses = '';
 
 	const dispatch = createEventDispatcher();
 	let nextButton;
@@ -29,7 +31,7 @@
 			<div class="text-center text-sm font-medium">{isLastWord ? 'Correct! Next ayah…' : 'Correct! Next word…'}</div>
 		{:else}
 			<div id="next-word-button" class="flex flex-col items-center gap-2">
-				<p class="text-center text-xs md:text-sm">Correct answer: {correctAnswer}</p>
+				<p class="text-center text-xs md:text-sm">Correct answer: <span class="inline-block {translationClasses}">{correctAnswer}</span></p>
 				<button bind:this={nextButton} class="{buttonOutlineClasses} min-h-11 text-sm md:text-base py-2 md:py-2.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-accent" disabled={isGeneratingWordSet} on:click={handleNext}>{isLastWord ? 'Next ayah' : 'Next word'}</button>
 			</div>
 		{/if}

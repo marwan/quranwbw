@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
-import { MIN_TRANSLATION_DISTANCE, advanceQuestion, advanceWord, buildQuizData, buildWordQuestion, createAyahSession, normalizeTranslation, recordWordOutcome, startNextAyah, translationCore, translationDistance } from './guessTheWordSet';
+import { MIN_TRANSLATION_DISTANCE, advanceQuestion, advanceWord, buildQuizData, buildWordQuestion, createAyahSession, normalizeTranslation, recordWordOutcome, startNextAyah, translationCore, translationDistance, translationPlain } from './guessTheWordSet';
 
 const word = (number, translation, arabic = 'كَلِمَة' + number, ayah = '1:1') => ({
 	word_key: ayah + ':' + number,
@@ -43,11 +43,12 @@ test('small datasets can reuse distractors without duplicating the correct answe
 });
 
 test('blank and malformed entries cannot become distractors', () => {
-	const words = [word(1, 'Clay'), null, word(2, '   '), word(3, 'clay'), word(4, 'Water', ''), word(5, 'Fire'), word(6, 'Earth'), word(7, 'Air')];
+	const words = [word(1, 'Clay'), null, word(2, '   '), word(3, 'clay'), word(4, 'Water', ''), word(8, '*'), word(9, ' - '), word(5, 'Fire'), word(6, 'Earth'), word(7, 'Air')];
 	const result = buildWordQuestion(words[0], words, [], () => 0);
-	assert.ok(result.wordSet.every((entry) => entry.word_arabic && normalizeTranslation(entry)));
+	assert.ok(result.wordSet.every((entry) => entry.word_arabic && /\p{L}/u.test(normalizeTranslation(entry))));
 	assert.equal(new Set(result.wordSet.map(normalizeTranslation)).size, 4);
 	assert.throws(() => buildWordQuestion(null, words), /no available translation/);
+	assert.throws(() => buildWordQuestion(words[5], words), /no available translation/);
 });
 
 test('different translations of identical Arabic cannot compete in the same question', () => {
@@ -76,6 +77,15 @@ test('look-alike translations are skipped when distinct distractors exist', () =
 	assert.ok(!(result.wordSet.includes(words[3]) && result.wordSet.includes(words[4])));
 });
 
+test('a bracketed word does not hide a look-alike: "(do) not" and "do not" are never offered together', () => {
+	const words = [word(1, 'do not'), word(2, '(do) not'), word(3, 'water'), word(4, 'fire'), word(5, 'earth')];
+	for (let start = 0; start < 5; start++) {
+		const result = buildWordQuestion(words[0], words, [], () => start / 5);
+		assert.ok(!result.wordSet.includes(words[1]), 'offered "(do) not" with "do not"');
+	}
+	assert.equal(translationPlain(word(6, '(do) not,')), 'do not');
+});
+
 test('look-alike translations are still used when nothing else can fill the question', () => {
 	const words = [word(1, 'the Messenger'), word(2, 'the Messengers'), word(3, 'water'), word(4, 'fire')];
 	const result = buildWordQuestion(words[0], words, [], () => 0);
@@ -89,13 +99,14 @@ test('insufficient answer data produces a recoverable error', () => {
 	assert.throws(() => buildWordQuestion(words[0], words), /four distinct/);
 });
 
-test('data preparation preserves numeric ayah and word order and excludes incomplete ayahs', () => {
+test('data preparation preserves numeric ayah and word order and keeps words without a meaning as not askable', () => {
 	const data = buildQuizData({
-		arabicWordData: { 2: { 10: [['ج', 'د']], 2: [['ا', 'ب']], 3: [['ه', 'و']], 4: null } },
-		translationWordData: { 2: { 10: [['earth', 'fire']], 2: [['water', 'air']], 3: [['clay', '']] } }
+		arabicWordData: { 2: { 10: [['ج', 'د']], 2: [['ا', 'ب']], 3: [['ه', 'و', 'ز']], 4: null, 5: [['ح']] } },
+		translationWordData: { 2: { 10: [['earth', 'fire']], 2: [['water', 'air']], 3: [['clay', '', '*\r\n']], 5: [['*']] } }
 	});
-	assert.deepEqual(data.ayahs.map((entry) => entry.key), ['2:2', '2:10']);
+	assert.deepEqual(data.ayahs.map((entry) => entry.key), ['2:2', '2:3', '2:10']);
 	assert.deepEqual(data.ayahs[0].words.map((entry) => entry.word_key), ['2:2:1', '2:2:2']);
+	assert.deepEqual(data.ayahs[1].words.map((entry) => entry.askable), [true, false, false]);
 	assert.equal(data.words.length, 5);
 	assert.throws(() => buildQuizData({}), /unavailable/);
 	assert.throws(() => buildQuizData({ arabicWordData: {}, translationWordData: {} }), /not enough/);

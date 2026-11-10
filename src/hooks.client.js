@@ -53,7 +53,8 @@ export const defaultSettings = {
 	},
 	quiz: {
 		correctAnswers: 0,
-		wrongAnswers: 0
+		wrongAnswers: 0,
+		wordTranslation: null
 	},
 	lastRead: {},
 	userBookmarks: [],

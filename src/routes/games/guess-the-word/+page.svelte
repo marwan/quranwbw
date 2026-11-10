@@ -2,17 +2,22 @@
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
-	import AnswerOptions from '$misc/AnswerOptions.svelte';
-	import QuizControls from '$misc/QuizControls.svelte';
-	import QuizStats from '$misc/QuizStats.svelte';
-	import AyahProgress from '$misc/AyahProgress.svelte';
-	import AyahWordStrip from '$misc/AyahWordStrip.svelte';
-	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
+	import AnswerOptions from './components/AnswerOptions.svelte';
+	import QuizControls from './components/QuizControls.svelte';
+	import QuizStats from './components/QuizStats.svelte';
+	import AyahProgress from './components/AyahProgress.svelte';
+	import AyahWordStrip from './components/AyahWordStrip.svelte';
+	import GuessTheWordSettings from './components/GuessTheWordSettings.svelte';
+	import Settings from '$svgs/Settings.svelte';
+	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers, __quizWordTranslation, __wordTranslation } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { quranMetaData } from '$data/quranMeta';
-	import { fetchQuizData } from '$utils/guessTheWordGame';
-	import { advanceQuestion, buildWordQuestion, createAyahSession, recordWordOutcome } from '$utils/guessTheWordSet';
+	import { selectableWordTranslations } from '$data/options';
+	import { replaceState } from '$app/navigation';
+	import { describeRange, gameQueryString, isAyahInRange, parseAyahRange, resolveWordTranslation } from './utils/guessTheWordOptions';
+	import { fetchQuizData } from './utils/guessTheWordGame';
+	import { advanceQuestion, askableIndexes, buildWordQuestion, createAyahSession, isLastAskableWord, recordWordOutcome, upcomingAyah } from './utils/guessTheWordSet';
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { onMount, tick } from 'svelte';
@@ -42,10 +47,18 @@
 	let moveFocus = false;
 	let celebrate = false;
 
+	// Game settings. Both live in the URL (?lang=1&from=2:106&to=2:205) so a game can be shared;
+	// the language is also remembered for next time.
+	let wordTranslation = 1;
+	let range = null;
+	let settingsOpen = false;
+	$: languageName = selectableWordTranslations[wordTranslation]?.language || 'English';
+	$: translationClasses = selectableWordTranslations[wordTranslation]?.customClasses || '';
+
 	$: currentAyah = session?.deck[session.ayahIndex];
 	$: chapterName = currentAyah ? quranMetaData[currentAyah.chapter]?.translation || 'Surah ' + currentAyah.chapter : '';
 	$: chapterTransliteration = currentAyah ? quranMetaData[currentAyah.chapter]?.transliteration || '' : '';
-	$: isLastWord = session && session.wordIndex === currentAyah.words.length - 1;
+	$: isLastWord = session && isLastAskableWord(session);
 
 	onMount(() => {
 		const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -65,6 +78,10 @@
 			script.onerror = () => console.warn('Confetti is unavailable. The quiz can still be played.');
 			document.head.appendChild(script);
 		}
+		const params = new URL(window.location.href).searchParams;
+		wordTranslation = resolveWordTranslation(params.get('lang'), $__quizWordTranslation, $__wordTranslation);
+		range = parseAyahRange(params.get('from'), params.get('to'));
+		tick().then(syncUrl);
 		startGame();
 		return () => {
 			disposed = true;
@@ -74,22 +91,48 @@
 		};
 	});
 
+	// Each start gets an id, so a game started with new settings wins over a load still in flight.
+	let loadId = 0;
+
 	async function startGame() {
-		if (isLoading || disposed) return;
+		if (disposed) return;
+		const id = ++loadId;
 		isLoading = true;
 		quizError = null;
 		session = null;
 		try {
-			const data = await fetchQuizData();
-			if (disposed) return;
+			const data = await fetchQuizData(wordTranslation);
+			if (disposed || id !== loadId) return;
+			const ayahs = data.ayahs.filter((ayah) => isAyahInRange(ayah, range));
+			if (!ayahs.length) throw new Error('None of the ayahs in ' + describeRange(range) + ' have a ' + languageName + ' meaning for every word. Choose another range or language.');
 			quizData = data;
 			previousWordKeys = [];
-			showQuestion(createAyahSession(data.ayahs));
+			showQuestion(createAyahSession(ayahs, Math.random, { ordered: Boolean(range) }));
 		} catch (error) {
-			if (!disposed) showError(error);
+			if (!disposed && id === loadId) showError(error);
 		} finally {
-			if (!disposed) isLoading = false;
+			if (!disposed && id === loadId) isLoading = false;
 		}
+	}
+
+	function syncUrl() {
+		const url = window.location.pathname + '?' + gameQueryString({ wordTranslation, range });
+		try {
+			replaceState(url, {});
+		} catch {
+			// The router is not ready yet on the very first frame; plain history keeps the address correct.
+			history.replaceState(history.state, '', url);
+		}
+	}
+
+	function applySettings(event) {
+		wordTranslation = event.detail.wordTranslation;
+		range = event.detail.range;
+		updateSettings({ type: 'quizWordTranslation', value: wordTranslation });
+		syncUrl();
+		clearTimeout(autoProgressTimeout);
+		celebrate = false;
+		startGame();
 	}
 
 	function showError(error) {
@@ -165,18 +208,27 @@
 
 <PageHead title="Guess The Word" description="Learn Quranic vocabulary by following each ayah, one word at a time." />
 
-<div class="mx-auto w-full max-w-3xl py-5 md:py-8">
+<!-- No top padding of our own: the site layout already clears the fixed navbar. -->
+<div class="mx-auto w-full max-w-3xl pb-5 md:pb-8">
 	{#if quizError}
 		<ErrorLoadingData error={quizError} center={false} />
-		<div class="mt-5 flex justify-center">
+		<div class="mt-5 flex flex-wrap justify-center gap-3">
 			<button class={buttonOutlineClasses} disabled={isLoading} on:click={startGame}>Try again</button>
+			<!-- Settings stay reachable when a chosen range or language cannot be played. -->
+			<button class="{buttonOutlineClasses} inline-flex items-center gap-2" aria-haspopup="dialog" on:click={() => (settingsOpen = true)}><Settings size={4} /> Game settings</button>
 		</div>
 	{:else if !session}
 		<div class="py-16" role="status" aria-label="Loading ayahs"><Spinner /></div>
 	{:else}
-		<AyahProgress ayah={currentAyah} {chapterName} {chapterTransliteration} wordIndex={session.wordIndex} outcomes={session.outcomes} />
+		<AyahProgress ayah={currentAyah} {chapterName} {chapterTransliteration} wordIndex={session.wordIndex} outcomes={session.outcomes}>
+			<!-- Icon only. The negative margins keep the icon's edge in line with the counter below and stop the
+			larger tap area from making the title row taller. -->
+			<button slot="settings" type="button" title="Game settings" aria-label="Game settings: {languageName}, {describeRange(range)}" class="-my-1.5 -me-1.5 inline-flex rounded-full p-1.5 hover:bg-theme-accent/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-theme-accent" aria-haspopup="dialog" on:click={() => (settingsOpen = true)}>
+				<Settings size={5} />
+			</button>
+		</AyahProgress>
 		<div class="mt-8 md:mt-12">
-			<AyahWordStrip ayah={currentAyah} nextAyah={session.deck[session.ayahIndex + 1] || null} wordIndex={session.wordIndex} />
+			<AyahWordStrip ayah={currentAyah} nextAyah={upcomingAyah(session)} wordIndex={session.wordIndex} />
 		</div>
 		<div class="grid overflow-hidden" inert={!questionReady}>
 			{#key wordSetKey}
@@ -184,7 +236,7 @@
 					class="col-start-1 row-start-1 min-w-0 py-4 outline-none md:py-6"
 					tabindex="-1"
 					role="group"
-					aria-label={'Word ' + (session.wordIndex + 1) + ' of ' + currentAyah.words.length}
+					aria-label={'Word ' + (askableIndexes(currentAyah).indexOf(session.wordIndex) + 1) + ' of ' + askableIndexes(currentAyah).length}
 					in:fly|global={{ x: reducedMotion ? 0 : 160, duration: reducedMotion ? 0 : 180, easing: quintOut }}
 					out:fly|global={{ x: reducedMotion ? 0 : -160, duration: reducedMotion ? 0 : 140, easing: quintOut }}
 					on:introend={onQuestionReady}
@@ -197,6 +249,7 @@
 						{isAnswerCorrect}
 						isGeneratingWordSet={!questionReady}
 						{correctAnswerIndex}
+						{translationClasses}
 					/>
 				</div>
 			{/key}
@@ -208,9 +261,12 @@
 			{isLastWord}
 			isGeneratingWordSet={!questionReady}
 			correctAnswer={currentWordSet[correctAnswerIndex].word_english}
+			{translationClasses}
 			on:next={() => continueWord()}
 			on:skip={() => continueWord(true)}
 		/>
 		<QuizStats {sessionCorrect} {sessionWrong} allTimeCorrect={$__quizCorrectAnswers} allTimeWrong={$__quizWrongAnswers} />
 	{/if}
 </div>
+
+<GuessTheWordSettings bind:open={settingsOpen} {wordTranslation} {range} currentChapter={currentAyah?.chapter ?? 1} on:apply={applySettings} />
