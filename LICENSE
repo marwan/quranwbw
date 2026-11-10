@@ -1,0 +1,196 @@
+QuranWBW Proprietary License
+
+Copyright (c) Marwan Ansari and the QuranWBW team.
+ALL RIGHTS RESERVED.
+
+This repository is published so that people can see how QuranWBW.com is built
+and help improve it. Being able to read this code does not give you any right
+to use it.
+
+-------------------------------------------------------------------------------
+1. NO LICENSE IS GRANTED
+-------------------------------------------------------------------------------
+
+The source code, markup, styles, scripts, configuration, design, layout, user
+interface, user experience, visual identity, and every other part of this
+repository (together, the "Software") are the exclusive property of the
+copyright holders and are protected by copyright and other intellectual
+property laws.
+
+No license, right, or permission of any kind is granted to you, whether express
+or implied, by estoppel, or otherwise, except the narrow permissions in
+section 2.
+
+Except as section 2 allows, and without prior written permission from the
+copyright holders, you may NOT, in any way, shape, or form:
+
+  a. copy, reproduce, or download the Software, in whole or in part, for any
+     purpose other than those allowed by section 2;
+  b. use, run, execute, deploy, host, or serve the Software, or any build of it,
+     publicly or privately, for free or for profit;
+  c. modify, adapt, translate, port, or create derivative works of the Software;
+  d. distribute, publish, sublicense, sell, rent, lease, or otherwise make the
+     Software available to anyone else;
+  e. build a website, app, extension, API, library, or service that replicates,
+     clones, imitates, or substantially reproduces the features, design, layout,
+     or user experience of QuranWBW.com, whether or not you copy code to do so;
+  f. reuse any component, module, function, algorithm, stylesheet, or asset
+     from the Software in another project;
+  g. use the Software, or any part of it, to train, fine-tune, evaluate, or
+     prompt any machine learning or artificial intelligence system, or to
+     generate code meant to reproduce it;
+  h. remove, hide, or alter any copyright, license, or attribution notice.
+
+These restrictions apply to every version, branch, commit, fork, and copy of
+the Software, including copies obtained before this file was added.
+
+-------------------------------------------------------------------------------
+2. THE ONLY PERMITTED USES
+-------------------------------------------------------------------------------
+
+Because this repository is public on GitHub, GitHub's Terms of Service let you
+view it and fork it within GitHub. Beyond that, you may do only the following:
+
+  a. read the Software on GitHub;
+  b. fork this repository, clone this repository or your fork, modify your
+     copy, and run it on your own computer (including letting it load files
+     from static.quranwbw.com the way the app normally does), solely to make
+     a contribution to this repository;
+  c. submit issues and pull requests to this repository;
+  d. visit and use the QuranWBW.com website in the ordinary way, to read,
+     listen to, and study the Qur'an for yourself.
+
+That's it. A fork or clone may not be deployed, hosted, published as a website
+or app, or used for any purpose other than making a contribution to this
+repository.
+
+-------------------------------------------------------------------------------
+3. CONTRIBUTIONS
+-------------------------------------------------------------------------------
+
+By submitting a contribution (for example a pull request, patch, issue
+attachment, or suggestion) to this repository, you confirm that you have the
+right to submit it, and you grant Marwan Ansari a perpetual, worldwide,
+irrevocable, royalty-free, non-exclusive license, with the right to sublicense,
+to use, copy, modify, distribute, and relicense that contribution as part of
+QuranWBW or otherwise. Your contribution does not give you any right to use the
+Software beyond what section 2 allows.
+
+-------------------------------------------------------------------------------
+4. DATA AND CONTENT HAVE THEIR OWN, SEPARATE LICENSING
+-------------------------------------------------------------------------------
+
+The data and content shown on QuranWBW.com are NOT part of the Software and are
+NOT covered by this file in any way that grants you rights. They are governed
+separately, and they come from different owners with different terms.
+
+"Data and Content" includes, without limitation: Qur'anic text editions and
+their encodings, word-by-word translations, word-by-word transliterations,
+verse translations, tafsir, morphology and grammar data, roots and lemmas,
+word and verse audio, audio timing and segmentation data, Mushaf page and
+line layouts, fonts and glyph maps, Tajweed data, topics, duas and
+supplications, indexes, metadata, images, and every JSON or other file served
+from static.quranwbw.com or any other QuranWBW domain.
+
+4.1  QuranWBW's own data. A large part of the Data and Content was created,
+     translated, recorded, corrected, compiled, aligned, structured, or
+     designed by QuranWBW. This includes its word-by-word data, its word audio
+     and timing data, its compiled datasets, its modified fonts, and the
+     selection and arrangement of all of the above. All of it is proprietary to
+     QuranWBW. All rights are reserved. No permission is given to copy, use,
+     or redistribute any of it.
+
+4.2  Third-party data. Other parts of the Data and Content belong to their
+     original authors, translators, reciters, publishers, and institutions,
+     and are used under each owner's own license or permission. Those terms
+     differ from source to source, and many do not allow redistribution. This
+     file grants you nothing in respect of third-party data. If you want to use
+     it, you must get it from the original source and follow that source's
+     terms. QuranWBW's permission to use it does not pass to you.
+
+4.3  The Qur'an. Nothing in this file claims ownership of the Qur'an itself.
+     The rights reserved here apply to QuranWBW's specific digital editions,
+     data, translations, recordings, and their selection and arrangement, and
+     to the rights of the third parties described in 4.2.
+
+4.4  Prohibited, for all Data and Content obtained from QuranWBW.com,
+     static.quranwbw.com, this repository, or any other QuranWBW service,
+     without prior written permission from the QuranWBW team:
+
+       a. scraping, crawling, downloading in bulk, mirroring, or extracting
+          data from QuranWBW.com, static.quranwbw.com, or any QuranWBW
+          service, whether by hand or by automated means;
+       b. hotlinking to, or loading files from, static.quranwbw.com or any
+          QuranWBW domain from another website, app, or service;
+       c. rehosting, repackaging, or redistributing any of it, in any form;
+       d. building datasets, APIs, libraries, apps, or websites from it;
+       e. using it to train, fine-tune, or evaluate any machine learning or
+          artificial intelligence system;
+       f. using it in anything that shows advertising, charges money, asks for
+          forced donations, locks features, or requires an account;
+       g. presenting it as your own.
+
+     Giving credit does not make any of the above allowed. You must get prior
+     written permission from the QuranWBW team first. Where permission is
+     given, you must also give clear credit to QuranWBW.com and to the
+     original owners.
+
+     This section does not cover:
+
+       - running a local copy of the app as section 2(b) allows, which may
+         load files from static.quranwbw.com the way the app normally does;
+       - third-party data you obtain on your own from its original source,
+         which is governed only by that source's terms (see 4.2).
+
+-------------------------------------------------------------------------------
+5. THIRD-PARTY SOFTWARE AND FONTS
+-------------------------------------------------------------------------------
+
+This repository depends on, and in a few places includes, software and fonts
+made by others (for example the npm packages listed in package.json, the
+swiped-events script in src/utils/swiped-events.min.js, and fonts in
+static/fonts). Each of those remains under its own license, which this file
+does not change. Those licenses apply only to those specific items and do not
+grant any right to the rest of the Software.
+
+-------------------------------------------------------------------------------
+6. NAME AND BRAND
+-------------------------------------------------------------------------------
+
+"QuranWBW", "QuranWBW.com", the QuranWBW logo, icons, and banner are the
+identity of this project. You may not use them, or anything confusingly
+similar, for any other project, website, app, or service.
+
+-------------------------------------------------------------------------------
+7. ENFORCEMENT
+-------------------------------------------------------------------------------
+
+Any use of the Software or of the Data and Content that this file does not
+expressly allow is infringement. The copyright holders reserve every remedy
+available to them, including takedown notices under the DMCA and equivalent
+laws, removal requests to hosting providers and app stores, and legal action.
+Not acting against one infringement does not waive the right to act against it
+or any other later.
+
+-------------------------------------------------------------------------------
+8. NO WARRANTY
+-------------------------------------------------------------------------------
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+9. PERMISSION REQUESTS
+-------------------------------------------------------------------------------
+
+If you want to use anything covered by this file, ask first and wait for a
+written answer: quranwbw@gmail.com
+
+If you are looking for Qur'anic data for your own project, start with the
+original sources, such as the Quranic Universal Library (https://qul.tarteel.ai/),
+and follow their terms.
