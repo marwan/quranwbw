@@ -24,6 +24,7 @@ import {
 	__userNotes,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
+	__quizWordTranslation,
 	__englishTerminology,
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
@@ -286,6 +287,12 @@ export function updateSettings(props) {
 		case 'quizWrongAnswers':
 			__quizWrongAnswers.set(props.value);
 			userSettings.quiz.wrongAnswers = props.value;
+			break;
+
+		// for the word-by-word language used in the quiz
+		case 'quizWordTranslation':
+			__quizWordTranslation.set(props.value);
+			userSettings.quiz.wordTranslation = props.value;
 			break;
 
 		// for verse play button
