@@ -3,9 +3,10 @@ import { describeRange, gameQueryString, isAyahInRange, parseAyahKey, parseAyahR
 import { advanceWord, askableIndexes, createAyahSession, isLastAskableWord, recordWordOutcome, startNextAyah, upcomingAyah } from './guessTheWordSet';
 
 describe('word-by-word language', () => {
-	test('uses the first known language id, falling back to English', () => {
-		expect(resolveWordTranslation('2', 5, 1)).toBe(2);
-		expect(resolveWordTranslation('999', 'urdu', null, 11)).toBe(11);
+	test('only English and French are offered; anything else falls back to the next candidate, then English', () => {
+		expect(resolveWordTranslation('11', 1)).toBe(11);
+		expect(resolveWordTranslation('2', 13, 11)).toBe(11);
+		expect(resolveWordTranslation('999', 'urdu', null, 5)).toBe(1);
 		expect(resolveWordTranslation(null, '', undefined)).toBe(1);
 	});
 });

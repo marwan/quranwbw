@@ -3,11 +3,14 @@ import { selectableWordTranslations } from '$data/options';
 
 export const defaultWordTranslation = 1;
 
-/** The first candidate that is a known word-by-word translation id, or English. */
+// Word-by-word languages offered in the game: English and French.
+export const gameWordTranslations = [1, 11].map((id) => selectableWordTranslations[id]);
+
+/** The first candidate that is one of the game's languages, or English. */
 export function resolveWordTranslation(...candidates) {
 	for (const candidate of candidates) {
 		const id = Number(candidate);
-		if (candidate !== null && candidate !== '' && Number.isInteger(id) && selectableWordTranslations[id]) return id;
+		if (candidate !== null && candidate !== '' && gameWordTranslations.some((language) => language.id === id)) return id;
 	}
 	return defaultWordTranslation;
 }

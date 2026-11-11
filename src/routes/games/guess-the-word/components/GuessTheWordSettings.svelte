@@ -3,10 +3,9 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import Select from '$ui/FlowbiteSvelte/forms/Select.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { selectableWordTranslations } from '$data/options';
 	import { buttonClasses, disabledClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { compareAyahs, parseAyahKey } from '../utils/guessTheWordOptions';
+	import { compareAyahs, gameWordTranslations, parseAyahKey } from '../utils/guessTheWordOptions';
 	import { createEventDispatcher } from 'svelte';
 
 	export let open = false;
@@ -19,9 +18,7 @@
 	const radioClasses = 'inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';
 	const fieldClasses = 'bg-theme-bg text-theme-text';
 
-	const languageItems = Object.values(selectableWordTranslations)
-		.map(({ id, language }) => ({ value: id, name: language }))
-		.sort((a, b) => a.name.localeCompare(b.name));
+	const languageItems = gameWordTranslations.map(({ id, language }) => ({ value: id, name: language }));
 	const chapterItems = Array.from({ length: 114 }, (_, index) => ({ value: index + 1, name: `${index + 1}. ${quranMetaData[index + 1].transliteration}` }));
 	const versesIn = (chapter) => Array.from({ length: quranMetaData[chapter].verses }, (_, index) => ({ value: index + 1, name: String(index + 1) }));
 

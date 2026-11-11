@@ -14,7 +14,8 @@
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableWordTranslations } from '$data/options';
-	import { replaceState } from '$app/navigation';
+	import { afterNavigate, replaceState } from '$app/navigation';
+	import { browser } from '$app/environment';
 	import { describeRange, gameQueryString, isAyahInRange, parseAyahRange, resolveWordTranslation } from './utils/guessTheWordOptions';
 	import { fetchQuizData } from './utils/guessTheWordGame';
 	import { advanceQuestion, askableIndexes, buildWordQuestion, createAyahSession, isLastAskableWord, recordWordOutcome, upcomingAyah } from './utils/guessTheWordSet';
@@ -49,8 +50,10 @@
 
 	// Game settings. Both live in the URL (?lang=1&from=2:106&to=2:205) so a game can be shared;
 	// the language is also remembered for next time.
-	let wordTranslation = 1;
-	let range = null;
+	// Read once, as the page is created, so they are set before the game starts or the address is rewritten.
+	const initialParams = browser ? new URL(window.location.href).searchParams : new URLSearchParams();
+	let wordTranslation = resolveWordTranslation(initialParams.get('lang'), $__quizWordTranslation, $__wordTranslation);
+	let range = parseAyahRange(initialParams.get('from'), initialParams.get('to'));
 	let settingsOpen = false;
 	$: languageName = selectableWordTranslations[wordTranslation]?.language || 'English';
 	$: translationClasses = selectableWordTranslations[wordTranslation]?.customClasses || '';
@@ -78,10 +81,6 @@
 			script.onerror = () => console.warn('Confetti is unavailable. The quiz can still be played.');
 			document.head.appendChild(script);
 		}
-		const params = new URL(window.location.href).searchParams;
-		wordTranslation = resolveWordTranslation(params.get('lang'), $__quizWordTranslation, $__wordTranslation);
-		range = parseAyahRange(params.get('from'), params.get('to'));
-		tick().then(syncUrl);
 		startGame();
 		return () => {
 			disposed = true;
@@ -99,7 +98,10 @@
 		const id = ++loadId;
 		isLoading = true;
 		quizError = null;
-		session = null;
+		// A restart keeps the current game on screen (locked) until the new one is ready. Tearing the game down
+		// to the spinner and straight back up while its exit animation was still running left the page blank.
+		questionReady = false;
+		clearTimeout(autoProgressTimeout);
 		try {
 			const data = await fetchQuizData(wordTranslation);
 			if (disposed || id !== loadId) return;
@@ -116,14 +118,11 @@
 	}
 
 	function syncUrl() {
-		const url = window.location.pathname + '?' + gameQueryString({ wordTranslation, range });
-		try {
-			replaceState(url, {});
-		} catch {
-			// The router is not ready yet on the very first frame; plain history keeps the address correct.
-			history.replaceState(history.state, '', url);
-		}
+		replaceState(window.location.pathname + '?' + gameQueryString({ wordTranslation, range }), {});
 	}
+
+	// The first sync waits for SvelteKit's router, which is ready once the page has finished navigating.
+	afterNavigate(() => syncUrl());
 
 	function applySettings(event) {
 		wordTranslation = event.detail.wordTranslation;
@@ -238,7 +237,7 @@
 					role="group"
 					aria-label={'Word ' + (askableIndexes(currentAyah).indexOf(session.wordIndex) + 1) + ' of ' + askableIndexes(currentAyah).length}
 					in:fly|global={{ x: reducedMotion ? 0 : 160, duration: reducedMotion ? 0 : 180, easing: quintOut }}
-					out:fly|global={{ x: reducedMotion ? 0 : -160, duration: reducedMotion ? 0 : 140, easing: quintOut }}
+					out:fly={{ x: reducedMotion ? 0 : -160, duration: reducedMotion ? 0 : 140, easing: quintOut }}
 					on:introend={onQuestionReady}
 				>
 					<AnswerOptions
