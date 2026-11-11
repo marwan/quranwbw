@@ -1,3 +1,9 @@
+### Nov 09, 2026
+
+- **Reading History:** Recently visited reading locations are now automatically recorded, making it easy to revisit Chapters, Mushaf, Juz, and Hizb pages you've been reading.
+
+---
+
 ### Nov 02, 2026
 
 - **Mushaf view shortcuts**: You can now use the left and right arrow keys on keyboard in mushaf view to quickly go to next and previous page
