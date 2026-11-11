@@ -215,19 +215,11 @@ export function queueReadingHistoryUpdate({ data, getHistory, onCommit }) {
 	}, stabilityDelay);
 }
 
-// Returns when an entry was last read, for display:
-// "A few moments ago", "5 minutes ago", "3 hours ago" within 24 hours, then the date
-export function formatReadingHistoryTime(timestamp, now = Date.now()) {
+// Returns the date an entry was last read, kept short so the full surah name fits:
+// "Nov 10", with the year only when it is not the current one ("May 12, 2025")
+export function formatReadingHistoryDate(timestamp, now = Date.now()) {
 	if (!timestamp) return null;
 
-	const minutes = Math.floor((now - timestamp) / 60000);
-	const hours = Math.floor(minutes / 60);
-
-	if (minutes < 1) return 'A few moments ago';
-	if (minutes < 60) return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
-	if (hours < 24) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
-
-	// Older entries show the date, with the year only when it is not the current one
 	const date = new Date(timestamp);
 	const sameYear = date.getFullYear() === new Date(now).getFullYear();
 	return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', ...(sameYear ? {} : { year: 'numeric' }) });
