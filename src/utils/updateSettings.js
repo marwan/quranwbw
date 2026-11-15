@@ -58,6 +58,8 @@ export function updateSettings(props) {
 			// Toggle in offline mode settings
 			toggleDownloadedDataSetting(userSettings.offlineModeSettings, 'fontTypes', props.value);
 
+			location.reload(); // force reload so new font applies cleanly  
+
 			break;
 
 		// for display types
