@@ -9,10 +9,10 @@
 </script>
 
 <div role="status" class={outDivclass}>
-	<div class="h-2 bg-theme-accent/15 rounded-full mb-2.5" />
-	<div class="h-2 bg-theme-accent/15 rounded-full w-10/12 mb-2.5" />
-	<div class="h-2 bg-theme-accent/15 rounded-full w-11/12 mb-2.5" />
-	<div class="h-2 bg-theme-accent/15 rounded-full w-9/12" />
+	<div class="h-2 bg-theme-accent/15 rounded-full mb-2.5"></div>
+	<div class="h-2 bg-theme-accent/15 rounded-full w-10/12 mb-2.5"></div>
+	<div class="h-2 bg-theme-accent/15 rounded-full w-11/12 mb-2.5"></div>
+	<div class="h-2 bg-theme-accent/15 rounded-full w-9/12"></div>
 	<span class="sr-only">Loading...</span>
 </div>
 

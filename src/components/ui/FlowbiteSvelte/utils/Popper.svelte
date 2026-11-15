@@ -142,13 +142,13 @@
 </script>
 
 {#if !referenceEl}
-	<div bind:this={contentEl} />
+	<div bind:this={contentEl}></div>
 {/if}
 
 {#if referenceEl}
 	<Frame use={init} options={referenceEl} bind:open role="tooltip" tabindex={activeContent ? -1 : undefined} on:focusin={optional(activeContent, showHandler)} on:focusout={optional(activeContent, hideHandler)} on:mouseenter={optional(activeContent && !clickable, showHandler)} on:mouseleave={optional(activeContent && !clickable, hideHandler)} {...$$restProps}>
 		<slot />
-		{#if arrow}<div use:initArrow class={arrowClass} />{/if}
+		{#if arrow}<div use:initArrow class={arrowClass}></div>{/if}
 	</Frame>
 {/if}
 
