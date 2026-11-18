@@ -4,6 +4,7 @@
 	import Search2 from '$svgs/Search2.svelte';
 	import FullVersesDisplay from '$display/verses/modes/FullVersesDisplay.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
+	import SectionDivider from '$display/SectionDivider.svelte';
 	import { goto } from '$app/navigation';
 	import { __currentPage } from '$utils/stores';
 	import { term } from '$utils/terminologies';
@@ -23,8 +24,8 @@
 	let resultsFound = false;
 	let badRequest = false;
 	let navigationResults = [];
-	let resultKeys;
-	let totalResults = 0;
+	let topKeys = null;
+	let literalKeys = null;
 
 	// Cache object to store search results (keyed by query, stores combined results)
 	let searchCache = {};
@@ -94,7 +95,7 @@
 	}
 
 	// Fetch both APIs in parallel and return combined, deduplicated results
-	// Returns null if both APIs fail, otherwise { navigationItems, combinedVerseKeys }
+	// Returns null if both APIs fail, otherwise { navigationItems, topKeys, literalKeys }
 	async function fetchAllResults(query) {
 		// Fire both requests at the same time — neither waits for the other
 		const [kalimatData, quranCloudKeys] = await Promise.all([fetchKalimatResults(query), fetchQuranCloudKeys(query)]);
@@ -105,11 +106,14 @@
 		// Extract verse keys from Kalimat results
 		const { verseKeys: kalimatVerseKeys, navigationItems } = processKalimatResults(kalimatData);
 
-		// Merge keys from both APIs into a Set to automatically remove duplicates
-		const mergedKeySet = new Set([...kalimatVerseKeys, ...quranCloudKeys]);
-		const combinedVerseKeys = Array.from(mergedKeySet);
+		// Top matches keep Kalimat's ranked order (deduplicated, not sorted)
+		const topKeys = Array.from(new Set(kalimatVerseKeys));
 
-		return { navigationItems, combinedVerseKeys };
+		// Literal matches exclude anything already in top matches, sorted canonically
+		const topKeySet = new Set(topKeys);
+		const literalKeys = sortVerseKeys(quranCloudKeys.filter((key) => !topKeySet.has(key)));
+
+		return { navigationItems, topKeys, literalKeys };
 	}
 
 	// Get results from cache or fetch from both APIs
@@ -179,25 +183,23 @@
 		const result = await getSearchResults(searchQuery);
 
 		if (result) {
-			const { navigationItems, combinedVerseKeys } = result;
+			const { navigationItems, topKeys: top, literalKeys: literal } = result;
 
 			navigationResults = navigationItems;
+			topKeys = top.length > 0 ? top : null;
+			literalKeys = literal.length > 0 ? literal : null;
 
-			// Total results = unique verse keys + navigation items
-			totalResults = combinedVerseKeys.length + navigationItems.length;
-			resultsFound = combinedVerseKeys.length > 0 || navigationItems.length > 0;
-
-			// Sort the final merged verse keys before passing to the display component
-			resultKeys = combinedVerseKeys.length > 0 ? sortVerseKeys(combinedVerseKeys) : null;
+			// Anything to show at all (verses or navigation cards)
+			resultsFound = top.length > 0 || literal.length > 0 || navigationItems.length > 0;
 		}
 
 		// Both APIs returned no usable data
 		else {
 			badRequest = true;
 			navigationResults = [];
-			totalResults = 0;
 			resultsFound = false;
-			resultKeys = null;
+			topKeys = null;
+			literalKeys = null;
 		}
 
 		fetchingNewData = false;
@@ -263,18 +265,16 @@
 		{:else}
 			<div id="search-block">
 				<div id="search-results-information" class="text-center text-xs">
-					{#if resultsFound}
-						<span>Showing {totalResults} {totalResults === 1 ? 'result' : 'results'} related to "{searchQuery}".</span>
-					{:else if !resultsFound && navigationResults.length === 0}
+					{#if !resultsFound}
 						<div class="flex text-center items-center justify-center pt-18 text-xs max-w-2xl mx-auto">Unfortunately, your query did not yield any results. Please try using a different keyword.</div>
 					{/if}
 				</div>
 
 				{#if navigationResults.length > 0}
-					<div id="navigation-results" class="flex flex-wrap space-x-4 justify-center mt-6">
+					<div id="navigation-results" class="flex flex-wrap space-x-4 justify-center mt-6 -mb-2.5">
 						{#each navigationResults as item}
 							{@const [itemTitle, itemLink] = getNavigationLink(item)}
-							<a href={itemLink} target="_blank" class="{linkClasses} my-1">
+							<a href={itemLink} target="_blank" class="{linkClasses} my-1" data-rybbit-event="Search Page Navigation Card Click">
 								<span class={linkTextClasses}>{itemTitle} {@html '&#8599;'}</span>
 							</a>
 						{/each}
@@ -282,11 +282,23 @@
 				{/if}
 
 				<div id="individual-verses-block" in:fade={{ duration: 300 }}>
-					{#key resultKeys}
-						{#if resultKeys}
-							<FullVersesDisplay keys={resultKeys.toString()} />
-						{/if}
-					{/key}
+					{#if topKeys}
+						<div id="top-matches" class="mt-6">
+							<SectionDivider text="Best Matches ({topKeys.length})" />
+							{#key topKeys}
+								<FullVersesDisplay keys={topKeys.toString()} />
+							{/key}
+						</div>
+					{/if}
+
+					{#if literalKeys}
+						<div id="literal-matches" class="mt-6">
+							<SectionDivider text="Found in Translations ({literalKeys.length})" />
+							{#key literalKeys}
+								<FullVersesDisplay keys={literalKeys.toString()} />
+							{/key}
+						</div>
+					{/if}
 				</div>
 			</div>
 		{/if}
