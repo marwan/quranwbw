@@ -1,6 +1,6 @@
 ### Privacy Policy
 
-_Last updated: October 23, 2026_
+_Last updated: November 18, 2026_
 
 QuranWBW.com is a passion project built to help people read, listen to, and learn the Quran. We collect as little as possible. There are no accounts, no sign-ups, no ads, and we never sell your data. We also do not ask for or accept donations or payments of any kind, so we never handle any payment or financial information.
 
@@ -16,7 +16,7 @@ Clearing your browser data removes all of it.
 
 ---
 
-### Analytics (Rybbit)
+### Analytics
 
 We use [Rybbit](https://rybbit.io/), a privacy-focused analytics tool, to understand how QuranWBW.com is used. Rybbit runs on our own server, so this data is not handed to a third-party analytics company.
 
@@ -35,11 +35,11 @@ This lets us spend our limited time improving what helps you most, instead of gu
 - Not done: we do not use analytics for advertising, we do not build advertising profiles, and we do not sell or share the data with advertisers.
 - Rybbit does not use cookies to identify you.
 
-#### Turning analytics off
+#### Opting out
 
-You can turn this off at any time under "Usage Insights" in the website settings. When you turn it off, the analytics script is no longer loaded at all, so nothing is sent to Rybbit from your browser. The page reloads when you change this setting.
+You can opt out at any time by enabling Disable Usage Insights in the website settings. When you opt out, the analytics script is no longer loaded at all, so nothing is sent to Rybbit from your browser. The page reloads when you change this setting.
 
-Your choice is remembered only in your own browser (see Cookies & Local Storage below). If you clear your browser data or use a different browser or device, you will need to turn it off again.
+Your choice is remembered only in your own browser (see Cookies & Local Storage below). If you clear your browser data or use a different browser or device, you will need to opt out again.
 
 ---
 
@@ -61,7 +61,7 @@ These providers can see technical details such as your IP address. We do not con
 
 We use your browser's local storage and IndexedDB to remember your settings and keep features working offline. We do not use advertising or cross-site tracking cookies.
 
-If you turn off analytics, we store a small flag in your browser's local storage so your choice is remembered. It is never sent anywhere.
+If you opt out of analytics, we store a small flag in your browser's local storage so your choice is remembered. It is never sent anywhere.
 
 ---
 
@@ -74,7 +74,7 @@ QuranWBW.com is open to everyone. We do not knowingly collect personal informati
 ### Your Choices
 
 - Use QuranWBW.com without any account. There is nothing to sign up for.
-- Turn off anonymous usage stats from the website settings at any time.
+- Opt out of anonymous usage insights from the website settings at any time.
 - Block analytics with your browser's tracking protection or an extension. The website will keep working.
 - Clear your browser data to remove everything stored on your device.
 
@@ -86,7 +86,7 @@ Depending on where you live, you may have the right to ask what data we hold abo
 
 QuranWBW.com does not collect names, emails, or any identifier that links usage data to a specific person. This means we cannot tell which analytics data came from you, so we are unable to locate, correct, or delete it on request. Your settings, bookmarks, and reading history are stored only on your own device, and you can remove them at any time by clearing your browser data.
 
-What you can do is stop future collection by turning off "Usage Insights" in the website settings. You are also welcome to get in touch with any questions.
+What you can do is stop future collection by enabling Disable Usage Insights in the website settings. You are also welcome to get in touch with any questions.
 
 ---
 

@@ -569,17 +569,17 @@
 
 					<div class="border-b border-theme-accent/20"></div>
 
-					<!-- anonymous-usage-stats-toggle -->
-					<div id="anonymous-usage-stats" class={settingsBlockClasses}>
+					<!-- analytics-opt-out-toggle -->
+					<div id="analytics-opt-out" class={settingsBlockClasses}>
 						<div class="flex flex-row justify-between items-center">
-							<span class="block">Usage Insights</span>
+							<span class="block">Disable Usage Insights</span>
 							<label class="inline-flex items-center cursor-pointer">
-								<!-- checked = stats on, so the disabled flag is the inverse of the checkbox -->
-								<input type="checkbox" value="" class="sr-only peer" checked={typeof localStorage === 'undefined' || localStorage.getItem('disable-rybbit') !== 'true'} on:click={(event) => updateSettings({ type: 'analyticsDisabled', value: !event.target.checked })} />
+								<!-- checked = opted out, so the disabled flag matches the checkbox directly -->
+								<input type="checkbox" value="" class="sr-only peer" checked={typeof localStorage !== 'undefined' && localStorage.getItem('disable-rybbit') === 'true'} on:click={(event) => updateSettings({ type: 'analyticsOptOut', value: event.target.checked })} />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
-						<p class={settingsDescriptionClasses}>Share anonymous usage insights to help improve this website. The page reloads when this is changed. See our <a href="/privacy" class={linkClasses}>Privacy Policy</a> for more info.</p>
+						<p class={settingsDescriptionClasses}>Opt out of anonymous usage insights. The page reloads when this is changed. See our <a href="/privacy" class={linkClasses}>Privacy Policy</a> for more info.</p>
 					</div>
 
 					<div class="border-b border-theme-accent/20"></div>
