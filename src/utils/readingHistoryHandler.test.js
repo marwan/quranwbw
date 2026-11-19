@@ -201,20 +201,29 @@ describe('removeReadingHistoryEntry', () => {
 	});
 });
 
-describe('formatReadingHistoryDate', () => {
-	const now = new Date(2026, 10, 10, 18, 0).getTime();
+describe('formatReadingHistoryTime', () => {
+	const now = new Date(2026, 10, 19, 18, 0).getTime();
+	const minute = 60 * 1000;
+	const hour = 60 * minute;
+	const day = 24 * hour;
 
-	test('shows a short date, even for entries read today', () => {
-		expect(handler.formatReadingHistoryDate(now - 3 * 60 * 1000, now)).toBe('Nov 10');
-		expect(handler.formatReadingHistoryDate(new Date(2026, 9, 25, 9, 0).getTime(), now)).toBe('Oct 25');
+	test('shows short relative time up to 7 days', () => {
+		expect(handler.formatReadingHistoryTime(now - 20 * 1000, now)).toBe('Just now');
+		expect(handler.formatReadingHistoryTime(now - 3 * minute, now)).toBe('3m ago');
+		expect(handler.formatReadingHistoryTime(now - 59 * minute, now)).toBe('59m ago');
+		expect(handler.formatReadingHistoryTime(now - hour, now)).toBe('1hr ago');
+		expect(handler.formatReadingHistoryTime(now - 23 * hour, now)).toBe('23hr ago');
+		expect(handler.formatReadingHistoryTime(now - day, now)).toBe('1d ago');
+		expect(handler.formatReadingHistoryTime(now - 7 * day - hour, now)).toBe('7d ago');
 	});
 
-	test('adds the year only for past years', () => {
-		expect(handler.formatReadingHistoryDate(new Date(2025, 4, 12, 9, 0).getTime(), now)).toBe('May 12, 2025');
+	test('shows a short date after 7 days, with the year only for past years', () => {
+		expect(handler.formatReadingHistoryTime(now - 8 * day, now)).toBe('Nov 11');
+		expect(handler.formatReadingHistoryTime(new Date(2025, 4, 12, 9, 0).getTime(), now)).toBe('May 12, 2025');
 	});
 
 	test('returns nothing for entries without a timestamp', () => {
-		expect(handler.formatReadingHistoryDate(undefined, now)).toBeNull();
+		expect(handler.formatReadingHistoryTime(undefined, now)).toBeNull();
 	});
 });
 
