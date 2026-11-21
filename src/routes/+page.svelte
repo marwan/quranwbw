@@ -329,7 +329,7 @@
 							</a>
 
 							{#if $__readingHistory.length > 1}
-								<button class="{continueReadingButtonClasses} w-full" on:click={() => __readingHistoryModalVisible.set(true)}>
+								<button class="{continueReadingButtonClasses} w-full" on:click={() => __readingHistoryModalVisible.set(true)} data-rybbit-event="Reading History Button">
 									<Clock size={5} />
 									<span class="md:hidden">History</span>
 									<span class="hidden md:inline-block">Reading History</span>

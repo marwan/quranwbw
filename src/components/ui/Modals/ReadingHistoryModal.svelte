@@ -30,6 +30,12 @@
 		return null;
 	}
 
+	// Resume the clicked entry and track which one was picked
+	function openEntry(item, entryUrl, index) {
+		resumeReadingSession(item.id, entryUrl);
+		window.rybbit?.event('Reading History Entry Click', { position: index + 1, view: item.currentPage ?? 'chapter' });
+	}
+
 	// Remove a single entry from the reading history
 	function removeEntry(item) {
 		updateSettings({ type: 'removeReadingHistoryEntry', value: item.id });
@@ -58,7 +64,7 @@
 				{@const readTime = formatReadingHistoryTime(item.updatedAt, now)}
 
 				<div class="{individualCheckboxClasses} flex items-stretch gap-3 w-full min-w-0 overflow-hidden">
-					<a href={entryUrl} class="flex-1 min-w-0 overflow-hidden" on:click={() => resumeReadingSession(item.id, entryUrl)}>
+					<a href={entryUrl} class="flex-1 min-w-0 overflow-hidden" on:click={() => openEntry(item, entryUrl, index)}>
 						<div class="line-clamp-1">
 							<!-- Small screens show only chapter:verse, larger screens the full surah name too -->
 							{index + 1}. <span class="md:hidden">{chapter}:{verse}</span><span class="hidden md:inline">{quranMetaData[chapter].transliteration} ({chapter}:{verse})</span>{#if viewLabel}<span class="opacity-70 ml-1">· {viewLabel}</span>{/if}
