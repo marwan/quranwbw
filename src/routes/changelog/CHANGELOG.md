@@ -1,4 +1,4 @@
-### Nov 09, 2026
+### Nov 21, 2026
 
 - **Reading History:** Recently visited reading locations are now automatically recorded, making it easy to revisit Chapters, Mushaf, Juz, and Hizb pages you've been reading.
 
