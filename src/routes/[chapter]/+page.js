@@ -6,14 +6,13 @@ import { quranMetaData } from '$data/quranMeta';
 export async function load({ params }) {
 	// if a colon/dash/period exists and the param is a valid key
 	if (params.chapter.includes(':') || params.chapter.includes('-') || params.chapter.includes('.')) {
-		let updatedParam;
-		updatedParam = params.chapter.replace('-', ':');
-		updatedParam = updatedParam.replace('.', ':');
-		const chapter = updatedParam.split(':')[0];
-		const verse = updatedParam.split(':')[1];
+		// Split chapter, start verse and optional end verse (e.g., 2-255-260, 2:255-260, 2.255)
+		const [chapter, verse, endVerse] = params.chapter.split(/[-:.]/);
 
 		if (isValidVerseKey(`${chapter}:${verse}`)) {
-			goto(`/${chapter}/${verse}`, { replaceState: false });
+			// Keep the end verse so ranges reach parseURL
+			const range = /^\d+$/.test(endVerse ?? '') ? `-${endVerse}` : '';
+			goto(`/${chapter}/${verse}${range}`, { replaceState: false });
 		}
 	}
 
