@@ -35,7 +35,8 @@ import {
 	__readingHistory
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
-import { queueReadingHistoryUpdate, isReaderPage, removeReadingHistoryEntry } from '$utils/readingHistoryHandler';
+import { queueReadingHistoryUpdate, removeReadingHistoryEntry } from '$utils/readingHistoryHandler';
+import { isReaderPage } from '$utils/isReaderPage';
 
 // function to update website settings
 export function updateSettings(props) {

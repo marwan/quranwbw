@@ -1,8 +1,4 @@
-// Max number of reading history entries to keep
 const maxHistoryEntries = 50;
-
-// Page types that count as "reader" pages for history tracking
-const readerPages = ['chapter', 'mushaf', 'juz', 'hizb'];
 
 // How long a position must stay unchanged before it is saved to history (ms).
 // Prevents wrong verses being recorded while fonts load or the layout shifts.
@@ -12,10 +8,8 @@ const stabilityDelay = 2500;
 // null means no session yet, so the next stable position creates a new entry.
 let activeSessionId = null;
 
-// Last URL seen by the navigation hook
 let lastUrl = null;
 
-// Timer for the pending (debounced) history update
 let pendingTimer = null;
 
 // The session is kept in sessionStorage (per tab) so a full page reload, a service worker update
@@ -149,7 +143,6 @@ function generateEntryId() {
 	return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-// Keeps only the position fields stored in a history entry
 function getEntryPosition(data, verse) {
 	return {
 		chapter: data.chapter,
@@ -168,10 +161,8 @@ export function updateReadingHistory({ history, data }) {
 	const list = Array.isArray(history) ? history : [];
 	const now = Date.now();
 
-	// Never go below verse 1
 	const verse = Math.max(1, data.verse);
 
-	// Look up the entry for the active session
 	const index = activeSessionId ? list.findIndex((entry) => entry.id === activeSessionId) : -1;
 
 	// Active session found, update it and move it to the front.
@@ -194,7 +185,6 @@ export function updateReadingHistory({ history, data }) {
 	return [newEntry, ...list].slice(0, maxHistoryEntries);
 }
 
-// Pure function: returns the history without the given entry
 export function removeReadingHistoryEntry({ history, entryId }) {
 	const list = Array.isArray(history) ? history : [];
 	return list.filter((entry) => entry.id !== entryId);
@@ -213,32 +203,4 @@ export function queueReadingHistoryUpdate({ data, getHistory, onCommit }) {
 		pendingTimer = null;
 		onCommit(updateReadingHistory({ history: getHistory(), data: position }));
 	}, stabilityDelay);
-}
-
-// Max age shown as relative time,
-// older show the date
-const maxRelativeDays = 7;
-
-// Returns when an entry was last read, kept short to leave room for the title:
-// "Just now", "3m ago", "1hr ago", "2d ago" up to 7 days, then "Nov 10" ("May 12, 2025" for past years)
-export function formatReadingHistoryTime(timestamp, now = Date.now()) {
-	if (!timestamp) return null;
-
-	const minutes = Math.floor((now - timestamp) / 60000);
-	const hours = Math.floor(minutes / 60);
-	const days = Math.floor(hours / 24);
-
-	if (minutes < 1) return 'Just now';
-	if (minutes < 60) return `${minutes}m ago`;
-	if (hours < 24) return `${hours}hr ago`;
-	if (days <= maxRelativeDays) return `${days}d ago`;
-
-	const date = new Date(timestamp);
-	const sameYear = date.getFullYear() === new Date(now).getFullYear();
-	return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', ...(sameYear ? {} : { year: 'numeric' }) });
-}
-
-// Returns true if the given page type should trigger reading history updates
-export function isReaderPage(page) {
-	return readerPages.includes(page);
 }

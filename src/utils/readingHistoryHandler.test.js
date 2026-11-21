@@ -201,32 +201,6 @@ describe('removeReadingHistoryEntry', () => {
 	});
 });
 
-describe('formatReadingHistoryTime', () => {
-	const now = new Date(2026, 10, 19, 18, 0).getTime();
-	const minute = 60 * 1000;
-	const hour = 60 * minute;
-	const day = 24 * hour;
-
-	test('shows short relative time up to 7 days', () => {
-		expect(handler.formatReadingHistoryTime(now - 20 * 1000, now)).toBe('Just now');
-		expect(handler.formatReadingHistoryTime(now - 3 * minute, now)).toBe('3m ago');
-		expect(handler.formatReadingHistoryTime(now - 59 * minute, now)).toBe('59m ago');
-		expect(handler.formatReadingHistoryTime(now - hour, now)).toBe('1hr ago');
-		expect(handler.formatReadingHistoryTime(now - 23 * hour, now)).toBe('23hr ago');
-		expect(handler.formatReadingHistoryTime(now - day, now)).toBe('1d ago');
-		expect(handler.formatReadingHistoryTime(now - 7 * day - hour, now)).toBe('7d ago');
-	});
-
-	test('shows a short date after 7 days, with the year only for past years', () => {
-		expect(handler.formatReadingHistoryTime(now - 8 * day, now)).toBe('Nov 11');
-		expect(handler.formatReadingHistoryTime(new Date(2025, 4, 12, 9, 0).getTime(), now)).toBe('May 12, 2025');
-	});
-
-	test('returns nothing for entries without a timestamp', () => {
-		expect(handler.formatReadingHistoryTime(undefined, now)).toBeNull();
-	});
-});
-
 describe('getReadingHistoryEntryUrl', () => {
 	test('reopens each entry in the view it was read in', () => {
 		expect(handler.getReadingHistoryEntryUrl({ chapter: 2, verse: 12, currentPage: 'chapter' })).toBe('/2?startVerse=12');

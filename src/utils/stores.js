@@ -189,9 +189,9 @@ if (browser) {
 	});
 
 	__anyModalVisible = derived(
-		[__audioModalVisible, __notesModalVisible, __tajweedRulesModalVisible, __tafsirModalVisible, __quranNavigationModalVisible, __siteNavigationModalVisible, __settingsSelectorModal, __verseTranslationModalVisible, __morphologyModalVisible, __copyShareVerseModalVisible, __favoriteChaptersModalVisible, __confirmationAlertModal, __settingsDrawerHidden],
-		([audio, notes, tajweed, tafsir, quranNav, siteNav, settingsSelector, verseTranslation, morphology, copyShare, favoriteChapters, confirmationAlert, settingsDrawerHidden]) =>
-			[audio, notes, tajweed, tafsir, quranNav, siteNav, verseTranslation, morphology, copyShare, favoriteChapters].some(Boolean) || settingsSelector.visible || confirmationAlert.visible || !settingsDrawerHidden
+		[__audioModalVisible, __notesModalVisible, __tajweedRulesModalVisible, __tafsirModalVisible, __quranNavigationModalVisible, __siteNavigationModalVisible, __settingsSelectorModal, __verseTranslationModalVisible, __morphologyModalVisible, __copyShareVerseModalVisible, __favoriteChaptersModalVisible, __readingHistoryModalVisible, __confirmationAlertModal, __settingsDrawerHidden],
+		([audio, notes, tajweed, tafsir, quranNav, siteNav, settingsSelector, verseTranslation, morphology, copyShare, favoriteChapters, readingHistory, confirmationAlert, settingsDrawerHidden]) =>
+			[audio, notes, tajweed, tafsir, quranNav, siteNav, verseTranslation, morphology, copyShare, favoriteChapters, readingHistory].some(Boolean) || settingsSelector.visible || confirmationAlert.visible || !settingsDrawerHidden
 	);
 
 	// wake lock settings
