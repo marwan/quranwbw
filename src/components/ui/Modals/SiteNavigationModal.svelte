@@ -57,7 +57,7 @@
 </script>
 
 <Modal id="siteNavigationModal" bind:open={$__siteNavigationModalVisible} transitionParams={getModalTransition('basic')} size="xs" class="rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" center outsideclose>
-	<h3 id="modal-title" class="mb-2 text-md font-semibold flex-shrink-0">Navigate</h3>
+	<h3 class="mb-2 text-md font-semibold flex-shrink-0">Navigate</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto">
 		<div class="flex flex-col space-y-4">
