@@ -702,6 +702,7 @@ export const selectableWordTranslations = {
 	22: {
 		id: 22,
 		language: 'Sign Language',
+		hideInSelector: true,
 		version: 2
 	}
 };

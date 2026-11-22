@@ -1,3 +1,9 @@
+### Nov 22, 2026
+
+- **Guess The Word:** The game now follows each ayah word by word. The ayah is shown in your chosen Quran font with the current word in the middle, and you pick the meaning of each word as you go. Tap "Game settings" to choose English or French meanings and to practise any range of ayahs; the link keeps your settings, so you can share it. You can also skip a word or a whole ayah.
+
+---
+
 ### Nov 21, 2026
 
 - **Reading History:** Recently visited reading locations are now automatically recorded, making it easy to revisit Chapters, Mushaf, Juz, and Hizb pages you've been reading.

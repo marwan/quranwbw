@@ -1,173 +1,302 @@
 <script>
 	import PageHead from '$misc/PageHead.svelte';
 	import Spinner from '$svgs/Spinner.svelte';
-	import Check from '$svgs/Check.svelte';
-	import Cross from '$svgs/Cross.svelte';
-	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
-	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers } from '$utils/stores';
-	import { buttonClasses, buttonOutlineClasses, disabledClasses, individualRadioClasses } from '$data/commonClasses';
+	import AnswerOptions from './components/AnswerOptions.svelte';
+	import QuizControls from './components/QuizControls.svelte';
+	import QuizStats from './components/QuizStats.svelte';
+	import AyahProgress from './components/AyahProgress.svelte';
+	import AyahWordStrip from './components/AyahWordStrip.svelte';
+	import GuessTheWordSettingsModal from './components/GuessTheWordSettingsModal.svelte';
+	import Settings from '$svgs/Settings.svelte';
+	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
+	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers, __wordTranslation, __signLanguageModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
-	import { playWordAudio } from '$utils/audioController';
 	import { fetchWordData } from '$utils/fetchData';
-	import { fade } from 'svelte/transition';
-	import { onMount } from 'svelte';
+	import { term } from '$utils/terminologies';
+	import { buttonOutlineClasses } from '$data/commonClasses';
+	import { quranMetaData } from '$data/quranMeta';
+	import { selectableWordTranslations } from '$data/options';
+	import { afterNavigate, replaceState } from '$app/navigation';
+	import { browser } from '$app/environment';
+	import { describeRange, gameQueryString, isAyahInRange, parseAyahRange } from './utils/guessTheWordOptions';
+	import { advanceQuestion, askableIndexes, buildQuizData, buildWordQuestion, createAyahSession, isLastAskableWord, recordWordOutcome, shuffleArray, skipAyah, upcomingAyah } from './utils/guessTheWordSet';
+	import { reducedMotion } from './utils/reducedMotion';
+	import { linear } from 'svelte/easing';
+	import { onMount, tick } from 'svelte';
 
-	let randomID = 1;
-	let selection = null;
-	let answerChecked = false;
-	let isAnswerCorrect = null;
-	let randomWord = Math.floor(Math.random() * 3);
-	let party = null; // will be set if CDN load succeeds
+	// After a correct answer the options stay still this long, so the player sees it marked, before moving on
+	// (wrong answers wait for the player).
+	const autoAdvanceDelay = 400;
 
-	$: randomWordsData = fetchRandomWords(randomID);
+	// The answer options move like a carousel: the new set comes in from past the right edge while the old set
+	// leaves past the left edge, both fully opaque and side by side (same length and easing). Measured in the
+	// panel's own width, so it covers the whole width on every screen.
+	const optionsSlideDuration = 250;
+	// The first options are already in place when the page opens; only later sets slide in.
+	let slideOptions = false;
 
-	// Dynamically load party-js from CDN after mount; sets `party` if successful, silently skips confetti if not
+	// Svelte transition: the new answer options enter from the right (100% -> 0%).
+	// `u` goes from 1 to 0 while the animation plays, so the panel starts fully to the right and ends in place.
+	function slideIn(node, { duration }) {
+		return { duration, easing: linear, css: (t, u) => `transform: translateX(${u * 100}%)` };
+	}
+	// Svelte transition: the old answer options leave to the left (0% -> -100%).
+	function slideOut(node, { duration }) {
+		return { duration, easing: linear, css: (t, u) => `transform: translateX(${-u * 100}%)` };
+	}
+
+	// Current question state
+	let selection = null; // index of the option the player picked (null = nothing picked yet)
+	let answerChecked = false; // true once the player has answered the current word
+	let isAnswerCorrect = null; // null until answered, then true or false
+	let autoProgressTimeout = null; // timer that moves on automatically after a correct answer
+	let sessionCorrect = 0; // correct answers since the page was opened
+	let sessionWrong = 0; // wrong answers since the page was opened
+	let quizData = null; // all ayahs and words fetched for the chosen language
+	let session = null; // the running game: which ayah, which word, results so far
+	let currentWordSet = []; // the 4 options shown for the current word
+	let correctAnswerIndex = 0; // position of the right answer inside currentWordSet
+	let previousWordKeys = []; // words used in the last question, so the next options feel fresh
+	let wordSetKey = 0; // changes with every question, which makes Svelte play the slide animation
+	let questionReady = false; // false while options are sliding in or the game is loading (input locked)
+	let isLoading = false;
+	let quizError = null;
+	let disposed = false; // true once the page is closed, so late async work stops
+	let quizControls; // reference to the QuizControls component, used to focus its Next button
+	let moveFocus = false; // keyboard focus moves to the new options only after the player has started playing
+
+	// Game settings. The language is the site's word translation setting. The range lives in the URL
+	// (?from=2:106&to=2:205) so a game can be shared.
+	// Read once, as the page is created, so it is set before the game starts or the address is rewritten.
+	const initialParams = browser ? new URL(window.location.href).searchParams : new URLSearchParams();
+	let range = parseAyahRange(initialParams.get('from'), initialParams.get('to'));
+	let settingsOpen = false;
+	$: wordTranslation = Number($__wordTranslation);
+	$: languageName = selectableWordTranslations[wordTranslation]?.language || 'English';
+	$: translationClasses = selectableWordTranslations[wordTranslation]?.customClasses || '';
+
+	// Values worked out from the session, re-calculated whenever the session changes
+	$: currentAyah = session?.deck[session.ayahIndex];
+	$: chapterTransliteration = currentAyah ? quranMetaData[currentAyah.chapter]?.transliteration || '' : '';
+	$: isLastWord = session && isLastAskableWord(session);
+
+	// Set once the page is open, so the game only starts in the browser
+	let mounted = false;
 	onMount(() => {
-		const script = document.createElement('script');
-		script.src = 'https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js';
-		script.async = true;
-		script.onload = () => {
-			// party-js attaches itself to window.party
-			if (window.party) party = window.party;
+		mounted = true;
+		return () => {
+			disposed = true;
+			clearTimeout(autoProgressTimeout);
 		};
-		script.onerror = () => {
-			// CDN failed (404, 500, offline) — confetti simply won't run
-			console.warn('party-js CDN failed to load. Confetti will be disabled.');
-		};
-		document.head.appendChild(script);
 	});
 
-	async function fetchRandomWords() {
-		const { arabicWordData, translationWordData, transliterationWordData } = await fetchWordData(1, 1, 1);
+	// Starts the game when the page opens, and starts a new one if the site's word translation changes.
+	// Never loads while Sign Language Mode is on; turning it off starts the game by itself.
+	$: if (mounted && wordTranslation && !$__signLanguageModeEnabled) startGame();
 
-		const allWordEntries = [];
+	// If the mode is switched on while playing, stop the timer that would move to the next word
+	$: if ($__signLanguageModeEnabled) clearTimeout(autoProgressTimeout);
 
-		for (const chapter in arabicWordData) {
-			const verses = arabicWordData[chapter];
-			for (const verse in verses) {
-				const [arabicWords = []] = verses[verse];
-				const translations = translationWordData[chapter]?.[verse]?.[0] || [];
-				const transliterations = transliterationWordData[chapter]?.[verse]?.[0] || [];
+	// Message shown instead of the game while Sign Language Mode is on
+	const signLanguageError = new Error('Guess The Word cannot be played while Arabic Sign Language mode is on.');
 
-				for (let i = 0; i < arabicWords.length; i++) {
-					allWordEntries.push({
-						word_key: `${chapter}:${verse}:${i + 1}`,
-						word_arabic: arabicWords[i],
-						word_transliteration: transliterations[i] || '',
-						word_english: translations[i] || ''
-					});
-				}
-			}
-		}
-
-		// Shuffle and pick 4 random unique words
-		const shuffled = allWordEntries.sort(() => 0.5 - Math.random());
-		const selected = shuffled.slice(0, 4);
-
-		return selected;
+	// Fetches every word of the Quran in the chosen translation language and turns it into quiz data
+	// (ayahs + a flat list of words). Only the word list is shuffled, because wrong options are picked by
+	// walking through it in order; the ayahs keep their order.
+	async function fetchQuizData(translation) {
+		const data = buildQuizData(await fetchWordData(1, translation, 1));
+		return { ...data, words: shuffleArray(data.words) };
 	}
 
-	// Check if the selected answer is correct
-	function checkAnswer() {
-		answerChecked = true;
-		isAnswerCorrect = selection === randomWord;
+	// Each start gets an id, so a game started with new settings wins over a load still in flight.
+	let loadId = 0;
 
-		if (isAnswerCorrect) {
-			// Only fire confetti if party-js loaded successfully
-			if (party) {
-				party.confetti(document.body, {
-					count: 80,
-					spread: 100,
-					size: 2
-				});
-			}
-
-			updateSettings({ type: 'quizCorrectAnswers', value: $__quizCorrectAnswers + 1 });
-		} else {
-			// Update wrong answers count
-			updateSettings({ type: 'quizWrongAnswers', value: $__quizWrongAnswers + 1 });
+	// Loads the data and starts a fresh game with the current language and range.
+	// Used on the first load, after changing settings, and by the "Try Again" button.
+	async function startGame() {
+		if (disposed) return;
+		const id = ++loadId;
+		isLoading = true;
+		quizError = null;
+		// A restart keeps the current game on screen (locked) until the new one is ready. Tearing the game down
+		// to the spinner and straight back up while its exit animation was still running left the page blank.
+		questionReady = false;
+		clearTimeout(autoProgressTimeout);
+		try {
+			const data = await fetchQuizData(wordTranslation);
+			// Stop if the page was closed, or if a newer startGame call has taken over while we were loading
+			if (disposed || id !== loadId) return;
+			// Keep only the ayahs inside the chosen range (all of them when there is no range)
+			const ayahs = data.ayahs.filter((ayah) => isAyahInRange(ayah, range));
+			if (!ayahs.length) throw new Error('None of the ' + term('verse') + 's in ' + describeRange(range) + ' have a ' + languageName + ' meaning for every word. Choose another range or language.');
+			quizData = data;
+			previousWordKeys = [];
+			// A range is played in order; the whole Quran is played in random order
+			showQuestion(createAyahSession(ayahs, Math.random, { ordered: Boolean(range) }));
+		} catch (error) {
+			if (!disposed && id === loadId) showError(error);
+		} finally {
+			if (!disposed && id === loadId) isLoading = false;
 		}
 	}
 
-	// Set new random word and reset selections
-	function setRandomWord() {
-		randomID = Math.floor(Math.random() * 9999999) + 1;
-		randomWord = Math.floor(Math.random() * 3);
+	// Writes the current range into the address bar, so the link can be shared.
+	function syncUrl() {
+		const query = gameQueryString(range);
+		replaceState(window.location.pathname + (query ? '?' + query : ''), {});
+	}
+
+	// The first sync waits for SvelteKit's router, which is ready once the page has finished navigating.
+	afterNavigate(() => syncUrl());
+
+	// Runs when the player presses Start in the settings modal: saves the new range and restarts the game.
+	function applySettings(event) {
+		range = event.detail.range;
+		syncUrl();
+		clearTimeout(autoProgressTimeout);
+		startGame();
+	}
+
+	// Shows the error screen, using a generic message if the error is not a normal Error object
+	function showError(error) {
+		clearTimeout(autoProgressTimeout);
+		quizError = error instanceof Error ? error : new Error('Unable to load this ' + term('verse') + '. Please try again.');
+		questionReady = false;
+	}
+
+	// Puts a session on screen: builds the 4 options for its current word and resets the answer state.
+	// Used for the very first question and for every question after it.
+	function showQuestion(nextSession) {
+		const ayah = nextSession.deck[nextSession.ayahIndex];
+		// Wrong options avoid the previous question's words and all words of this ayah (they are on screen already)
+		const result = buildWordQuestion(ayah.words[nextSession.wordIndex], quizData.words, [...previousWordKeys, ...ayah.words.map((word) => word.word_key)]);
+		// Lock input until the new options have finished sliding in
+		questionReady = false;
 		selection = null;
-		isAnswerCorrect = null;
 		answerChecked = false;
+		isAnswerCorrect = null;
+		session = nextSession;
+		currentWordSet = result.wordSet;
+		correctAnswerIndex = result.correctAnswerIndex;
+		previousWordKeys = result.previousWordKeys;
+		// A new key makes Svelte swap the options panel, which plays the slide out/in animation
+		wordSetKey++;
+	}
+
+	// Runs when the new options have finished sliding in: unlocks input and, once the player has started
+	// playing, moves keyboard focus to the new options (so keyboard users do not lose their place).
+	async function onQuestionReady(event) {
+		const panel = event.currentTarget;
+		questionReady = true;
+		slideOptions = true;
+		await tick();
+		if (!disposed && moveFocus && panel.isConnected) panel.focus({ preventScroll: true });
+	}
+
+	// Runs when the player picks an option: checks it, records the result and updates the scores.
+	async function checkAnswer(event) {
+		// Ignore taps while locked, after the page closed, or if this word was already answered
+		if (!questionReady || disposed || !session || session.isComplete || answerChecked) return;
+		selection = event.detail;
+		// Ignore anything that is not a valid option index
+		if (!Number.isInteger(selection) || selection < 0 || selection >= currentWordSet.length) return;
+		answerChecked = true;
+		isAnswerCorrect = selection === correctAnswerIndex;
+		session = recordWordOutcome(session, isAnswerCorrect ? 'correct' : 'wrong');
+		if (isAnswerCorrect) {
+			sessionCorrect++;
+			updateSettings({ type: 'quizCorrectAnswers', value: $__quizCorrectAnswers + 1 });
+			// Correct: move on by itself after a short pause
+			autoProgressTimeout = setTimeout(() => continueWord(), autoAdvanceDelay);
+		} else {
+			sessionWrong++;
+			updateSettings({ type: 'quizWrongAnswers', value: $__quizWrongAnswers + 1 });
+			// Wait for the player: the correct answer stays up until they press the Next button.
+			await tick();
+			if (!disposed) quizControls?.focusNext();
+		}
+	}
+
+	// Moves to the next word (or the first word of the next ayah after the last word).
+	// - continueWord()      : after an answer, called by the timer (correct) or the Next button (wrong)
+	// - continueWord(true)  : the Skip Word button, which counts the word as skipped
+	function continueWord(skip = false) {
+		// Skip only works before answering, Next only works after answering
+		if (!questionReady || disposed || !session || session.isComplete || (skip ? answerChecked : !answerChecked)) return;
+		clearTimeout(autoProgressTimeout);
+		moveFocus = true;
+		if (skip) session = recordWordOutcome(session, 'skipped');
+		try {
+			showQuestion(advanceQuestion(session));
+		} catch (error) {
+			showError(error);
+		}
+	}
+
+	// The Skip Ayah button: leaves the current ayah and starts the next one (its remaining words are not counted)
+	function skipCurrentAyah() {
+		// Only allowed before answering the current word
+		if (!questionReady || disposed || !session || session.isComplete || answerChecked) return;
+		clearTimeout(autoProgressTimeout);
+		moveFocus = true;
+		try {
+			showQuestion(skipAyah(session));
+		} catch (error) {
+			showError(error);
+		}
 	}
 
 	__currentPage.set('Guess The Word');
 </script>
 
-<PageHead title={'Guess The Word'} description="Test your knowledge of Quranic vocabulary with our Guess The Word game!" />
+<PageHead title="Guess The Word" description="Learn Quranic vocabulary by following each {term('verse')}, one word at a time." />
 
-<div class="space-y-12">
-	{#await randomWordsData}
-		<Spinner />
-	{:then data}
-		<div class="flex flex-col space-y-8 my-6 md:my-8 justify-center" in:fade={{ duration: 300 }}>
-			<!-- word -->
-			<button class="flex flex-col space-y-4 mx-auto items-center" on:click={() => playWordAudio({ key: data[randomWord].word_key })}>
-				<span class="text-5xl md:text-7xl arabic-font-1">{data[randomWord].word_arabic}</span>
-				<span class="text-xs">{data[randomWord].word_transliteration}</span>
-			</button>
-
-			<!-- options -->
-			<div id="options" class="pt-8">
-				<p class="mb-5 text-sm">Guess the correct translation:</p>
-				<div class="grid gap-4 md:gap-6 w-full md:grid-cols-2">
-					{#each Object.entries(data) as [key, _]}
-						<Radio name="bordered" bind:group={selection} value={+key} class={answerChecked === true && selection !== +key ? disabledClasses : null} custom>
-							<div class="{individualRadioClasses} {selection === +key ? `border-theme-accent/20` : null}">
-								<div class="flex flex-row mr-auto ml-2">{data[key].word_english}</div>
-
-								<!-- check / cross icon -->
-								{#if answerChecked === true && selection === +key}
-									<div class="justify-end">
-										<svelte:component this={selection === randomWord ? Check : Cross} size={5} />
-									</div>
-								{/if}
-							</div>
-						</Radio>
-					{/each}
-				</div>
-			</div>
-
-			<!-- answer-results -->
-			{#if answerChecked === true && isAnswerCorrect !== null}
-				<div id="answer-results" class="flex justify-center text-center font-medium text-md">
-					<span>
-						{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${data[randomWord].word_english}" 😟`}
-					</span>
-				</div>
-			{/if}
-
-			<!-- buttons -->
-			<div id="buttons" class="flex flex-row space-x-4 justify-center w-full">
-				<!-- confirm-button -->
-				{#if !answerChecked}
-					<div id="confirm-button" class="{selection === null || answerChecked === true ? disabledClasses : null} w-full">
-						<button class="{buttonClasses} w-full" on:click={() => checkAnswer()}>Confirm</button>
-					</div>
-				{/if}
-
-				<!-- skip-word-button -->
-				<div id="skip-word-button" class="w-full">
-					<button class="{buttonOutlineClasses} w-full" on:click={() => setRandomWord()}>{answerChecked ? 'Next' : 'Skip'} {@html '&#x2192;'}</button>
-				</div>
-			</div>
-
-			<!-- correct / wrong answers so far -->
-			<div id="quiz-stats" class="flex flex-row space-x-4 justify-center text-xs">
-				<span>Correct: {$__quizCorrectAnswers}</span>
-				<span>|</span>
-				<span>Wrong: {$__quizWrongAnswers}</span>
-			</div>
+<!-- No top padding of our own: the site layout already clears the fixed navbar. -->
+<div class="mx-auto w-full max-w-3xl pb-5 md:pb-8">
+	{#if $__signLanguageModeEnabled}
+		<ErrorLoadingData error={signLanguageError} center={false} showMessage />
+	{:else if quizError}
+		<ErrorLoadingData error={quizError} center={false} showMessage />
+		<div class="mt-5 flex flex-wrap justify-center gap-3">
+			<button class={buttonOutlineClasses} disabled={isLoading} on:click={startGame}>Try Again</button>
+			<!-- Settings stay reachable when a chosen range or language cannot be played. -->
+			<button class="{buttonOutlineClasses} inline-flex items-center gap-2" aria-haspopup="dialog" on:click={() => (settingsOpen = true)}><Settings size={4} /> Game Settings</button>
 		</div>
-	{:catch error}
-		<ErrorLoadingData {error} />
-	{/await}
+	{:else if !session}
+		<div class="py-16" role="status" aria-label="Loading {term('verse')}s"><Spinner /></div>
+	{:else}
+		<AyahProgress ayah={currentAyah} {chapterTransliteration} wordIndex={session.wordIndex} outcomes={session.outcomes}>
+			<svelte:fragment slot="settings">
+				<button type="button" aria-label="Game Settings" class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (settingsOpen = true)}>
+					<Settings size={4} />
+				</button>
+				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Game Settings</Tooltip>
+			</svelte:fragment>
+		</AyahProgress>
+		<div class="mt-8 md:mt-12">
+			<AyahWordStrip ayah={currentAyah} nextAyah={upcomingAyah(session)} wordIndex={session.wordIndex} />
+		</div>
+		<!-- Outside the sliding panel, so only the options move. -->
+		<p class="px-1 pt-6 text-sm sm:px-3 md:px-4 md:pt-6">Guess the correct translation:</p>
+		<div class="grid overflow-hidden" inert={!questionReady}>
+			{#key wordSetKey}
+				<div
+					class="col-start-1 row-start-1 min-w-0 outline-none py-4 md:py-6"
+					tabindex="-1"
+					role="group"
+					aria-label={'Word ' + (askableIndexes(currentAyah).indexOf(session.wordIndex) + 1) + ' of ' + askableIndexes(currentAyah).length}
+					in:slideIn|global={{ duration: $reducedMotion || !slideOptions ? 0 : optionsSlideDuration }}
+					out:slideOut={{ duration: $reducedMotion ? 0 : optionsSlideDuration }}
+					on:introend={onQuestionReady}
+				>
+					<AnswerOptions wordSet={currentWordSet} {selection} on:answer={checkAnswer} {answerChecked} {isAnswerCorrect} isGeneratingWordSet={!questionReady} {correctAnswerIndex} {translationClasses} />
+				</div>
+			{/key}
+		</div>
+		<QuizControls bind:this={quizControls} {answerChecked} {isAnswerCorrect} {isLastWord} canSkipAyah={session.deck.length > 1} isGeneratingWordSet={!questionReady} correctAnswer={currentWordSet[correctAnswerIndex].word_english} {translationClasses} on:next={() => continueWord()} on:skip={() => continueWord(true)} on:skipAyah={skipCurrentAyah} />
+		<QuizStats {sessionCorrect} {sessionWrong} allTimeCorrect={$__quizCorrectAnswers} allTimeWrong={$__quizWrongAnswers} />
+	{/if}
 </div>
+
+<GuessTheWordSettingsModal bind:open={settingsOpen} {range} currentChapter={currentAyah?.chapter ?? 1} on:apply={applySettings} />

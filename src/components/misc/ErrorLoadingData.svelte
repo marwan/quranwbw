@@ -8,6 +8,9 @@
 	// Error object passed from the parent (usually from a failed fetch)
 	export let error = null;
 
+	// When true, shows the error's own message instead of the default "couldn't load the data" text
+	export let showMessage = false;
+
 	// Default centering behavior
 	$: center = center === undefined ? true : center;
 
@@ -40,9 +43,14 @@
 </script>
 
 <div class="flex flex-col space-y-4 justify-center text-center !text-sm max-w-xl mx-auto" class:pt-[30vh]={center === true}>
-	<p>Sorry, we couldn’t load the data right now. Please try again in a {errorCode !== null ? `moment (${errorCode})` : 'moment'}.</p>
+	{#if showMessage && error?.message}
+		<!-- Custom text: the message of the error that was passed in -->
+		<p>{error.message}</p>
+	{:else}
+		<p>Sorry, we couldn’t load the data right now. Please try again in a {errorCode !== null ? `moment (${errorCode})` : 'moment'}.</p>
 
-	{#if !userOnline}
-		<p>It also looks like you’re currently offline. Please reconnect to the internet and, if you plan to use this page offline, make sure the required offline data is downloaded beforehand.</p>
+		{#if !userOnline}
+			<p>It also looks like you’re currently offline. Please reconnect to the internet and, if you plan to use this page offline, make sure the required offline data is downloaded beforehand.</p>
+		{/if}
 	{/if}
 </div>

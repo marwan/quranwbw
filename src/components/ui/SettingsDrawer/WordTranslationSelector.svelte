@@ -22,6 +22,11 @@
 
 	// Helper function to check if a translation should be shown
 	function shouldShowTranslation(translationId) {
+		// Translations marked hideInSelector (Sign Language) only show while they are the selected one
+		if (selectableWordTranslations[translationId]?.hideInSelector && Number($__wordTranslation) !== translationId) {
+			return false;
+		}
+
 		// If user is online, show all translations
 		if (userOnline) {
 			return true;
