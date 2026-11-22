@@ -1,14 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { describeRange, gameQueryString, isAyahInRange, parseAyahKey, parseAyahRange, resolveWordTranslation } from './guessTheWordOptions';
-
-describe('word-by-word language', () => {
-	test('only English and French are offered; anything else falls back to the next candidate, then English', () => {
-		expect(resolveWordTranslation('11', 1)).toBe(11);
-		expect(resolveWordTranslation('2', 13, 11)).toBe(11);
-		expect(resolveWordTranslation('999', 'urdu', null, 5)).toBe(1);
-		expect(resolveWordTranslation(null, '', undefined)).toBe(1);
-	});
-});
+import { describeRange, gameQueryString, isAyahInRange, parseAyahKey, parseAyahRange } from './guessTheWordOptions';
 
 describe('ayah range', () => {
 	test('accepts only real ayahs', () => {
@@ -36,13 +27,13 @@ describe('ayah range', () => {
 		expect(isAyahInRange({ chapter: 9, verse: 1 }, null)).toBe(true);
 	});
 
-	test('settings round-trip through the URL', () => {
+	test('the range round-trips through the URL', () => {
 		const range = parseAyahRange('2:106', '2:205');
-		const query = gameQueryString({ wordTranslation: 2, range });
-		expect(query).toBe('lang=2&from=2:106&to=2:205');
+		const query = gameQueryString(range);
+		expect(query).toBe('from=2:106&to=2:205');
 		const params = new URLSearchParams(query);
 		expect(parseAyahRange(params.get('from'), params.get('to'))).toEqual(range);
-		expect(gameQueryString({ wordTranslation: 1, range: null })).toBe('lang=1');
+		expect(gameQueryString(null)).toBe('');
 		expect(describeRange(range)).toBe('2:106 – 2:205');
 		expect(describeRange(null)).toBe('Whole Quran');
 	});

@@ -50,7 +50,6 @@ let __currentPage,
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
-	__quizWordTranslation,
 	__englishTerminology,
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
@@ -201,7 +200,6 @@ if (browser) {
 	// quiz settings
 	__quizCorrectAnswers = writable(userSettings.quiz.correctAnswers);
 	__quizWrongAnswers = writable(userSettings.quiz.wrongAnswers);
-	__quizWordTranslation = writable(userSettings.quiz.wordTranslation ?? null);
 
 	// english/arabic Quranic terms
 	__englishTerminology = writable(userSettings.displaySettings.englishTerminology);
@@ -296,7 +294,6 @@ export {
 	__wakeLockEnabled,
 	__quizCorrectAnswers,
 	__quizWrongAnswers,
-	__quizWordTranslation,
 	__englishTerminology,
 	__hideNonDuaPart,
 	__playButtonsFunctionality,

@@ -10,7 +10,7 @@
 	import GuessTheWordSettingsModal from './components/GuessTheWordSettingsModal.svelte';
 	import Settings from '$svgs/Settings.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
-	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers, __quizWordTranslation, __wordTranslation } from '$utils/stores';
+	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers, __wordTranslation, __signLanguageModeEnabled } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { fetchWordData } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
@@ -19,7 +19,7 @@
 	import { selectableWordTranslations } from '$data/options';
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { browser } from '$app/environment';
-	import { describeRange, gameQueryString, isAyahInRange, parseAyahRange, resolveWordTranslation } from './utils/guessTheWordOptions';
+	import { describeRange, gameQueryString, isAyahInRange, parseAyahRange } from './utils/guessTheWordOptions';
 	import { advanceQuestion, askableIndexes, buildQuizData, buildWordQuestion, createAyahSession, isLastAskableWord, recordWordOutcome, shuffleArray, skipAyah, upcomingAyah } from './utils/guessTheWordSet';
 	import { reducedMotion } from './utils/reducedMotion';
 	import { linear } from 'svelte/easing';
@@ -66,13 +66,13 @@
 	let quizControls; // reference to the QuizControls component, used to focus its Next button
 	let moveFocus = false; // keyboard focus moves to the new options only after the player has started playing
 
-	// Game settings. Both live in the URL (?lang=1&from=2:106&to=2:205) so a game can be shared;
-	// the language is also remembered for next time.
-	// Read once, as the page is created, so they are set before the game starts or the address is rewritten.
+	// Game settings. The language is the site's word translation setting. The range lives in the URL
+	// (?from=2:106&to=2:205) so a game can be shared.
+	// Read once, as the page is created, so it is set before the game starts or the address is rewritten.
 	const initialParams = browser ? new URL(window.location.href).searchParams : new URLSearchParams();
-	let wordTranslation = resolveWordTranslation(initialParams.get('lang'), $__quizWordTranslation, $__wordTranslation);
 	let range = parseAyahRange(initialParams.get('from'), initialParams.get('to'));
 	let settingsOpen = false;
+	$: wordTranslation = Number($__wordTranslation);
 	$: languageName = selectableWordTranslations[wordTranslation]?.language || 'English';
 	$: translationClasses = selectableWordTranslations[wordTranslation]?.customClasses || '';
 
@@ -81,14 +81,25 @@
 	$: chapterTransliteration = currentAyah ? quranMetaData[currentAyah.chapter]?.transliteration || '' : '';
 	$: isLastWord = session && isLastAskableWord(session);
 
-	// Starts the game when the page opens, and cleans up when the page closes
+	// Set once the page is open, so the game only starts in the browser
+	let mounted = false;
 	onMount(() => {
-		startGame();
+		mounted = true;
 		return () => {
 			disposed = true;
 			clearTimeout(autoProgressTimeout);
 		};
 	});
+
+	// Starts the game when the page opens, and starts a new one if the site's word translation changes.
+	// Never loads while Sign Language Mode is on; turning it off starts the game by itself.
+	$: if (mounted && wordTranslation && !$__signLanguageModeEnabled) startGame();
+
+	// If the mode is switched on while playing, stop the timer that would move to the next word
+	$: if ($__signLanguageModeEnabled) clearTimeout(autoProgressTimeout);
+
+	// Message shown instead of the game while Sign Language Mode is on
+	const signLanguageError = new Error('Guess The Word cannot be played while Sign Language Mode is on. Please turn it off in Settings first.');
 
 	// Fetches every word of the Quran in the chosen translation language and turns it into quiz data
 	// (ayahs + a flat list of words). Only the word list is shuffled, because wrong options are picked by
@@ -130,21 +141,18 @@
 		}
 	}
 
-	// Writes the current language and range into the address bar, so the link can be shared.
-	// replaceState changes the URL without adding a new browser history entry.
+	// Writes the current range into the address bar, so the link can be shared.
 	function syncUrl() {
-		replaceState(window.location.pathname + '?' + gameQueryString({ wordTranslation, range }), {});
+		const query = gameQueryString(range);
+		replaceState(window.location.pathname + (query ? '?' + query : ''), {});
 	}
 
 	// The first sync waits for SvelteKit's router, which is ready once the page has finished navigating.
 	afterNavigate(() => syncUrl());
 
-	// Runs when the player presses Start in the settings modal: saves the new settings and restarts the game.
+	// Runs when the player presses Start in the settings modal: saves the new range and restarts the game.
 	function applySettings(event) {
-		wordTranslation = event.detail.wordTranslation;
 		range = event.detail.range;
-		// Remember the chosen language for next time (the range is only kept in the URL)
-		updateSettings({ type: 'quizWordTranslation', value: wordTranslation });
 		syncUrl();
 		clearTimeout(autoProgressTimeout);
 		startGame();
@@ -246,7 +254,9 @@
 
 <!-- No top padding of our own: the site layout already clears the fixed navbar. -->
 <div class="mx-auto w-full max-w-3xl pb-5 md:pb-8">
-	{#if quizError}
+	{#if $__signLanguageModeEnabled}
+		<ErrorLoadingData error={signLanguageError} center={false} />
+	{:else if quizError}
 		<ErrorLoadingData error={quizError} center={false} />
 		<div class="mt-5 flex flex-wrap justify-center gap-3">
 			<button class={buttonOutlineClasses} disabled={isLoading} on:click={startGame}>Try Again</button>
@@ -289,4 +299,4 @@
 	{/if}
 </div>
 
-<GuessTheWordSettingsModal bind:open={settingsOpen} {wordTranslation} {range} currentChapter={currentAyah?.chapter ?? 1} on:apply={applySettings} />
+<GuessTheWordSettingsModal bind:open={settingsOpen} {range} currentChapter={currentAyah?.chapter ?? 1} on:apply={applySettings} />

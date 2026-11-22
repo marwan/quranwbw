@@ -1,22 +1,4 @@
 import { quranMetaData } from '$data/quranMeta';
-import { selectableWordTranslations } from '$data/options';
-
-// Translation id used when nothing valid is chosen (1 = English).
-export const defaultWordTranslation = 1;
-
-// Word-by-word languages offered in the game: English (1) and French (11).
-export const gameWordTranslations = [1, 11].map((id) => selectableWordTranslations[id]);
-
-// Goes through the given values (e.g. URL param, saved setting) and returns the first one that is a
-// language the game supports. Falls back to English if none match.
-export function resolveWordTranslation(...candidates) {
-	for (const candidate of candidates) {
-		const id = Number(candidate);
-		// Skip empty values, because Number(null) and Number('') would both turn into 0.
-		if (candidate !== null && candidate !== '' && gameWordTranslations.some((language) => language.id === id)) return id;
-	}
-	return defaultWordTranslation;
-}
 
 // Turns text like "2:106" into { chapter: 2, verse: 106, key: '2:106' }.
 // Returns null if the text is not a real ayah (bad format, chapter outside 1-114, or verse beyond the chapter's length).
@@ -49,14 +31,11 @@ export function isAyahInRange(ayah, range) {
 	return !range || (compareAyahs(ayah, range.from) >= 0 && compareAyahs(ayah, range.to) <= 0);
 }
 
-// Creates the URL query string that reproduces this game setup, so it can be shared.
-// Example: lang=1&from=2:106&to=2:205
-export function gameQueryString({ wordTranslation, range }) {
-	const params = new URLSearchParams({ lang: String(wordTranslation) });
-	if (range) {
-		params.set('from', range.from.key);
-		params.set('to', range.to.key);
-	}
+// Creates the URL query string that reproduces the chosen range, so it can be shared.
+// Example: from=2:106&to=2:205 (empty text for the whole Quran)
+export function gameQueryString(range) {
+	if (!range) return '';
+	const params = new URLSearchParams({ from: range.from.key, to: range.to.key });
 	// URLSearchParams encodes ":" as "%3A"; turn it back so the link stays readable.
 	return params.toString().replaceAll('%3A', ':');
 }

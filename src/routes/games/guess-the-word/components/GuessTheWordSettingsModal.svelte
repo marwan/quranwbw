@@ -9,12 +9,11 @@
 	import { buttonClasses, disabledClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { compareAyahs, gameWordTranslations, parseAyahKey } from '../utils/guessTheWordOptions';
+	import { compareAyahs, parseAyahKey } from '../utils/guessTheWordOptions';
 	import { createEventDispatcher } from 'svelte';
 
 	// Settings currently used by the game (set by the page)
 	export let open = false; // whether the modal is visible
-	export let wordTranslation = 1; // current language id
 	export let range = null; // current range as { from, to }, or null for the whole Quran
 	// Chapter of the ayah on screen, used to suggest a range when there is none yet.
 	export let currentChapter = 1;
@@ -27,7 +26,6 @@
 	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 
 	// Edits stay in a draft until Start, so closing the window changes nothing.
-	let draftLanguage; // language chosen in the modal
 	let mode; // 'whole' = whole Quran, 'range' = custom range
 	let fromChapter, fromVerse, toChapter, toVerse; // the custom range being edited
 
@@ -51,7 +49,6 @@
 
 	// Fills the draft from the current settings every time the modal opens
 	function resetDraft() {
-		draftLanguage = wordTranslation;
 		mode = range ? 'range' : 'whole';
 		// With no range yet, suggest the chapter the player is currently on (whole chapter, first to last verse)
 		const chapter = range?.from.chapter ?? currentChapter;
@@ -137,7 +134,7 @@
 	// Sends the chosen settings to the parent and closes the modal
 	function start() {
 		if (!canStart) return;
-		dispatch('apply', { wordTranslation: Number(draftLanguage), range: mode === 'range' ? { from: draftFrom, to: draftTo } : null });
+		dispatch('apply', { range: mode === 'range' ? { from: draftFrom, to: draftTo } : null });
 		open = false;
 	}
 </script>
@@ -147,24 +144,8 @@
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">
 		<div class="flex flex-col">
-			<!-- word-by-word language options -->
-			<div class="flex flex-col space-y-4 py-4">
-				<span class="text-sm">Language</span>
-				<div class="flex flex-row space-x-2">
-					{#each gameWordTranslations as { id, language }}
-						<div class="flex items-center">
-							<Radio bind:group={draftLanguage} value={id} custom>
-								<div class="{radioClasses} {draftLanguage === id && selectedRadioOrCheckboxClasses}">
-									<div class="w-full">{language}</div>
-								</div>
-							</Radio>
-						</div>
-					{/each}
-				</div>
-			</div>
-
 			<!-- range options -->
-			<div class="flex flex-col space-y-4 py-4 border-t border-theme-accent/20">
+			<div class="flex flex-col space-y-4 py-4">
 				<span class="text-sm">Range</span>
 				<div class="flex flex-row space-x-2">
 					<!-- whole quran -->
