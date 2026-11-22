@@ -99,7 +99,7 @@
 	$: if ($__signLanguageModeEnabled) clearTimeout(autoProgressTimeout);
 
 	// Message shown instead of the game while Sign Language Mode is on
-	const signLanguageError = new Error('Guess The Word cannot be played while Sign Language Mode is on. Please turn it off in Settings first.');
+	const signLanguageError = new Error('Guess The Word cannot be played while Arabic Sign Language mode is on.');
 
 	// Fetches every word of the Quran in the chosen translation language and turns it into quiz data
 	// (ayahs + a flat list of words). Only the word list is shuffled, because wrong options are picked by
@@ -255,9 +255,9 @@
 <!-- No top padding of our own: the site layout already clears the fixed navbar. -->
 <div class="mx-auto w-full max-w-3xl pb-5 md:pb-8">
 	{#if $__signLanguageModeEnabled}
-		<ErrorLoadingData error={signLanguageError} center={false} />
+		<ErrorLoadingData error={signLanguageError} center={false} showMessage />
 	{:else if quizError}
-		<ErrorLoadingData error={quizError} center={false} />
+		<ErrorLoadingData error={quizError} center={false} showMessage />
 		<div class="mt-5 flex flex-wrap justify-center gap-3">
 			<button class={buttonOutlineClasses} disabled={isLoading} on:click={startGame}>Try Again</button>
 			<!-- Settings stay reachable when a chosen range or language cannot be played. -->
