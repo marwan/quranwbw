@@ -26,17 +26,17 @@
 <!-- Fixed height, so swapping the buttons for the correct answer never moves the score below.
 The correct answer stays on one line: it is also marked among the options above. -->
 <div class="h-[4.5rem] flex items-center justify-center w-full" aria-live="polite">
-	{#if answerChecked === true && isAnswerCorrect !== null}
+	{#if answerChecked}
 		{#if isAnswerCorrect}
 			<div class="text-center text-sm font-medium">Correct! Next {isLastWord ? term('verse') : 'word'}…</div>
 		{:else}
-			<div id="next-word-button" class="flex max-w-full flex-col items-center space-y-4 px-2 md:px-0">
+			<div class="flex max-w-full flex-col items-center space-y-4 px-2 md:px-0">
 				<p class="max-w-full truncate text-center text-sm" title={correctAnswer}>Correct answer: <span class={translationClasses}>{correctAnswer}</span></p>
 				<button bind:this={nextButton} class={controlButtonClasses} disabled={isGeneratingWordSet} on:click={() => dispatch('next')}>Next {isLastWord ? term('verse') : 'Word'}</button>
 			</div>
 		{/if}
 	{:else}
-		<div id="buttons" class="flex flex-row gap-3 justify-center w-full px-2 md:px-0">
+		<div class="flex flex-row gap-3 justify-center w-full px-2 md:px-0">
 			<button class={controlButtonClasses} disabled={isGeneratingWordSet} on:click={() => dispatch('skip')}>Skip Word</button>
 			<!-- On the last word, skipping the word already moves to the next verse. -->
 			{#if !isLastWord}

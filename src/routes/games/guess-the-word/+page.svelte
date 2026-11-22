@@ -72,9 +72,7 @@
 	$: translationClasses = selectableWordTranslations[wordTranslation]?.customClasses || '';
 
 	$: currentAyah = session?.deck[session.ayahIndex];
-	$: chapterName = currentAyah ? quranMetaData[currentAyah.chapter]?.translation || term('chapter') + ' ' + currentAyah.chapter : '';
 	$: chapterTransliteration = currentAyah ? quranMetaData[currentAyah.chapter]?.transliteration || '' : '';
-	$: chapterArabic = currentAyah ? quranMetaData[currentAyah.chapter]?.arabic || '' : '';
 	$: isLastWord = session && isLastAskableWord(session);
 
 	onMount(() => {
@@ -221,13 +219,13 @@
 	{:else if !session}
 		<div class="py-16" role="status" aria-label="Loading {term('verse')}s"><Spinner /></div>
 	{:else}
-		<AyahProgress ayah={currentAyah} {chapterName} {chapterTransliteration} {chapterArabic} wordIndex={session.wordIndex} outcomes={session.outcomes}>
-			<!-- The negative margins keep the label's edge in line with the counter below and stop the larger tap
-			area from making the title row taller. -->
-			<button slot="settings" type="button" aria-label="Game Settings" class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (settingsOpen = true)}>
-				<Settings size={4} />
-			</button>
-			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Game Settings</Tooltip>
+		<AyahProgress ayah={currentAyah} {chapterTransliteration} wordIndex={session.wordIndex} outcomes={session.outcomes}>
+			<svelte:fragment slot="settings">
+				<button type="button" aria-label="Game Settings" class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (settingsOpen = true)}>
+					<Settings size={4} />
+				</button>
+				<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Game Settings</Tooltip>
+			</svelte:fragment>
 		</AyahProgress>
 		<div class="mt-8 md:mt-12">
 			<AyahWordStrip ayah={currentAyah} nextAyah={upcomingAyah(session)} wordIndex={session.wordIndex} />

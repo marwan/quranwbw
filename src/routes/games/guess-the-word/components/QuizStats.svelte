@@ -14,7 +14,7 @@
 	];
 </script>
 
-<div id="quiz-stats" class="flex flex-col items-center mt-4 md:mt-6 w-full px-1 md:px-4">
+<div class="flex flex-col items-center mt-4 md:mt-6 w-full px-1 md:px-4">
 	<div class="flex flex-row flex-nowrap items-stretch w-full max-w-lg p-2 md:p-3 rounded-lg border-2 border-theme-accent/20 bg-theme-bg">
 		{#each scores as { label, correct, wrong }, index}
 			<!-- divider between the two scores -->

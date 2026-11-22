@@ -18,7 +18,7 @@
 </script>
 
 <!-- The "Guess the correct translation" prompt is on the page, outside the sliding panel, so it stays still. -->
-<div id="options" class="px-1 sm:px-3 md:px-4" role="group" aria-label="Answer choices">
+<div class="px-1 sm:px-3 md:px-4" role="group" aria-label="Answer choices">
 	<div class="grid gap-2 md:gap-4 lg:gap-6 w-full md:grid-cols-2">
 		{#each wordSet as word, index (word.word_key)}
 			<button
