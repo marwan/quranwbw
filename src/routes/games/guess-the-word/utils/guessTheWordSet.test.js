@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
-import { minTranslationDistance, advanceQuestion, advanceWord, buildQuizData, buildWordQuestion, createAyahSession, normalizeTranslation, recordWordOutcome, skipAyah, startNextAyah, translationCore, translationDistance, translationPlain } from './guessTheWordSet';
+import { minTranslationDistance, advanceQuestion, advanceWord, askableIndexes, buildQuizData, buildWordQuestion, createAyahSession, isLastAskableWord, normalizeTranslation, recordWordOutcome, skipAyah, startNextAyah, translationCore, translationDistance, translationPlain, upcomingAyah } from './guessTheWordSet';
 
 const word = (number, translation, arabic = 'كَلِمَة' + number, ayah = '1:1') => ({
 	word_key: ayah + ':' + number,
@@ -258,4 +258,41 @@ test('skipping an ayah moves to the start of the next one without counting its w
 	assert.deepEqual(session.outcomes, []);
 	session = skipAyah(session);
 	assert.equal(session.deck[session.ayahIndex].key, '1:1');
+});
+
+// Moved here from guessTheWordOptions.test.js, because they test the session functions in this file.
+
+test('words without a meaning are skipped: play starts at, steps through and ends on askable words only', () => {
+	const markedWord = (key, askable = true) => ({ word_key: key, askable });
+	const markedAyah = { key: '2:5', chapter: 2, verse: 5, words: [markedWord('2:5:1', false), markedWord('2:5:2'), markedWord('2:5:3', false), markedWord('2:5:4'), markedWord('2:5:5', false)] };
+	let session = createAyahSession([markedAyah], () => 0, { ordered: true });
+	const asked = [];
+	while (!session.isComplete) {
+		asked.push(session.deck[0].words[session.wordIndex].word_key);
+		session = advanceWord(recordWordOutcome(session, 'correct'));
+	}
+	assert.deepEqual(asked, ['2:5:2', '2:5:4']);
+	assert.deepEqual(askableIndexes(markedAyah), [1, 3]);
+	assert.equal(isLastAskableWord({ deck: [markedAyah], ayahIndex: 0, wordIndex: 3 }), true);
+	assert.equal(isLastAskableWord({ deck: [markedAyah], ayahIndex: 0, wordIndex: 1 }), false);
+});
+
+test('a range is played in order and starts over after the last ayah', () => {
+	const rangeAyahs = ['2:106', '2:107', '2:108'].map((key) => ayah(key, 1));
+	let session = createAyahSession(rangeAyahs, () => 0, { ordered: true });
+	const played = [];
+	for (let index = 0; index < 4; index++) {
+		played.push(session.deck[session.ayahIndex].key);
+		session = startNextAyah({ ...session, isComplete: true });
+	}
+	assert.deepEqual(played, ['2:106', '2:107', '2:108', '2:106']);
+});
+
+test('the upcoming ayah wraps around for a range but is unknown at the end of a shuffled deck', () => {
+	const rangeAyahs = ['2:106', '2:107', '2:108'].map((key) => ayah(key, 1));
+	const ordered = createAyahSession(rangeAyahs, () => 0, { ordered: true });
+	assert.equal(upcomingAyah({ ...ordered, ayahIndex: 2 }).key, '2:106');
+	const shuffled = createAyahSession(rangeAyahs, () => 0);
+	assert.equal(upcomingAyah({ ...shuffled, ayahIndex: 2 }), null);
+	assert.equal(upcomingAyah(createAyahSession([ayah('1:1', 1)], () => 0, { ordered: true })), null);
 });

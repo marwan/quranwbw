@@ -4,7 +4,10 @@
 
 	function getWordData(type) {
 		if (!wordDataByFont.has(type)) {
-			wordDataByFont.set(type, fetchWordData(type, 1, 1).catch((error) => (wordDataByFont.delete(type), Promise.reject(error))));
+			wordDataByFont.set(
+				type,
+				fetchWordData(type, 1, 1).catch((error) => (wordDataByFont.delete(type), Promise.reject(error)))
+			);
 		}
 		return wordDataByFont.get(type);
 	}
@@ -24,13 +27,13 @@
 	import { playWordAudio } from '$utils/audioController';
 	import { getMushafWordFontLink, isFirefoxDarkNonTajweed, isFirefoxDarkTajweed } from '$utils/getMushafWordFontLink';
 	import { __fontType, __websiteTheme } from '$utils/stores';
+	import { reducedMotion } from '../utils/reducedMotion';
 
 	const mushafFontTypes = [2, 3];
 	const slide = { duration: 250, easing: 'ease-out' };
 
 	let viewport;
 	let track;
-	let reducedMotion = false;
 
 	let previousAyah = null;
 	let shownAyah = ayah;
@@ -46,11 +49,7 @@
 	$: lineAyahs.forEach((entry) => prepare(entry, $__fontType));
 	$: tokens = ready.has(ayah.key) ? lineAyahs.filter((entry) => ready.has(entry.key)).flatMap((entry, position) => wordTokens(entry, ready.get(entry.key), position)) : [];
 
-	$: mushafPaletteClasses = isFirefoxDarkTajweed()
-		? 'hafs-palette-firefox-dark'
-		: isFirefoxDarkNonTajweed()
-			? ''
-			: [$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal', $__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : '', $__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''].join(' ');
+	$: mushafPaletteClasses = isFirefoxDarkTajweed() ? 'hafs-palette-firefox-dark' : isFirefoxDarkNonTajweed() ? '' : [$__fontType === 3 ? 'theme-palette-tajweed' : 'theme-palette-normal', $__fontType === 2 && $__websiteTheme === 5 ? 'mocha-night-font-color' : '', $__fontType === 2 && $__websiteTheme === 9 ? 'dark-luxury-font-color' : ''].join(' ');
 
 	async function prepare(entry, type) {
 		const id = type + '|' + entry.key;
@@ -101,7 +100,7 @@
 		offset = target;
 		track.getAnimations().forEach((animation) => animation.cancel());
 		track.style.transform = `translateX(${target}px)`;
-		if (Math.abs(from - target) > 0.5 && !reducedMotion) track.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${target}px)` }], slide);
+		if (Math.abs(from - target) > 0.5 && !$reducedMotion) track.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${target}px)` }], slide);
 	}
 
 	// Measure in the next frame, alongside the layout the browser does anyway, instead of forcing one mid-update.
@@ -113,7 +112,6 @@
 	afterUpdate(scheduleCenter);
 
 	onMount(() => {
-		reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		// Keep the current word centered when the strip is resized or a web font finishes loading.
 		const observer = new ResizeObserver(scheduleCenter);
 		observer.observe(viewport);

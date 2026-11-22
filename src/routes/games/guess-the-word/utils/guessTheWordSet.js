@@ -5,7 +5,7 @@ export function normalizeTranslation(word) {
 }
 
 // Checks if a word can be used in the quiz: it needs a key, Arabic text and a real translation.
-export function isUsableWord(word) {
+function isUsableWord(word) {
 	return Boolean(
 		word &&
 		typeof word.word_key === 'string' &&
@@ -31,29 +31,29 @@ export function shuffleArray(array, random = Math.random) {
 // Two options whose translations are closer than this (0 = identical, 1 = totally different) look too alike.
 export const minTranslationDistance = 0.4;
 
-// The main meaning of a translation, with bracketed words, punctuation and a leading "and" removed.
-// Example: "and (of) Allah" -> "allah".
-export function translationCore(word) {
+// Shared cleaning for translationCore and translationPlain: removes punctuation and a leading "and".
+// With `removeBrackets`, words inside (...) and [...] are removed too.
+function cleanTranslation(word, removeBrackets) {
 	const translation = normalizeTranslation(word);
-	const core = translation
-		.replace(/\([^)]*\)|\[[^\]]*\]/g, ' ') // remove (...) and [...] together with their content
+	const withoutBrackets = removeBrackets ? translation.replace(/\([^)]*\)|\[[^\]]*\]/g, ' ') : translation;
+	const cleaned = withoutBrackets
 		.replace(/[^\p{L}\p{N}\s]/gu, ' ') // remove punctuation
 		.replace(/^\s*and\s+/, '') // remove a leading "and"
 		.replace(/\s+/g, ' ')
 		.trim();
 	// If everything got removed, fall back to the original translation.
-	return core || translation;
+	return cleaned || translation;
+}
+
+// The main meaning of a translation, with bracketed words, punctuation and a leading "and" removed.
+// Example: "and (of) Allah" -> "allah".
+export function translationCore(word) {
+	return cleanTranslation(word, true);
 }
 
 // Like translationCore, but keeps the words inside brackets. Example: "(do) not" -> "do not".
 export function translationPlain(word) {
-	const translation = normalizeTranslation(word);
-	const plain = translation
-		.replace(/[^\p{L}\p{N}\s]/gu, ' ') // remove punctuation only, brackets' content stays
-		.replace(/^\s*and\s+/, '')
-		.replace(/\s+/g, ' ')
-		.trim();
-	return plain || translation;
+	return cleanTranslation(word, false);
 }
 
 // Both ways of reading a translation: [core, plain]. Two options look alike if either reading is close.
@@ -68,7 +68,7 @@ function looksAlike(formsA, formsB) {
 }
 
 // Counts how many single-letter edits (add, remove, change) turn text a into text b.
-export function levenshtein(a, b) {
+function levenshtein(a, b) {
 	if (a === b) return 0;
 	// `previous` holds the distances for the previous row of the comparison table.
 	let previous = Array.from({ length: b.length + 1 }, (_, index) => index);
@@ -103,13 +103,12 @@ export function buildWordQuestion(correctWord, allFetchedWords, excludedWordKeys
 	const wordCount = allFetchedWords.length;
 	const excludedKeys = new Set(excludedWordKeys);
 	const options = [correctWord];
-	// Track what is already chosen so no option repeats a word, a translation or an Arabic text.
-	const usedKeys = new Set([correctWord.word_key]);
+	// Track what is already chosen so no option repeats a translation or an Arabic text.
 	const usedTranslations = new Set([normalizeTranslation(correctWord)]);
 	const usedArabicWords = new Set([correctWord.word_arabic.trim()]);
 	const usedForms = [translationForms(correctWord)];
 	// Start looking at a random position in the pool so the wrong options differ every time.
-	const randomStart = Math.min(wordCount - 1, Math.floor(random() * wordCount));
+	const randomStart = Math.floor(random() * wordCount);
 
 	// Pick in rounds, strictest first: prefer wrong options that look unlike every chosen option and were not
 	// in the last question, then allow older words, and only accept look-alike translations as a last resort.
@@ -123,14 +122,13 @@ export function buildWordQuestion(correctWord, allFetchedWords, excludedWordKeys
 		for (let offset = 0; offset < wordCount && options.length < 4; offset++) {
 			// Walk through the pool from the random start, wrapping around at the end.
 			const candidate = allFetchedWords[(randomStart + offset) % wordCount];
-			if (!isUsableWord(candidate) || usedKeys.has(candidate.word_key) || (!allowPrevious && excludedKeys.has(candidate.word_key))) continue;
+			if (!isUsableWord(candidate) || (!allowPrevious && excludedKeys.has(candidate.word_key))) continue;
 			const translation = normalizeTranslation(candidate);
 			const arabicWord = candidate.word_arabic.trim();
 			if (usedTranslations.has(translation) || usedArabicWords.has(arabicWord)) continue;
 			const forms = translationForms(candidate);
 			if (requireDistinct && usedForms.some((used) => looksAlike(forms, used))) continue;
 			options.push(candidate);
-			usedKeys.add(candidate.word_key);
 			usedTranslations.add(translation);
 			usedArabicWords.add(arabicWord);
 			usedForms.push(forms);

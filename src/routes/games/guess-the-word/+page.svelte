@@ -12,6 +12,7 @@
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers, __quizWordTranslation, __wordTranslation } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
+	import { fetchWordData } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { quranMetaData } from '$data/quranMeta';
@@ -19,8 +20,8 @@
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { describeRange, gameQueryString, isAyahInRange, parseAyahRange, resolveWordTranslation } from './utils/guessTheWordOptions';
-	import { fetchQuizData } from './utils/guessTheWordGame';
-	import { advanceQuestion, askableIndexes, buildWordQuestion, createAyahSession, isLastAskableWord, recordWordOutcome, skipAyah, upcomingAyah } from './utils/guessTheWordSet';
+	import { advanceQuestion, askableIndexes, buildQuizData, buildWordQuestion, createAyahSession, isLastAskableWord, recordWordOutcome, shuffleArray, skipAyah, upcomingAyah } from './utils/guessTheWordSet';
+	import { reducedMotion } from './utils/reducedMotion';
 	import { linear } from 'svelte/easing';
 	import { onMount, tick } from 'svelte';
 
@@ -57,7 +58,6 @@
 	let isLoading = false;
 	let quizError = null;
 	let disposed = false;
-	let reducedMotion = false;
 	let quizControls;
 	let moveFocus = false;
 
@@ -76,17 +76,20 @@
 	$: isLastWord = session && isLastAskableWord(session);
 
 	onMount(() => {
-		const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const updateMotion = () => (reducedMotion = motionQuery.matches);
-		updateMotion();
-		motionQuery.addEventListener('change', updateMotion);
 		startGame();
 		return () => {
 			disposed = true;
 			clearTimeout(autoProgressTimeout);
-			motionQuery.removeEventListener('change', updateMotion);
 		};
 	});
+
+	// Fetches every word of the Quran in the chosen translation language and turns it into quiz data
+	// (ayahs + a flat list of words). Only the word list is shuffled, because wrong options are picked by
+	// walking through it in order; the ayahs keep their order.
+	async function fetchQuizData(translation) {
+		const data = buildQuizData(await fetchWordData(1, translation, 1));
+		return { ...data, words: shuffleArray(data.words) };
+	}
 
 	// Each start gets an id, so a game started with new settings wins over a load still in flight.
 	let loadId = 0;
@@ -239,8 +242,8 @@
 					tabindex="-1"
 					role="group"
 					aria-label={'Word ' + (askableIndexes(currentAyah).indexOf(session.wordIndex) + 1) + ' of ' + askableIndexes(currentAyah).length}
-					in:slideIn|global={{ duration: reducedMotion || !slideOptions ? 0 : optionsSlideDuration }}
-					out:slideOut={{ duration: reducedMotion ? 0 : optionsSlideDuration }}
+					in:slideIn|global={{ duration: $reducedMotion || !slideOptions ? 0 : optionsSlideDuration }}
+					out:slideOut={{ duration: $reducedMotion ? 0 : optionsSlideDuration }}
 					on:introend={onQuestionReady}
 				>
 					<AnswerOptions wordSet={currentWordSet} {selection} on:answer={checkAnswer} {answerChecked} {isAnswerCorrect} isGeneratingWordSet={!questionReady} {correctAnswerIndex} {translationClasses} />
