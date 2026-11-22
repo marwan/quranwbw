@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'vitest';
-import { MIN_TRANSLATION_DISTANCE, advanceQuestion, advanceWord, buildQuizData, buildWordQuestion, createAyahSession, normalizeTranslation, recordWordOutcome, skipAyah, startNextAyah, translationCore, translationDistance, translationPlain } from './guessTheWordSet';
+import { minTranslationDistance, advanceQuestion, advanceWord, buildQuizData, buildWordQuestion, createAyahSession, normalizeTranslation, recordWordOutcome, skipAyah, startNextAyah, translationCore, translationDistance, translationPlain } from './guessTheWordSet';
 
 const word = (number, translation, arabic = 'كَلِمَة' + number, ayah = '1:1') => ({
 	word_key: ayah + ':' + number,
@@ -9,7 +9,9 @@ const word = (number, translation, arabic = 'كَلِمَة' + number, ayah = '1
 	word_transliteration: 'kalima'
 });
 const ayah = (key, length) => ({
-	key, chapter: +key.split(':')[0], verse: +key.split(':')[1],
+	key,
+	chapter: +key.split(':')[0],
+	verse: +key.split(':')[1],
 	words: Array.from({ length }, (_, index) => word(index + 1, 'meaning ' + index, undefined, key))
 });
 const identityRandom = () => 0.999;
@@ -37,7 +39,12 @@ test('the next ayah word is still asked if it appeared in the previous question'
 
 test('small datasets can reuse distractors without duplicating the correct answer', () => {
 	const words = Array.from({ length: 4 }, (_, index) => word(index + 1, 'meaning ' + index));
-	const result = buildWordQuestion(words[0], words, words.map((entry) => entry.word_key), () => 0);
+	const result = buildWordQuestion(
+		words[0],
+		words,
+		words.map((entry) => entry.word_key),
+		() => 0
+	);
 	assert.equal(result.wordSet.length, 4);
 	assert.equal(new Set(result.wordSet.map(normalizeTranslation)).size, 4);
 });
@@ -71,7 +78,7 @@ test('look-alike translations are skipped when distinct distractors exist', () =
 	const result = buildWordQuestion(words[0], words, [], () => 0);
 	const cores = result.wordSet.map(translationCore);
 	for (let i = 0; i < cores.length; i++) {
-		for (let j = i + 1; j < cores.length; j++) assert.ok(translationDistance(cores[i], cores[j]) >= MIN_TRANSLATION_DISTANCE, cores[i] + ' / ' + cores[j]);
+		for (let j = i + 1; j < cores.length; j++) assert.ok(translationDistance(cores[i], cores[j]) >= minTranslationDistance, cores[i] + ' / ' + cores[j]);
 	}
 	assert.ok(!result.wordSet.some((entry) => entry === words[1] || entry === words[2]));
 	assert.ok(!(result.wordSet.includes(words[3]) && result.wordSet.includes(words[4])));
@@ -104,9 +111,18 @@ test('data preparation preserves numeric ayah and word order and keeps words wit
 		arabicWordData: { 2: { 10: [['ج', 'د']], 2: [['ا', 'ب']], 3: [['ه', 'و', 'ز']], 4: null, 5: [['ح']] } },
 		translationWordData: { 2: { 10: [['earth', 'fire']], 2: [['water', 'air']], 3: [['clay', '', '*\r\n']], 5: [['*']] } }
 	});
-	assert.deepEqual(data.ayahs.map((entry) => entry.key), ['2:2', '2:3', '2:10']);
-	assert.deepEqual(data.ayahs[0].words.map((entry) => entry.word_key), ['2:2:1', '2:2:2']);
-	assert.deepEqual(data.ayahs[1].words.map((entry) => entry.askable), [true, false, false]);
+	assert.deepEqual(
+		data.ayahs.map((entry) => entry.key),
+		['2:2', '2:3', '2:10']
+	);
+	assert.deepEqual(
+		data.ayahs[0].words.map((entry) => entry.word_key),
+		['2:2:1', '2:2:2']
+	);
+	assert.deepEqual(
+		data.ayahs[1].words.map((entry) => entry.askable),
+		[true, false, false]
+	);
 	assert.equal(data.words.length, 5);
 	assert.throws(() => buildQuizData({}), /unavailable/);
 	assert.throws(() => buildQuizData({ arabicWordData: {}, translationWordData: {} }), /not enough/);
@@ -119,7 +135,10 @@ test('a new session starts at word one, with a manageable opening ayah when avai
 	assert.equal(session.wordIndex, 0);
 	assert.deepEqual(session.outcomes, []);
 	assert.equal(session.isComplete, false);
-	assert.deepEqual(source.map((entry) => entry.key), ['1:1', '1:2', '1:3']);
+	assert.deepEqual(
+		source.map((entry) => entry.key),
+		['1:1', '1:2', '1:3']
+	);
 });
 
 test('correct, wrong, and skipped words all advance exactly one position in the same ayah', () => {
