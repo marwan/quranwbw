@@ -29,7 +29,7 @@ The correct answer stays on one line: it is also marked among the options above.
 <div class="h-[4.5rem] flex items-center justify-center w-full" aria-live="polite">
 	{#if answerChecked}
 		{#if isAnswerCorrect}
-			<div class="text-center text-sm font-medium">Correct! Next {isLastWord ? term('verse') : 'word'}…</div>
+			<div class="text-center text-sm">Correct! Moving on to the next {isLastWord ? term('verse') : 'word'}…</div>
 		{:else}
 			<div class="flex max-w-full flex-col items-center space-y-4 px-2 md:px-0">
 				<p class="max-w-full truncate text-center text-sm" title={correctAnswer}>Correct answer: <span class={translationClasses}>{correctAnswer}</span></p>
