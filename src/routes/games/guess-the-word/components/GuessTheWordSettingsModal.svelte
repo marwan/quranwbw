@@ -12,12 +12,14 @@
 	import { compareAyahs, gameWordTranslations, parseAyahKey } from '../utils/guessTheWordOptions';
 	import { createEventDispatcher } from 'svelte';
 
-	export let open = false;
-	export let wordTranslation = 1;
-	export let range = null;
+	// Settings currently used by the game (set by the page)
+	export let open = false; // whether the modal is visible
+	export let wordTranslation = 1; // current language id
+	export let range = null; // current range as { from, to }, or null for the whole Quran
 	// Chapter of the ayah on screen, used to suggest a range when there is none yet.
 	export let currentChapter = 1;
 
+	// Used to tell the page which settings were chosen (the "apply" event)
 	const dispatch = createEventDispatcher();
 
 	// CSS classes for radio buttons and dropdown items (same as the audio modal)
@@ -25,9 +27,9 @@
 	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 
 	// Edits stay in a draft until Start, so closing the window changes nothing.
-	let draftLanguage;
-	let mode;
-	let fromChapter, fromVerse, toChapter, toVerse;
+	let draftLanguage; // language chosen in the modal
+	let mode; // 'whole' = whole Quran, 'range' = custom range
+	let fromChapter, fromVerse, toChapter, toVerse; // the custom range being edited
 
 	// Open state and search text of each dropdown
 	let fromChapterDropdownOpen = false;
@@ -39,6 +41,7 @@
 	let toChapterSearch = '';
 	let toVerseSearch = '';
 
+	// Runs the draft reset once each time the modal changes from closed to open.
 	// One block, so the reset is checked before `wasOpen` is updated (separate statements get reordered).
 	let wasOpen = false;
 	$: {
@@ -50,15 +53,18 @@
 	function resetDraft() {
 		draftLanguage = wordTranslation;
 		mode = range ? 'range' : 'whole';
+		// With no range yet, suggest the chapter the player is currently on (whole chapter, first to last verse)
 		const chapter = range?.from.chapter ?? currentChapter;
 		fromChapter = chapter;
 		fromVerse = range?.from.verse ?? 1;
 		toChapter = range?.to.chapter ?? chapter;
 		toVerse = range?.to.verse ?? quranMetaData[chapter].verses;
+		// Start every dropdown with an empty search box
 		fromChapterSearch = fromVerseSearch = toChapterSearch = toVerseSearch = '';
 	}
 
 	// List of whole numbers from first to last, e.g. numbersBetween(3, 5) gives [3, 4, 5]
+	// (an empty list if last is smaller than first)
 	function numbersBetween(first, last) {
 		return Array.from({ length: Math.max(last - first + 1, 0) }, (_, index) => first + index);
 	}
@@ -68,13 +74,15 @@
 		return `${chapter}. ${quranMetaData[chapter].transliteration}`;
 	}
 
-	// Chapters from `first` to 114 that match the search text (by number or name)
+	// Chapters from `first` to 114 that match the search text (by number or name).
+	// The "till" list passes the "from" chapter as `first`, so it never offers an earlier chapter.
 	function chaptersMatching(first, search) {
 		const text = search.trim().toLowerCase();
 		return numbersBetween(first, 114).filter((chapter) => chapterName(chapter).toLowerCase().includes(text));
 	}
 
-	// Verses from `first` to the end of the chapter that match the search text
+	// Verses from `first` to the end of the chapter that match the search text.
+	// The "till" list passes the "from" verse as `first` when both are in the same chapter.
 	function versesMatching(first, chapter, search) {
 		return numbersBetween(first, quranMetaData[chapter].verses).filter((verse) => String(verse).includes(search.trim()));
 	}
@@ -91,11 +99,12 @@
 	function selectFromChapter(chapter) {
 		fromChapter = chapter;
 		fromVerse = 1;
-		fromChapterDropdownOpen = false;
-		fromChapterSearch = '';
+		fromChapterDropdownOpen = false; // close the dropdown
+		fromChapterSearch = ''; // clear the search box for next time
 		keepRangeValid();
 	}
 
+	// Picking a "from" verse (inside the "from" chapter)
 	function selectFromVerse(verse) {
 		fromVerse = verse;
 		fromVerseDropdownOpen = false;
@@ -111,12 +120,15 @@
 		toChapterSearch = '';
 	}
 
+	// Picking a "till" verse (inside the "till" chapter). No range check needed, because the list
+	// only offered verses that come after "from".
 	function selectToVerse(verse) {
 		toVerse = verse;
 		toVerseDropdownOpen = false;
 		toVerseSearch = '';
 	}
 
+	// The draft range as full ayah objects (with keys like "2:106"), or null if the numbers are not a real ayah
 	$: draftFrom = parseAyahKey(`${fromChapter}:${fromVerse}`);
 	$: draftTo = parseAyahKey(`${toChapter}:${toVerse}`);
 	// Start is only allowed for the whole Quran, or for a valid range that does not go backwards
