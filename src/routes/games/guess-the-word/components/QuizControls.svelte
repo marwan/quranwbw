@@ -8,6 +8,7 @@
 	export let isGeneratingWordSet = false;
 	export let correctAnswer = '';
 	export let isLastWord = false;
+	export let canSkipAyah = true;
 	// Font and direction of the chosen word-by-word language (e.g. right-to-left for Urdu).
 	export let translationClasses = '';
 
@@ -39,7 +40,7 @@ The correct answer stays on one line: it is also marked among the options above.
 		<div class="flex flex-row gap-3 justify-center w-full px-2 md:px-0">
 			<button class={controlButtonClasses} disabled={isGeneratingWordSet} on:click={() => dispatch('skip')}>Skip Word</button>
 			<!-- On the last word, skipping the word already moves to the next verse. -->
-			{#if !isLastWord}
+			{#if !isLastWord && canSkipAyah}
 				<button class={controlButtonClasses} disabled={isGeneratingWordSet} on:click={() => dispatch('skipAyah')}>Skip {term('verse')}</button>
 			{/if}
 		</div>

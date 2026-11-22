@@ -284,7 +284,7 @@
 				</div>
 			{/key}
 		</div>
-		<QuizControls bind:this={quizControls} {answerChecked} {isAnswerCorrect} {isLastWord} isGeneratingWordSet={!questionReady} correctAnswer={currentWordSet[correctAnswerIndex].word_english} {translationClasses} on:next={() => continueWord()} on:skip={() => continueWord(true)} on:skipAyah={skipCurrentAyah} />
+		<QuizControls bind:this={quizControls} {answerChecked} {isAnswerCorrect} {isLastWord} canSkipAyah={session.deck.length > 1} isGeneratingWordSet={!questionReady} correctAnswer={currentWordSet[correctAnswerIndex].word_english} {translationClasses} on:next={() => continueWord()} on:skip={() => continueWord(true)} on:skipAyah={skipCurrentAyah} />
 		<QuizStats {sessionCorrect} {sessionWrong} allTimeCorrect={$__quizCorrectAnswers} allTimeWrong={$__quizWrongAnswers} />
 	{/if}
 </div>
