@@ -7,10 +7,12 @@
 	import QuizStats from './components/QuizStats.svelte';
 	import AyahProgress from './components/AyahProgress.svelte';
 	import AyahWordStrip from './components/AyahWordStrip.svelte';
-	import GuessTheWordSettings from './components/GuessTheWordSettings.svelte';
+	import GuessTheWordSettingsModal from './components/GuessTheWordSettingsModal.svelte';
 	import Settings from '$svgs/Settings.svelte';
+	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { __currentPage, __quizCorrectAnswers, __quizWrongAnswers, __quizWordTranslation, __wordTranslation } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
+	import { term } from '$utils/terminologies';
 	import { buttonOutlineClasses } from '$data/commonClasses';
 	import { quranMetaData } from '$data/quranMeta';
 	import { selectableWordTranslations } from '$data/options';
@@ -70,14 +72,14 @@
 	$: translationClasses = selectableWordTranslations[wordTranslation]?.customClasses || '';
 
 	$: currentAyah = session?.deck[session.ayahIndex];
-	$: chapterName = currentAyah ? quranMetaData[currentAyah.chapter]?.translation || 'Surah ' + currentAyah.chapter : '';
+	$: chapterName = currentAyah ? quranMetaData[currentAyah.chapter]?.translation || term('chapter') + ' ' + currentAyah.chapter : '';
 	$: chapterTransliteration = currentAyah ? quranMetaData[currentAyah.chapter]?.transliteration || '' : '';
 	$: chapterArabic = currentAyah ? quranMetaData[currentAyah.chapter]?.arabic || '' : '';
 	$: isLastWord = session && isLastAskableWord(session);
 
 	onMount(() => {
 		const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const updateMotion = () => reducedMotion = motionQuery.matches;
+		const updateMotion = () => (reducedMotion = motionQuery.matches);
 		updateMotion();
 		motionQuery.addEventListener('change', updateMotion);
 		startGame();
@@ -104,7 +106,7 @@
 			const data = await fetchQuizData(wordTranslation);
 			if (disposed || id !== loadId) return;
 			const ayahs = data.ayahs.filter((ayah) => isAyahInRange(ayah, range));
-			if (!ayahs.length) throw new Error('None of the ayahs in ' + describeRange(range) + ' have a ' + languageName + ' meaning for every word. Choose another range or language.');
+			if (!ayahs.length) throw new Error('None of the ' + term('verse') + 's in ' + describeRange(range) + ' have a ' + languageName + ' meaning for every word. Choose another range or language.');
 			quizData = data;
 			previousWordKeys = [];
 			showQuestion(createAyahSession(ayahs, Math.random, { ordered: Boolean(range) }));
@@ -133,17 +135,13 @@
 
 	function showError(error) {
 		clearTimeout(autoProgressTimeout);
-		quizError = error instanceof Error ? error : new Error('Unable to load this ayah. Please try again.');
+		quizError = error instanceof Error ? error : new Error('Unable to load this ' + term('verse') + '. Please try again.');
 		questionReady = false;
 	}
 
 	function showQuestion(nextSession) {
 		const ayah = nextSession.deck[nextSession.ayahIndex];
-		const result = buildWordQuestion(
-			ayah.words[nextSession.wordIndex],
-			quizData.words,
-			[...previousWordKeys, ...ayah.words.map((word) => word.word_key)]
-		);
+		const result = buildWordQuestion(ayah.words[nextSession.wordIndex], quizData.words, [...previousWordKeys, ...ayah.words.map((word) => word.word_key)]);
 		questionReady = false;
 		selection = null;
 		answerChecked = false;
@@ -177,7 +175,7 @@
 		} else {
 			sessionWrong++;
 			updateSettings({ type: 'quizWrongAnswers', value: $__quizWrongAnswers + 1 });
-			// Wait for the player: the correct answer stays up until they press Next word / Next ayah.
+			// Wait for the player: the correct answer stays up until they press the Next button.
 			await tick();
 			if (!disposed) quizControls?.focusNext();
 		}
@@ -209,37 +207,37 @@
 	__currentPage.set('Guess The Word');
 </script>
 
-<PageHead title="Guess The Word" description="Learn Quranic vocabulary by following each ayah, one word at a time." />
+<PageHead title="Guess The Word" description="Learn Quranic vocabulary by following each {term('verse')}, one word at a time." />
 
 <!-- No top padding of our own: the site layout already clears the fixed navbar. -->
 <div class="mx-auto w-full max-w-3xl pb-5 md:pb-8">
 	{#if quizError}
 		<ErrorLoadingData error={quizError} center={false} />
 		<div class="mt-5 flex flex-wrap justify-center gap-3">
-			<button class={buttonOutlineClasses} disabled={isLoading} on:click={startGame}>Try again</button>
+			<button class={buttonOutlineClasses} disabled={isLoading} on:click={startGame}>Try Again</button>
 			<!-- Settings stay reachable when a chosen range or language cannot be played. -->
-			<button class="{buttonOutlineClasses} inline-flex items-center gap-2" aria-haspopup="dialog" on:click={() => (settingsOpen = true)}><Settings size={4} /> Game settings</button>
+			<button class="{buttonOutlineClasses} inline-flex items-center gap-2" aria-haspopup="dialog" on:click={() => (settingsOpen = true)}><Settings size={4} /> Game Settings</button>
 		</div>
 	{:else if !session}
-		<div class="py-16" role="status" aria-label="Loading ayahs"><Spinner /></div>
+		<div class="py-16" role="status" aria-label="Loading {term('verse')}s"><Spinner /></div>
 	{:else}
 		<AyahProgress ayah={currentAyah} {chapterName} {chapterTransliteration} {chapterArabic} wordIndex={session.wordIndex} outcomes={session.outcomes}>
 			<!-- The negative margins keep the label's edge in line with the counter below and stop the larger tap
 			area from making the title row taller. -->
-			<button slot="settings" type="button" title="{languageName}, {describeRange(range)}" aria-label="Game settings: {languageName}, {describeRange(range)}" class="-my-1.5 -me-2.5 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-sm hover:bg-theme-accent/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-theme-accent" aria-haspopup="dialog" on:click={() => (settingsOpen = true)}>
+			<button slot="settings" type="button" aria-label="Game Settings" class="inline-flex p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => (settingsOpen = true)}>
 				<Settings size={4} />
-				<span>Game settings</span>
 			</button>
+			<Tooltip arrow={false} type="light" placement="top" class="z-30 w-max hidden md:block font-normal">Game Settings</Tooltip>
 		</AyahProgress>
 		<div class="mt-8 md:mt-12">
 			<AyahWordStrip ayah={currentAyah} nextAyah={upcomingAyah(session)} wordIndex={session.wordIndex} />
 		</div>
 		<!-- Outside the sliding panel, so only the options move. -->
-		<p class="px-1 pt-4 text-xs sm:px-3 md:px-4 md:pt-6 md:text-sm">Guess the correct translation:</p>
+		<p class="px-1 pt-6 text-sm sm:px-3 md:px-4 md:pt-6">Guess the correct translation:</p>
 		<div class="grid overflow-hidden" inert={!questionReady}>
 			{#key wordSetKey}
 				<div
-					class="col-start-1 row-start-1 min-w-0 pb-4 pt-2 outline-none md:pb-6 md:pt-5"
+					class="col-start-1 row-start-1 min-w-0 outline-none py-4 md:py-6"
 					tabindex="-1"
 					role="group"
 					aria-label={'Word ' + (askableIndexes(currentAyah).indexOf(session.wordIndex) + 1) + ' of ' + askableIndexes(currentAyah).length}
@@ -247,33 +245,13 @@
 					out:slideOut={{ duration: reducedMotion ? 0 : optionsSlideDuration }}
 					on:introend={onQuestionReady}
 				>
-					<AnswerOptions
-						wordSet={currentWordSet}
-						{selection}
-						on:answer={checkAnswer}
-						{answerChecked}
-						{isAnswerCorrect}
-						isGeneratingWordSet={!questionReady}
-						{correctAnswerIndex}
-						{translationClasses}
-					/>
+					<AnswerOptions wordSet={currentWordSet} {selection} on:answer={checkAnswer} {answerChecked} {isAnswerCorrect} isGeneratingWordSet={!questionReady} {correctAnswerIndex} {translationClasses} />
 				</div>
 			{/key}
 		</div>
-		<QuizControls
-			bind:this={quizControls}
-			{answerChecked}
-			{isAnswerCorrect}
-			{isLastWord}
-			isGeneratingWordSet={!questionReady}
-			correctAnswer={currentWordSet[correctAnswerIndex].word_english}
-			{translationClasses}
-			on:next={() => continueWord()}
-			on:skip={() => continueWord(true)}
-			on:skipAyah={skipCurrentAyah}
-		/>
+		<QuizControls bind:this={quizControls} {answerChecked} {isAnswerCorrect} {isLastWord} isGeneratingWordSet={!questionReady} correctAnswer={currentWordSet[correctAnswerIndex].word_english} {translationClasses} on:next={() => continueWord()} on:skip={() => continueWord(true)} on:skipAyah={skipCurrentAyah} />
 		<QuizStats {sessionCorrect} {sessionWrong} allTimeCorrect={$__quizCorrectAnswers} allTimeWrong={$__quizWrongAnswers} />
 	{/if}
 </div>
 
-<GuessTheWordSettings bind:open={settingsOpen} {wordTranslation} {range} currentChapter={currentAyah?.chapter ?? 1} on:apply={applySettings} />
+<GuessTheWordSettingsModal bind:open={settingsOpen} {wordTranslation} {range} currentChapter={currentAyah?.chapter ?? 1} on:apply={applySettings} />

@@ -1,10 +1,9 @@
 <script>
 	import { askableIndexes } from '../utils/guessTheWordSet';
+	import { term } from '$utils/terminologies';
 
 	export let ayah;
-	export let chapterName;
 	export let chapterTransliteration;
-	export let chapterArabic = '';
 	export let wordIndex;
 	export let outcomes = [];
 
@@ -19,30 +18,23 @@
 	$: if (ayah.key !== firstAyahKey) slideTitle = true;
 </script>
 
-<!-- The header stays mounted across ayahs. The title is keyed on the ayah and slides in like the ayah line
-(CSS on the compositor, so it never waits on script or layout). The progress bar fills instantly. -->
-<section aria-label="Current ayah">
-	<!-- Two rows: title | settings cog, then surah and ayah | word counter (sharing a baseline). -->
-	<div class="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1">
+<section aria-label="Current {term('verse')}" class="px-1 sm:px-3">
+	<!-- One row: chapter name and verse on the left, word counter and settings button on the right. -->
+	<div class="flex flex-row items-center justify-between gap-x-3">
 		{#key ayah.key}
-			<h1 class:title-in={slideTitle} class="min-w-0 text-lg font-semibold md:text-xl">{chapterName}</h1>
+			<h1 class:title-in={slideTitle} class="flex min-w-0 items-baseline whitespace-nowrap text-sm">
+				<!-- The chapter name gets "…" when space runs out, the verse number always stays visible. -->
+				<span class="min-w-0 truncate">{chapterTransliteration}, {ayah.key}</span>
+			</h1>
 		{/key}
-		<div class="flex self-center justify-self-end">
+		<div class="flex flex-shrink-0 flex-row items-center gap-x-2">
+			<p class="whitespace-nowrap text-sm tabular-nums" aria-live="polite" aria-atomic="true">Word {wordNumber} of {askable.length}</p>
 			<slot name="settings" />
 		</div>
-		{#key ayah.key}
-			<!-- One line: the surah names get "…" when space runs out, the ayah number always stays visible.
-			The Arabic name is isolated so the bidi algorithm doesn't reorder it with the Latin text around it. It is hidden on
-			the narrowest phones, where it would be cut into broken letters; elsewhere it is an inline block, so it is shown
-			whole or replaced by the "…". -->
-			<p class:title-in={slideTitle} class="flex min-w-0 items-baseline gap-1 whitespace-nowrap text-sm text-theme-text/75">
-				<span class="min-w-0 truncate">{chapterTransliteration} <span lang="ar" dir="rtl" class="hidden min-[430px]:inline-block">{chapterArabic}</span></span>
-				<span class="flex-shrink-0">· Ayah {ayah.key}</span>
-			</p>
-		{/key}
-		<p class="justify-self-end whitespace-nowrap text-sm tabular-nums" aria-live="polite" aria-atomic="true">Word <strong>{wordNumber}</strong> of {askable.length}</p>
 	</div>
-	<div class="mt-4 h-1 overflow-hidden rounded-full bg-theme-accent/15" role="progressbar" aria-label="Words practiced in this ayah" aria-valuemin="0" aria-valuemax={askable.length} aria-valuenow={completedWords}>
+
+	<!-- Progress bar fills instantly -->
+	<div class="mt-3 h-1 overflow-hidden rounded-full bg-theme-accent/15" role="progressbar" aria-label="Words practiced in this {term('verse')}" aria-valuemin="0" aria-valuemax={askable.length} aria-valuenow={completedWords}>
 		<div class="h-full origin-left rounded-full bg-theme-accent" style:transform="scaleX({completedWords / askable.length})"></div>
 	</div>
 </section>
