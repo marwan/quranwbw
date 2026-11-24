@@ -210,7 +210,7 @@
 
 	<!-- Show the progress tracker for specific pages only -->
 	{#if ['chapter', 'juz', 'hizb'].includes($__currentPage)}
-		<div id="progress-bar" class="fixed inset-x-0 z-20 h-1 rounded-r-3xl bg-theme-accent" style="width: {readingProgress}%" />
+		<div id="progress-bar" class="fixed inset-x-0 z-20 h-1 rounded-r-3xl bg-theme-accent" style="width: {readingProgress}%"></div>
 	{/if}
 
 	<!-- mini nav for mushaf page -->

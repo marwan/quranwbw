@@ -26,18 +26,19 @@
 	$: headerCls = twMerge(headerClass, classHeader);
 	$: ulCls = twMerge('py-1', $$props.class);
 	$: footerCls = twMerge(footerClass, classFooter);
-	$: {
-		// set default values
-		$$restProps.arrow = $$restProps.arrow ?? false;
-		$$restProps.trigger = $$restProps.trigger ?? 'click';
-		$$restProps.placement = $$restProps.placement ?? 'bottom';
-		$$restProps.color = $$restProps.color ?? 'dropdown';
-		$$restProps.shadow = $$restProps.shadow ?? true;
-		$$restProps.rounded = $$restProps.rounded ?? true;
-	}
+	// build props for Popper (assigning into $$restProps no longer works in Svelte 5)
+	$: popperProps = {
+		...$$restProps,
+		arrow: $$restProps.arrow ?? false,
+		trigger: $$restProps.trigger ?? 'click',
+		placement: $$restProps.placement ?? 'bottom',
+		color: $$restProps.color ?? 'dropdown',
+		shadow: $$restProps.shadow ?? true,
+		rounded: $$restProps.rounded ?? true
+	};
 </script>
 
-<Popper activeContent {...$$restProps} class={containerCls} on:show bind:open>
+<Popper activeContent {...popperProps} class={containerCls} on:show bind:open>
 	{#if $$slots.header}
 		<div class={headerCls}>
 			<slot name="header" />
