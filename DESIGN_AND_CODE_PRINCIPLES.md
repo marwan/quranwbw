@@ -120,7 +120,7 @@ Every theme is defined in `app.html` as an `html.theme-{id}` block that sets `--
 
 ### 3.4 Reusable UI Patterns
 
-- **Shared Class Constants (`$data/commonClasses`)**: Always import the shared constants (e.g., `buttonClasses`, `buttonOutlineClasses`, `linkClasses`, `disabledClasses`, `individualRadioClasses`, `individualCheckboxClasses`, `selectedRadioOrCheckboxClasses`) rather than duplicating them. The file may grow, so check it first. Any class string repeated more than 2-3 times should be added there (see Section 5.4).
+- **Shared Class Constants (`$data/commonClasses`)**: Always import the shared constants (e.g., `buttonClasses`, `buttonOutlineClasses`, `linkClasses`, `disabledClasses`, `individualRadioClasses`, `individualCheckboxClasses`, `selectedRadioOrCheckboxClasses`) rather than duplicating them. The file may grow, so check it first. A class string repeated more than 2-3 times across multiple files should be added there (see Section 5.4). If it is repeated only within a single file, use a local `*Classes` constant instead.
 - **Interactive Pill / Card Surface**: Use `border border-transparent hover:border-theme-accent bg-theme-accent/5` for subtle interactive tiles, navigation links, and verse key badges.
 - **Standard Bottom-Sheet Modal**:
   - Open from bottom on mobile (`!rounded-b-none md:!rounded-3xl`), round all corners on desktop, constrain height (`max-h-[90vh] flex flex-col`), and scroll only the inner content container (`flex-1 min-h-0 overflow-y-auto w-full pr-2`):
@@ -246,8 +246,9 @@ These rules keep the codebase small, readable, and easy to navigate for both hum
 
 ### 5.4 Reuse Instead of Repeating
 
-- If the same Tailwind classes are repeated more than 2-3 times, add them to `$data/commonClasses` and import them.
-- If the same inline markup with the same Tailwind classes is repeated multiple times (a button, pill, etc.), turn it into a component.
+- If the same Tailwind classes are repeated more than 2-3 times **across multiple files**, add them to `$data/commonClasses` and import them.
+- If the repetition is only within a single file, do not move it to a shared file. Use a local `*Classes` constant (or a loop such as `{#each}`) in that file.
+- If the same inline markup with the same Tailwind classes (a button, pill, etc.) is repeated across multiple files, turn it into a component. If it is repeated only within one file, keep it local in that file.
 
 ---
 
@@ -267,7 +268,7 @@ These rules keep the codebase small, readable, and easy to navigate for both hum
 - **Names must be self-explanatory.** Util files, Svelte components, data files, and functions get descriptive names instead of short or generic ones (e.g., not `options.js`). Functions have a `//` comment on top and inside wherever the logic needs explaining.
 - **Do not split code into separate files/components without a valid reason.** Keep it in the same file unless it is used elsewhere.
 - **Every file in `$utils`, `$data`, and `$display`/`$ui`/`$misc`/`$views` components must be imported somewhere.** No unused files.
-- **Repeated Tailwind classes (more than 2-3 times) go into `$data/commonClasses`**, and repeated inline markup with the same classes (button, pill, etc.) becomes a component.
+- **Repeated Tailwind classes (more than 2-3 times across multiple files) go into `$data/commonClasses`**, and repeated inline markup with the same classes (button, pill, etc.) across multiple files becomes a component. If the repetition is only inside a single file, use a local constant instead.
 
 ---
 
@@ -319,12 +320,12 @@ function check_reader_state(current_page) {
 ```js
 // DO: Mutate settings via updateSettings() and prefix stores with __
 // SettingsDrawer.svelte & updateSettings.js pattern
-import { __wideWesbiteLayoutEnabled } from '$utils/stores';
+import { __wideWebsiteLayoutEnabled } from '$utils/stores';
 import { updateSettings } from '$utils/updateSettings';
 
 function toggleWideLayout(enabled) {
 	// Persist setting to localStorage and sync the store
-	updateSettings({ type: 'wideWesbiteLayoutEnabled', value: enabled });
+	updateSettings({ type: 'wideWebsiteLayoutEnabled', value: enabled });
 }
 ```
 
@@ -466,10 +467,10 @@ function cnt(a, b) {
 }
 ```
 
-### 10. Repeated Markup & Classes
+### 10. Repeated Markup & Classes (Across Files vs. Single File)
 
 ```svelte
-<!-- DO: Turn repeated inline markup (button, pill, etc.) into one component -->
+<!-- DO: If the same button/pill markup is used across multiple files, make it one component -->
 <!-- e.g. a component such as ActionPill.svelte, then reuse it -->
 <ActionPill label="Copy" on:click={copyVerse} />
 <ActionPill label="Share" on:click={shareVerse} />
@@ -477,10 +478,20 @@ function cnt(a, b) {
 ```
 
 ```svelte
-<!-- DON'T: Copy-paste the same Tailwind classes on every element -->
+<!-- DON'T: Copy-paste the same Tailwind classes in multiple files -->
 <button class="rounded-full border border-transparent hover:border-theme-accent bg-theme-accent/5 px-3 py-1 text-sm" on:click={copyVerse}>Copy</button>
 <button class="rounded-full border border-transparent hover:border-theme-accent bg-theme-accent/5 px-3 py-1 text-sm" on:click={shareVerse}>Share</button>
 <button class="rounded-full border border-transparent hover:border-theme-accent bg-theme-accent/5 px-3 py-1 text-sm" on:click={bookmarkVerse}>Bookmark</button>
+```
+
+```svelte
+<script>
+	// DO: If the repetition is only inside this one file, use a local constant
+	const actionPillClasses = 'rounded-full border border-transparent hover:border-theme-accent bg-theme-accent/5 px-3 py-1 text-sm';
+</script>
+
+<button class={actionPillClasses} on:click={copyVerse}>Copy</button>
+<button class={actionPillClasses} on:click={shareVerse}>Share</button>
 ```
 
 ---
@@ -500,4 +511,4 @@ Before submitting any new code or feature, verify every item below:
 - [ ] **Tests**: Complex state/utility logic includes a co-located `*.test.js` Vitest suite matching `audioController.test.js` / `readingHistoryHandler.test.js` / `AudioModal.test.js`.
 - [ ] **Naming**: File, component, data, and function names are self-explanatory (no `options.js`-style generic names), and functions have a `//` comment on top.
 - [ ] **File Hygiene**: Nothing is split into its own file/folder without a valid reason (used in multiple places, or a route-local component), and every new util, data, or component file is imported somewhere.
-- [ ] **Reuse Over Repetition**: Tailwind classes repeated more than 2-3 times live in `$data/commonClasses`, and repeated inline markup (button, pill, etc.) is a component.
+- [ ] **Reuse Over Repetition**: Tailwind classes repeated more than 2-3 times across multiple files live in `$data/commonClasses`, and repeated inline markup (button, pill, etc.) across multiple files is a component. Repetition within a single file uses a local constant instead.
