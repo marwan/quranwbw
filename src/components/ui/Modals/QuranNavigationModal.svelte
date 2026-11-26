@@ -342,22 +342,6 @@
 					</div>
 				{/if}
 
-				<!-- supplications selector -->
-				<!-- {#if $__currentPage === 'supplications'}
-					<div class="flex flex-col space-y-2 w-full">
-						<div class="px-2 text-sm pb-2 border-b border-theme-accent/20 font-medium">{term('supplications')}</div>
-						<ul id="navbar-supplications-list" class="grow basis-1/2 px-2 overflow-y-scroll">
-							{#each Object.entries(supplicationsFromQuran) as [key, value]}
-								<li>
-									<a href="#{key}">
-										<div class={listItemClasses}>{quranMetaData[key.split(':')[0]].transliteration}, {key}</div>
-									</a>
-								</li>
-							{/each}
-						</ul>
-					</div>
-				{/if} -->
-
 				<!-- words selector -->
 				{#if $__currentPage === 'morphology'}
 					<div class="flex flex-col space-y-2 w-full">
