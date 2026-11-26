@@ -170,7 +170,7 @@
 
 							<!-- Show the "goto verse" button if the user in on morphology page -->
 							{#if isMorphologyPage}
-								<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
+								<a href="/{chapter}/{verse}" class={buttonClasses}>Goto {term('verse')}</a>
 							{/if}
 						</div>
 					</div>

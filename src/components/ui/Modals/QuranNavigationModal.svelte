@@ -120,7 +120,7 @@
 
 				<!-- instructions -->
 				<div id="search-instructions" class="text-xs pt-2 opacity-70 pb-4">
-					Enter a {term('chapter').toLowerCase()}, page, {term('juz').toLowerCase()}/{term('hizb').toLowerCase()} number, or {term('verse').toLowerCase()}/word key (e.g., 2:255, 2.286, 18-10, 2 1 1). You can also navigate using surah names (e.g., faatiha, kahf, mary).
+					Enter a {term('chapter').toLowerCase()}, page, {term('juz').toLowerCase()}/{term('hizb').toLowerCase()} number, or {term('verse').toLowerCase()}/word key (e.g., 2:255, 2.286, 18-10, 2 1 1). You can also navigate using {term('chapter').toLowerCase()} names (e.g., faatiha, kahf, mary).
 				</div>
 
 				<!-- suggestions (only for home page) -->
