@@ -229,25 +229,25 @@ export function updateSettings(props) {
 
 		case 'userNotes':
 			const value = props.value;
-			const notes_key = props.key;
+			const notesKey = props.key;
 			const isWhitespaceString = (str) => !str.replace(/\s/g, '').length;
 			let userNotes = userSettings['userNotes'];
 
 			// if override key was set, then just set the value key in localStorage
 			if (props.override) {
-				userSettings.userNotes = notes_key;
+				userSettings.userNotes = notesKey;
 			}
 
 			// else just set what was provided as key invidually post validation
 			else {
 				// we only save the note if it's not just only whitespace
 				if (!isWhitespaceString(value)) {
-					userNotes[notes_key] = {
+					userNotes[notesKey] = {
 						note: value,
 						modified_at: new Date().toISOString()
 					};
 				} else if (value.length === 0) {
-					if (Object.prototype.hasOwnProperty.call(userNotes, notes_key)) delete userNotes[notes_key];
+					if (Object.prototype.hasOwnProperty.call(userNotes, notesKey)) delete userNotes[notesKey];
 				}
 
 				// update the notes
