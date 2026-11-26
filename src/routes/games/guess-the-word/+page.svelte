@@ -13,6 +13,8 @@
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
+	const pageTitle = 'Guess The Word';
+
 	let randomID = 1;
 	let selection = null;
 	let answerChecked = false;
@@ -99,10 +101,10 @@
 		answerChecked = false;
 	}
 
-	__currentPage.set('Guess The Word');
+	__currentPage.set(pageTitle);
 </script>
 
-<PageHead title={'Guess The Word'} description="Test your knowledge of Quranic vocabulary with our Guess The Word game!" />
+<PageHead title={pageTitle} description={`Test your knowledge of Quranic vocabulary with our ${pageTitle} game!`} />
 
 <div class="space-y-12">
 	{#await randomWordsData}

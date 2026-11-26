@@ -172,7 +172,7 @@
 
 			<!-- display only the page name for non-chapter page -->
 			{#if !['chapter', 'mushaf', 'supplications', 'juz', 'hizb'].includes($__currentPage)}
-				{$__currentPage[0].toUpperCase() + $__currentPage.slice(1)}
+				<span class="capitalize">{$__currentPage}</span>
 
 				<!-- if it's the morphology page, show morphology key as well -->
 				{#if $__currentPage === 'morphology'}
