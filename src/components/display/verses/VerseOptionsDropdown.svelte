@@ -29,7 +29,6 @@
 
 	// Component state
 	let dropdownOpen = false;
-	let subMenuVisible = false;
 
 	// Computed values
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
@@ -162,25 +161,23 @@
 		{$__verseKey}
 	</div>
 
-	{#if !subMenuVisible}
-		<div transition:fly={{ duration: 0, x: 0, easing: sineIn }}>
-			<!-- Main menu items -->
-			{#each menuItems as item (item.id)}
-				{#if item.show}
-					<DropdownItem class={dropdownItemClasses} on:click={item.handler} data-rybbit-event={item.analyticsEvent}>
-						<svelte:component this={item.icon} />
-						<span>{item.text}</span>
-					</DropdownItem>
-				{/if}
-			{/each}
-
-			<!-- Mode switching items -->
-			{#each modeItems as item}
-				<DropdownItem class={dropdownItemClasses} href={item.href} on:click={() => window.rybbit?.event(item.analyticsEvent)}>
+	<div transition:fly={{ duration: 0, x: 0, easing: sineIn }}>
+		<!-- Main menu items -->
+		{#each menuItems as item (item.id)}
+			{#if item.show}
+				<DropdownItem class={dropdownItemClasses} on:click={item.handler} data-rybbit-event={item.analyticsEvent}>
 					<svelte:component this={item.icon} />
 					<span>{item.text}</span>
 				</DropdownItem>
-			{/each}
-		</div>
-	{/if}
+			{/if}
+		{/each}
+
+		<!-- Mode switching items -->
+		{#each modeItems as item}
+			<DropdownItem class={dropdownItemClasses} href={item.href} on:click={() => window.rybbit?.event(item.analyticsEvent)}>
+				<svelte:component this={item.icon} />
+				<span>{item.text}</span>
+			</DropdownItem>
+		{/each}
+	</div>
 </Dropdown>
