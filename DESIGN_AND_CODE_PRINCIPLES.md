@@ -1,6 +1,6 @@
 # DESIGN_AND_CODE_PRINCIPLES.md
 
-Rulebook for AI assistants designing or implementing features in the QuranWBW codebase. All rules below are derived strictly from the existing source files.
+Rulebook for anyone designing or implementing features in the QuranWBW codebase, whether you are a human contributor or an AI assistant. The rules below are derived from the existing source files and the maintainer's own conventions.
 
 ---
 
@@ -24,7 +24,9 @@ Rulebook for AI assistants designing or implementing features in the QuranWBW co
 
 ## 2. Project Structure
 
-Follow the existing directory layout and SvelteKit path aliases:
+Follow the existing directory layout and SvelteKit path aliases.
+
+> Note: Files and folders get added, deleted, and moved over time, so the files named below are **examples, not a full inventory**. Check the actual folder before assuming a file exists (or doesn't).
 
 - **Root HTML & Hooks**:
   - `app.html`: Inline theme CSS variables, early theme & checkbox SVG injection, font preloading, optional-chaining browser check, Rybbit script loader, and global `<audio id="player"></audio>`.
@@ -35,21 +37,22 @@ Follow the existing directory layout and SvelteKit path aliases:
   - `+error.svelte`: 404 and generic error page with `noindex` meta and Rybbit error event.
   - Feature routes contain `+page.svelte`, optional `+page.js` (for param validation/redirects), route-local components (e.g., `MorphologyView.svelte`, `Table.svelte`), or raw markdown files (`ABOUT.md`, `CHANGELOG.md`, `PRIVACY.md`).
 - **Views (`$views/`)**: Shared top-level page views reused by multiple routes (e.g., `$views/Chapter.svelte`, `$views/Supplications.svelte`).
-- **UI Chrome (`$ui/`)**:
-  - `$ui/Navbar.svelte`
-  - `$ui/BottomToolbar/` (`BottomToolbar.svelte`, `BottomToolbarButtons.svelte`, button components)
-  - `$ui/Modals/` (`AudioModal.svelte`, `ConfirmationAlertModal.svelte`, `CopyShareVerseModal.svelte`, `FavoriteChaptersModal.svelte`, `MorphologyModal.svelte`, `NotesModal.svelte`, `QuranNavigationModal.svelte`, `ReadingHistoryModal.svelte`, `SettingsSelectorModal.svelte`, `SiteNavigationModal.svelte`, `TafsirModal.svelte`, `TajweedRulesModal.svelte`, `VerseTranslationModal.svelte`)
-  - `$ui/SettingsDrawer/` (`SettingsDrawer.svelte` and `*Selector.svelte` sub-panels)
-  - `$ui/FlowbiteSvelte/` (vendored base components)
-- **Display Components (`$display/`)**:
-  - Cards & containers: `QuranDivisionCard.svelte`, `BookmarkCard.svelte`, `NoteCard.svelte`, `UserBookmarks.svelte`, `UserNotes.svelte`, `ScrollableFadeContainer.svelte`, `SectionDivider.svelte`.
-  - `$display/layouts/`: Verse layout modes (`WordByWord.svelte`, `Normal.svelte`, `Continuous.svelte`, `SideBySide.svelte`, `TranslationTransliteration.svelte`).
-  - `$display/verses/`: `WordsBlock.svelte`, `VerseTranslations.svelte`, `VerseOptionButtons.svelte`, `VerseOptionsDropdown.svelte`, `VerseSeparator.svelte`, `ArabicVerseWords.svelte`.
-  - `$display/verses/modes/`: `Chapter.svelte`, `FullVersesDisplay.svelte`.
-- **Misc (`$misc/`)**: `PageHead.svelte`, `Bismillah.svelte`, `ChapterHeader.svelte`, `ErrorLoadingData.svelte`.
-- **Icons (`$svgs/`)**: Single-purpose SVG icon components (e.g., `Bookmark.svelte`, `Trash.svelte`, `Spinner.svelte`, `Mecca.svelte`, `Madinah.svelte`).
-- **Utilities (`$utils/`)**: Stores (`stores.js`), settings (`updateSettings.js`, `resetSettings.js`, `settingsManager.js`), data fetching (`fetchData.js`, `dexie.js`), audio (`audioController.js`), navigation/URL helpers (`parseURL.js`, `validateKey.js`, `getSegmentKeys.js`), UI helpers (`getModalTransition.js`, `getWebsiteWidth.js`, `confirmationAlertHandler.js`, `terminologies.js`), and co-located `*.test.js` files.
-- **Static Data & Config (`$data/`)**: `quranMeta.js`, `options.js`, `commonClasses.js`, `websiteSettings.js`, `selectableTafsirs.js`, `bismillahFontMap.js`, `faq.js`.
+- **UI Chrome (`$ui/`)**: App-wide interface pieces.
+  - Top-level examples: `Navbar.svelte`.
+  - `$ui/BottomToolbar/`: The bottom toolbar and its button components.
+  - `$ui/Modals/`: All modals (e.g., `AudioModal.svelte`, `ConfirmationAlertModal.svelte`, `ReadingHistoryModal.svelte`).
+  - `$ui/SettingsDrawer/`: `SettingsDrawer.svelte` and its `*Selector.svelte` sub-panels.
+  - `$ui/FlowbiteSvelte/`: Vendored base components.
+- **Display Components (`$display/`)**: Components that render Quran content and cards.
+  - Cards & containers (e.g., `QuranDivisionCard.svelte`, `BookmarkCard.svelte`, `NoteCard.svelte`, `ScrollableFadeContainer.svelte`).
+  - `$display/layouts/`: Verse layout modes (e.g., `WordByWord.svelte`, `Normal.svelte`, `Continuous.svelte`).
+  - `$display/verses/`: Verse building blocks (e.g., `WordsBlock.svelte`, `VerseTranslations.svelte`, `ArabicVerseWords.svelte`).
+  - `$display/verses/modes/`: Top-level verse display modes (e.g., `Chapter.svelte`).
+- **Misc (`$misc/`)**: Small shared pieces (e.g., `PageHead.svelte`, `Bismillah.svelte`, `ErrorLoadingData.svelte`).
+- **Icons (`$svgs/`)**: Single-purpose SVG icon components (e.g., `Bookmark.svelte`, `Trash.svelte`, `Spinner.svelte`).
+- **Utilities (`$utils/`)**: Stores (`stores.js`), settings handling (e.g., `updateSettings.js`), data fetching (e.g., `fetchData.js`, `dexie.js`), audio (e.g., `audioController.js`), navigation/URL helpers (e.g., `parseURL.js`), UI helpers (e.g., `getModalTransition.js`, `terminologies.js`), and co-located `*.test.js` files.
+- **Static Data & Config (`$data/`)**: Static data and shared config (e.g., `quranMeta.js`, `commonClasses.js`, `websiteSettings.js`, `selectableTafsirs.js`).
+- Only keep a file in its own folder if it is used in multiple places (see Section 5).
 
 ---
 
@@ -72,19 +75,11 @@ Never use standard Tailwind palette colors (e.g., `bg-gray-100`, `text-amber-600
 
 #### Theme Definitions (`app.html`)
 
-All 9 themes set `--theme-bg-rgb`, `--theme-accent-rgb`, `--theme-text-rgb`, and font palette CSS variables on `html.theme-{1..9}`:
+Every theme is defined in `app.html` as an `html.theme-{id}` block that sets `--theme-bg-rgb`, `--theme-accent-rgb`, `--theme-text-rgb`, and the font palette CSS variables. Each theme is either light or dark.
 
-| ID  | Name                   | Mode (`color`) | `--theme-bg-rgb` | `--theme-accent-rgb` | `--theme-text-rgb` |
-| :-- | :--------------------- | :------------- | :--------------- | :------------------- | :----------------- |
-| `1` | Golden Glint (Default) | light          | `255 255 255`    | `177 144 31`         | `0 0 0`            |
-| `2` | Classic Light          | light          | `255 255 255`    | `0 0 0`              | `0 0 0`            |
-| `3` | Silver Lining          | light          | `225 225 225`    | `0 0 0`              | `0 0 0`            |
-| `4` | Vintage Sepia          | light          | `233 227 215`    | `85 60 15`           | `85 60 15`         |
-| `5` | Mocha Night            | dark           | `32 22 31`       | `220 165 76`         | `220 165 76`       |
-| `6` | Midnight Blue          | dark           | `2 2 27`         | `194 194 194`        | `194 194 194`      |
-| `7` | Forest Green           | dark           | `0 22 23`        | `221 221 221`        | `221 221 221`      |
-| `8` | Oled Black             | dark           | `0 0 0`          | `221 221 221`        | `221 221 221`      |
-| `9` | Dark Luxury            | dark           | `9 9 11`         | `220 165 76`         | `220 165 76`       |
+- Themes are added over time, so this file does not list them all. `app.html` is the source of truth for the current themes, their IDs, and their color values.
+- Examples: Golden Glint (default, light), Mocha Night (dark), Oled Black (dark).
+- Never hardcode a theme count or a list of theme colors in components. Always use the semantic tokens above.
 
 ### 3.2 Typography
 
@@ -125,7 +120,7 @@ All 9 themes set `--theme-bg-rgb`, `--theme-accent-rgb`, `--theme-text-rgb`, and
 
 ### 3.4 Reusable UI Patterns
 
-- **Shared Class Constants (`$data/commonClasses`)**: Always import `buttonClasses`, `buttonOutlineClasses`, `linkClasses`, `disabledClasses`, `individualRadioClasses`, `individualCheckboxClasses`, `selectedRadioOrCheckboxClasses` rather than duplicating them.
+- **Shared Class Constants (`$data/commonClasses`)**: Always import the shared constants (e.g., `buttonClasses`, `buttonOutlineClasses`, `linkClasses`, `disabledClasses`, `individualRadioClasses`, `individualCheckboxClasses`, `selectedRadioOrCheckboxClasses`) rather than duplicating them. The file may grow, so check it first. Any class string repeated more than 2-3 times should be added there (see Section 5.4).
 - **Interactive Pill / Card Surface**: Use `border border-transparent hover:border-theme-accent bg-theme-accent/5` for subtle interactive tiles, navigation links, and verse key badges.
 - **Standard Bottom-Sheet Modal**:
   - Open from bottom on mobile (`!rounded-b-none md:!rounded-3xl`), round all corners on desktop, constrain height (`max-h-[90vh] flex flex-col`), and scroll only the inner content container (`flex-1 min-h-0 overflow-y-auto w-full pr-2`):
@@ -156,7 +151,7 @@ All 9 themes set `--theme-bg-rgb`, `--theme-accent-rgb`, `--theme-text-rgb`, and
 ### 3.5 Theming and Dark Mode Handling
 
 - Do **not** use Tailwind's `dark:` variant.
-- Theme CSS variables are defined inline in `app.html` (`html.theme-1` through `html.theme-9`) and applied synchronously before first paint via inline `<script>` reading `localStorage.userSettings`.
+- Theme CSS variables are defined inline in `app.html` (one `html.theme-{id}` block per theme) and applied synchronously before first paint via inline `<script>` reading `localStorage.userSettings`.
 - Checkbox checkmark SVG colors are injected dynamically in `app.html` by reading `--theme-accent-rgb` via `getComputedStyle`.
 - Changing `websiteTheme` in `updateSettings.js` updates `localStorage` and calls `location.reload()` so all inline theme variables, checkbox SVGs, and platform-specific COLRv1/OT-SVG Mushaf font selections (`getMushafWordFontLink.js`) re-evaluate cleanly.
 - Firefox dark-theme COLRv1 bugs are handled explicitly via `isFirefoxDarkTajweed()` and `isFirefoxDarkNonTajweed()`.
@@ -175,7 +170,7 @@ All 9 themes set `--theme-bg-rgb`, `--theme-accent-rgb`, `--theme-text-rgb`, and
 
 ### 4.1 Naming
 
-- **Variables & Functions**: `camelCase` (`startVerse`, `loadQuranData`, `isAudioLengthDelay`).
+- **Variables & Functions**: `camelCase` with self-explanatory names (`startVerse`, `loadQuranData`, `isAudioLengthDelay`). Every function has a `//` comment on top.
 - **Stores (`$utils/stores.js`)**: Prefix every Svelte store with double underscores + `camelCase` (`__currentPage`, `__audioSettings`, `__readingHistoryModalVisible`).
 - **CSS Class Constants**: Name local style strings with a `Classes` suffix (`linkClasses`, `dropdownItemClasses`, `toggleBtnClasses`, `cardInnerClasses`).
 - **Files**:
@@ -183,6 +178,7 @@ All 9 themes set `--theme-bg-rgb`, `--theme-accent-rgb`, `--theme-text-rgb`, and
   - SvelteKit route files: `+page.svelte`, `+page.js`, `+layout.svelte`, `+error.svelte`.
   - Utilities & handlers: `camelCase.js` (e.g., `updateSettings.js`, `readingHistoryHandler.js`).
   - Tests: `<TargetName>.test.js` co-located beside the target file.
+  - Names must be self-explanatory, never short or generic (see Section 5.1).
 
 ### 4.2 Component Structure & Ordering Inside Files
 
@@ -228,7 +224,34 @@ Follow the standard `.svelte` layout used across the majority of components:
 
 ---
 
-## 5. Hard Rules (Must Always Follow)
+## 5. Code Organization & File Hygiene
+
+These rules keep the codebase small, readable, and easy to navigate for both humans and AI.
+
+### 5.1 Naming
+
+- Util files, Svelte components, and data files must have self-explanatory names that say what they contain or do. Avoid short or generic names (e.g., `options.js` should not be used for new files; prefer something like `selectableWordTranslations.js`).
+- Function names must be self-explanatory too, not short or cryptic (`getUnreadChapterCount`, not `cnt`).
+- Put a `//` comment on top of every function describing what it does, and add comments inside wherever the logic is not obvious.
+
+### 5.2 Keep Related Code Together
+
+- Do not unnecessarily split code or components into different files. Keep it in the same file unless it is used elsewhere.
+- A util, data, or component file that is used in only one place should not live separately in another folder. Merge it into the code that uses it. The exception is route-local components, which stay beside their route for ease of reading.
+- In short: nothing should be separated into its own file or folder without a valid reason.
+
+### 5.3 No Unused Files
+
+- Every file in `$utils`, `$data`, and the component folders must be imported somewhere. When adding, moving, or deleting code, make sure no file is left unused.
+
+### 5.4 Reuse Instead of Repeating
+
+- If the same Tailwind classes are repeated more than 2-3 times, add them to `$data/commonClasses` and import them.
+- If the same inline markup with the same Tailwind classes is repeated multiple times (a button, pill, etc.), turn it into a component.
+
+---
+
+## 6. Hard Rules (Must Always Follow)
 
 - **All code must be well commented, with comments starting with two slashes `//`.**
 - **All variables must be `camelCase`.**
@@ -241,10 +264,14 @@ Follow the standard `.svelte` layout used across the majority of components:
 - **Report caught exceptions to `window.rybbit?.error(error)`** and guard network-only actions with `checkOnlineAndAlert()` or `isUserOnline()`.
 - **Include `<PageHead ... />` and call `__currentPage.set('...')` at the bottom of `<script>`** on every page/view component.
 - **Keep `<script>` blocks free of unguarded browser globals during SSR** or rely on client-only execution matching the existing route setup; clean up event listeners and observers in `onDestroy` or `onMount` return callbacks.
+- **Names must be self-explanatory.** Util files, Svelte components, data files, and functions get descriptive names instead of short or generic ones (e.g., not `options.js`). Functions have a `//` comment on top and inside wherever the logic needs explaining.
+- **Do not split code into separate files/components without a valid reason.** Keep it in the same file unless it is used elsewhere.
+- **Every file in `$utils`, `$data`, and `$display`/`$ui`/`$misc`/`$views` components must be imported somewhere.** No unused files.
+- **Repeated Tailwind classes (more than 2-3 times) go into `$data/commonClasses`**, and repeated inline markup with the same classes (button, pill, etc.) becomes a component.
 
 ---
 
-## 6. Do / Don't Examples
+## 7. Do / Don't Examples
 
 ### 1. Theme Colors
 
@@ -273,7 +300,7 @@ let isLoading = false;
 
 // Returns true if the current page is a reader view
 function checkReaderState(currentPage) {
-  return ["chapter", "juz", "hizb"].includes(currentPage);
+	return ['chapter', 'juz', 'hizb'].includes(currentPage);
 }
 ```
 
@@ -283,7 +310,7 @@ const max_items_to_load = 20;
 let is_loading = false;
 
 function check_reader_state(current_page) {
-  return ["chapter", "juz", "hizb"].includes(current_page);
+	return ['chapter', 'juz', 'hizb'].includes(current_page);
 }
 ```
 
@@ -292,24 +319,24 @@ function check_reader_state(current_page) {
 ```js
 // DO: Mutate settings via updateSettings() and prefix stores with __
 // SettingsDrawer.svelte & updateSettings.js pattern
-import { __wideWesbiteLayoutEnabled } from "$utils/stores";
-import { updateSettings } from "$utils/updateSettings";
+import { __wideWesbiteLayoutEnabled } from '$utils/stores';
+import { updateSettings } from '$utils/updateSettings';
 
 function toggleWideLayout(enabled) {
-  // Persist setting to localStorage and sync the store
-  updateSettings({ type: "wideWesbiteLayoutEnabled", value: enabled });
+	// Persist setting to localStorage and sync the store
+	updateSettings({ type: 'wideWesbiteLayoutEnabled', value: enabled });
 }
 ```
 
 ```js
 // DON'T: Write directly to localStorage.userSettings or create unprefixed stores
-import { wideLayout } from "$utils/stores";
+import { wideLayout } from '$utils/stores';
 
 function toggleWideLayout(enabled) {
-  const raw = JSON.parse(localStorage.getItem("userSettings"));
-  raw.displaySettings.wideLayout = enabled;
-  localStorage.setItem("userSettings", JSON.stringify(raw));
-  wideLayout.set(enabled);
+	const raw = JSON.parse(localStorage.getItem('userSettings'));
+	raw.displaySettings.wideLayout = enabled;
+	localStorage.setItem('userSettings', JSON.stringify(raw));
+	wideLayout.set(enabled);
 }
 ```
 
@@ -356,22 +383,22 @@ function toggleWideLayout(enabled) {
 // DO: Use fetchAndCacheJson and report failures to console + rybbit
 // ReadingHistoryModal.svelte / UserBookmarks.svelte pattern
 async function loadQuranData() {
-  try {
-    fullQuranTextData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, "other");
-  } catch (error) {
-    console.warn(error);
-    window.rybbit?.error(error);
-  }
+	try {
+		fullQuranTextData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, 'other');
+	} catch (error) {
+		console.warn(error);
+		window.rybbit?.error(error);
+	}
 }
 ```
 
 ```js
 // DON'T: Call raw fetch() for static JSON or swallow errors silently
 async function loadQuranData() {
-  try {
-    const res = await fetch("https://static.quranwbw.com/data.json");
-    fullQuranTextData = await res.json();
-  } catch {}
+	try {
+		const res = await fetch('https://static.quranwbw.com/data.json');
+		fullQuranTextData = await res.json();
+	} catch {}
 }
 ```
 
@@ -419,9 +446,46 @@ async function loadQuranData() {
 </div>
 ```
 
+### 9. Naming Files & Functions
+
+```js
+// DO: Use self-explanatory names and put a comment on top of the function
+// utils/getUnreadChapterCount.js
+// Returns how many chapters the user has not opened yet
+function getUnreadChapterCount(readChapters, totalChapters) {
+	// Subtract unique read chapters from the total
+	return totalChapters - new Set(readChapters).size;
+}
+```
+
+```js
+// DON'T: Use short or generic names for files and functions
+// utils/opts.js
+function cnt(a, b) {
+	return b - new Set(a).size;
+}
+```
+
+### 10. Repeated Markup & Classes
+
+```svelte
+<!-- DO: Turn repeated inline markup (button, pill, etc.) into one component -->
+<!-- e.g. a component such as ActionPill.svelte, then reuse it -->
+<ActionPill label="Copy" on:click={copyVerse} />
+<ActionPill label="Share" on:click={shareVerse} />
+<ActionPill label="Bookmark" on:click={bookmarkVerse} />
+```
+
+```svelte
+<!-- DON'T: Copy-paste the same Tailwind classes on every element -->
+<button class="rounded-full border border-transparent hover:border-theme-accent bg-theme-accent/5 px-3 py-1 text-sm" on:click={copyVerse}>Copy</button>
+<button class="rounded-full border border-transparent hover:border-theme-accent bg-theme-accent/5 px-3 py-1 text-sm" on:click={shareVerse}>Share</button>
+<button class="rounded-full border border-transparent hover:border-theme-accent bg-theme-accent/5 px-3 py-1 text-sm" on:click={bookmarkVerse}>Bookmark</button>
+```
+
 ---
 
-## 7. New Feature Checklist
+## 8. New Feature Checklist
 
 Before submitting any new code or feature, verify every item below:
 
@@ -434,3 +498,6 @@ Before submitting any new code or feature, verify every item below:
 - [ ] **Routing & Metadata**: New pages include `<PageHead ... />`, set `__currentPage.set('...')` (lowercase key), and clean up any window listeners or observers on unmount.
 - [ ] **Responsive & Accessibility**: Mobile (`!rounded-b-none md:!rounded-3xl`, `md:hidden` / `hidden md:block`) and accessibility (`aria-label`, `sr-only`, `print:hidden`, `direction-rtl`/`direction-ltr`) patterns are applied.
 - [ ] **Tests**: Complex state/utility logic includes a co-located `*.test.js` Vitest suite matching `audioController.test.js` / `readingHistoryHandler.test.js` / `AudioModal.test.js`.
+- [ ] **Naming**: File, component, data, and function names are self-explanatory (no `options.js`-style generic names), and functions have a `//` comment on top.
+- [ ] **File Hygiene**: Nothing is split into its own file/folder without a valid reason (used in multiple places, or a route-local component), and every new util, data, or component file is imported somewhere.
+- [ ] **Reuse Over Repetition**: Tailwind classes repeated more than 2-3 times live in `$data/commonClasses`, and repeated inline markup (button, pill, etc.) is a component.
