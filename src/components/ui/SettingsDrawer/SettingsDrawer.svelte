@@ -39,7 +39,7 @@
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
-		__wideWesbiteLayoutEnabled,
+		__wideWebsiteLayoutEnabled,
 		__signLanguageModeEnabled,
 		__audioSettings
 	} from '$utils/stores';
@@ -328,7 +328,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Wide Website Layout</span>
 							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWesbiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWesbiteLayoutEnabled', value: event.target.checked })} />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWebsiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWebsiteLayoutEnabled', value: event.target.checked })} />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>

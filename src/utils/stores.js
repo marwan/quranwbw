@@ -56,7 +56,7 @@ let __currentPage,
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__wordMorphologyOnClick,
-	__wideWesbiteLayoutEnabled,
+	__wideWebsiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
 	__offlineModeSettings,
@@ -223,7 +223,7 @@ if (browser) {
 	__wordMorphologyOnClick = writable(userSettings.displaySettings.wordMorphologyOnClick);
 
 	// to store the website wide layout option
-	__wideWesbiteLayoutEnabled = writable(userSettings.displaySettings.wideWesbiteLayoutEnabled);
+	__wideWebsiteLayoutEnabled = writable(userSettings.displaySettings.wideWebsiteLayoutEnabled);
 
 	// to store the sign language mode option
 	__signLanguageModeEnabled = writable(userSettings.displaySettings.signLanguageModeEnabled);
@@ -300,7 +300,7 @@ export {
 	__mushafMinimalModeEnabled,
 	__keysToFetch,
 	__wordMorphologyOnClick,
-	__wideWesbiteLayoutEnabled,
+	__wideWebsiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__verseWordBlocks,
 	__offlineModeSettings,

@@ -20,7 +20,7 @@
 	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __readingHistory, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible, __readingHistoryModalVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __readingHistory, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWebsiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible, __readingHistoryModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
@@ -148,7 +148,7 @@
 
 <PageHead title={`Quran ${websiteTagline}`} />
 
-<div class={`${!$__wideWesbiteLayoutEnabled && 'max-w-5xl'} mx-auto flex flex-col space-y-4 md:px-4`}>
+<div class={`${!$__wideWebsiteLayoutEnabled && 'max-w-5xl'} mx-auto flex flex-col space-y-4 md:px-4`}>
 	<!-- top menu -->
 	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">

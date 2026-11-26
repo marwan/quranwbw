@@ -28,7 +28,7 @@ import {
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
-	__wideWesbiteLayoutEnabled,
+	__wideWebsiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__offlineModeSettings,
 	__homepageLayoutPreferences,
@@ -331,9 +331,9 @@ export function updateSettings(props) {
 			break;
 
 		// for toggling website wide layout
-		case 'wideWesbiteLayoutEnabled':
-			__wideWesbiteLayoutEnabled.set(props.value);
-			userSettings.displaySettings.wideWesbiteLayoutEnabled = props.value;
+		case 'wideWebsiteLayoutEnabled':
+			__wideWebsiteLayoutEnabled.set(props.value);
+			userSettings.displaySettings.wideWebsiteLayoutEnabled = props.value;
 			break;
 
 		// for toggling sign language mode
