@@ -141,14 +141,12 @@
 		__pageNumber.set(page);
 	}
 
-	/**
-	 * This function retrieves and processes Quranic verses for a given page number.
-	 * It first gets the specific verse keys required for the given page.
-	 * After identifying the necessary chapters, it fetches their complete data
-	 * and filters out only the requested verses. The function then ensures that the verses
-	 * are sorted in ascending order based on chapter and verse numbers before returning
-	 * the final structured object. This provides well-organized data for further use.
-	 */
+	// This function retrieves and processes Quranic verses for a given page number.
+	// It first gets the specific verse keys required for the given page.
+	// After identifying the necessary chapters, it fetches their complete data
+	// and filters out only the requested verses. The function then ensures that the verses
+	// are sorted in ascending order based on chapter and verse numbers before returning
+	// the final structured object. This provides well-organized data for further use.
 	async function fetchVersesByPage(page) {
 		try {
 			// Get keys for the given page
