@@ -17,8 +17,8 @@
 	const loadAll = params.get('load_all') === 'true';
 
 	// Fallbacks
-	const sanitizedwordKeys = Array.isArray(wordKeys) ? wordKeys : [];
-	const totalAvailableWords = sanitizedwordKeys.length;
+	const sanitizedWordKeys = Array.isArray(wordKeys) ? wordKeys : [];
+	const totalAvailableWords = sanitizedWordKeys.length;
 	const maxResultsToLoad = 50;
 
 	let lastWordToLoad = calculateInitialLastWordToLoad(loadAll, totalAvailableWords, maxResultsToLoad);
@@ -49,7 +49,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each sanitizedwordKeys.slice(0, lastWordToLoad) as item, i}
+						{#each sanitizedWordKeys.slice(0, lastWordToLoad) as item, i}
 							{@const [chapter, verse, word] = item.split(':')}
 							{@const arabic = wordData.arabicWordData[chapter][verse][0][word - 1]}
 							{@const translation = wordData.translationWordData[chapter][verse][0][word - 1]}
