@@ -1,4 +1,9 @@
 <script>
+	export let verse;
+	export let note;
+	export let cardInnerClasses;
+	export let forceClose = 0;
+
 	import Portal from 'svelte-portal';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
@@ -10,11 +15,6 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 	import { __verseKey, __notesModalVisible } from '$utils/stores';
-
-	export let verse;
-	export let note;
-	export let cardInnerClasses;
-	export let forceClose = 0;
 
 	const dispatch = createEventDispatcher();
 

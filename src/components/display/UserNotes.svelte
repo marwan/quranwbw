@@ -1,11 +1,11 @@
 <script>
+	export let cardGridClasses;
+	export let cardInnerClasses;
+
 	import Notes from '$svgs/Notes.svelte';
 	import NoteCard from '$display/NoteCard.svelte';
 	import ScrollableFadeContainer from '$display/ScrollableFadeContainer.svelte';
 	import { __userNotes } from '$utils/stores';
-
-	export let cardGridClasses;
-	export let cardInnerClasses;
 
 	let forceCloseDropdowns = 0;
 
