@@ -95,14 +95,14 @@
 	let showIndividualSetting = false;
 	let totalVerseTransliterationsSelected = 0;
 	let arabicWordSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.arabicText);
-	let wordTranlationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
-	let verseTranlationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.verseTranslationText);
+	let wordTranslationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
+	let verseTranslationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.verseTranslationText);
 	let playbackSpeedValue = JSON.parse($__userSettings).audioSettings.playbackSpeed;
 
 	// Update settings when sliders are changed
 	$: updateSettings({ type: 'arabicText', value: selectableFontSizes[arabicWordSizeValue].value });
-	$: updateSettings({ type: 'wordTranslationText', value: selectableFontSizes[wordTranlationTransliterationSizeValue].value });
-	$: updateSettings({ type: 'verseTranslationText', value: selectableFontSizes[verseTranlationTransliterationSizeValue].value });
+	$: updateSettings({ type: 'wordTranslationText', value: selectableFontSizes[wordTranslationTransliterationSizeValue].value });
+	$: updateSettings({ type: 'verseTranslationText', value: selectableFontSizes[verseTranslationTransliterationSizeValue].value });
 	$: updateSettings({ type: 'playbackSpeed', value: playbackSpeedValue });
 
 	// Calculate maximum allowed font size based on breakpoint
@@ -170,7 +170,6 @@
 
 		settingsDrawerOpacity = 'opacity-0';
 		settingsDrawerBackground = 'bg-transparent';
-		document.querySelector('.settings-backdrop').classList.add('opacityyy-10');
 
 		const selectedElement = document.getElementById(selector);
 		selectedElement.classList.remove('opacity-0', 'pointer-events-none');
@@ -186,7 +185,6 @@
 
 		settingsDrawerOpacity = 'opacity-100';
 		settingsDrawerBackground = 'bg-theme-bg';
-		document.querySelector('.settings-backdrop').classList.remove('opacityyy-10');
 	}
 
 	function getFontSizeIdByClass(className) {
@@ -384,10 +382,10 @@
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">
 								{$__signLanguageModeEnabled ? 'Sign Language Icon Size' : 'Word Translation/Transliteration Size'}
-								({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})
+								({selectableFontSizes[wordTranslationTransliterationSizeValue].value.split('-')[1]})
 							</span>
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('word-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
-								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranlationTransliterationSizeValue} class={rangeClasses} />
+								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranslationTransliterationSizeValue} class={rangeClasses} />
 							</div>
 						</div>
 					</div>
@@ -397,9 +395,9 @@
 					<!-- verse-translation-size-setting -->
 					<div id="verse-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
-							<span class="block">{term('verse')} Translation/Transliteration Size ({selectableFontSizes[verseTranlationTransliterationSizeValue].value.split('-')[1]})</span>
+							<span class="block">{term('verse')} Translation/Transliteration Size ({selectableFontSizes[verseTranslationTransliterationSizeValue].value.split('-')[1]})</span>
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('verse-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
-								<Range min="1" max={maxFontSizeAllowed} bind:value={verseTranlationTransliterationSizeValue} class={rangeClasses} />
+								<Range min="1" max={maxFontSizeAllowed} bind:value={verseTranslationTransliterationSizeValue} class={rangeClasses} />
 							</div>
 						</div>
 					</div>
