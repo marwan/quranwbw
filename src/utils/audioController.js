@@ -298,7 +298,7 @@ export function resetAudioSettings(props) {
 		// Stop word highlighting and clear any active highlights
 		audio.removeEventListener('timeupdate', wordHighlighter);
 		document.querySelectorAll('.word').forEach((element) => {
-			element.classList.remove('bg-black/5');
+			element.classList.remove('bg-theme-accent/15');
 		});
 
 		// Clear cached word counts to prevent stale data between playback sessions
