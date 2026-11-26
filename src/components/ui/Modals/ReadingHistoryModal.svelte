@@ -67,7 +67,7 @@
 						</div>
 
 						{#if fullQuranTextData}
-							<div class="text-md truncate text-right direction-rtl arabic-font-1 opacity-70 mt-2" lang="ar">
+							<div class="truncate text-right direction-rtl arabic-font-1 opacity-70 mt-2" lang="ar">
 								{fullQuranTextData.data[`${chapter}:${verse}`]}
 							</div>
 						{/if}

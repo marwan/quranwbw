@@ -140,7 +140,7 @@
 
 			<!-- answer-results -->
 			{#if answerChecked === true && isAnswerCorrect !== null}
-				<div id="answer-results" class="flex justify-center text-center font-medium text-md">
+				<div id="answer-results" class="flex justify-center text-center font-medium">
 					<span>
 						{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${data[randomWord].word_english}" 😟`}
 					</span>

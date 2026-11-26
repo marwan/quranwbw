@@ -36,7 +36,7 @@
 	<div class="grid gap-3 w-full">
 		{#each Object.entries(verseTafsirLanguages) as [_, language]}
 			<div class="flex flex-col space-y-2 pb-6">
-				<div id="translation-name" class="text-md font-medium">{language.language}</div>
+				<div id="translation-name" class="font-medium">{language.language}</div>
 				<div id="translation-list" class="space-y-3">
 					{#if shouldShowTafsir(language.language)}
 						{#each Object.entries(selectableTafsirs) as [_, tafsir]}

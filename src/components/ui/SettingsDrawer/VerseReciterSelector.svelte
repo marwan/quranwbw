@@ -12,7 +12,7 @@
 <div class="grid gap-3 w-full">
 	<!-- Translated Audios -->
 	<div class="flex flex-col space-y-2 pb-6">
-		<div id="audio-name" class="text-md font-medium">Translation</div>
+		<div id="audio-name" class="font-medium">Translation</div>
 		<div id="audio-list" class="space-y-3">
 			{#each Object.entries(selectableTranslationReciters) as [_, reciter]}
 				<Radio name="reciter" bind:group={$__translationReciter} value={reciter.id} on:change={(event) => updateSettings({ type: 'translationReciter', value: +event.target.value })} custom>
@@ -26,7 +26,7 @@
 
 	<!-- Arabic Audios -->
 	<div class="flex flex-col space-y-2 pb-6">
-		<div id="audio-name" class="text-md font-medium">Arabic</div>
+		<div id="audio-name" class="font-medium">Arabic</div>
 		<div id="audio-list" class="space-y-3">
 			{#each Object.entries(selectableReciters).sort((a, b) => a[1].reciter.localeCompare(b[1].reciter)) as [_, reciter]}
 				<Radio name="reciter" bind:group={$__reciter} value={reciter.id} on:change={(event) => updateSettings({ type: 'reciter', value: +event.target.value })} custom>

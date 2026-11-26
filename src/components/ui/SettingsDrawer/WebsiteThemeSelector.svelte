@@ -9,7 +9,7 @@
 <div class="grid gap-3 w-full">
 	{#each themeColors as color}
 		<div class="flex flex-col space-y-2 pb-6">
-			<div id="color-name" class="text-md font-medium capitalize">{color}</div>
+			<div id="color-name" class="font-medium capitalize">{color}</div>
 			<div id="color-list" class="space-y-3">
 				{#each Object.entries(selectableThemes) as [_, theme]}
 					{#if theme.color === color}
