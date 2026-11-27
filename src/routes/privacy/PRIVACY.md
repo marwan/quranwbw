@@ -1,6 +1,6 @@
 ### Privacy Policy
 
-_Last updated: November 26, 2026_
+_Last updated: November 27, 2026_
 
 QuranWBW.com is a passion project built to help people read, listen to, and learn the Quran. We collect as little as possible. There are no accounts, no sign-ups, no ads, and we never sell your data. We also do not ask for or accept donations or payments of any kind, so we never handle any payment or financial information.
 
