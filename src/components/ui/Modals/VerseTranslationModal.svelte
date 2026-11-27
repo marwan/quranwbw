@@ -4,6 +4,7 @@
 	import ArabicVerseWords from '$display/verses/ArabicVerseWords.svelte';
 	import { __currentPage, __verseTranslationModalVisible, __chapterData, __verseKey } from '$utils/stores';
 	import { quranMetaData } from '$data/quranMeta';
+	import { getModalTransition } from '$utils/getModalTransition';
 
 	let chapterData;
 	$: chapter = +$__verseKey.split(':')[0];
@@ -11,24 +12,16 @@
 	$: if ($__verseTranslationModalVisible) chapterData = $__currentPage === 'mushaf' ? JSON.parse(localStorage.getItem('pageData')) : $__chapterData;
 </script>
 
-<Modal
-	bind:open={$__verseTranslationModalVisible}
-	title="{quranMetaData[chapter].transliteration}, {chapter}:{verse}"
-	id="verseTranslationModal"
-	class="!rounded-b-none md:!rounded-3xl"
-	bodyClass="p-6 space-y-4 flex-1 overflow-y-auto overscroll-contain !border-t-0"
-	headerClass="flex justify-between items-center p-6 rounded-t-3xl"
-	classFooter="rounded-b-3xl flex flex-row justify-between"
-	size="lg"
-	position="bottom"
-	center
-	outsideclose
->
-	<div class="flex flex-col space-y-4">
-		<div class="py-4">
-			<ArabicVerseWords key={$__verseKey} />
-		</div>
+<Modal id="verseTranslationModal" bind:open={$__verseTranslationModalVisible} transitionParams={getModalTransition('bottom')} size="lg" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+	<h3 class="mb-6 text-xl font-medium flex-shrink-0">{quranMetaData[chapter].transliteration}, {chapter}:{verse}</h3>
 
-		<VerseTranslations value={chapterData[$__verseKey]} />
+	<div class="flex-1 min-h-0 overflow-y-auto overscroll-contain w-full pr-2">
+		<div class="flex flex-col space-y-4">
+			<div class="py-4">
+				<ArabicVerseWords key={$__verseKey} />
+			</div>
+
+			<VerseTranslations value={chapterData[$__verseKey]} />
+		</div>
 	</div>
 </Modal>

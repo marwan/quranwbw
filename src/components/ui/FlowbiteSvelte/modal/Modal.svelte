@@ -140,7 +140,7 @@
 				<!-- Modal body -->
 				<div class={bodyCls} role="document" on:keydown|stopPropagation={handleKeys} on:wheel|stopPropagation|passive>
 					{#if dismissable && !$$slots.header && !title}
-						<CloseButton name="Close modal" class="absolute top-3 end-2.5" {color} on:click={hide} />
+						<CloseButton name="Close modal" class="absolute top-5 end-5" {color} on:click={hide} />
 					{/if}
 					<slot />
 				</div>
