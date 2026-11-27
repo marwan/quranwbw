@@ -171,6 +171,9 @@
 		settingsDrawerOpacity = 'opacity-0';
 		settingsDrawerBackground = 'bg-transparent';
 
+		// Remove the border from the font settings block to avoid visual clutter when sliders are active
+		document.querySelector('#font-settings-block').classList.remove('border-t-2');
+
 		const selectedElement = document.getElementById(selector);
 		selectedElement.classList.remove('opacity-0', 'pointer-events-none');
 		selectedElement.classList.add('opacity-100', `bg-theme-bg`, 'rounded-3xl', 'shadow-lg', 'px-2');
@@ -185,6 +188,9 @@
 
 		settingsDrawerOpacity = 'opacity-100';
 		settingsDrawerBackground = 'bg-theme-bg';
+
+		// Restore the border to the font settings block
+		document.querySelector('#font-settings-block').classList.add('border-t-2');
 	}
 
 	function getFontSizeIdByClass(className) {
