@@ -6,6 +6,12 @@ This website is a passion project, not a full-time endeavor. For issues, suggest
 
 ---
 
+### Privacy Policy
+
+Your privacy matters to us. To learn what is stored, how it is used, and what choices you have, please read our [Privacy Policy](/privacy).
+
+---
+
 ### Website Credits
 
 QuranWBW.com owes its existence to the contributions of the following remarkable individuals and organizations:

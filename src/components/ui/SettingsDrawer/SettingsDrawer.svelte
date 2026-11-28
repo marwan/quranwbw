@@ -114,6 +114,9 @@
 	// Hide settings drawer and go back to main settings on certain conditions
 	$: if ($__currentPage || $__settingsDrawerHidden) goBackToMainSettings();
 
+	// Hide the settings drawer whenever the page changes
+	$: if ($__currentPage) $__settingsDrawerHidden = true;
+
 	// Build a Set of all transliteration resource IDs (language_id === 11115)
 	const transliterationIdSet = new Set(
 		Object.values(selectableVerseTranslations)
@@ -566,6 +569,21 @@
 							</label>
 						</div>
 						<p class={settingsDescriptionClasses}>Show morphology on word click, instead of playing audio.</p>
+					</div>
+
+					<div class="border-b border-theme-accent/20"></div>
+
+					<!-- analytics-opt-out-toggle -->
+					<div id="analytics-opt-out" class={settingsBlockClasses}>
+						<div class="flex flex-row justify-between items-center">
+							<span class="block">Disable Usage Insights</span>
+							<label class="inline-flex items-center cursor-pointer">
+								<!-- checked = opted out, so the disabled flag matches the checkbox directly -->
+								<input type="checkbox" value="" class="sr-only peer" checked={typeof localStorage !== 'undefined' && localStorage.getItem('disable-rybbit') === 'true'} on:click={(event) => updateSettings({ type: 'analyticsOptOut', value: event.target.checked })} />
+								<div class={toggleBtnClasses}></div>
+							</label>
+						</div>
+						<p class={settingsDescriptionClasses}>Opt out of anonymous usage insights. The page reloads when this is changed. See our <a href="/privacy" class={linkClasses}>Privacy Policy</a> for more info.</p>
 					</div>
 
 					<div class="border-b border-theme-accent/20"></div>
