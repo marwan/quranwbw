@@ -1,13 +1,13 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { __websiteTheme } from '$utils/stores';
-	import { selectableThemes, themeColors } from '$data/selectableOptions';
+	import { selectableThemes } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 </script>
 
 <div class="grid gap-3 w-full">
-	{#each themeColors as color}
+	{#each ['light', 'dark'] as color}
 		<div class="flex flex-col space-y-2 pb-6">
 			<div id="color-name" class="font-medium capitalize">{color}</div>
 			<div id="color-list" class="space-y-3">

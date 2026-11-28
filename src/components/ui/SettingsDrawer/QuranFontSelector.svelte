@@ -2,10 +2,13 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { onMount } from 'svelte';
 	import { __currentPage, __fontType, __offlineModeSettings } from '$utils/stores';
-	import { selectableFontTypes, fontTypes } from '$data/selectableOptions';
+	import { selectableFontTypes } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';
+
+	// Font type groups, matched against the `type` field of each entry in selectableFontTypes
+	const fontTypes = ['Uthmanic', 'Indopak / Nastaleeq'];
 
 	// Get downloaded font types from offline settings
 	$: downloadedFontTypes = $__offlineModeSettings?.downloadedDataSettings?.fontTypes ?? [];

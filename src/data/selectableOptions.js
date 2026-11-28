@@ -70,8 +70,6 @@ export const selectableDisplays = {
 	}
 };
 
-export const fontTypes = ['Uthmanic', 'Indopak / Nastaleeq'];
-
 export const selectableFontTypes = {
 	1: {
 		id: 1,
@@ -170,8 +168,6 @@ export const selectableFontTypes = {
 		version: 8
 	}
 };
-
-export const themeColors = ['light', 'dark'];
 
 export const selectableThemes = {
 	1: { id: 1, name: 'Golden Glint', color: 'light' },
