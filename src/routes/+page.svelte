@@ -27,6 +27,7 @@
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { resumeLatestReadingSession } from '$utils/readingHistoryHandler';
+	import { onMount } from 'svelte';
 
 	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5';
@@ -134,13 +135,20 @@
 	let chapterDataLoaded = false;
 
 	// On first scroll (after 50px), fetch chapter and translation data without updating the store
-	window.addEventListener('scroll', async function onScroll() {
-		if (!chapterDataLoaded && window.scrollY > 50) {
+	onMount(() => {
+		function onScroll() {
+			if (chapterDataLoaded || window.scrollY <= 50) return;
+
 			chapterDataLoaded = true;
 			fetchChapterData({ chapter: 1, preventStoreUpdate: true });
 			fetchVerseTranslationData({ preventStoreUpdate: true });
 			window.removeEventListener('scroll', onScroll);
 		}
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+
+		// Remove the listener if the user leaves the page before scrolling
+		return () => window.removeEventListener('scroll', onScroll);
 	});
 
 	__currentPage.set('home');
