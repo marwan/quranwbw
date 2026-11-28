@@ -259,7 +259,7 @@
 			<div class="text-xs opacity-70 mb-6 text-left">
 				{#if copyType === 1 || copyType === 3}
 					<span>Text copied to clipboard.</span>
-					<button on:click={downloadTextFile(`quran-${chapter}-${verse}`, generatedVerseData)} class={linkClasses} data-rybbit-event="Download Verse File Button">Click here to download it as a file.</button>
+					<button on:click={() => downloadTextFile(`quran-${chapter}-${verse}`, generatedVerseData)} class={linkClasses} data-rybbit-event="Download Verse File Button">Click here to download it as a file.</button>
 				{:else}
 					<span>Link copied to clipboard.</span>
 				{/if}
