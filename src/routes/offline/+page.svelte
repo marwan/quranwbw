@@ -111,7 +111,7 @@
 		},
 		{
 			id: 'tafsirData',
-			title: 'Tafsir Data',
+			title: `${term('tafsir')} Data`,
 			dataSizeInMB: 90,
 			description: `These files let you read ${term('tafsir')} for all ${term('chapters')} offline, based on the ${term('tafsir')} you have selected in your settings.`,
 			isDataDownloaded: isTafsirDataDownloaded,
