@@ -8,7 +8,7 @@
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { resumeReadingSession, getReadingHistoryEntryUrl } from '$utils/readingHistoryHandler';
-	import { shortTimeAgo } from '$utils/shortTimeAgo';
+	import { formatRelativeTime } from '$utils/formatRelativeTime';
 	import { term } from '$utils/terminologies';
 	import { updateSettings } from '$utils/updateSettings';
 
@@ -64,7 +64,7 @@
 				{@const [chapter, verse] = [item.chapter, item.verse]}
 				{@const entryUrl = getReadingHistoryEntryUrl(item)}
 				{@const viewLabel = getViewLabel(item)}
-				{@const readTime = shortTimeAgo(item.updatedAt, now)}
+				{@const readTime = formatRelativeTime(item.updatedAt, now)}
 
 				<div class="{individualCheckboxClasses} flex items-stretch gap-3 w-full min-w-0 overflow-hidden">
 					<a href={entryUrl} class="flex-1 min-w-0 overflow-hidden" on:click={() => openEntry(item, entryUrl, index)}>

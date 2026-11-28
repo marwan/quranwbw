@@ -4,7 +4,7 @@
 	import { quranMetaData } from '$data/quranMeta';
 	import { __verseKey, __userNotes, __notesModalVisible } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
-	import { timeAgo } from '$utils/timeAgo';
+	import { formatRelativeTime } from '$utils/formatRelativeTime';
 	import { updateSettings } from '$utils/updateSettings';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
@@ -25,7 +25,7 @@
 		// Update note details if a note exists for the current key
 		if (Object.prototype.hasOwnProperty.call($__userNotes, $__verseKey)) {
 			verseNote = $__userNotes[$__verseKey].note;
-			noteModifiedAt = timeAgo($__userNotes[$__verseKey].modified_at);
+			noteModifiedAt = formatRelativeTime($__userNotes[$__verseKey].modified_at);
 
 			// Re-run the block when notes modal visibility changes
 			$__notesModalVisible;
@@ -80,7 +80,7 @@
 		<textarea id="notes-value" rows="8" value={verseNote} class="block p-2.5 w-full text-sm rounded-3xl bg-transparent border border-theme-accent/20 focus:border-theme-accent focus:ring-theme-accent placeholder:text-theme-accent/50 resize-none" placeholder="Write your thoughts here..."></textarea>
 
 		{#if noteModifiedAt !== null}
-			<div id="notes-last-modified" class="text-xs mt-4">Modified {noteModifiedAt}.</div>
+			<div id="notes-last-modified" class="text-xs opacity-70 mt-4">Modified {noteModifiedAt}.</div>
 		{/if}
 	</div>
 
