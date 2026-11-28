@@ -4,7 +4,7 @@
 
 	import { pageNumberKeys, juzNumberKeys, hizbNumberKeys } from '$data/quranMeta';
 	import { __currentPage, __displayType } from '$utils/stores';
-	import { selectableDisplays } from '$data/options';
+	import { selectableDisplays } from '$data/selectableOptions';
 	import { term } from '$utils/terminologies';
 
 	// Shared styling; bottom margin depends on whether the display type is continuous

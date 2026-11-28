@@ -2,7 +2,7 @@
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
 	import { onMount } from 'svelte';
 	import { __verseTranslations, __offlineModeSettings } from '$utils/stores';
-	import { selectableVerseTranslations, verseTranslationsLanguages } from '$data/options';
+	import { selectableVerseTranslations, verseTranslationsLanguages } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualCheckboxClasses } from '$data/commonClasses';
 	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';

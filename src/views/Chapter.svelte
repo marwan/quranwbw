@@ -9,7 +9,7 @@
 	import { parseURL } from '$utils/parseURL';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { quranMetaData } from '$data/quranMeta';
-	import { selectableDisplays } from '$data/options';
+	import { selectableDisplays } from '$data/selectableOptions';
 	import { __userSettings, __currentPage, __chapterNumber, __displayType, __fontType, __wordTranslation, __wordTransliteration, __verseTranslations, __firstVerseOnPage } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
 	import { goto } from '$app/navigation';

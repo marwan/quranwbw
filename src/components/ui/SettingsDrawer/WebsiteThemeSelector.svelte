@@ -1,7 +1,7 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { __websiteTheme } from '$utils/stores';
-	import { selectableThemes, themeColors } from '$data/options';
+	import { selectableThemes, themeColors } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 </script>

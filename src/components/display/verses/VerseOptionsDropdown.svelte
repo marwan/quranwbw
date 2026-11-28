@@ -15,7 +15,7 @@
 	import Morphology from '$svgs/Morphology.svelte';
 	import Copy from '$svgs/Copy.svelte';
 	import { showAudioModal } from '$utils/audioController';
-	import { selectableDisplays } from '$data/options';
+	import { selectableDisplays } from '$data/selectableOptions';
 	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType, __morphologyKey } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';

@@ -7,7 +7,7 @@
 	import { linkClasses, buttonClasses, selectedRadioOrCheckboxClasses, radioClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
-	import { selectableVerseTranslations } from '$data/options';
+	import { selectableVerseTranslations } from '$data/selectableOptions';
 
 	// Options
 	let copyType = 1;

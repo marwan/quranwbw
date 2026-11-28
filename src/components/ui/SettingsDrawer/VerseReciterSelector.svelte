@@ -1,7 +1,7 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { __reciter, __translationReciter } from '$utils/stores';
-	import { selectableReciters, selectableTranslationReciters } from '$data/options';
+	import { selectableReciters, selectableTranslationReciters } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { staticEndpoint } from '$data/websiteSettings';

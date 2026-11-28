@@ -14,7 +14,7 @@
 	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled, __anyModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
-	import { selectableFontTypes } from '$data/options';
+	import { selectableFontTypes } from '$data/selectableOptions';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { loadFont } from '$utils/loadFont';

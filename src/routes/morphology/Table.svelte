@@ -3,7 +3,7 @@
 	export let tableType;
 	export let wordData;
 
-	import { selectableWordTranslations } from '$data/options';
+	import { selectableWordTranslations } from '$data/selectableOptions';
 	import { __wordTranslation } from '$utils/stores';
 	import { buttonClasses, linkClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';

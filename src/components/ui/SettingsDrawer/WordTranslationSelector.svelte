@@ -2,7 +2,7 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { onMount } from 'svelte';
 	import { __wordTranslation, __offlineModeSettings } from '$utils/stores';
-	import { selectableWordTranslations } from '$data/options';
+	import { selectableWordTranslations } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { isUserOnline } from '$utils/offlineModeHandler';

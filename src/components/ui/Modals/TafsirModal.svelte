@@ -6,7 +6,7 @@
 	import { quranMetaData } from '$data/quranMeta';
 	import { __tafsirModalVisible, __verseKey, __verseTafsir } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
-	import { selectableTafsirs } from '$data/selectableTafsirs';
+	import { selectableTafsirs } from '$data/selectableOptions';
 	import { term } from '$utils/terminologies';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { tafsirDataUrls } from '$data/websiteSettings';

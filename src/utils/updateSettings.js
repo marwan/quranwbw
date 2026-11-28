@@ -36,7 +36,6 @@ import {
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 import { queueReadingHistoryUpdate, removeReadingHistoryEntry } from '$utils/readingHistoryHandler';
-import { isReaderPage } from '$utils/isReaderPage';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -259,7 +258,7 @@ export function updateSettings(props) {
 
 		// Update last read position and reading history when on a reader page
 		case 'lastRead':
-			if (isReaderPage(get(__currentPage))) {
+			if (['chapter', 'mushaf', 'juz', 'hizb'].includes(get(__currentPage))) {
 				const data = props.value;
 				data['currentPage'] = get(__currentPage);
 

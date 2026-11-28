@@ -2,7 +2,7 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { onMount } from 'svelte';
 	import { __verseTafsir, __offlineModeSettings } from '$utils/stores';
-	import { verseTafsirLanguages, selectableTafsirs } from '$data/selectableTafsirs';
+	import { verseTafsirLanguages, selectableTafsirs } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';

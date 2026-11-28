@@ -16,7 +16,7 @@
 	import { goto } from '$app/navigation';
 	import { inview } from 'svelte-inview';
 	import { term } from '$utils/terminologies';
-	import { selectableDisplays } from '$data/options';
+	import { selectableDisplays } from '$data/selectableOptions';
 
 	// Set this so we can use it for the 'setPlayFromHere' functionality in the audio modal
 	$: $__keysToFetch = keys;

@@ -10,7 +10,7 @@
 	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __reciter, __translationReciter, __playbackSpeed } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
 	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses, dropdownItemClasses, radioClasses } from '$data/commonClasses';
-	import { selectableAudioDelays, selectableAudioDelaysOrder, selectableRepeatTimes, selectableReciters } from '$data/options';
+	import { selectableAudioDelays, selectableAudioDelaysOrder, selectableRepeatTimes, selectableReciters } from '$data/selectableOptions';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { updateSettings } from '$utils/updateSettings';

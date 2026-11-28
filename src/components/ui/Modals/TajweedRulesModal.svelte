@@ -7,7 +7,6 @@
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { staticEndpoint, cdnStaticDataUrls } from '$data/websiteSettings';
 	import { linkClasses } from '$data/commonClasses';
-	import { createLink } from '$utils/createLink';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 
 	const modalTitle = `${term('tajweed')} Rules`;
@@ -75,7 +74,7 @@
 			<!-- links to PDF files -->
 			<div class="mt-4 text-xs">
 				To learn the correct pronunciation of Arabic alphabets, please refer to
-				{@html createLink(`${staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf`, 'Makharij Al Huroof')}.
+				<a href="{staticEndpoint}/tajweed/Makharij%20Al%20Huroof.pdf" target="_blank" rel="noopener noreferrer" class={linkClasses}>Makharij Al Huroof</a>.
 			</div>
 		{:catch error}
 			<ErrorLoadingData center="false" {error} />
