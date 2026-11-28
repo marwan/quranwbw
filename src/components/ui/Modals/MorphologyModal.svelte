@@ -12,7 +12,7 @@
 	$: if ($__morphologyModalVisible) resetAudioSettings();
 </script>
 
-<Modal bind:open={$__morphologyModalVisible} id="morphologyModal" transitionParams={getModalTransition('bottom')} size="lg" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+<Modal bind:open={$__morphologyModalVisible} id="morphologyModal" transitionParams={getModalTransition('bottom')} size="lg" position="bottom" center outsideclose>
 	<div class="flex flex-row space-x-2 flex-shrink-0">
 		<h3 class="mb-6 text-xl font-medium flex-shrink-0">Word {$__morphologyKey}</h3>
 		<a href="/morphology?word={$__morphologyKey}" class="inline-flex mt-[-2px] mb-6 p-2 rounded-full items-center border border-transparent hover:border-theme-accent bg-theme-accent/5" on:click={() => window.rybbit?.event('Full View Morphology Button')}>

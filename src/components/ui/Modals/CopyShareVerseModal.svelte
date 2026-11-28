@@ -4,13 +4,10 @@
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { __verseKey, __copyShareVerseModalVisible, __verseTranslationData } from '$utils/stores';
-	import { linkClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
+	import { linkClasses, buttonClasses, selectedRadioOrCheckboxClasses, radioClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { selectableVerseTranslations } from '$data/options';
-
-	// CSS classes for radio buttons
-	const radioClasses = 'inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';
 
 	// Options
 	let copyType = 1;
@@ -156,7 +153,7 @@
 	}
 </script>
 
-<Modal id="copyShareVerseModal" bind:open={$__copyShareVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!rounded-b-none md:!rounded-3xl !theme max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" placement="center" position="bottom" outsideclose>
+<Modal id="copyShareVerseModal" bind:open={$__copyShareVerseModalVisible} transitionParams={getModalTransition('bottom')} size="xs" class="!theme" placement="center" position="bottom" outsideclose>
 	<h3 class="mb-6 text-xl font-medium flex-shrink-0">
 		{quranMetaData[chapter || 1].transliteration}, {$__verseKey}
 	</h3>

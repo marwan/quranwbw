@@ -13,9 +13,10 @@
 	import { quranMetaData } from '$data/quranMeta';
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
+	import { dropdownItemClasses } from '$data/commonClasses';
 
 	const dispatch = createEventDispatcher();
-	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
+
 	// Parse the bookmark key (chapter:verse) and get the chapter metadata
 	const [bookmarkChapter, bookmarkVerse] = bookmark.split(':').map(Number);
 	const chapterMeta = quranMetaData[bookmarkChapter];

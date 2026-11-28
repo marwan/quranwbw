@@ -9,16 +9,13 @@
 	import { quranMetaData } from '$data/quranMeta';
 	import { __currentPage, __chapterNumber, __audioSettings, __audioModalVisible, __reciter, __translationReciter, __playbackSpeed } from '$utils/stores';
 	import { prepareVersesToPlay, playButtonHandler } from '$utils/audioController';
-	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses } from '$data/commonClasses';
+	import { disabledClasses, buttonClasses, selectedRadioOrCheckboxClasses, dropdownItemClasses, radioClasses } from '$data/commonClasses';
 	import { selectableAudioDelays, selectableAudioDelaysOrder, selectableRepeatTimes, selectableReciters } from '$data/options';
 	import { term } from '$utils/terminologies';
 	import { getModalTransition } from '$utils/getModalTransition';
 	import { updateSettings } from '$utils/updateSettings';
 	import { defaultSettings } from '$src/hooks.client';
 
-	// CSS classes for radio buttons
-	const radioClasses = 'inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';
-	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 	let invalidStartVerse = false;
 	let invalidEndVerse = false;
 	let invalidTimesToRepeat = false;
@@ -159,7 +156,7 @@
 	}
 </script>
 
-<Modal id="audioModal" bind:open={$__audioModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl !theme max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" placement="center" position="bottom" outsideclose>
+<Modal id="audioModal" bind:open={$__audioModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!theme" placement="center" position="bottom" outsideclose>
 	<h3 class="mb-6 text-xl font-medium flex-shrink-0">{quranMetaData[$__audioSettings.playingChapter || 1].transliteration}, {$__audioSettings.playingKey}</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">

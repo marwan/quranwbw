@@ -15,13 +15,13 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 	import { __verseKey, __notesModalVisible } from '$utils/stores';
+	import { dropdownItemClasses } from '$data/commonClasses';
 
 	const dispatch = createEventDispatcher();
 
 	// Dropdown state (previous values are used to detect changes in the reactive blocks below)
 	let dropdownOpen = false;
 	let buttonElement;
-	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 	let hasMounted = false;
 	let previousOpen = dropdownOpen;
 	let previousForceClose = forceClose;

@@ -55,7 +55,7 @@
 	}
 </script>
 
-<Modal id="readingHistoryModal" bind:open={$__readingHistoryModalVisible} transitionParams={getModalTransition('bottom')} size="md" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+<Modal id="readingHistoryModal" bind:open={$__readingHistoryModalVisible} transitionParams={getModalTransition('bottom')} size="md" position="bottom" center outsideclose>
 	<h3 class="mb-6 text-xl font-medium flex-shrink-0">Reading History</h3>
 
 	<div class="flex-1 min-h-0 overflow-y-auto w-full pr-2">

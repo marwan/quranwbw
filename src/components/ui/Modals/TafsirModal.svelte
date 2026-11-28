@@ -79,7 +79,7 @@
 	}
 </script>
 
-<Modal id="tafsirModal" bind:open={$__tafsirModalVisible} transitionParams={getModalTransition('bottom')} size="lg" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+<Modal id="tafsirModal" bind:open={$__tafsirModalVisible} transitionParams={getModalTransition('bottom')} size="lg" position="bottom" center outsideclose>
 	<h3 class="mb-6 text-xl font-medium flex-shrink-0">{quranMetaData[chapter].transliteration}, {chapter}:{verse}</h3>
 
 	<div bind:this={scrollContainer} class="flex-1 min-h-0 overflow-y-auto overscroll-contain w-full pr-2">

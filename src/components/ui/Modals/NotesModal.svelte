@@ -71,7 +71,7 @@
 	}
 </script>
 
-<Modal id="notesModal" bind:open={$__notesModalVisible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl max-h-[90vh] flex flex-col" bodyClass="p-6 flex flex-col min-h-0 overflow-hidden" position="bottom" center outsideclose>
+<Modal id="notesModal" bind:open={$__notesModalVisible} transitionParams={getModalTransition('bottom')} size="sm" position="bottom" center outsideclose>
 	<h3 class="mb-6 text-xl font-medium flex-shrink-0">
 		{quranMetaData[chapter].transliteration}, {$__verseKey}
 	</h3>

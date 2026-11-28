@@ -22,10 +22,9 @@
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+	import { dropdownItemClasses } from '$data/commonClasses';
 
-	// Constants
 	const mushafFontTypes = [2, 3];
-	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 
 	// Component state
 	let dropdownOpen = false;
