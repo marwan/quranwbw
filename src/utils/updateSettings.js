@@ -354,6 +354,17 @@ export function updateSettings(props) {
 			userSettings.displaySettings.homepageLayoutPreferences = props.value;
 			break;
 
+		// for toggling analytics (opt-out)
+		case 'analyticsOptOut':
+			// when checked, set the flag to disable analytics
+			if (props.value) localStorage.setItem('disable-rybbit', 'true');
+			// when unchecked, remove the flag so analytics loads again
+			else localStorage.removeItem('disable-rybbit');
+
+			// reload so the script is loaded or skipped accordingly
+			location.reload();
+			break;
+
 		// Increase/decrease font sizes by swapping the Tailwind font size class on all
 		// matching elements and persisting the new size to userSettings.
 		// Elements use a `data-fontSize` attribute to track their current size class,

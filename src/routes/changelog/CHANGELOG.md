@@ -1,3 +1,9 @@
+### Nov 28, 2026
+
+- **Disable Usage Insights**: You can now opt out of anonymous usage insights directly from the website settings.
+
+---
+
 ### Nov 21, 2026
 
 - **Reading History:** Recently visited reading locations are now automatically recorded, making it easy to revisit Chapters, Mushaf, Juz, and Hizb pages you've been reading.
