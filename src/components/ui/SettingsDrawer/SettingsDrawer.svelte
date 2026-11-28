@@ -196,6 +196,7 @@
 		document.querySelector('#font-settings-block').classList.add('border-t-2');
 	}
 
+	// Returns the font size id matching the given Tailwind class, or null if none match
 	function getFontSizeIdByClass(className) {
 		for (const key in selectableFontSizes) {
 			if (selectableFontSizes[key].value === className) {
@@ -205,12 +206,15 @@
 		return null;
 	}
 
+	// Hidden file input element used for importing settings
 	let fileInput;
 
+	// Opens the file picker for importing settings
 	function triggerImport() {
 		fileInput.click();
 	}
 
+	// Confirms with the user, then imports the selected settings file
 	function handleFileChange(event) {
 		const file = event.target.files[0];
 		if (file) {

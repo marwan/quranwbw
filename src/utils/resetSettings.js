@@ -1,6 +1,7 @@
 import { deleteDexieDatabase } from '$utils/dexie';
 import { unregisterServiceWorkerAndClearCache } from '$utils/offlineModeHandler';
 
+// Wipes all stored settings, caches and local databases, then reloads the page for a clean state
 export async function resetSettings() {
 	// 1. Remove stored user settings
 	localStorage.removeItem('userSettings');

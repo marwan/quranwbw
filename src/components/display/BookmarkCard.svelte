@@ -16,10 +16,12 @@
 
 	const dispatch = createEventDispatcher();
 	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
+	// Parse the bookmark key (chapter:verse) and get the chapter metadata
 	const [bookmarkChapter, bookmarkVerse] = bookmark.split(':').map(Number);
 	const chapterMeta = quranMetaData[bookmarkChapter];
 	const maxTextLength = 'max-w-[28vw] md:max-w-[115px]';
 
+	// Dropdown state (previous values are used to detect changes in the reactive blocks below)
 	let dropdownOpen = false;
 	let buttonElement;
 	let hasMounted = false;
@@ -32,11 +34,13 @@
 		previousOpen = dropdownOpen;
 	});
 
+	// Notify the parent whenever the dropdown opens or closes (after mount)
 	$: if (hasMounted && dropdownOpen !== previousOpen) {
 		previousOpen = dropdownOpen;
 		dispatch('toggle', { bookmark, open: dropdownOpen });
 	}
 
+	// Close the dropdown when the parent changes the forceClose value
 	$: if (forceClose !== previousForceClose) {
 		previousForceClose = forceClose;
 		if (dropdownOpen) {
@@ -45,10 +49,12 @@
 		}
 	}
 
+	// Toggles the dropdown open/closed
 	function toggleDropdown() {
 		dropdownOpen = !dropdownOpen;
 	}
 
+	// Asks for confirmation, then deletes the bookmark
 	function handleDeleteBookmark(event) {
 		event.stopPropagation();
 

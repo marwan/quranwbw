@@ -17,11 +17,14 @@
 	// Automatically close the modal whenever the user navigates to a new page
 	$: if ($__currentPage) __readingHistoryModalVisible.set(false);
 
+	// Load the Quran text data whenever the modal is opened
 	$: if ($__readingHistoryModalVisible) loadQuranData();
 
+	// Timestamp used for relative "time ago" labels, refreshed each time the modal opens
 	let now = Date.now();
 	$: if ($__readingHistoryModalVisible) now = Date.now();
 
+	// Returns a label for the entry view (page, juz or hizb), or null for regular chapter views
 	function getViewLabel(item) {
 		if (item.currentPage === 'mushaf' && item.page) return `Page ${item.page}`;
 		if (item.currentPage === 'juz' && item.juz) return `${term('juz')} ${item.juz}`;
@@ -29,16 +32,19 @@
 		return null;
 	}
 
+	// Resumes the selected reading session and tracks the click
 	function openEntry(item, entryUrl, index) {
 		resumeReadingSession(item.id, entryUrl);
 		window.rybbit?.event('Reading History Entry Click', { position: index + 1, view: item.currentPage ?? 'chapter' });
 	}
 
+	// Removes the entry from reading history and tracks the removal
 	function removeEntry(item) {
 		updateSettings({ type: 'removeReadingHistoryEntry', value: item.id });
 		window.rybbit?.event('Remove Reading History Entry');
 	}
 
+	// Fetches (and caches) the full Quran text data used by the history entries
 	async function loadQuranData() {
 		try {
 			fullQuranTextData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, 'other');
