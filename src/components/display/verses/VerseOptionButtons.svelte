@@ -119,7 +119,7 @@
 			{/if}
 
 			<!-- verses option dropdown -->
-			<button id="verse-options-{verse}" class={buttonClasses} aria-label="Options" on:mouseenter={__verseKey.set(key)} on:click={__verseKey.set(key)}>
+			<button id="verse-options-{verse}" class={buttonClasses} aria-label="Options" on:mouseenter={() => __verseKey.set(key)} on:focus={() => __verseKey.set(key)} on:click={() => __verseKey.set(key)}>
 				<div>
 					<DotsHorizontal size={6} />
 				</div>
