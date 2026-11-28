@@ -16,6 +16,7 @@
 	import { selectableTafsirs } from '$data/selectableOptions';
 	import { bismillahFontMap } from '$data/bismillahFontMap';
 	import { clearDexieTable } from '$utils/dexie';
+	import { onMount } from 'svelte';
 
 	const pageTitle = 'Offline Mode (Beta)';
 
@@ -123,20 +124,30 @@
 		}
 	];
 
-	// Listen for cache started
-	window.addEventListener('sw-cache-started', () => {
-		isRegistering = true;
-	});
+	// Listen for service worker cache start and completion
+	onMount(() => {
+		const onCacheStarted = () => {
+			isRegistering = true;
+		};
 
-	// Listen for cache completion
-	window.addEventListener('sw-cache-complete', () => {
-		isRegistering = false;
+		const onCacheComplete = () => {
+			isRegistering = false;
 
-		// Update using helper function
-		updateOfflineSettingsStructure('serviceWorker', {
-			downloaded: true,
-			downloadedAt: new Date().toISOString()
-		});
+			// Update using helper function
+			updateOfflineSettingsStructure('serviceWorker', {
+				downloaded: true,
+				downloadedAt: new Date().toISOString()
+			});
+		};
+
+		window.addEventListener('sw-cache-started', onCacheStarted);
+		window.addEventListener('sw-cache-complete', onCacheComplete);
+
+		// Remove the listeners when the user leaves the page
+		return () => {
+			window.removeEventListener('sw-cache-started', onCacheStarted);
+			window.removeEventListener('sw-cache-complete', onCacheComplete);
+		};
 	});
 
 	// Helper function to ensure nested structure exists with custom properties
