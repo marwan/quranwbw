@@ -5,7 +5,7 @@
 	import Skeleton from '$ui/FlowbiteSvelte/skeleton/Skeleton.svelte';
 	import { __currentPage, __verseTranslations, __verseTranslationData, __userSettings } from '$utils/stores';
 	import { fetchVerseTranslationData } from '$utils/fetchData';
-	import { selectableVerseTranslations } from '$data/options';
+	import { selectableVerseTranslations } from '$data/selectableOptions';
 
 	$: fontSizes = JSON.parse($__userSettings).displaySettings.fontSizes;
 	$: verseTranslationClasses = `verseTranslationText flex flex-col space-y-4 leading-normal ${fontSizes.verseTranslationText}`;

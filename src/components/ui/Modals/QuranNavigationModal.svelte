@@ -6,7 +6,7 @@
 	import Search from '$svgs/Search.svelte';
 	import { quranMetaData, startPageOfChapters, pageNumberKeys, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { buttonClasses } from '$data/commonClasses';
-	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWesbiteLayoutEnabled } from '$utils/stores';
+	import { __chapterNumber, __pageURL, __currentPage, __pageNumber, __quranNavigationModalVisible, __lastRead, __morphologyKey, __wideWebsiteLayoutEnabled } from '$utils/stores';
 	import { inview } from 'svelte-inview';
 	import { validateKey } from '$utils/validateKey';
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
@@ -97,7 +97,7 @@
 </script>
 
 <Modal id="quranNavigationModal" bind:open={$__quranNavigationModalVisible} transitionParams={getModalTransition('top')} title="Navigate" size="md" class="!rounded-t-none md:!rounded-3xl" bodyClass="md:p-2 !border-t-0" headerClass="hidden" placement="center" position="top" outsideclose>
-	<div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-col space-y-2 justify-between px-4 py-5 mx-auto`}>
+	<div class={`${getWebsiteWidth($__wideWebsiteLayoutEnabled)} flex flex-col space-y-2 justify-between px-4 py-5 mx-auto`}>
 		<!-- search block -->
 		<div id="search-block" class="mx-2">
 			<div id="navigation-inputs" class="flex flex-col justify-start">
@@ -120,7 +120,7 @@
 
 				<!-- instructions -->
 				<div id="search-instructions" class="text-xs pt-2 opacity-70 pb-4">
-					Enter a {term('chapter').toLowerCase()}, page, {term('juz').toLowerCase()}/{term('hizb').toLowerCase()} number, or {term('verse').toLowerCase()}/word key (e.g., 2:255, 2.286, 18-10, 2 1 1). You can also navigate using surah names (e.g., faatiha, kahf, mary).
+					Enter a {term('chapter').toLowerCase()}, page, {term('juz').toLowerCase()}/{term('hizb').toLowerCase()} number, or {term('verse').toLowerCase()}/word key (e.g., 2:255, 2.286, 18-10, 2 1 1). You can also navigate using {term('chapter').toLowerCase()} names (e.g., faatiha, kahf, mary).
 				</div>
 
 				<!-- suggestions (only for home page) -->
@@ -341,22 +341,6 @@
 						</ul>
 					</div>
 				{/if}
-
-				<!-- supplications selector -->
-				<!-- {#if $__currentPage === 'supplications'}
-					<div class="flex flex-col space-y-2 w-full">
-						<div class="px-2 text-sm pb-2 border-b border-theme-accent/20 font-medium">{term('supplications')}</div>
-						<ul id="navbar-supplications-list" class="grow basis-1/2 px-2 overflow-y-scroll">
-							{#each Object.entries(supplicationsFromQuran) as [key, value]}
-								<li>
-									<a href="#{key}">
-										<div class={listItemClasses}>{quranMetaData[key.split(':')[0]].transliteration}, {key}</div>
-									</a>
-								</li>
-							{/each}
-						</ul>
-					</div>
-				{/if} -->
 
 				<!-- words selector -->
 				{#if $__currentPage === 'morphology'}

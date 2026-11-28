@@ -17,3 +17,7 @@ export const selectedRadioOrCheckboxClasses = 'bg-theme-accent/5 !border-theme-a
 export const individualRadioClasses = 'inline-flex justify-between items-center p-5 w-full rounded-lg cursor-pointer border-2 border-theme-accent/20 bg-theme-bg peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';
 
 export const individualCheckboxClasses = 'inline-flex justify-between items-center p-5 w-full rounded-lg cursor-pointer border-2 border-theme-accent/20 bg-theme-bg hover:bg-theme-accent/5';
+
+export const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
+
+export const radioClasses = 'inline-flex justify-between items-center py-2 px-4 w-full bg-theme-bg rounded-lg border-2 border-theme-accent/20 cursor-pointer peer-checked:border-2 peer-checked:border-theme-accent hover:bg-theme-accent/5';

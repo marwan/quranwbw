@@ -13,9 +13,12 @@
 	import { staticEndpoint, chapterHeaderFontLink, cdnStaticDataUrls, morphologyDataUrls, tafsirDataUrls } from '$data/websiteSettings';
 	import { getMushafWordFontLink, isIOSorMac } from '$utils/getMushafWordFontLink';
 	import { term } from '$utils/terminologies';
-	import { selectableTafsirs } from '$data/selectableTafsirs';
+	import { selectableTafsirs } from '$data/selectableOptions';
 	import { bismillahFontMap } from '$data/bismillahFontMap';
 	import { clearDexieTable } from '$utils/dexie';
+	import { onMount } from 'svelte';
+
+	const pageTitle = 'Offline Mode (Beta)';
 
 	// Common messages
 	const errorAlertMessage = 'Something went wrong. Please try again in a few moments.';
@@ -109,7 +112,7 @@
 		},
 		{
 			id: 'tafsirData',
-			title: 'Tafsir Data',
+			title: `${term('tafsir')} Data`,
 			dataSizeInMB: 90,
 			description: `These files let you read ${term('tafsir')} for all ${term('chapters')} offline, based on the ${term('tafsir')} you have selected in your settings.`,
 			isDataDownloaded: isTafsirDataDownloaded,
@@ -121,20 +124,30 @@
 		}
 	];
 
-	// Listen for cache started
-	window.addEventListener('sw-cache-started', () => {
-		isRegistering = true;
-	});
+	// Listen for service worker cache start and completion
+	onMount(() => {
+		const onCacheStarted = () => {
+			isRegistering = true;
+		};
 
-	// Listen for cache completion
-	window.addEventListener('sw-cache-complete', () => {
-		isRegistering = false;
+		const onCacheComplete = () => {
+			isRegistering = false;
 
-		// Update using helper function
-		updateOfflineSettingsStructure('serviceWorker', {
-			downloaded: true,
-			downloadedAt: new Date().toISOString()
-		});
+			// Update using helper function
+			updateOfflineSettingsStructure('serviceWorker', {
+				downloaded: true,
+				downloadedAt: new Date().toISOString()
+			});
+		};
+
+		window.addEventListener('sw-cache-started', onCacheStarted);
+		window.addEventListener('sw-cache-complete', onCacheComplete);
+
+		// Remove the listeners when the user leaves the page
+		return () => {
+			window.removeEventListener('sw-cache-started', onCacheStarted);
+			window.removeEventListener('sw-cache-complete', onCacheComplete);
+		};
 	});
 
 	// Helper function to ensure nested structure exists with custom properties
@@ -696,14 +709,14 @@
 		}
 	}
 
-	__currentPage.set('Offline Mode (Beta)');
+	__currentPage.set(pageTitle);
 </script>
 
-<PageHead title={'Offline Mode (Beta)'} />
+<PageHead title={pageTitle} />
 
 <div class="mx-auto">
 	<div class="markdown mx-auto">
-		<h3>Offline Mode (Beta)</h3>
+		<h3>{pageTitle}</h3>
 		<p>
 			Offline mode lets you use parts of QuranWBW without an internet connection by saving some website data on your device. This is optional and you can update or remove the saved data at any time. Please note that enabling offline mode downloads the core website files, which may use a noticeable amount of data and take some time, especially on slower connections or mobile data. It's best to use
 			a stable Wi-Fi connection if possible.

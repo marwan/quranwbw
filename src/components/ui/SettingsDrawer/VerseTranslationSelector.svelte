@@ -2,7 +2,7 @@
 	import Checkbox from '$ui/FlowbiteSvelte/forms/Checkbox.svelte';
 	import { onMount } from 'svelte';
 	import { __verseTranslations, __offlineModeSettings } from '$utils/stores';
-	import { selectableVerseTranslations, verseTranslationsLanguages } from '$data/options';
+	import { selectableVerseTranslations, verseTranslationsLanguages } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualCheckboxClasses } from '$data/commonClasses';
 	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';
@@ -44,7 +44,7 @@
 		{#each Object.entries(verseTranslationsLanguages) as [_, language]}
 			{#if language.language_id !== 11115}
 				<div class="flex flex-col space-y-2 pb-6">
-					<div id="translation-name" class="text-md font-medium">{language.language}</div>
+					<div id="translation-name" class="font-medium">{language.language}</div>
 					<div id="translation-list" class="space-y-3">
 						{#if hasVisibleTranslations(language.language_id)}
 							{#each Object.values(selectableVerseTranslations) as translation}

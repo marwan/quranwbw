@@ -39,17 +39,15 @@
 		__hideNonDuaPart,
 		__playButtonsFunctionality,
 		__wordMorphologyOnClick,
-		__wideWesbiteLayoutEnabled,
+		__wideWebsiteLayoutEnabled,
 		__signLanguageModeEnabled,
 		__audioSettings
 	} from '$utils/stores';
 
-	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions } from '$data/options';
-
+	import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations, selectableReciters, selectablePlaybackSpeeds, selectableTooltipOptions, selectableFontSizes, selectableVersePlayButtonOptions, selectableTafsirs } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { resetSettings } from '$utils/resetSettings';
 	import { disabledClasses, buttonClasses, linkClasses } from '$data/commonClasses';
-	import { selectableTafsirs } from '$data/selectableTafsirs';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 	import { term } from '$utils/terminologies';
@@ -95,14 +93,14 @@
 	let showIndividualSetting = false;
 	let totalVerseTransliterationsSelected = 0;
 	let arabicWordSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.arabicText);
-	let wordTranlationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
-	let verseTranlationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.verseTranslationText);
+	let wordTranslationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.wordTranslationText);
+	let verseTranslationTransliterationSizeValue = getFontSizeIdByClass(JSON.parse($__userSettings).displaySettings.fontSizes.verseTranslationText);
 	let playbackSpeedValue = JSON.parse($__userSettings).audioSettings.playbackSpeed;
 
 	// Update settings when sliders are changed
 	$: updateSettings({ type: 'arabicText', value: selectableFontSizes[arabicWordSizeValue].value });
-	$: updateSettings({ type: 'wordTranslationText', value: selectableFontSizes[wordTranlationTransliterationSizeValue].value });
-	$: updateSettings({ type: 'verseTranslationText', value: selectableFontSizes[verseTranlationTransliterationSizeValue].value });
+	$: updateSettings({ type: 'wordTranslationText', value: selectableFontSizes[wordTranslationTransliterationSizeValue].value });
+	$: updateSettings({ type: 'verseTranslationText', value: selectableFontSizes[verseTranslationTransliterationSizeValue].value });
 	$: updateSettings({ type: 'playbackSpeed', value: playbackSpeedValue });
 
 	// Calculate maximum allowed font size based on breakpoint
@@ -173,7 +171,9 @@
 
 		settingsDrawerOpacity = 'opacity-0';
 		settingsDrawerBackground = 'bg-transparent';
-		document.querySelector('.settings-backdrop').classList.add('opacityyy-10');
+
+		// Remove the border from the font settings block to avoid visual clutter when sliders are active
+		document.querySelector('#font-settings-block').classList.remove('border-t-2');
 
 		const selectedElement = document.getElementById(selector);
 		selectedElement.classList.remove('opacity-0', 'pointer-events-none');
@@ -189,9 +189,12 @@
 
 		settingsDrawerOpacity = 'opacity-100';
 		settingsDrawerBackground = 'bg-theme-bg';
-		document.querySelector('.settings-backdrop').classList.remove('opacityyy-10');
+
+		// Restore the border to the font settings block
+		document.querySelector('#font-settings-block').classList.add('border-t-2');
 	}
 
+	// Returns the font size id matching the given Tailwind class, or null if none match
 	function getFontSizeIdByClass(className) {
 		for (const key in selectableFontSizes) {
 			if (selectableFontSizes[key].value === className) {
@@ -201,12 +204,15 @@
 		return null;
 	}
 
+	// Hidden file input element used for importing settings
 	let fileInput;
 
+	// Opens the file picker for importing settings
 	function triggerImport() {
 		fileInput.click();
 	}
 
+	// Confirms with the user, then imports the selected settings file
 	function handleFileChange(event) {
 		const file = event.target.files[0];
 		if (file) {
@@ -331,7 +337,7 @@
 						<div class="flex flex-row justify-between items-center">
 							<span class="block">Wide Website Layout</span>
 							<label class="inline-flex items-center cursor-pointer {$__wordTranslationEnabled === false && disabledClasses}">
-								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWesbiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWesbiteLayoutEnabled', value: event.target.checked })} />
+								<input type="checkbox" value="" class="sr-only peer" checked={$__wideWebsiteLayoutEnabled} on:click={(event) => updateSettings({ type: 'wideWebsiteLayoutEnabled', value: event.target.checked })} />
 								<div class={toggleBtnClasses}></div>
 							</label>
 						</div>
@@ -387,10 +393,10 @@
 						<div class="flex flex-col justify-between space-y-4">
 							<span class="block">
 								{$__signLanguageModeEnabled ? 'Sign Language Icon Size' : 'Word Translation/Transliteration Size'}
-								({selectableFontSizes[wordTranlationTransliterationSizeValue].value.split('-')[1]})
+								({selectableFontSizes[wordTranslationTransliterationSizeValue].value.split('-')[1]})
 							</span>
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('word-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
-								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranlationTransliterationSizeValue} class={rangeClasses} />
+								<Range min="1" max={maxFontSizeAllowed} bind:value={wordTranslationTransliterationSizeValue} class={rangeClasses} />
 							</div>
 						</div>
 					</div>
@@ -400,9 +406,9 @@
 					<!-- verse-translation-size-setting -->
 					<div id="verse-translation-size-setting" class="fontSizeSliders {settingsBlockClasses} {$__currentPage === 'mushaf' && disabledClasses}">
 						<div class="flex flex-col justify-between space-y-4">
-							<span class="block">{term('verse')} Translation/Transliteration Size ({selectableFontSizes[verseTranlationTransliterationSizeValue].value.split('-')[1]})</span>
+							<span class="block">{term('verse')} Translation/Transliteration Size ({selectableFontSizes[verseTranslationTransliterationSizeValue].value.split('-')[1]})</span>
 							<div class="flex flex-col space-y-2 rounded-3xl w-full" role="group" on:mouseenter={() => onMouseEnter('verse-translation-size-setting')} on:mouseleave={() => onMouseLeave()}>
-								<Range min="1" max={maxFontSizeAllowed} bind:value={verseTranlationTransliterationSizeValue} class={rangeClasses} />
+								<Range min="1" max={maxFontSizeAllowed} bind:value={verseTranslationTransliterationSizeValue} class={rangeClasses} />
 							</div>
 						</div>
 					</div>

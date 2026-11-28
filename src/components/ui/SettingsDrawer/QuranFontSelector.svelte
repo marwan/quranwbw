@@ -2,10 +2,13 @@
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { onMount } from 'svelte';
 	import { __currentPage, __fontType, __offlineModeSettings } from '$utils/stores';
-	import { selectableFontTypes, fontTypes } from '$data/options';
+	import { selectableFontTypes } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 	import { dataUnavailableWhileOfflineMessage, isUserOnline } from '$utils/offlineModeHandler';
+
+	// Font type groups, matched against the `type` field of each entry in selectableFontTypes
+	const fontTypes = ['Uthmanic', 'Indopak / Nastaleeq'];
 
 	// Get downloaded font types from offline settings
 	$: downloadedFontTypes = $__offlineModeSettings?.downloadedDataSettings?.fontTypes ?? [];
@@ -60,7 +63,7 @@
 	<div class="grid gap-3 w-full">
 		{#each fontTypes as type}
 			<div class="flex flex-col space-y-2 pb-6">
-				<div id="font-type" class="text-md font-medium capitalize">{type}</div>
+				<div id="font-type" class="font-medium capitalize">{type}</div>
 				<div id="font-list" class="space-y-3">
 					{#if getFontVisibilityStatus(type) === 'has-visible'}
 						{#each Object.entries(selectableFontTypes).sort((a, b) => a[1].order - b[1].order) as [fontKey, fontType]}

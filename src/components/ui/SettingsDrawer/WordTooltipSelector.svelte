@@ -1,7 +1,7 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { __wordTooltip } from '$utils/stores';
-	import { selectableTooltipOptions } from '$data/options';
+	import { selectableTooltipOptions } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 </script>

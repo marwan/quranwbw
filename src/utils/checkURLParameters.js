@@ -1,5 +1,5 @@
 import { updateSettings } from '$utils/updateSettings';
-import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations } from '$data/options';
+import { selectableDisplays, selectableFontTypes, selectableThemes, selectableWordTranslations } from '$data/selectableOptions';
 
 const params = new URLSearchParams(window.location.search);
 

@@ -14,7 +14,7 @@
 	import { __pageNumber, __currentPage, __fontType, __wordTranslation, __mushafPageDivisions, __mushafMinimalModeEnabled, __anyModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData } from '$data/quranMeta';
-	import { selectableFontTypes } from '$data/options';
+	import { selectableFontTypes } from '$data/selectableOptions';
 	import { toggleMushafMinimalMode } from '$utils/toggleMushafMinimalMode';
 	import { getMushafWordFontLink } from '$utils/getMushafWordFontLink';
 	import { loadFont } from '$utils/loadFont';
@@ -141,14 +141,12 @@
 		__pageNumber.set(page);
 	}
 
-	/**
-	 * This function retrieves and processes Quranic verses for a given page number.
-	 * It first gets the specific verse keys required for the given page.
-	 * After identifying the necessary chapters, it fetches their complete data
-	 * and filters out only the requested verses. The function then ensures that the verses
-	 * are sorted in ascending order based on chapter and verse numbers before returning
-	 * the final structured object. This provides well-organized data for further use.
-	 */
+	// This function retrieves and processes Quranic verses for a given page number.
+	// It first gets the specific verse keys required for the given page.
+	// After identifying the necessary chapters, it fetches their complete data
+	// and filters out only the requested verses. The function then ensures that the verses
+	// are sorted in ascending order based on chapter and verse numbers before returning
+	// the final structured object. This provides well-organized data for further use.
 	async function fetchVersesByPage(page) {
 		try {
 			// Get keys for the given page

@@ -99,6 +99,7 @@ export async function isUserOnline(timeout = 1000) {
 		return response.type === 'opaque' || (response.status >= 200 && response.status < 300);
 	} catch (error) {
 		clearTimeout(id);
+		// Not reported to rybbit on purpose: failures here are expected (e.g. offline) and non-critical
 		console.warn(error);
 		return false;
 	}

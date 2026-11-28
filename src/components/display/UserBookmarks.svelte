@@ -1,4 +1,7 @@
 <script>
+	export let cardGridClasses;
+	export let cardInnerClasses;
+
 	import Bookmark from '$svgs/Bookmark.svelte';
 	import BookmarkCard from '$display/BookmarkCard.svelte';
 	import ScrollableFadeContainer from '$display/ScrollableFadeContainer.svelte';
@@ -6,9 +9,6 @@
 	import { cdnStaticDataUrls } from '$data/websiteSettings';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { term } from '$utils/terminologies';
-
-	export let cardGridClasses;
-	export let cardInnerClasses;
 
 	let fullQuranTextData = null;
 	let forceCloseDropdowns = 0;

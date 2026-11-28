@@ -6,21 +6,28 @@
 	import CloseButton from '../utils/CloseButton.svelte';
 	import focusTrap from '../utils/focusTrap';
 
+	// Add frameClasses + bodyClasses to each position
 	const modalPositions = {
 		default: {
 			dialogClasses: 'fixed top-0 start-0 end-0 h-modal md:inset-0 md:h-full z-50 w-full p-4 flex',
 			innerClasses: 'flex relative',
-			sizes: 'w-full max-h-full'
+			sizes: 'w-full max-h-full',
+			frameClasses: '',
+			bodyClasses: 'p-4 md:p-5 space-y-4 flex-1 overflow-y-auto overscroll-contain'
 		},
 		top: {
 			dialogClasses: 'fixed top-0 start-0 end-0 h-full md:h-modal md:inset-0 md:h-full z-50 w-full md:p-4 flex',
 			innerClasses: 'flex fixed top-0 md:relative',
-			sizes: 'w-full max-h-full'
+			sizes: 'w-full max-h-full',
+			frameClasses: '',
+			bodyClasses: 'p-4 md:p-5 space-y-4 flex-1 overflow-y-auto overscroll-contain'
 		},
 		bottom: {
 			dialogClasses: 'fixed bottom-0 md:top-0 start-0 end-0 h-full md:h-modal md:inset-0 md:h-full z-50 w-full md:p-4 flex',
 			innerClasses: 'flex fixed bottom-0 md:relative',
-			sizes: 'w-full max-h-[90%]'
+			sizes: 'w-full max-h-[90%]',
+			frameClasses: '!rounded-b-none md:!rounded-3xl max-h-[90vh]',
+			bodyClasses: 'p-6 flex flex-col min-h-0 overflow-hidden'
 		}
 	};
 
@@ -40,7 +47,7 @@
 	export let defaultClass = 'relative flex flex-col mx-auto';
 	export let headerClass = 'flex justify-between items-center p-4 md:p-5 rounded-t-lg';
 	export let classHeader = undefined;
-	export let bodyClass = 'p-4 md:p-5 space-y-4 flex-1 overflow-y-auto overscroll-contain';
+	export let bodyClass = modalPositions[position].bodyClasses;
 	export let classBody = undefined;
 	export let footerClass = 'flex items-center p-4 md:p-5 space-x-3 rtl:space-x-reverse rounded-b-lg';
 	export let classFooter = undefined;
@@ -112,7 +119,7 @@
 	}
 	$: backdropCls = twMerge(backdropClass, classBackdrop);
 	$: dialogCls = twMerge(dialogClass, classDialog, getPlacementClasses(placement));
-	$: frameCls = twMerge(defaultClass, 'w-full divide-y', $$props.class);
+	$: frameCls = twMerge(defaultClass, 'w-full divide-y', modalPositions[position].frameClasses, $$props.class);
 	$: headerCls = twMerge(headerClass, classHeader);
 	$: bodyCls = twMerge(bodyClass, classBody);
 	$: footerCls = twMerge(footerClass, classFooter);
@@ -140,7 +147,7 @@
 				<!-- Modal body -->
 				<div class={bodyCls} role="document" on:keydown|stopPropagation={handleKeys} on:wheel|stopPropagation|passive>
 					{#if dismissable && !$$slots.header && !title}
-						<CloseButton name="Close modal" class="absolute top-3 end-2.5" {color} on:click={hide} />
+						<CloseButton name="Close modal" class="absolute top-5 end-5" {color} on:click={hide} />
 					{/if}
 					<slot />
 				</div>

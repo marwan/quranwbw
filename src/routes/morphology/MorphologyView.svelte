@@ -3,7 +3,7 @@
 
 	import Spinner from '$svgs/Spinner.svelte';
 	import WordsBlock from '$display/verses/WordsBlock.svelte';
-	import Table from './Table.svelte';
+	import MorphologyWordsTable from './MorphologyWordsTable.svelte';
 	import ErrorLoadingData from '$misc/ErrorLoadingData.svelte';
 	import { quranMetaData } from '$data/quranMeta';
 	import { morphologyDataUrls } from '$data/websiteSettings';
@@ -170,7 +170,7 @@
 
 							<!-- Show the "goto verse" button if the user in on morphology page -->
 							{#if isMorphologyPage}
-								<a href="/{chapter}/{verse}" class={buttonClasses}>Goto Verse</a>
+								<a href="/{chapter}/{verse}" class={buttonClasses}>Goto {term('verse')}</a>
 							{/if}
 						</div>
 					</div>
@@ -204,14 +204,14 @@
 					<!-- Word with same root -->
 					{#if allData?.wordsWithSameRootData?.data && wordRoot && wordRoot in allData.wordsWithSameRootData.data}
 						<div id="words-with-same-root" class="pb-8 pt-8 border-b-2 border-theme-accent/20">
-							<Table wordKeys={allData.wordsWithSameRootData.data[wordRoot]} tableType={1} wordData={allData.wordData} />
+							<MorphologyWordsTable wordKeys={allData.wordsWithSameRootData.data[wordRoot]} tableType={1} wordData={allData.wordData} />
 						</div>
 					{/if}
 
 					<!-- Exact words in Quran -->
 					{#if Array.isArray(allData?.exactWordsInQuranData) && allData.exactWordsInQuranData.length}
 						<div id="exact-word-data" class="pb-8 pt-8 border-b-2 border-theme-accent/20">
-							<Table wordKeys={allData.exactWordsInQuranData} tableType={2} wordData={allData.wordData} />
+							<MorphologyWordsTable wordKeys={allData.exactWordsInQuranData} tableType={2} wordData={allData.wordData} />
 						</div>
 					{/if}
 				</div>

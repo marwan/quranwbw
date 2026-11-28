@@ -3,7 +3,7 @@
 	export let tableType;
 	export let wordData;
 
-	import { selectableWordTranslations } from '$data/options';
+	import { selectableWordTranslations } from '$data/selectableOptions';
 	import { __wordTranslation } from '$utils/stores';
 	import { buttonClasses, linkClasses } from '$data/commonClasses';
 	import { term } from '$utils/terminologies';
@@ -17,8 +17,8 @@
 	const loadAll = params.get('load_all') === 'true';
 
 	// Fallbacks
-	const sanitizedwordKeys = Array.isArray(wordKeys) ? wordKeys : [];
-	const totalAvailableWords = sanitizedwordKeys.length;
+	const sanitizedWordKeys = Array.isArray(wordKeys) ? wordKeys : [];
+	const totalAvailableWords = sanitizedWordKeys.length;
 	const maxResultsToLoad = 50;
 
 	let lastWordToLoad = calculateInitialLastWordToLoad(loadAll, totalAvailableWords, maxResultsToLoad);
@@ -35,7 +35,7 @@
 {#if totalAvailableWords > 0}
 	<div class="flex flex-col">
 		<div class="relative space-y-6 sm:rounded-3xl">
-			<h1 class="text-md md:text-2xl text-center">{totalAvailableWords} {totalAvailableWords > 1 ? 'words' : 'word'} {tableTitles[tableType].title}</h1>
+			<h1 class="md:text-2xl text-center">{totalAvailableWords} {totalAvailableWords > 1 ? 'words' : 'word'} {tableTitles[tableType].title}</h1>
 			<div class="max-h-[32em] overflow-auto">
 				<table class="w-full text-sm text-left rtl:text-right rounded-md">
 					<thead class="text-xs uppercase top-0 bg-theme-accent/5">
@@ -49,7 +49,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each sanitizedwordKeys.slice(0, lastWordToLoad) as item, i}
+						{#each sanitizedWordKeys.slice(0, lastWordToLoad) as item, i}
 							{@const [chapter, verse, word] = item.split(':')}
 							{@const arabic = wordData.arabicWordData[chapter][verse][0][word - 1]}
 							{@const translation = wordData.translationWordData[chapter][verse][0][word - 1]}

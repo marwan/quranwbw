@@ -1,24 +1,22 @@
 import { build, files, version } from '$service-worker';
 
-/**
- * SERVICE WORKER FOR QURANWBW OFFLINE FUNCTIONALITY
- *
- * This service worker enables optional offline access to the website.
- * It does NOT automatically cache anything - users must explicitly enable offline mode.
- *
- * HOW IT WORKS:
- * 1. Service worker registers automatically when user visits the site (but does nothing)
- * 2. User initially downloads the core website files
- * 3. Service worker receives START_CACHING message
- * 4. All website pages are downloaded and cached on the user's device
- * 5. When offline, cached pages are served instead of showing errors
- *
- * UPDATES:
- * When we deploy a new version:
- * - Users with offline mode enabled will automatically get the updated cache
- * - Old cached data is deleted and replaced with new data
- * - Users without offline mode enabled see no difference
- */
+// SERVICE WORKER FOR QURANWBW OFFLINE FUNCTIONALITY
+//
+// This service worker enables optional offline access to the website.
+// It does NOT automatically cache anything - users must explicitly enable offline mode.
+//
+// HOW IT WORKS:
+// 1. Service worker registers automatically when user visits the site (but does nothing)
+// 2. User initially downloads the core website files
+// 3. Service worker receives START_CACHING message
+// 4. All website pages are downloaded and cached on the user's device
+// 5. When offline, cached pages are served instead of showing errors
+//
+// UPDATES:
+// When we deploy a new version:
+// - Users with offline mode enabled will automatically get the updated cache
+// - Old cached data is deleted and replaced with new data
+// - Users without offline mode enabled see no difference
 
 // Different cache names for different data types
 const cacheNames = {
@@ -51,10 +49,8 @@ const staticRoutesToCache = ['/about', '/bookmarks', '/changelog', '/duas', '/ga
 let cachingEnabled = false;
 let cachingStatusLoaded = false; // Track if we've loaded the status
 
-/**
- * CHECK IF USER PREVIOUSLY ENABLED OFFLINE MODE
- * Reads from the config cache to see if caching was enabled before
- */
+// CHECK IF USER PREVIOUSLY ENABLED OFFLINE MODE
+// Reads from the config cache to see if caching was enabled before
 async function getCachingStatus() {
 	try {
 		const cache = await caches.open(cacheNames.config);
@@ -69,10 +65,8 @@ async function getCachingStatus() {
 	return false;
 }
 
-/**
- * SAVE USER'S OFFLINE MODE PREFERENCE
- * Stores whether caching is enabled so it persists across updates
- */
+// SAVE USER'S OFFLINE MODE PREFERENCE
+// Stores whether caching is enabled so it persists across updates
 async function saveCachingStatus(enabled) {
 	try {
 		const cache = await caches.open(cacheNames.config);
@@ -87,10 +81,8 @@ async function saveCachingStatus(enabled) {
 	}
 }
 
-/**
- * ENSURE CACHING STATUS IS LOADED
- * This must be called before any fetch events use cachingEnabled
- */
+// ENSURE CACHING STATUS IS LOADED
+// This must be called before any fetch events use cachingEnabled
 async function ensureCachingStatusLoaded() {
 	if (!cachingStatusLoaded) {
 		cachingEnabled = await getCachingStatus();
@@ -99,24 +91,20 @@ async function ensureCachingStatusLoaded() {
 	}
 }
 
-/**
- * INSTALL EVENT
- * Runs when service worker is first installed
- * We skip waiting so the new service worker activates immediately
- */
+// INSTALL EVENT
+// Runs when service worker is first installed
+// We skip waiting so the new service worker activates immediately
 self.addEventListener('install', () => {
 	self.skipWaiting();
 });
 
-/**
- * ACTIVATE EVENT
- * Runs when service worker becomes active (takes control of the page)
- *
- * This is where we:
- * 1. Check if user had offline mode enabled before
- * 2. If yes, automatically update their cache with new content
- * 3. Delete old caches from previous versions ONLY AFTER new cache is complete
- */
+// ACTIVATE EVENT
+// Runs when service worker becomes active (takes control of the page)
+//
+// This is where we:
+// 1. Check if user had offline mode enabled before
+// 2. If yes, automatically update their cache with new content
+// 3. Delete old caches from previous versions ONLY AFTER new cache is complete
 self.addEventListener('activate', (event) => {
 	event.waitUntil(
 		(async () => {
@@ -173,12 +161,10 @@ self.addEventListener('activate', (event) => {
 	);
 });
 
-/**
- * PERFORM CACHING
- * Downloads and caches all website content
- * This function is called both when user enables offline mode
- * and when service worker updates automatically
- */
+// PERFORM CACHING
+// Downloads and caches all website content
+// This function is called both when user enables offline mode
+// and when service worker updates automatically
 async function performCaching() {
 	const cache = await caches.open(cacheNames.core);
 
@@ -217,15 +203,13 @@ async function performCaching() {
 	await backgroundCache(staticRoutesToCache, 'static-routes');
 }
 
-/**
- * MESSAGE EVENT
- * Listens for messages from the website
- *
- * START_CACHING: User initially downloads the core website files
- * CACHE_URL: Cache a specific URL to a specific cache
- * DELETE_CACHE: Delete a specific cache
- * DISABLE_CACHING: User wants to clear all offline data
- */
+// MESSAGE EVENT
+// Listens for messages from the website
+//
+// START_CACHING: User initially downloads the core website files
+// CACHE_URL: Cache a specific URL to a specific cache
+// DELETE_CACHE: Delete a specific cache
+// DISABLE_CACHING: User wants to clear all offline data
 self.addEventListener('message', (event) => {
 	// User wants to enable offline mode
 	if (event.data.type === 'START_CACHING') {
@@ -321,18 +305,16 @@ self.addEventListener('message', (event) => {
 	}
 });
 
-/**
- * FETCH EVENT
- * Intercepts all network requests from the website
- *
- * If offline mode is enabled:
- * - Try to serve from cache first (checks all caches)
- * - If not in cache, fetch from network and cache it
- * - If offline and not in cache, show error (or homepage for navigation)
- *
- * If offline mode is disabled:
- * - Just fetch from network normally (service worker does nothing)
- */
+// FETCH EVENT
+// Intercepts all network requests from the website
+//
+// If offline mode is enabled:
+// - Try to serve from cache first (checks all caches)
+// - If not in cache, fetch from network and cache it
+// - If offline and not in cache, show error (or homepage for navigation)
+//
+// If offline mode is disabled:
+// - Just fetch from network normally (service worker does nothing)
 self.addEventListener('fetch', (event) => {
 	const url = new URL(event.request.url);
 

@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import { mushafWordFontLink } from '$data/websiteSettings';
-import { selectableThemes } from '$data/options';
+import { selectableThemes } from '$data/selectableOptions';
 import { __websiteTheme, __fontType } from '$utils/stores';
 
 // Returns the Mushaf word font URL for a given page number

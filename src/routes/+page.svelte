@@ -20,19 +20,20 @@
 	import QuranDivisionCard from '$display/QuranDivisionCard.svelte';
 	import Tooltip from '$ui/FlowbiteSvelte/tooltip/Tooltip.svelte';
 	import { websiteTagline } from '$data/websiteSettings';
-	import { __currentPage, __lastRead, __readingHistory, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWesbiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible, __readingHistoryModalVisible } from '$utils/stores';
+	import { __currentPage, __lastRead, __readingHistory, __siteNavigationModalVisible, __quranNavigationModalVisible, __userBookmarks, __userNotes, __wideWebsiteLayoutEnabled, __homepageLayoutPreferences, __userFavoriteChapters, __favoriteChaptersModalVisible, __readingHistoryModalVisible } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { quranMetaData, juzMeta, hizbMeta, mostRead } from '$data/quranMeta';
 	import { term } from '$utils/terminologies';
 	import { disabledClasses } from '$data/commonClasses';
 	import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 	import { resumeLatestReadingSession } from '$utils/readingHistoryHandler';
+	import { onMount } from 'svelte';
 
 	const topButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const continueReadingButtonClasses = 'inline-flex items-center rounded-full px-4 py-2 space-x-2 justify-center text-sm border border-transparent hover:border-theme-accent bg-theme-accent/5';
 	const cardGridClasses = 'grid md:grid-cols-2 lg:grid-cols-3 gap-3';
 	const cardInnerClasses = 'flex justify-between md:text-left transition text-sm rounded-xl p-5 hover:cursor-pointer border border-transparent hover:border-theme-accent bg-theme-accent/5 hover:bg-theme-accent/5';
-	const commontabClasses = 'px-2 md:px-3 py-2 text-xs md:text-md border-b-4 cursor-pointer';
+	const commontabClasses = 'px-2 md:px-3 py-2 text-xs md:border-b-4 cursor-pointer';
 	const tabDefaultBorder = `${commontabClasses} border-transparent`;
 	const tabActiveBorder = `${commontabClasses} border-theme-accent/20`;
 	const siteDescriptionText = ['Your companion for reading, listening to, and learning the Holy Quran, word by word.', 'With features like word audios, Tajweed colors, and transliteration, delve into the Quran with ease. Additionally, explore multi-language translations, tafsir, and detailed word morphology.'];
@@ -134,13 +135,20 @@
 	let chapterDataLoaded = false;
 
 	// On first scroll (after 50px), fetch chapter and translation data without updating the store
-	window.addEventListener('scroll', async function onScroll() {
-		if (!chapterDataLoaded && window.scrollY > 50) {
+	onMount(() => {
+		function onScroll() {
+			if (chapterDataLoaded || window.scrollY <= 50) return;
+
 			chapterDataLoaded = true;
 			fetchChapterData({ chapter: 1, preventStoreUpdate: true });
 			fetchVerseTranslationData({ preventStoreUpdate: true });
 			window.removeEventListener('scroll', onScroll);
 		}
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+
+		// Remove the listener if the user leaves the page before scrolling
+		return () => window.removeEventListener('scroll', onScroll);
 	});
 
 	__currentPage.set('home');
@@ -148,7 +156,7 @@
 
 <PageHead title={`Quran ${websiteTagline}`} />
 
-<div class={`${!$__wideWesbiteLayoutEnabled && 'max-w-5xl'} mx-auto flex flex-col space-y-4 md:px-4`}>
+<div class={`${!$__wideWebsiteLayoutEnabled && 'max-w-5xl'} mx-auto flex flex-col space-y-4 md:px-4`}>
 	<!-- top menu -->
 	<div class="flex flex-col mt-2">
 		<div class="w-full flex flex-row justify-between text-sm">

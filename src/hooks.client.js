@@ -16,7 +16,7 @@ export const defaultSettings = {
 			wordTranslationText: 'text-sm',
 			verseTranslationText: 'text-sm'
 		},
-		wideWesbiteLayoutEnabled: false,
+		wideWebsiteLayoutEnabled: false,
 		signLanguageModeEnabled: false,
 		homepageLayoutPreferences: {
 			extrasPanelVisible: true,

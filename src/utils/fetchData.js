@@ -2,7 +2,7 @@ import { cacheTableMap } from '$utils/dexie';
 import { get } from 'svelte/store';
 import { __fontType, __chapterData, __verseTranslationData, __wordTranslation, __wordTransliteration, __verseTranslations, __verseKeyData } from '$utils/stores';
 import { staticEndpoint, cdnStaticDataUrls } from '$data/websiteSettings';
-import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/options';
+import { selectableFontTypes, selectableWordTranslations, selectableWordTransliterations, selectableVerseTranslations } from '$data/selectableOptions';
 
 // Keep track of in-progress fetches globally
 const inFlightRequests = new Map();

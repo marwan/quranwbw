@@ -1,4 +1,9 @@
 <script>
+	export let verse;
+	export let note;
+	export let cardInnerClasses;
+	export let forceClose = 0;
+
 	import Portal from 'svelte-portal';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Dropdown from '$ui/FlowbiteSvelte/dropdown/Dropdown.svelte';
@@ -10,17 +15,13 @@
 	import { updateSettings } from '$utils/updateSettings';
 	import { showConfirm } from '$utils/confirmationAlertHandler';
 	import { __verseKey, __notesModalVisible } from '$utils/stores';
-
-	export let verse;
-	export let note;
-	export let cardInnerClasses;
-	export let forceClose = 0;
+	import { dropdownItemClasses } from '$data/commonClasses';
 
 	const dispatch = createEventDispatcher();
 
+	// Dropdown state (previous values are used to detect changes in the reactive blocks below)
 	let dropdownOpen = false;
 	let buttonElement;
-	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 	let hasMounted = false;
 	let previousOpen = dropdownOpen;
 	let previousForceClose = forceClose;
@@ -30,16 +31,19 @@
 	const chapterMeta = quranMetaData[chapter];
 	const maxTextLength = 'max-w-[30vw] md:max-w-[115px]';
 
+	// Mark the component as mounted so the toggle event is not fired on initial render
 	onMount(() => {
 		hasMounted = true;
 		previousOpen = dropdownOpen;
 	});
 
+	// Notify the parent whenever the dropdown opens or closes (after mount)
 	$: if (hasMounted && dropdownOpen !== previousOpen) {
 		previousOpen = dropdownOpen;
 		dispatch('toggle', { verse, open: dropdownOpen });
 	}
 
+	// Close the dropdown when the parent changes the forceClose value
 	$: if (forceClose !== previousForceClose) {
 		previousForceClose = forceClose;
 		if (dropdownOpen) {
@@ -48,10 +52,12 @@
 		}
 	}
 
+	// Toggles the dropdown open/closed
 	function toggleDropdown() {
 		dropdownOpen = !dropdownOpen;
 	}
 
+	// Opens the notes modal to edit this verse's note
 	function handleEditNote(event) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -61,6 +67,7 @@
 		window.rybbit?.event('Edit Note Menu');
 	}
 
+	// Asks for confirmation, then clears the note
 	function handleDeleteNote(event) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -75,6 +82,7 @@
 		});
 	}
 
+	// Prevents the card link from being followed while the dropdown is open
 	function handleCardClick(event) {
 		if (dropdownOpen) {
 			event.preventDefault();

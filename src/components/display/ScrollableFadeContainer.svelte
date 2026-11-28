@@ -4,12 +4,12 @@
 	Also supports an optional callback for custom actions on scroll.
 -->
 <script>
-	import { onMount } from 'svelte';
-
 	export let containerId;
 	export let maxHeight = 250; // max height of the scrollable area in pixels
 	export let fadeHeight = 50; // height of the fade effect in pixels
 	export let onScrollAction = () => {}; // optional callback when user scrolls
+
+	import { onMount } from 'svelte';
 
 	let container;
 	let fadePixels = fadeHeight; // tracks the current fade size, shrinks as user scrolls down

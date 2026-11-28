@@ -1,7 +1,7 @@
 <script>
 	import Radio from '$ui/FlowbiteSvelte/forms/Radio.svelte';
 	import { __playButtonsFunctionality } from '$utils/stores';
-	import { selectableVersePlayButtonOptions } from '$data/options';
+	import { selectableVersePlayButtonOptions } from '$data/selectableOptions';
 	import { updateSettings } from '$utils/updateSettings';
 	import { selectedRadioOrCheckboxClasses, individualRadioClasses } from '$data/commonClasses';
 </script>

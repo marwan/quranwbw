@@ -20,7 +20,7 @@
 	import FavoriteChaptersModal from '$ui/Modals/FavoriteChaptersModal.svelte';
 	import ReadingHistoryModal from '$ui/Modals/ReadingHistoryModal.svelte';
 
-	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWesbiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
+	import { __userSettings, __currentPage, __chapterNumber, __settingsDrawerHidden, __wakeLockEnabled, __fontType, __wordTranslation, __mushafMinimalModeEnabled, __topNavbarVisible, __bottomToolbarVisible, __displayType, __wideWebsiteLayoutEnabled, __signLanguageModeEnabled, __wordTransliterationEnabled } from '$utils/stores';
 	import { debounce } from '$utils/debounce';
 	import { toggleNavbarToolbarOnScroll } from '$utils/toggleNavbarToolbarOnScroll';
 	import { resetAudioSettings } from '$utils/audioController';
@@ -189,7 +189,7 @@
 	})();
 </script>
 
-<div class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
+<div class={`${getWebsiteWidth($__wideWebsiteLayoutEnabled)} mx-auto ${paddingTop} ${paddingBottom} ${paddingX}`}>
 	<QuranNavigationModal />
 	<AudioModal />
 	<TajweedRulesModal />

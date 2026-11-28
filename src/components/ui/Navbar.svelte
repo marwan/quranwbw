@@ -5,7 +5,7 @@
 	import Mecca from '$svgs/Mecca.svelte';
 	import Madinah from '$svgs/Madinah.svelte';
 	import { quranMetaData } from '$data/quranMeta';
-	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWesbiteLayoutEnabled, __fullVersesDisplayKeys, __chapterData, __verseKeyData } from '$utils/stores';
+	import { __chapterNumber, __currentPage, __lastRead, __topNavbarVisible, __pageNumber, __morphologyKey, __mushafPageDivisions, __siteNavigationModalVisible, __quranNavigationModalVisible, __wideWebsiteLayoutEnabled, __fullVersesDisplayKeys, __chapterData, __verseKeyData } from '$utils/stores';
 	import { term } from '$utils/terminologies';
 	import { getWebsiteWidth } from '$utils/getWebsiteWidth';
 	import { page } from '$app/stores';
@@ -20,7 +20,7 @@
 	// Classes for the navbar
 	$: navbarClasses = `bg-theme-bg border-b border-theme-accent/20 fixed w-full z-20 top-0 left-0 print:hidden ${$__currentPage === 'home' ? 'hidden' : 'block'}`;
 	$: topNavClasses = `
-		${getWebsiteWidth($__wideWesbiteLayoutEnabled)}
+		${getWebsiteWidth($__wideWebsiteLayoutEnabled)}
 		${$__topNavbarVisible ? 'block' : 'hidden'} 
 		${['chapter', 'mushaf'].includes($__currentPage) && `border-b border-theme-accent/20 `}
 		flex flex-row items-center justify-between mx-auto px-4 py-2
@@ -172,7 +172,7 @@
 
 			<!-- display only the page name for non-chapter page -->
 			{#if !['chapter', 'mushaf', 'supplications', 'juz', 'hizb'].includes($__currentPage)}
-				{$__currentPage[0].toUpperCase() + $__currentPage.slice(1)}
+				<span class="capitalize">{$__currentPage}</span>
 
 				<!-- if it's the morphology page, show morphology key as well -->
 				{#if $__currentPage === 'morphology'}
@@ -189,7 +189,7 @@
 
 	<!-- mini nav for chapter page -->
 	{#if $__currentPage === 'chapter'}
-		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between text-xs mx-auto px-6`}>
+		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWebsiteLayoutEnabled)} flex flex-row items-center justify-between text-xs mx-auto px-6`}>
 			<div id="navbar-bottom-chapter-revalation" class="flex flex-row items-center py-2">
 				<span class="py-2 flex flex-row items-center gap-1">
 					<svelte:component this={RevelationIcon} />
@@ -215,7 +215,7 @@
 
 	<!-- mini nav for mushaf page -->
 	{#if $__currentPage === 'mushaf'}
-		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWesbiteLayoutEnabled)} flex flex-row items-center justify-between border-t border-theme-accent/20 text-xs mx-auto px-6`}>
+		<div id="bottom-nav" class={`${getWebsiteWidth($__wideWebsiteLayoutEnabled)} flex flex-row items-center justify-between border-t border-theme-accent/20 text-xs mx-auto px-6`}>
 			<div class="flex flex-row items-center py-2 truncate">
 				{#if !$__topNavbarVisible}
 					<span>Page {$__pageNumber} -&nbsp;</span>

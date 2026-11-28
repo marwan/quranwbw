@@ -28,7 +28,7 @@ import {
 	__hideNonDuaPart,
 	__playButtonsFunctionality,
 	__wordMorphologyOnClick,
-	__wideWesbiteLayoutEnabled,
+	__wideWebsiteLayoutEnabled,
 	__signLanguageModeEnabled,
 	__offlineModeSettings,
 	__homepageLayoutPreferences,
@@ -36,7 +36,6 @@ import {
 } from '$utils/stores';
 import { fetchChapterData, fetchVerseTranslationData } from '$utils/fetchData';
 import { queueReadingHistoryUpdate, removeReadingHistoryEntry } from '$utils/readingHistoryHandler';
-import { isReaderPage } from '$utils/isReaderPage';
 
 // function to update website settings
 export function updateSettings(props) {
@@ -229,25 +228,25 @@ export function updateSettings(props) {
 
 		case 'userNotes':
 			const value = props.value;
-			const notes_key = props.key;
+			const notesKey = props.key;
 			const isWhitespaceString = (str) => !str.replace(/\s/g, '').length;
 			let userNotes = userSettings['userNotes'];
 
 			// if override key was set, then just set the value key in localStorage
 			if (props.override) {
-				userSettings.userNotes = notes_key;
+				userSettings.userNotes = notesKey;
 			}
 
 			// else just set what was provided as key invidually post validation
 			else {
 				// we only save the note if it's not just only whitespace
 				if (!isWhitespaceString(value)) {
-					userNotes[notes_key] = {
+					userNotes[notesKey] = {
 						note: value,
 						modified_at: new Date().toISOString()
 					};
 				} else if (value.length === 0) {
-					if (Object.prototype.hasOwnProperty.call(userNotes, notes_key)) delete userNotes[notes_key];
+					if (Object.prototype.hasOwnProperty.call(userNotes, notesKey)) delete userNotes[notesKey];
 				}
 
 				// update the notes
@@ -259,7 +258,7 @@ export function updateSettings(props) {
 
 		// Update last read position and reading history when on a reader page
 		case 'lastRead':
-			if (isReaderPage(get(__currentPage))) {
+			if (['chapter', 'mushaf', 'juz', 'hizb'].includes(get(__currentPage))) {
 				const data = props.value;
 				data['currentPage'] = get(__currentPage);
 
@@ -331,9 +330,9 @@ export function updateSettings(props) {
 			break;
 
 		// for toggling website wide layout
-		case 'wideWesbiteLayoutEnabled':
-			__wideWesbiteLayoutEnabled.set(props.value);
-			userSettings.displaySettings.wideWesbiteLayoutEnabled = props.value;
+		case 'wideWebsiteLayoutEnabled':
+			__wideWebsiteLayoutEnabled.set(props.value);
+			userSettings.displaySettings.wideWebsiteLayoutEnabled = props.value;
 			break;
 
 		// for toggling sign language mode

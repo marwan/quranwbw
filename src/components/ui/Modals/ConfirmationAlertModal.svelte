@@ -22,7 +22,7 @@
 </script>
 
 <Modal id="confirmationAlertModal" bind:open={$__confirmationAlertModal.visible} transitionParams={getModalTransition('bottom')} size="sm" class="!rounded-b-none md:!rounded-3xl z-[21]" bodyClass="p-6" position="bottom" center outsideclose>
-	<h3 class="mb-6 text-xl font-medium">
+	<h3 class="mb-6 text-xl font-medium flex-shrink-0">
 		{$__confirmationAlertModal.type === 'confirm' ? 'Confirmation' : 'Alert'}
 	</h3>
 

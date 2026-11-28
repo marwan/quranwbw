@@ -13,6 +13,8 @@
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
+	const pageTitle = 'Guess The Word';
+
 	let randomID = 1;
 	let selection = null;
 	let answerChecked = false;
@@ -99,10 +101,10 @@
 		answerChecked = false;
 	}
 
-	__currentPage.set('Guess The Word');
+	__currentPage.set(pageTitle);
 </script>
 
-<PageHead title={'Guess The Word'} description="Test your knowledge of Quranic vocabulary with our Guess The Word game!" />
+<PageHead title={pageTitle} description={`Test your knowledge of Quranic vocabulary with our ${pageTitle} game!`} />
 
 <div class="space-y-12">
 	{#await randomWordsData}
@@ -138,7 +140,7 @@
 
 			<!-- answer-results -->
 			{#if answerChecked === true && isAnswerCorrect !== null}
-				<div id="answer-results" class="flex justify-center text-center font-medium text-md">
+				<div id="answer-results" class="flex justify-center text-center font-medium">
 					<span>
 						{isAnswerCorrect ? 'Your answer was correct 😀' : `Sorry, the correct answer was "${data[randomWord].word_english}" 😟`}
 					</span>

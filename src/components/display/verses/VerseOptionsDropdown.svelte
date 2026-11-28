@@ -15,21 +15,19 @@
 	import Morphology from '$svgs/Morphology.svelte';
 	import Copy from '$svgs/Copy.svelte';
 	import { showAudioModal } from '$utils/audioController';
-	import { selectableDisplays } from '$data/options';
+	import { selectableDisplays } from '$data/selectableOptions';
 	import { __userSettings, __verseKey, __notesModalVisible, __tafsirModalVisible, __morphologyModalVisible, __verseTranslationModalVisible, __copyShareVerseModalVisible, __currentPage, __displayType, __userNotes, __fontType, __morphologyKey } from '$utils/stores';
 	import { updateSettings } from '$utils/updateSettings';
 	import { term } from '$utils/terminologies';
 	import { sineIn } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 	import { checkOnlineAndAlert } from '$utils/offlineModeHandler';
+	import { dropdownItemClasses } from '$data/commonClasses';
 
-	// Constants
 	const mushafFontTypes = [2, 3];
-	const dropdownItemClasses = 'flex flex-row items-center space-x-2 font-normal rounded-3xl hover:bg-theme-accent/5';
 
 	// Component state
 	let dropdownOpen = false;
-	let subMenuVisible = false;
 
 	// Computed values
 	$: [chapter, verse] = $__verseKey.split(':').map(Number);
@@ -162,25 +160,23 @@
 		{$__verseKey}
 	</div>
 
-	{#if !subMenuVisible}
-		<div transition:fly={{ duration: 0, x: 0, easing: sineIn }}>
-			<!-- Main menu items -->
-			{#each menuItems as item (item.id)}
-				{#if item.show}
-					<DropdownItem class={dropdownItemClasses} on:click={item.handler} data-rybbit-event={item.analyticsEvent}>
-						<svelte:component this={item.icon} />
-						<span>{item.text}</span>
-					</DropdownItem>
-				{/if}
-			{/each}
-
-			<!-- Mode switching items -->
-			{#each modeItems as item}
-				<DropdownItem class={dropdownItemClasses} href={item.href} on:click={() => window.rybbit?.event(item.analyticsEvent)}>
+	<div transition:fly={{ duration: 0, x: 0, easing: sineIn }}>
+		<!-- Main menu items -->
+		{#each menuItems as item (item.id)}
+			{#if item.show}
+				<DropdownItem class={dropdownItemClasses} on:click={item.handler} data-rybbit-event={item.analyticsEvent}>
 					<svelte:component this={item.icon} />
 					<span>{item.text}</span>
 				</DropdownItem>
-			{/each}
-		</div>
-	{/if}
+			{/if}
+		{/each}
+
+		<!-- Mode switching items -->
+		{#each modeItems as item}
+			<DropdownItem class={dropdownItemClasses} href={item.href} on:click={() => window.rybbit?.event(item.analyticsEvent)}>
+				<svelte:component this={item.icon} />
+				<span>{item.text}</span>
+			</DropdownItem>
+		{/each}
+	</div>
 </Dropdown>

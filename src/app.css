@@ -173,7 +173,6 @@ html, body {
 }
 
 body {
-  color: #333;
   margin: 0;
   padding: 8px;
   box-sizing: border-box;
@@ -195,10 +194,6 @@ label {
   border-radius: 2px;
 } */
 
-
-input:disabled {
-  color: #ccc;
-}
 
 input:placeholder-shown {
   text-overflow: ellipsis;

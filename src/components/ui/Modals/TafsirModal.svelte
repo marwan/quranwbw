@@ -6,12 +6,14 @@
 	import { quranMetaData } from '$data/quranMeta';
 	import { __tafsirModalVisible, __verseKey, __verseTafsir } from '$utils/stores';
 	import { buttonClasses } from '$data/commonClasses';
-	import { selectableTafsirs } from '$data/selectableTafsirs';
+	import { selectableTafsirs } from '$data/selectableOptions';
 	import { term } from '$utils/terminologies';
 	import { fetchAndCacheJson } from '$utils/fetchData';
 	import { tafsirDataUrls } from '$data/websiteSettings';
+	import { getModalTransition } from '$utils/getModalTransition';
 
 	let tafsirData;
+	let scrollContainer;
 
 	$: selectedTafsirId = $__verseTafsir || 30;
 	$: selectedTafsir = selectableTafsirs[selectedTafsirId];
@@ -30,17 +32,7 @@
 	`;
 
 	// Scroll to top when navigating to a different verse
-	$: if ($__tafsirModalVisible && verse) {
-		try {
-			const tafsirModal = document.getElementById('tafsirModal');
-			if (tafsirModal) {
-				tafsirModal.getElementsByTagName('div')[1].scrollTop = 0;
-			}
-		} catch (error) {
-			console.warn(error);
-			window.rybbit?.error(error);
-		}
-	}
+	$: if ($__tafsirModalVisible && verse && scrollContainer) scrollContainer.scrollTop = 0;
 
 	// Normalizes line breaks: blank lines become paragraph breaks, single newlines become <br />
 	function formatTafsir(text) {
@@ -87,54 +79,44 @@
 	}
 </script>
 
-<Modal
-	bind:open={$__tafsirModalVisible}
-	title="{quranMetaData[chapter].transliteration}, {chapter}:{verse}"
-	id="tafsirModal"
-	class="!rounded-b-none md:!rounded-3xl"
-	bodyClass="p-6 space-y-4 flex-1 overflow-y-auto overscroll-contain !border-t-0"
-	headerClass="flex justify-between items-center p-6 rounded-t-3xl"
-	classFooter="rounded-b-3xl flex flex-row justify-between !border-t-0"
-	size="lg"
-	position="bottom"
-	center
-	outsideclose
->
-	<div class="flex flex-col space-y-4">
-		{#key verse}
-			{#await tafsirData}
-				<Spinner inline={true} />
-			{:then data}
-				{@const tafsir = findTafsirForVerse(data.ayahs, chapter, verse)}
-				<div class="py-4">
-					<ArabicVerseWords key="{chapter}:{verse}" />
-				</div>
+<Modal id="tafsirModal" bind:open={$__tafsirModalVisible} transitionParams={getModalTransition('bottom')} size="lg" position="bottom" center outsideclose>
+	<h3 class="mb-6 text-xl font-medium flex-shrink-0">{quranMetaData[chapter].transliteration}, {chapter}:{verse}</h3>
 
-				<div class="text-sm flex flex-col space-y-6">
-					<div class="flex flex-col space-y-4">
-						<div class={tafsirTextClasses}>
-							{#if tafsir?.text}
-								{@html formatTafsir(tafsir.text)}
-							{:else}
-								<ErrorLoadingData center="false" error={new Error(`No tafsir found for ${chapter}:${verse}`)} />
-							{/if}
+	<div bind:this={scrollContainer} class="flex-1 min-h-0 overflow-y-auto overscroll-contain w-full pr-2">
+		<div class="flex flex-col space-y-4">
+			{#key verse}
+				{#await tafsirData}
+					<Spinner inline={true} />
+				{:then data}
+					{@const tafsir = findTafsirForVerse(data.ayahs, chapter, verse)}
+					<div class="py-4">
+						<ArabicVerseWords key="{chapter}:{verse}" />
+					</div>
+
+					<div class="text-sm flex flex-col space-y-6">
+						<div class="flex flex-col space-y-4">
+							<div class={tafsirTextClasses}>
+								{#if tafsir?.text}
+									{@html formatTafsir(tafsir.text)}
+								{:else}
+									<ErrorLoadingData center="false" error={new Error(`No tafsir found for ${chapter}:${verse}`)} />
+								{/if}
+							</div>
 						</div>
 					</div>
-				</div>
-			{:catch error}
-				<ErrorLoadingData center="false" {error} />
-			{/await}
-		{/key}
+				{:catch error}
+					<ErrorLoadingData center="false" {error} />
+				{/await}
+			{/key}
+		</div>
 	</div>
 
-	<svelte:fragment slot="footer">
-		{#key verse}
-			{#await tafsirData then}
-				<div class="grid grid-cols-2 gap-4 w-full">
-					<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>Previous {term('verse')}</button>
-					<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>Next {term('verse')}</button>
-				</div>
-			{/await}
-		{/key}
-	</svelte:fragment>
+	{#key verse}
+		{#await tafsirData then}
+			<div class="grid grid-cols-2 gap-4 w-full flex-shrink-0 mt-4">
+				<button class="text-sm {buttonClasses} {verse > 1 ? 'visible' : 'invisible'} w-fit justify-self-start" on:click={() => (verse = verse - 1)}>Previous {term('verse')}</button>
+				<button class="text-sm {buttonClasses} {verse < quranMetaData[chapter].verses ? 'visible' : 'invisible'} w-fit justify-self-end" on:click={() => (verse = verse + 1)}>Next {term('verse')}</button>
+			</div>
+		{/await}
+	{/key}
 </Modal>
