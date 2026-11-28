@@ -49,6 +49,7 @@
 		try {
 			fullQuranTextData = await fetchAndCacheJson(cdnStaticDataUrls.fullQuranUthmani, 'other');
 		} catch (error) {
+			// Not reported to rybbit on purpose: failures here are expected (e.g. offline) and non-critical
 			console.warn(error);
 		}
 	}
