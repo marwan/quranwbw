@@ -1,4 +1,4 @@
-### Nov 27, 2026
+### Nov 28, 2026
 
 - **Disable Usage Insights**: You can now opt out of anonymous usage insights directly from the website settings.
 
